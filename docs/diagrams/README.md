@@ -18,6 +18,9 @@ To change a diagram, edit `build.py`, run `python3 docs/diagrams/build.py`, and 
 | D4 | [Life of a registration](#d4-state-machine--life-of-a-registration) | State machine | Every status a registration can have and what moves it | BR-05–BR-12, BR-18–BR-20 |
 | D5 | [Life of an event](#d5-state-machine--life-of-an-event) | State machine | Every status an event can have, stored or worked out from the clock | FR-06, FR-08–FR-10, BR-04, BR-15 |
 | D6 | [What Sprint 1 must build first](../features.md#5-sprint-1-feature-bundle-preview-of-step-5) | Dependency graph | Which Sprint 1 feature needs which | Feature-A … Feature-I |
+| D7 | [One container, three tiers](arch-system.png) | Architecture | Browser, container (API, services, Prisma), PostgreSQL | SDS §2, SD-01 |
+| D8 | [Who owns what](er-data-model.png) | ER / data model | Entities, fields, ownership, constraints, sprint of each entity | SDS §4, BR-01–BR-07 |
+| D9 | [Three sprints to 13 December](gantt-sprints.png) | Gantt | Sprints, labs, deadlines and the exam period | `docs/sprints/plan.md` |
 
 ---
 
@@ -50,7 +53,7 @@ Source: [`seq-auth.html`](seq-auth.html)
 
 | Step | What happens | Requirement |
 |---|---|---|
-| Sign in | The browser sends email and password. The API compares the password with the stored **bcrypt** hash, creates a session row, and returns an **HttpOnly** cookie that page scripts cannot read | FR-01, NFR-03, NFR-04 |
+| Sign in | The browser sends email and password. The API compares the password with the stored **scrypt** hash, creates a session row, and returns an **HttpOnly** cookie that page scripts cannot read | FR-01, NFR-03, NFR-04 |
 | Who am I | Each request carries the cookie. The API finds the session and returns the user's id, name and role | FR-03 |
 | Sign out | The API **deletes** the session row and tells the browser to clear the cookie | FR-04 |
 | Old cookie | A request that reuses the old cookie finds no session, so it gets **401** and no data | NFR-01, NFR-04 |
@@ -122,3 +125,5 @@ Source: [`state-event.html`](state-event.html)
 |---|---|---|
 | v0.1 | 4 Nov 2026 | D1–D5 first versions |
 | v0.2 | 4 Nov 2026 | D6 Sprint 1 dependency graph (shown in `docs/features.md`) |
+| v0.3 | 4 Nov 2026 | D7 architecture and D8 data model (shown in `docs/system-sds.md`); D2 label now says scrypt |
+| v0.4 | 4 Nov 2026 | D9 three-sprint Gantt (shown in `docs/sprints/plan.md`) |

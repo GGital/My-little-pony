@@ -1,7 +1,7 @@
 # Requirements-to-Features Traceability
 
-Project: **TCG Event Hub** · Document version: v0.1 — draft for team review (branch `sprint-1/spec`)
-Inputs: [`docs/srs.md`](srs.md) v0.4 · [`docs/features.md`](features.md) v0.2 · Diagrams: [`docs/diagrams/`](diagrams/README.md)
+Project: **TCG Event Hub** · Document version: v0.2 — v0.1 approved in PR #1; CH-10 is under review in PR 2
+Inputs: [`docs/srs.md`](srs.md) v0.5 · [`docs/features.md`](features.md) v0.2 · Diagrams: [`docs/diagrams/`](diagrams/README.md)
 
 This is step 3 of the course design process. Every requirement is followed through four links, so anyone can
 answer "where is this built, when, and how do we know it works?":
@@ -103,7 +103,7 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 |---|---|---|---|---|---|
 | NFR-01 | 401 without a valid session, no private data | Feature-B, Feature-A | Sprint 1 | AC-B-02 · I | 2, 3 (each new endpoint) |
 | NFR-02 | 403 wrong role, 404 not owner; fixed check order | Feature-B, SR-02 | Sprint 1 | AC-B-03 · I | 2, 3 |
-| NFR-03 | bcrypt hash, no password in data or responses | Feature-A | Sprint 1 | AC-A-05 · U, I | — |
+| NFR-03 | scrypt hash, no password in data or responses | Feature-A | Sprint 1 | AC-A-05 · U, I | — |
 | NFR-04 | HttpOnly SameSite cookie, 8 h absolute, dead after sign-out | Feature-A | Sprint 1 | AC-A-04, AC-A-06 · U, I | Lab 5 (deployed) |
 | NFR-05 | 20 simultaneous requests → exactly 1 wins | Feature-G | Sprint 1 | AC-G-06 · I | 2 (with cancel) |
 | NFR-06 | Data survives restart; migrations only; seed reproducible | SR-01 | Sprint 1 | AC-SR1-01, AC-SR1-02 · I, M | 2, 3, Lab 5 |
@@ -162,7 +162,7 @@ response shapes). Each AC gets a test in the Software Test Specification with th
 | AC-A-02 | A | Wrong password and unknown email both give 401 with the same message; no session is created | FR-02 |
 | AC-A-03 | A | `GET /me` with a valid session returns the user; without one returns 401 | FR-03 |
 | AC-A-04 | A | After sign-out, the old cookie gets 401 on every protected endpoint | FR-04, NFR-04 |
-| AC-A-05 | A | Stored passwords are bcrypt hashes (cost ≥ 10); no response contains `password` or `passwordHash` | NFR-03 |
+| AC-A-05 | A | Stored passwords are scrypt hashes in the `scrypt$N$r$p$salt$hash` format with N = 2^15; no response contains `password` or `passwordHash` | NFR-03 |
 | AC-A-06 | A | Cookie is HttpOnly and SameSite=Lax; a session older than 8 hours gets 401 (fixed clock) | NFR-04 |
 | AC-B-01 | B | A `userId`, `role` or `organizerId` sent by the client is ignored; records belong to the session user | BR-17 |
 | AC-B-02 | B | Every protected endpoint answers 401 without a session, with no private data in the body | NFR-01 |
@@ -242,6 +242,7 @@ made. Each still needs the teammate's approval in the spec Pull Request.
 | CH-07 | BR-16 and D-14: organizers see display names, not emails | Data minimisation; email is not needed for check-in | Feature-I |
 | CH-08 | NFR-02 check order 401 → 403 → 404 → 409/422; NFR-04 8 h is absolute; NFR-13 health check | Makes the expected status code unambiguous and prepares Lab 5 | Feature-A, B, SR-02, SR-04 |
 | CH-09 | A-06 seed has ≥ 2 organizers and ≥ 3 participants; C-06 supported browsers; Q-08, Q-09 overlap questions resolved; X-08 reference fixed | Ownership tests need two users of each role; scope questions answered before building | SR-01 |
+| CH-10 | NFR-03 hashing changed from bcrypt to scrypt (D-15) | Chosen while writing the SDS: reuses reviewed TokTickIT code and avoids a native dependency in Docker | Feature-A, AC-A-05 |
 
 No requirement was withdrawn and no ID was renumbered.
 
@@ -259,3 +260,4 @@ No requirement was withdrawn and no ID was renumbered.
 | Version | Date | Change | Author |
 |---|---|---|---|
 | v0.1 | 4 Nov 2026 | First matrix: 64 requirements (40 in Sprint 1), 47 planned Sprint 1 ACs, shared-requirement table, problem trace, gaps and approved changes CH-01 … CH-09 | Team (AI-assisted) |
+| v0.2 | 4 Nov 2026 | CH-10: scrypt instead of bcrypt (NFR-03, AC-A-05) | Team (AI-assisted) |
