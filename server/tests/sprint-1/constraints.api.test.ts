@@ -56,17 +56,28 @@ describe('TEST-SR1-04 an event ends after it starts and lasts at most 24 hours (
   })
 })
 
+// Prisma reports a unique violation as SQLSTATE 23505 with the key columns, but without the index name.
+const UNIQUE_ON_EVENT_AND_PARTICIPANT = /Code: `23505`[\s\S]*Key \(\\?"eventId\\?", \\?"participantId\\?"\)/
+
 describe('TEST-SR1-05 one ACTIVE registration per participant per event (BR-06)', () => {
+  it('is enforced by a partial unique index that covers only active statuses', async () => {
+    const [index] = await prisma.$queryRaw<{ indexdef: string }[]>`
+      SELECT indexdef FROM pg_indexes WHERE tablename = 'Registration' AND indexname = 'registration_one_active'`
+    expect(index?.indexdef).toMatch(/CREATE UNIQUE INDEX registration_one_active/)
+    expect(index?.indexdef).toMatch(/\("eventId", "participantId"\)/)
+    expect(index?.indexdef).toMatch(/WHERE.*'REGISTERED'.*'CHECKED_IN'/)
+  })
+
   it('rejects a second active registration, then allows one again after the first is cancelled', async () => {
     const event = await makeEvent(organizerId)
     const participant = await makeParticipant()
 
     await expect(insertRegistrationRaw(event.id, participant.id, 'REGISTERED')).resolves.toBe(1)
     await expect(insertRegistrationRaw(event.id, participant.id, 'REGISTERED')).rejects.toThrow(
-      /registration_one_active/,
+      UNIQUE_ON_EVENT_AND_PARTICIPANT,
     )
     await expect(insertRegistrationRaw(event.id, participant.id, 'CHECKED_IN')).rejects.toThrow(
-      /registration_one_active/,
+      UNIQUE_ON_EVENT_AND_PARTICIPANT,
     )
 
     await prisma.registration.updateMany({
