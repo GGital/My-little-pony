@@ -2,7 +2,7 @@
 
 Project: **TCG Event Hub** · Document version: v0.1 — draft for team review (PR 2)
 Inputs: [`../features.md`](../features.md) v0.2 · [`../traceability.md`](../traceability.md) v0.2 ·
-[`../system-sds.md`](../system-sds.md) v0.1 · Course schedule: group work specification §4, §7, §10
+[`../system-sds.md`](../system-sds.md) v0.2 · Course schedule: group work specification §4, §7, §10
 
 This is step 5 of the course design process. It decides **which features are built in which sprint**, in what
 order, and what "done" looks like at the end of each sprint. Together the three sprints cover the whole baseline:

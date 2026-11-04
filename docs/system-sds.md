@@ -1,6 +1,6 @@
 # System-Level Software Design Specification (SDS)
 
-Project: **TCG Event Hub** · Document version: v0.1 — draft for team review (PR 2)
+Project: **TCG Event Hub** · Document version: v0.2 — draft for team review (PR 2)
 Inputs: [`srs.md`](srs.md) v0.5 · [`features.md`](features.md) v0.2 · [`traceability.md`](traceability.md) v0.2 ·
 [`ui/design-direction.md`](ui/design-direction.md) v0.2 · [`diagrams/`](diagrams/README.md)
 
@@ -173,6 +173,7 @@ All ids are auto-increment integers. Authorization never depends on ids being ha
 | `publishedAt` | timestamptz | set when published | 1 |
 | `registrationDeadline` | timestamptz | nullable = start time; `CHECK` ≤ `startAt` (BR-08) | 2 |
 | `cancelledAt`, `cancelledById`, `cancelReason` | timestamptz, int FK, varchar(200) | all null or all set (BR-12, FR-28) | 2 |
+| `seedKey` | varchar(40) | unique, nullable; set only by the seed so re-runs find their rows (Sprint 1 contracts §1) | 1 |
 | `createdAt`, `updatedAt` | timestamptz | — | 1 |
 
 Index: `(status, startAt)` for the upcoming list (FR-11, NFR-12).
@@ -250,7 +251,7 @@ gives the ordering we need (SD-08).
 | Item | Design |
 |---|---|
 | Migrations | `prisma migrate dev` locally, `prisma migrate deploy` in CI and Lab 5. Each schema change is one migration committed with the feature that needs it. Migrations are never edited after merge |
-| Seed (`server/prisma/seed.ts`) | **Idempotent**: upserts by email and by a fixed event `seedKey`, so running it twice creates nothing new (NFR-06, AC-SR1-02) |
+| Seed (`server/prisma/seed.ts`) | **Idempotent**: upserts users by email and events by `seedKey`, so running it twice creates nothing new (NFR-06, AC-SR1-02). The exact accounts and events are listed in Sprint 1 contracts §0.3 |
 | Seed contents | 2 organizers (Quantum Cards, Dragon's Den), 4 participants (one with no registrations, for empty states), 6 events: open with seats, almost full, full, already started, one per organizer at least, plus a 1-seat event for the concurrency demo |
 | Seed password | Read from the `SEED_PASSWORD` environment variable. `.env.example` holds a placeholder only. The README tells testers to choose their own local value. No real password is in Git or the PDF |
 | Test database | A separate database (`DATABASE_URL_TEST`). Integration tests run migrations once, then truncate tables before each test file |
@@ -536,3 +537,4 @@ Design points:
 | Version | Date | Change | Author |
 |---|---|---|---|
 | v0.1 | 4 Nov 2026 | First draft: architecture, stack, data model with constraints and seat-lock transaction, UI and API conventions, endpoint catalogue E-01 … E-22, permission matrix, session design, configuration and GCP plan, testing architecture, SD-01 … SD-10 | Team (AI-assisted) |
+| v0.2 | 4 Nov 2026 | `Event.seedKey` added for the idempotent seed (Sprint 1 contracts §1); seed reference to contracts §0.3 | Team (AI-assisted) |
