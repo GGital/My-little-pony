@@ -212,7 +212,7 @@ survives restarts and works with more than one Cloud Run instance.
 
 ### 4.3 Constraints that back the rules (raw SQL in migrations)
 
-Prisma cannot express these in `schema.prisma`, so the first migration adds them as SQL (SD-04):
+Prisma cannot express these in `schema.prisma`, so migration `0002_rule_constraints` adds them as SQL (SD-04):
 
 ```sql
 ALTER TABLE "Event" ADD CONSTRAINT event_capacity_range CHECK (capacity BETWEEN 1 AND 256);
@@ -538,3 +538,4 @@ Design points:
 |---|---|---|---|
 | v0.1 | 4 Nov 2026 | First draft: architecture, stack, data model with constraints and seat-lock transaction, UI and API conventions, endpoint catalogue E-01 … E-22, permission matrix, session design, configuration and GCP plan, testing architecture, SD-01 … SD-10 | Team (AI-assisted) |
 | v0.2 | 4 Nov 2026 | `Event.seedKey` added for the idempotent seed (Sprint 1 contracts §1); seed reference to contracts §0.3 | Team (AI-assisted) |
+| v0.3 | 4 Nov 2026 | §4.3 names the migration that holds the constraints (`0002_rule_constraints`, from I-01) | Team (AI-assisted) |

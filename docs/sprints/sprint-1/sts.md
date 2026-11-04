@@ -74,11 +74,11 @@ the commit id in §6.
 
 | Test ID | Level | AC / Req | Precondition / input | Action | Expected result | File | Result |
 |---|---|---|---|---|---|---|---|
-| TEST-SR1-01 | I, M | AC-SR1-01, NFR-06 | Organizer creates an event; participant registers (through the API) | Read both with a **new** Prisma client; (M) restart the server and reload `/me/registrations` | Identical field values; the registration still shows after restart | `server/tests/sprint-1/persistence.api.test.ts` | Pending |
+| TEST-SR1-01 | I, M | AC-SR1-01, NFR-06 | (I-01) organizer, participant, event and registration written through the data layer; (I-12) the same through the API | Read both with a **new** Prisma client; (M, I-12) restart the server and reload `/me/registrations` | Identical field values; the registration still shows after restart | `server/tests/sprint-1/persistence.api.test.ts` | Pending |
 | TEST-SR1-02 | I | AC-SR1-02, NFR-06 | Empty test database, `SEED_PASSWORD` set | Run the seed twice | 6 users (2 organizers, 4 participants), 6 events, the §0.3 registrations; second run adds 0 rows | `server/tests/sprint-1/seed.api.test.ts` | Pending |
 | TEST-SR1-03 | I | BR-01 | Direct SQL insert with capacity 0 and 257 | Insert, bypassing the API | Rejected by `event_capacity_range` | `server/tests/sprint-1/constraints.api.test.ts` | Pending |
 | TEST-SR1-04 | I | BR-02 | Direct SQL insert with end ≤ start, and end = start + 24 h 1 min | Insert, bypassing the API | Rejected by `event_time_window` | `server/tests/sprint-1/constraints.api.test.ts` | Pending |
-| TEST-SR1-05 | I | BR-06 | One active registration exists for (event, participant) | Insert a second active row by SQL; then mark the first `CANCELLED` and insert again | First insert rejected by `registration_one_active`; after the cancel, the insert succeeds | `server/tests/sprint-1/constraints.api.test.ts` | Pending |
+| TEST-SR1-05 | I | BR-06 | One active registration exists for (event, participant) | Insert a second active row by SQL; then mark the first `CANCELLED` and insert again | `registration_one_active` is a UNIQUE index on (`eventId`, `participantId`) limited to `REGISTERED`/`CHECKED_IN`; the second active insert (and a `CHECKED_IN` one) fails with SQLSTATE 23505 on those columns; after the cancel, the insert succeeds | `server/tests/sprint-1/constraints.api.test.ts` | Pending |
 
 ### 2.2 SR-02, SR-03 — conventions, validation, errors, time
 
@@ -246,7 +246,7 @@ the evidence the TA checks (Deliverable 1 §4.2).
 
 | Issue | Tests written first | Red commit | Red run (failed / total) | Green commit | Green run (passed / total) |
 |---|---|---|---|---|---|
-| I-01 SR-01 data foundation | TEST-SR1-01 … 05 | Pending | Pending | Pending | Pending |
+| I-01 SR-01 data foundation | TEST-SR1-01 … 05 | `4725528` | **10 failed / 17** (all on assertions: constraints accepted bad rows; seed created nothing) — `evidence/I-01-red.txt` | `3486e31` (implementation, 16 / 17), then `47bba2c` (explained test correction) | **18 passed / 18** — `evidence/I-01-green-2.txt` |
 | I-02 SR-02, SR-03 API foundation | TEST-SR2-01 … 05, TEST-SR3-01, TEST-SR4-01 (U, I) | Pending | Pending | Pending | Pending |
 | I-03 Client shell | TEST-C-01, C-02, C-05, TEST-SR3-02 | Pending | Pending | Pending | Pending |
 | I-04 Feature-A | TEST-A-01 … 06, TEST-C-04 | Pending | Pending | Pending | Pending |
@@ -308,3 +308,4 @@ npm --prefix server run db:seed && npx playwright test e2e/sprint-1
 | Version | Date | Change | Author |
 |---|---|---|---|
 | v1.0 | 4 Nov 2026 | First STS: 53 planned test rows + 2 journeys for 47 ACs, BR rejection map, TDD record, commands | Team (AI-assisted) |
+| v1.1 | 4 Nov 2026 | I-01 TDD record filled from real runs; TEST-SR1-01 split between I-01 (data layer) and I-12 (API, restart); TEST-SR1-05 expected result states the index shape and SQLSTATE 23505 | Team (AI-assisted) |
