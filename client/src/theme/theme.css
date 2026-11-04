@@ -1,0 +1,68 @@
+:root {
+  --ink-900: #16112b;
+  --ink-800: #2a1f55;
+  --surface: #ffffff;
+  --accent-ink: #007a78;
+  --primary-violet: #6c4ce0;
+  --primary-violet-hover: #583bb8;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
+  --radius-panel: 16px;
+  --radius-card: 12px;
+  --radius-pill: 999px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --font-heading: 'Chakra Petch', sans-serif;
+  --font-body: 'IBM Plex Sans Thai', sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--text-main);
+  background: linear-gradient(180deg, var(--ink-900) 0%, var(--ink-800) 100%);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+
+::selection {
+  background-color: rgba(108, 76, 224, 0.24);
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary-violet);
+  outline-offset: 2px;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.badge-role-player {
+  background-color: var(--accent-ink);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  padding: 4px 8px;
+  border-radius: var(--radius-pill);
+  text-transform: uppercase;
+}
+
+.badge-role-organizer {
+  background-color: var(--primary-violet);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  padding: 4px 8px;
+  border-radius: var(--radius-pill);
+  text-transform: uppercase;
+}
