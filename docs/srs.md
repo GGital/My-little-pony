@@ -4,8 +4,9 @@ Project: **TCG Event Hub** — Event Registration and Attendance System
 Course: CPE 334, Semester 1/2026 — Theme 3 (Event Registration and Attendance System)
 Team: Phattaratorn Mahatkeerati (67070503433, [@GGital](https://github.com/GGital)) ·
 Praewa Thuwatharanimitkul (67070503432, [@MeldyRose](https://github.com/MeldyRose))
-Document version: v0.3 — draft for team review (branch `sprint-1/spec`)
-Companion documents (to follow): `docs/features.md`, `docs/traceability.md`, `docs/system-sds.md`,
+Document version: v0.4 — draft for team review (branch `sprint-1/spec`)
+Companion documents: [`docs/features.md`](features.md), [`docs/traceability.md`](traceability.md),
+[`docs/diagrams/`](diagrams/README.md), [`docs/ui/design-direction.md`](ui/design-direction.md); to follow: `docs/system-sds.md`,
 `docs/sprints/plan.md`, `docs/sprints/sprint-1/`
 
 This SRS describes the **whole product** across all three sprints. Every requirement has a stable identifier
@@ -32,13 +33,13 @@ seats, because a store has a fixed number of tables, and every match needs an op
 
 Today a typical store takes sign-ups through chat messages and a paper list. The pain points are:
 
-| # | Problem today | Consequence |
-|---|---|---|
-| P-01 | Seats are counted by hand | Events are overbooked, or the last seats go to whoever messages twice |
-| P-02 | The same player is listed twice under different spellings | Phantom seats; the real count of players is unknown |
-| P-03 | Players do not know whether seats are left until they ask | Lost players and repeated questions to staff |
-| P-04 | Check-in at the door is a paper tick list | No reliable record of who actually came; no-shows cannot be measured |
-| P-05 | Organizers cannot see attendance across events | They cannot plan table counts or prize support |
+| # | Problem today | Consequence | Addressed by |
+|---|---|---|---|
+| P-01 | Seats are counted by hand | Events are overbooked, or the last seats go to whoever messages twice | BR-05, BR-07, FR-15 |
+| P-02 | The same player is listed twice under different spellings | Phantom seats; the real count of players is unknown | BR-06, FR-01 (one account per player) |
+| P-03 | Players do not know whether seats are left until they ask | Lost players and repeated questions to staff | FR-11, FR-12, FR-13 |
+| P-04 | Check-in at the door is a paper tick list | No reliable record of who actually came; no-shows cannot be measured | FR-21, FR-22, BR-18–BR-20 |
+| P-05 | Organizers cannot see attendance across events | They cannot plan table counts or prize support | FR-23, FR-24 |
 
 ### 1.2 UX reference
 
@@ -83,7 +84,7 @@ Role rules for accounts:
 - Accounts are **seeded**. There is no self-registration, password recovery, or account administration screen
   (X-01).
 - An organizer **owns** each event they create. An organizer can manage only events they own (BR-14). There is no
-  co-organizer or "all events" administrator role (X-09).
+  co-organizer or "all events" administrator role (X-08).
 
 ### 2.1 Access summary
 
@@ -100,7 +101,8 @@ role/permission matrix, and every "No" is enforced by the backend (BR-17), not o
 | Cancel own registration (Sprint 2) | No | Own only | No |
 | Create / publish an event | No | No (BR-13) | Yes |
 | Organizer dashboard: own events, edit, cancel (Sprint 2) | No | No | Own events only (BR-14) |
-| Registration list of an event | No | No | Own events only (BR-14) |
+| Registration list of an event (display names only) | No | No | Own events only (BR-14, BR-16) |
+| See a draft event (Sprint 2) | No | No | Own drafts only (BR-04) |
 | Check-in and attendance report (Sprint 3) | No | No | Own events only (BR-18) |
 
 ---
@@ -150,6 +152,7 @@ role/permission matrix, and every "No" is enforced by the backend (BR-17), not o
 | **Format** | How cards are played: `CONSTRUCTED` (bring your own deck), `SEALED` or `DRAFT` (decks built at the event from new packs) |
 | **Capacity** | The maximum number of *active* registrations an event may hold (positive whole number) |
 | **Seats remaining** | Capacity minus the event's active registrations, computed by the backend |
+| **Upcoming** | An event whose start time is later than the server's current time |
 | **Event status** | `DRAFT` (Sprint 2) → `PUBLISHED` → `CANCELLED` (Sprint 2). An event is *past* once its end time has passed; this is derived from time, not stored |
 | **Registration** | One participant's place at one event |
 | **Active registration** | A registration in status `REGISTERED` or `CHECKED_IN`; it occupies a seat |
@@ -204,9 +207,11 @@ behaviour but is never the only enforcement point.
   "12 / 32") and seats remaining. Signed-in
   and signed-out users may view the list.
 - **FR-12** *(Sprint 1)* The system shall show an event's detail page with all public fields, its seats remaining
-  and, for a signed-in participant, whether they are already registered.
+  and the action the current viewer may take (sign in to register, register, already registered, full, closed, or
+  manage for the owner), decided by the server. An event id that does not exist, or that the viewer may not see
+  (BR-04), answers "not found".
 - **FR-13** *(Sprint 2)* The system shall let users search the list by text (title, venue or city) and filter it
-  by event type, format, date range, and "seats available only".
+  by event type, format, date range, and "seats available only", and page through results 20 at a time.
 - **FR-14** *(Sprint 2)* The system shall show past and cancelled events only when the user explicitly asks for
   them; they are never registrable.
 
@@ -218,7 +223,7 @@ behaviour but is never the only enforcement point.
 - **FR-16** *(Sprint 1)* The system shall reject a registration that breaks BR-04 to BR-07 or BR-10, store
   nothing, and return a specific reason the UI can show (for example "This event is full").
 - **FR-17** *(Sprint 1)* The system shall show a participant the list of their own registrations with event title,
-  date/time, venue, and registration status, and shall let them open each one.
+  date/time, venue, and registration status, and shall let them open each event's detail page from it.
 - **FR-18** *(Sprint 1)* The system shall show the owning organizer the list of registrations for one of their
   events: participant display name, registration time and status, with the active count and capacity.
 - **FR-19** *(Sprint 2)* The system shall let a participant cancel their own active registration before the
@@ -238,6 +243,13 @@ behaviour but is never the only enforcement point.
 - **FR-25** The system shall show a participant their event history with each event's final status
   (attended, no-show, cancelled, event cancelled).
 
+### 5.6 Record keeping — Sprints 2 and 3
+
+- **FR-28** The system shall record who performed, and when, each state change of an event or registration:
+  registration created, registration cancelled, event published, event cancelled (with its reason), capacity or
+  deadline changed, check-in and check-in undone. Owners can see this information on the records they manage;
+  records are never deleted (X-11). *(Sprint 2 for cancellations and changes, Sprint 3 for check-in.)*
+
 ---
 
 ## 6. Business rules (BR)
@@ -254,8 +266,9 @@ database where a constraint can express it.
 - **BR-03** *(Sprint 1)* Title (3–100 characters), event type, format, venue name, venue address, city, start,
   end and capacity are required. Entry-fee label (up to 40 characters), play structure note (up to 80), contact (up
   to 120) and description (up to 2,000 characters) are optional.
-- **BR-04** *(Sprint 1)* Only `PUBLISHED` events are visible to participants and visitors, and only `PUBLISHED`
-  events that have not started (and, from Sprint 2, whose deadline has not passed) accept registrations.
+- **BR-04** *(Sprint 1)* **Visibility and openness.** `PUBLISHED` and `CANCELLED` events are visible to everyone
+  (a cancelled event is shown as cancelled); a `DRAFT` event is visible only to its owner (Sprint 2). Only a
+  `PUBLISHED` event that has not started (and, from Sprint 2, whose deadline has not passed) accepts registrations.
 
 ### 6.2 Registration rules
 
@@ -268,26 +281,28 @@ database where a constraint can express it.
   same moment, exactly one registration succeeds; the rest are rejected as "full". BR-05 and BR-06 must hold even
   for simultaneous requests and repeated clicks.
 - **BR-08** *(Sprint 2)* **Registration deadline.** Each event has a registration deadline that defaults to its
-  start time. The organizer may set it earlier, never later than the start. After the deadline, registration and
-  participant cancellation are rejected.
-- **BR-09** *(Sprint 2)* **Capacity changes.** The owning organizer may raise capacity at any time before the event
-  starts. They may lower it only down to the current number of active registrations, never below; existing
+  start time. The organizer may set it earlier, never later than the start, and never earlier than the moment it is
+  set. After the deadline, registration and participant cancellation are rejected.
+- **BR-09** *(Sprint 2)* **Capacity changes.** The owning organizer may raise capacity, up to the BR-01 maximum, at
+  any time before the event starts. They may lower it only down to the current number of active registrations, never below; existing
   registrations are never removed by a capacity change. This answers the brief's "capacity changes" question.
 - **BR-10** *(Sprint 1)* Only users with the `PARTICIPANT` role can register. An organizer cannot register for any
   event, including their own.
 - **BR-11** *(Sprint 2)* A participant can cancel only their own registration and only while it is `REGISTERED` and
   before the deadline. A cancelled registration keeps its record; it no longer occupies a seat.
-- **BR-12** *(Sprint 2)* When an organizer cancels an event, all its active registrations become
-  `EVENT_CANCELLED`, the event stops accepting registrations, and the cancellation cannot be undone.
+- **BR-12** *(Sprint 2)* Only an event that has not started can be cancelled, and a reason of 5–200 characters is
+  required. When it is cancelled, all its active registrations become `EVENT_CANCELLED` in the same transaction, the
+  event stops accepting registrations, and the cancellation cannot be undone.
 
 ### 6.3 Ownership and privacy rules
 
 - **BR-13** *(Sprint 1)* Only organizers can create events. Participants and visitors cannot.
 - **BR-14** *(Sprint 1)* An organizer can view the registration list of, and manage, **only events they own**.
-- **BR-15** *(Sprint 2)* Once an event has started, its start time, capacity and deadline can no longer be changed;
-  only its description may be edited.
+- **BR-15** *(Sprint 2)* Once an event has started, its start time, end time, capacity and deadline can no longer be
+  changed; only its description, play structure note, contact and entry-fee label may be edited.
 - **BR-16** *(Sprint 1)* A participant can see **only their own** registrations. Other participants' names and
-  registrations are never shown to participants or visitors; the public sees only the seats-remaining count.
+  registrations are never shown to participants or visitors; the public sees only registered/capacity and seats
+  remaining. The owning organizer sees each participant's **display name**, never their email (D-14).
 - **BR-17** *(Sprint 1)* The identity used for every protected operation comes from the authenticated session.
   The backend never trusts a user id or role sent by the client.
 
@@ -310,9 +325,9 @@ Later sprints rerun earlier checks as regression tests.
 | ID | Quality | Requirement and measurable target | Verification | Sprint |
 |---|---|---|---|---|
 | **NFR-01** | Security — authentication | Every protected API endpoint returns **401** to a request with no session or an expired session, and the response contains no private data | API integration tests, one per protected endpoint group | 1 |
-| **NFR-02** | Security — authorization | A signed-in user who calls an operation outside their role gets **403**; a request for another user's registration or another organizer's event data gets **404**, with no private fields in the body | API integration tests for each role/ownership pair in the permission matrix | 1 |
+| **NFR-02** | Security — authorization | A signed-in user who calls an operation outside their role gets **403**; a request for another user's registration or another organizer's event data gets **404**, with no private fields in the body. Checks run in a fixed order: session (401) → role (403) → ownership (404) → business rules (409/422) | API integration tests for each role/ownership pair in the permission matrix | 1 |
 | **NFR-03** | Security — credentials | Passwords are stored only as salted hashes (bcrypt, cost ≥ 10); no plaintext password exists in the database, logs or API responses | Unit test on the hash; database inspection test on seeded users; API test that no response contains `password`/`passwordHash` | 1 |
-| **NFR-04** | Security — session lifecycle | The session is an HttpOnly, SameSite=Lax cookie that expires after **8 hours**; after sign-out the old cookie is rejected with 401 | API test: sign in → sign out → reuse cookie → 401; unit test on expiry | 1 |
+| **NFR-04** | Security — session lifecycle | The session is an HttpOnly, SameSite=Lax cookie that expires **8 hours after sign-in** (absolute, not extended by activity); after sign-out the old cookie is rejected with 401 | API test: sign in → sign out → reuse cookie → 401; unit test on expiry | 1 |
 | **NFR-05** | Data integrity — concurrency | With **20 simultaneous** registration requests from 20 different participants for an event with **1** seat left, exactly 1 succeeds and active registrations equal capacity; 5 simultaneous requests by one participant create at most 1 registration | API/database integration test against PostgreSQL | 1 |
 | **NFR-06** | Reliability — persistence | Events and registrations are stored in PostgreSQL and remain after the application restarts; the schema is created only by versioned migrations; seed data is reproducible (running the seed twice creates no duplicates) | Integration test re-reading data through a fresh connection; seed-twice test; manual restart check (Sprint 1), container restart check (Lab 5) | 1 |
 | **NFR-07** | Safe errors | Every error response uses one JSON shape `{ "error": { "code", "message", "details?" } }`; no stack trace, SQL text or internal id of another user appears in any response | API tests on validation, 401, 403, 404, 409 and 500 paths | 1 |
@@ -321,7 +336,9 @@ Later sprints rerun earlier checks as regression tests.
 | **NFR-10** | Accessibility | All forms usable by keyboard only, every input has a visible label, text contrast ≥ 4.5:1; automated accessibility scan reports **0 serious/critical** issues on main screens | axe-core scan in Playwright + manual keyboard walk-through | 3 |
 | **NFR-11** | Correct time handling | All times stored in UTC and shown in Asia/Bangkok (UTC+7). "Upcoming", deadline and check-in decisions use the **server** clock, never the browser clock | Unit tests with a fixed clock around each boundary (exactly at, 1 minute before, 1 minute after) | 1 |
 | **NFR-12** | Performance | With **500 events and 5,000 registrations** seeded, the event-list and organizer-report endpoints respond in **< 500 ms at the 95th percentile** on a developer laptop | Scripted load measurement (e.g. autocannon) recorded in test evidence | 3 |
-| **NFR-13** | Deployability and configuration | All configuration (database URL, session secret, port, client origin) comes from environment variables with a committed `.env.example`; no real secret is committed; the app builds into a Docker image and stores data on durable storage | Repository secret scan + review checklist (Sprint 1); Docker build and GCP deploy (Lab 5) | 1 / Lab 5 |
+| **NFR-13** | Deployability and configuration | All configuration (database URL, session secret, port, client origin) comes from environment variables with a committed `.env.example`; no real secret is committed; `GET /api/health` returns 200 only when the database is reachable; the app builds into a Docker image and stores data on durable storage | Repository secret scan + review checklist (Sprint 1); Docker build and GCP deploy (Lab 5) | 1 / Lab 5 |
+| **NFR-15** | Security — input and request hygiene | Every request body and query is validated on the server against a schema (wrong types, out-of-range values and unknown fields → 400 with field details); state-changing operations use only POST/PATCH/DELETE; user-written text (titles, descriptions) is always displayed as plain text, never run as HTML | API tests with malformed and extra fields; API test that a GET cannot change data; UI test that a description containing `<script>` is shown literally | 1 |
+| **NFR-16** | Security — sign-in throttling | After **5 failed sign-ins for one email within 10 minutes**, further attempts for that email get **429** for 10 minutes, with the same generic message style as FR-02 | API test: 5 failures → 6th attempt 429 → succeeds after the window (fixed clock) | 3 |
 | **NFR-14** | Maintainability — test coverage of rules | Every acceptance criterion of a sprint is linked to at least one automated test (or a justified manual check), and every BR has at least one negative test | Traceability review at each sprint release | 1, 2, 3 |
 
 ---
@@ -336,6 +353,7 @@ Later sprints rerun earlier checks as regression tests.
 - **C-04** Synthetic demo data only; no external payment, messaging or third-party API (spec §5.3).
 - **C-05** Git workflow: GitHub Issues and project board, branches from `sprint-N-staging`, teammate-reviewed Pull
   Requests, release Pull Request from staging to `main`, tagged releases (spec §8.3).
+- **C-06** Supported browsers: current desktop and mobile versions of Chrome, Edge, Firefox and Safari.
 
 ---
 
@@ -348,7 +366,7 @@ Later sprints rerun earlier checks as regression tests.
 | A-03 | An organizer runs events at one or more venues; the venue is stored as text on the event, not as a separate managed store record | A Store entity and store-level permissions would be needed |
 | A-04 | Entry fees are collected in person at the store; the product only displays the fee | A payment flow would be a new, excluded feature |
 | A-05 | The organizer is trusted to check players in honestly; players do not check themselves in | Self check-in would need a code or location proof |
-| A-06 | Seeded accounts are enough for every sprint and demo | Account creation would become a new feature |
+| A-06 | Seeded accounts are enough for every sprint and demo: at least **2 organizers** and **3 participants**, so ownership and privacy rules can be tested between users of the same role | Account creation would become a new feature |
 | A-07 | Seat counts shown to the public may be a few seconds stale; the authoritative check happens at registration time (BR-07) | Real-time push updates would be required |
 
 ---
@@ -372,6 +390,7 @@ Later sprints rerun earlier checks as regression tests.
 | D-11 | Session cookie (server-side session store) rather than a token in browser storage | Logout can truly invalidate the session (NFR-04); the same pattern worked in TokTickIT | 4 Nov 2026 | Decided by team — detailed in SDS |
 | D-12 | Unlike the reference, registered players are **not** listed publicly; the public and other participants see only "registered / capacity" | The brief requires that participants cannot inspect another participant's registration; screen names can identify real people | 4 Nov 2026 | Decided by team |
 | D-13 | Keep the reference's **layout** (tabs, search bar, event cards with chips, two-column detail page) but give the product its **own visual theme**, defined in `docs/ui/design-direction.md` | Familiar flow for TCG players without copying another product's brand | 4 Nov 2026 | Decided by team |
+| D-14 | Organizers see participants' display names only, not emails; contacting players is outside the product (X-03) | Data minimisation: a display name is enough to check a player in | 4 Nov 2026 | Decided by team |
 
 ### 10.2 Open questions
 
@@ -383,7 +402,9 @@ Later sprints rerun earlier checks as regression tests.
 | Q-04 | Maximum capacity? | 256 (largest local store event we expect) (BR-01) | Team | Resolved |
 | Q-05 | Can participants see who else is registered? | No, only the seat count (BR-16) | Team | Resolved |
 | Q-06 | Should check-in be allowed after the event ends (late paperwork)? | No; the window closes at the end time (BR-18). Revisit in Sprint 3 if stores need it | Team | Resolved for now |
-| Q-07 | Which reference-UX details (card fields, filter set) can be confirmed directly in a browser? | Opened on 4 Nov 2026; observations recorded in §1.2. The list's event cards come from a separate data service that did not load, so card layout is confirmed in the UI spec from the detail page fields | Team | Resolved |
+| Q-07 | Which reference-UX details (card fields, filter set) can be confirmed directly in a browser? | Opened on 4 Nov 2026; observations recorded in §1.2. The list's event cards did not load in the automated browser, so their layout was confirmed from team screenshots of the signed-in list and detail pages | Team | Resolved |
+| Q-08 | Should a participant be blocked from registering for two events that overlap in time? | No: players may plan to leave early; overlap is not checked | Team | Resolved — not checked |
+| Q-09 | Should an organizer be blocked from creating overlapping events at the same venue? | No: a store may run two events in different rooms | Team | Resolved — not checked |
 
 ---
 
@@ -394,3 +415,4 @@ Later sprints rerun earlier checks as regression tests.
 | v0.1 | 4 Nov 2026 | First full draft of the whole-product SRS | Team (drafted with AI assistance, see AI-use declaration) |
 | v0.2 | 4 Nov 2026 | Reference UX verified in a browser (§1.2, Q-07 resolved); event gains venue address, play structure note and contact (FR-06, BR-03); list shows registered/capacity (FR-11); added X-13 and D-12 | Team (AI-assisted) |
 | v0.3 | 4 Nov 2026 | Event-card and header patterns from the reference (§1.2); access summary (§2.1); FR-26 sign-in-then-return, FR-27 header account menu; D-13 own visual theme | Team (AI-assisted) |
+| v0.4 | 4 Nov 2026 | Review pass: BR-04 rewritten (cancelled events visible, drafts owner-only) to remove a conflict with FR-14 and FR-17; added FR-28 record keeping, NFR-15 input hygiene, NFR-16 sign-in throttling, "Upcoming" definition, problem → requirement links, C-06, D-14, Q-08, Q-09; clarified FR-12, FR-13, FR-17, BR-08, BR-09, BR-12, BR-15, BR-16, NFR-02, NFR-04, NFR-13, A-06; fixed X-08 reference | Team (AI-assisted) |
