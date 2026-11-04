@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TCG Event Hub — UI mock-up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink-900:#16112B; --ink-700:#2A1F55; --surface:#fff; --surface-muted:#F5F3FB;
+    --text:#1F1A33; --text-muted:#5F5878; --primary:#6C4CE0; --primary-hover:#5838C9;
+    --accent:#0E8F80; --warning:#B45309; --danger:#C8303F; --border:#E3DFF0;
+    --focus:0 0 0 3px rgba(108,76,224,.45);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:16px/1.5 Inter,system-ui,sans-serif;color:var(--text);
+       background:linear-gradient(160deg,var(--ink-900) 0%,var(--ink-700) 100%);min-height:100vh}
+  a{color:var(--primary)}
+  :focus-visible{outline:none;box-shadow:var(--focus);border-radius:8px}
+  .lbl{font:600 12px/1.2 Inter;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+  h1,h2,h3{font-family:Sora,Inter,sans-serif;margin:0}
+  /* header */
+  header{display:flex;align-items:center;gap:32px;padding:14px 40px;background:var(--ink-900);color:#fff;
+         border-bottom:1px solid rgba(255,255,255,.08)}
+  .logo{display:flex;align-items:center;gap:10px;font:700 18px Sora;letter-spacing:.04em}
+  .logo i{width:28px;height:28px;border-radius:8px;background:conic-gradient(from 45deg,#8B6CFF,#19C2AE,#8B6CFF);display:block;transform:rotate(45deg)}
+  nav{display:flex;gap:24px;font:600 14px Inter;letter-spacing:.06em;text-transform:uppercase}
+  nav a{color:#CFC8EE;text-decoration:none} nav a.on{color:#fff}
+  .acct{margin-left:auto;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);
+        padding:8px 14px;border-radius:10px;font-weight:600}
+  .role{font:700 11px Inter;letter-spacing:.08em;padding:3px 8px;border-radius:999px;background:var(--accent);color:#fff}
+  .role.org{background:#F2B84B;color:#2a1a00}
+  .btn-signin{margin-left:auto;background:var(--primary);color:#fff;border:0;border-radius:999px;padding:8px 18px;font-weight:600}
+  /* frames */
+  .switch{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:16px}
+  .switch button{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px;font:600 13px Inter;cursor:pointer}
+  .switch button.on{background:#fff;color:var(--ink-900)}
+  .frame{display:none} .frame.on{display:block}
+  main{max-width:1200px;margin:0 auto 40px;padding:0 16px}
+  .panel{background:var(--surface);border-radius:16px;overflow:hidden}
+  .ptop{padding:36px 48px 0}
+  .ptop h1{font-size:32px;letter-spacing:.02em;text-transform:uppercase}
+  .tabs{display:flex;gap:28px;margin-top:24px}
+  .tabs span{padding-bottom:12px;font:600 15px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)}
+  .tabs span.on{color:var(--text);border-bottom:3px solid var(--primary)}
+  .pbody{background:var(--surface-muted);border-top:1px solid var(--border);padding:28px 40px 40px}
+  .search{display:grid;grid-template-columns:1.2fr 1fr 1fr auto;align-items:center;background:#fff;border:1px solid var(--border);
+          border-radius:999px;padding:8px 8px 8px 24px;box-shadow:0 6px 18px rgba(31,26,51,.06)}
+  .search div{padding:4px 16px;border-right:1px solid var(--border)} .search div:nth-child(3){border:0}
+  .search .v{color:var(--text-muted)}
+  .sbtn{width:96px;height:48px;border-radius:999px;border:0;background:var(--primary);color:#fff;font-size:20px}
+  .soon{font-size:12px;color:var(--text-muted);margin:8px 0 0 24px}
+  .listhead{display:flex;justify-content:space-between;align-items:end;margin:28px 0 14px}
+  .listhead h2{font-size:18px;text-transform:uppercase;letter-spacing:.04em}
+  .card{display:grid;grid-template-columns:auto 1fr auto;gap:20px;background:#fff;border:1px solid var(--border);border-radius:12px;
+        padding:22px 26px;margin-bottom:12px;text-decoration:none;color:inherit}
+  .card:hover{border-color:#C9BEF5;box-shadow:0 8px 20px rgba(108,76,224,.10)}
+  .date{width:58px;height:62px;border-radius:10px;background:var(--primary);color:#fff;text-align:center;padding-top:6px}
+  .date b{display:block;font:700 13px Inter;letter-spacing:.06em} .date strong{font:700 24px Sora;line-height:1.1}
+  .when{font:700 13px Inter;letter-spacing:.06em;color:var(--primary);text-transform:uppercase}
+  .card h3{font-size:19px;margin:2px 0} .sub{color:var(--text-muted);font-size:15px} .venue{margin-top:10px;font-size:15px}
+  .venue b{font-weight:600}
+  .chips{display:flex;gap:8px;align-items:start}
+  .chip{border:1px solid var(--border);border-radius:999px;padding:6px 14px;font:700 13px Inter;background:#fff;white-space:nowrap}
+  .chip.seats{background:#E6F6F3;border-color:#B9E5DE;color:var(--accent)}
+  .chip.low{background:#FEF3E2;border-color:#F6D7A8;color:var(--warning)}
+  .chip.full{background:#FCE8EA;border-color:#F3BCC2;color:var(--danger)}
+  /* detail */
+  .dhead{display:grid;grid-template-columns:1fr 1fr 1fr 1.6fr;gap:24px;align-items:end;padding:32px 48px 28px}
+  .dhead .t{grid-column:1/-1} .dhead h1{font-size:28px}
+  .big{height:56px;border:0;border-radius:12px;background:var(--primary);color:#fff;font:700 15px Inter;letter-spacing:.08em}
+  .big.reg{background:#fff;border:2px solid var(--accent);color:var(--accent)}
+  .cols{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;padding:24px 48px 40px;background:var(--surface-muted);border-top:1px solid var(--border)}
+  .box{background:#fff;border:1px solid var(--border);border-radius:14px;padding:26px 28px;margin-bottom:16px}
+  .box h2{font-size:16px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:16px}
+  .row{display:flex;gap:14px;margin:14px 0;align-items:start}
+  .ico{width:40px;height:40px;border-radius:10px;background:var(--surface-muted);display:grid;place-items:center;flex:none}
+  .pill{display:inline-block;background:var(--surface-muted);border:1px solid var(--border);border-radius:999px;padding:6px 14px;font:700 12px Inter;letter-spacing:.08em}
+  .bar{height:10px;border-radius:999px;background:var(--surface-muted);overflow:hidden;margin:10px 0}
+  .bar i{display:block;height:100%;background:var(--accent)}
+  .alert{border-radius:10px;padding:12px 16px;font-weight:600;margin-top:12px}
+  .alert.err{background:#FCE8EA;color:#8E1F2B} .alert.ok{background:#E6F6F3;color:#0B6B60}
+  /* sign-in */
+  .auth{max-width:460px;margin:24px auto;padding:40px}
+  .auth h1{font-size:26px;text-transform:uppercase;margin-bottom:20px}
+  label{display:block;font:600 14px Inter;margin:16px 0 6px}
+  input{width:100%;height:46px;border:1px solid var(--border);border-radius:10px;padding:0 14px;font:16px Inter;background:var(--surface-muted)}
+  .auth .big{width:100%;margin-top:22px}
+  table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  th,td{text-align:left;padding:14px 18px;border-bottom:1px solid var(--border);font-size:15px}
+  th{background:#FAF9FE;font:600 12px Inter;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+  .st{font:700 12px Inter;color:var(--accent)}
+  .deny{text-align:center;padding:64px 24px}
+  .deny .ico{margin:0 auto 18px;width:64px;height:64px;font-size:28px}
+  @media (max-width:767px){
+    header{padding:12px 16px;gap:14px;flex-wrap:wrap} nav{display:none}
+    .ptop{padding:24px 20px 0} .pbody{padding:20px 16px 28px}
+    .search{grid-template-columns:1fr;border-radius:16px;padding:12px} .search div{border:0;border-bottom:1px solid var(--border);padding:10px 4px}
+    .sbtn{width:100%;margin-top:8px}
+    .card{grid-template-columns:auto 1fr;padding:18px} .chips{grid-column:1/-1}
+    .dhead{grid-template-columns:1fr 1fr 1fr;padding:24px 20px} .dhead .big{grid-column:1/-1}
+    .cols{grid-template-columns:1fr;padding:16px}
+  }
+</style>
+</head>
+<body>
+<div class="switch" role="tablist" aria-label="Mock-up screens">
+  <button class="on" data-f="list">Find an Event</button>
+  <button data-f="detail">Event detail</button>
+  <button data-f="login">Sign in</button>
+  <button data-f="org">Organizer: registrations</button>
+  <button data-f="deny">Not available (403)</button>
+</div>
+
+<!-- LIST -->
+<section class="frame on" id="list">
+  <header><div class="logo"><i></i>TCG EVENT HUB</div>
+    <nav><a class="on" href="#">Events</a><a href="#">My Events</a></nav>
+    <div class="acct">Mint <span class="role">PLAYER</span> ▾</div></header>
+  <main><div class="panel">
+    <div class="ptop"><h1>Events</h1>
+      <div class="tabs"><span class="on">Find an Event</span><span>My Events</span></div></div>
+    <div class="pbody">
+      <div class="search">
+        <div><div class="lbl">Where</div><div class="v">Store, venue or city</div></div>
+        <div><div class="lbl">Event type</div><div class="v">All types ▾</div></div>
+        <div><div class="lbl">Format</div><div class="v">All formats ▾</div></div>
+        <button class="sbtn" aria-label="Search">⌕</button>
+      </div>
+      <div class="soon">Search and filters arrive in Sprint 2 (FR-13).</div>
+      <div class="listhead"><h2>Upcoming events</h2><span class="lbl">Sorted by date</span></div>
+      <a class="card" href="#"><div class="date"><b>NOV</b><strong>5</strong></div>
+        <div><div class="when">Thursday · 5:00 PM</div><h3>Friday Night Constructed</h3>
+          <div class="sub">Casual · Constructed</div>
+          <div class="venue"><b>Quantum Cards</b> · Bang Khae, Bangkok</div></div>
+        <div class="chips"><span class="chip">THB 250</span><span class="chip seats">👥 3 / 24</span></div></a>
+      <a class="card" href="#"><div class="date"><b>NOV</b><strong>7</strong></div>
+        <div><div class="when">Saturday · 1:00 PM</div><h3>Release Weekend Sealed</h3>
+          <div class="sub">Release · Sealed</div>
+          <div class="venue"><b>Heavyweight Games</b> · Bang Khae, Bangkok</div></div>
+        <div class="chips"><span class="chip">THB 900</span><span class="chip low">👥 30 / 32</span></div></a>
+      <a class="card" href="#"><div class="date"><b>NOV</b><strong>9</strong></div>
+        <div><div class="when">Monday · 6:30 PM</div><h3>Store Championship Qualifier</h3>
+          <div class="sub">Tournament · Constructed</div>
+          <div class="venue"><b>Dragon's Den</b> · Pathum Wan, Bangkok</div></div>
+        <div class="chips"><span class="chip">THB 400</span><span class="chip full">FULL 16 / 16</span></div></a>
+    </div></div></main>
+</section>
+
+<!-- DETAIL -->
+<section class="frame" id="detail">
+  <header><div class="logo"><i></i>TCG EVENT HUB</div>
+    <nav><a class="on" href="#">Events</a><a href="#">My Events</a></nav>
+    <div class="acct">Mint <span class="role">PLAYER</span> ▾</div></header>
+  <main><div class="panel">
+    <div class="dhead">
+      <div class="t"><div class="lbl">Quantum Cards</div><h1>Friday Night Constructed</h1></div>
+      <div><div class="lbl">Date</div>Nov 5, 2026</div>
+      <div><div class="lbl">Time</div>5:00 PM</div>
+      <div><div class="lbl">Players</div>3 / 24</div>
+      <button class="big">REGISTER</button>
+    </div>
+    <div class="cols">
+      <div>
+        <div class="box"><h2>Event details</h2><span class="pill">CASUAL</span>
+          <div class="row"><div class="ico">📅</div><div>Nov 5, 2026<br>5:00 – 9:00 PM</div></div>
+          <div class="row"><div class="ico">📍</div><div><a href="#">1631 Kanchanaphisek Rd, Bang Khae, Bangkok 10160</a></div></div>
+          <div class="row"><div class="ico">🏆</div><div>Constructed · 1v1<br>4 rounds · Best of 1</div></div>
+          <div class="row"><div class="ico">💳</div><div>THB 250 — pay at the store</div></div>
+          <p class="sub">Bring a legal constructed deck. Promo pack for every player. Please arrive 15 minutes early for check-in.</p>
+        </div>
+        <div class="box"><h2>Contact</h2>
+          <div class="row"><div class="ico">✉</div><div><a href="#">hello@quantumcards.example</a></div></div></div>
+      </div>
+      <div>
+        <div class="box"><h2 style="display:flex;justify-content:space-between">Seats <span>3 / 24</span></h2>
+          <div class="bar"><i style="width:12.5%"></i></div>
+          <b style="color:var(--accent)">21 seats left</b>
+          <p class="sub">Player names are private. Only the organizer of this event can see who registered.</p></div>
+        <div class="box"><h2>After you click Register</h2>
+          <div class="alert ok">✓ You're registered — see it in My Events</div>
+          <div class="alert err">⚠ This event just became full. No registration was made.</div>
+          <p class="sub">Example messages: success, and the server's rejection when someone else took the last seat (BR-07).</p></div>
+      </div>
+    </div></div></main>
+</section>
+
+<!-- LOGIN -->
+<section class="frame" id="login">
+  <header><div class="logo"><i></i>TCG EVENT HUB</div><nav><a href="#">Events</a></nav>
+    <button class="btn-signin">Sign in</button></header>
+  <main><div class="panel auth">
+    <h1>Sign in</h1>
+    <p class="sub">Sign in to register for “Friday Night Constructed”. You'll come back to it afterwards.</p>
+    <label for="em">Email</label><input id="em" value="mint@player.example">
+    <label for="pw">Password</label><input id="pw" type="password" value="xxxxxxxx">
+    <div class="alert err">⚠ Email or password is incorrect.</div>
+    <button class="big">SIGN IN</button>
+    <p class="sub" style="margin-top:16px">Demo accounts are listed in the README (local seed only).</p>
+  </div></main>
+</section>
+
+<!-- ORGANIZER -->
+<section class="frame" id="org">
+  <header><div class="logo"><i></i>TCG EVENT HUB</div>
+    <nav><a href="#">Events</a><a class="on" href="#">Dashboard</a><a href="#">+ Create event</a></nav>
+    <div class="acct">Quantum Cards <span class="role org">ORGANIZER</span> ▾</div></header>
+  <main><div class="panel">
+    <div class="ptop"><div class="lbl">Your event</div><h1 style="text-transform:none">Friday Night Constructed</h1>
+      <div class="tabs"><span class="on">Registrations</span><span>Details</span></div></div>
+    <div class="pbody">
+      <div class="listhead"><h2>Registrations</h2><span class="chip seats">3 / 24 · 21 seats left</span></div>
+      <table><thead><tr><th>#</th><th>Player</th><th>Registered at</th><th>Status</th></tr></thead>
+        <tbody><tr><td>1</td><td>Mint</td><td>Nov 3, 2026 · 7:12 PM</td><td class="st">REGISTERED</td></tr>
+        <tr><td>2</td><td>Ploy</td><td>Nov 3, 2026 · 8:40 PM</td><td class="st">REGISTERED</td></tr>
+        <tr><td>3</td><td>Boss</td><td>Nov 4, 2026 · 9:05 AM</td><td class="st">REGISTERED</td></tr></tbody></table>
+      <p class="sub">Only the owning organizer can open this page. Another organizer gets “Not found” (404); a player gets “Not available” (403).</p>
+    </div></div></main>
+</section>
+
+<!-- DENY -->
+<section class="frame" id="deny">
+  <header><div class="logo"><i></i>TCG EVENT HUB</div>
+    <nav><a href="#">Events</a><a href="#">My Events</a></nav>
+    <div class="acct">Mint <span class="role">PLAYER</span> ▾</div></header>
+  <main><div class="panel deny">
+    <div class="ico">🔒</div><h1 style="font-size:24px">This page isn't available for your account</h1>
+    <p class="sub">Organizer tools need an organizer account. Nothing from this page was loaded.</p>
+    <button class="big" style="padding:0 28px">BACK TO FIND AN EVENT</button>
+  </div></main>
+</section>
+
+<script>
+  document.querySelectorAll('.switch button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.switch button,.frame').forEach(x => x.classList.remove('on'));
+    b.classList.add('on'); document.getElementById(b.dataset.f).classList.add('on');
+  }));
+</script>
+</body>
+</html>
