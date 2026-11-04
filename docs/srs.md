@@ -4,7 +4,7 @@ Project: **TCG Event Hub** — Event Registration and Attendance System
 Course: CPE 334, Semester 1/2026 — Theme 3 (Event Registration and Attendance System)
 Team: Phattaratorn Mahatkeerati (67070503433, [@GGital](https://github.com/GGital)) ·
 Praewa Thuwatharanimitkul (67070503432, [@MeldyRose](https://github.com/MeldyRose))
-Document version: v0.5 — draft for team review (branch `sprint-1/spec`)
+Document version: v0.5 — v0.4 approved in PR #1; the v0.5 change (D-15) is under review in PR 2
 Companion documents: [`docs/features.md`](features.md), [`docs/traceability.md`](traceability.md),
 [`docs/diagrams/`](diagrams/README.md), [`docs/ui/design-direction.md`](ui/design-direction.md), [`docs/system-sds.md`](system-sds.md); to follow:
 `docs/sprints/plan.md`, `docs/sprints/sprint-1/`

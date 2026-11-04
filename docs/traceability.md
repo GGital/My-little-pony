@@ -1,6 +1,6 @@
 # Requirements-to-Features Traceability
 
-Project: **TCG Event Hub** · Document version: v0.1 — draft for team review (branch `sprint-1/spec`)
+Project: **TCG Event Hub** · Document version: v0.2 — v0.1 approved in PR #1; CH-10 is under review in PR 2
 Inputs: [`docs/srs.md`](srs.md) v0.5 · [`docs/features.md`](features.md) v0.2 · Diagrams: [`docs/diagrams/`](diagrams/README.md)
 
 This is step 3 of the course design process. Every requirement is followed through four links, so anyone can

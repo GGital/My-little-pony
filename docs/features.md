@@ -1,7 +1,7 @@
 # Complete Feature Inventory
 
 Project: **TCG Event Hub** — Event Registration and Attendance System
-Document version: v0.2 — draft for team review (branch `sprint-1/spec`)
+Document version: v0.2 — approved in PR #1 (4 Nov 2026)
 Source of requirements: [`docs/srs.md`](srs.md) v0.4 · Next document: `docs/traceability.md`
 
 This is step 2 of the course design process. The whole product is split into **features**: pieces small enough to

@@ -1,6 +1,6 @@
 # System-Level Software Design Specification (SDS)
 
-Project: **TCG Event Hub** · Document version: v0.1 — **local draft** (branch `sprint-1/sds`, not pushed)
+Project: **TCG Event Hub** · Document version: v0.1 — draft for team review (PR 2)
 Inputs: [`srs.md`](srs.md) v0.5 · [`features.md`](features.md) v0.2 · [`traceability.md`](traceability.md) v0.2 ·
 [`ui/design-direction.md`](ui/design-direction.md) v0.2 · [`diagrams/`](diagrams/README.md)
 

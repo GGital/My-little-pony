@@ -1,6 +1,6 @@
 # UI Design Direction — "Arcane Ink" theme
 
-Project: TCG Event Hub · Version v0.2 (4 Nov 2026) · Branch `sprint-1/sds` (local draft)
+Project: TCG Event Hub · Version v0.2 (4 Nov 2026) · v0.1 approved in PR #1; v0.2 under review in PR 2
 Related: `docs/srs.md` §1.2 (reference UX), §2.1 (access summary), D-12, D-13. A visual mock-up is in
 [`mockup.html`](mockup.html) (open it in a browser), with rendered images in [`mockup/`](mockup/).
 
