@@ -20,6 +20,7 @@ To change a diagram, edit `build.py`, run `python3 docs/diagrams/build.py`, and 
 | D6 | [What Sprint 1 must build first](../features.md#5-sprint-1-feature-bundle-preview-of-step-5) | Dependency graph | Which Sprint 1 feature needs which | Feature-A … Feature-I |
 | D7 | [One container, three tiers](arch-system.png) | Architecture | Browser, container (API, services, Prisma), PostgreSQL | SDS §2, SD-01 |
 | D8 | [Who owns what](er-data-model.png) | ER / data model | Entities, fields, ownership, constraints, sprint of each entity | SDS §4, BR-01–BR-07 |
+| D9 | [Three sprints to 13 December](gantt-sprints.png) | Gantt | Sprints, labs, deadlines and the exam period | `docs/sprints/plan.md` |
 
 ---
 
@@ -125,3 +126,4 @@ Source: [`state-event.html`](state-event.html)
 | v0.1 | 4 Nov 2026 | D1–D5 first versions |
 | v0.2 | 4 Nov 2026 | D6 Sprint 1 dependency graph (shown in `docs/features.md`) |
 | v0.3 | 4 Nov 2026 | D7 architecture and D8 data model (shown in `docs/system-sds.md`); D2 label now says scrypt |
+| v0.4 | 4 Nov 2026 | D9 three-sprint Gantt (shown in `docs/sprints/plan.md`) |

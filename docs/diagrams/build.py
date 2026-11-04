@@ -71,6 +71,10 @@ def legend(y, items, vw):
     for kind,text in items:
         if kind=='focal': s+=f'<rect x="{x}" y="{y}" width="14" height="10" rx="2" fill="rgba(191,69,32,0.08)" stroke="{ACC}"/>'
         elif kind=='reject': s+=f'<rect x="{x}" y="{y}" width="14" height="10" rx="2" fill="rgba(45,49,66,0.04)" stroke="{MUTED}" stroke-dasharray="3,3"/>'
+        elif kind=='bar-accent': s+=f'<rect x="{x}" y="{y}" width="22" height="10" rx="3" fill="rgba(191,69,32,0.12)" stroke="{ACC}"/>'; x+=8
+        elif kind=='bar': s+=f'<rect x="{x}" y="{y}" width="22" height="10" rx="3" fill="rgba(79,93,117,0.15)" stroke="{MUTED}"/>'; x+=8
+        elif kind=='shade': s+=f'<rect x="{x}" y="{y}" width="22" height="10" fill="rgba(45,49,66,0.08)"/>'; x+=8
+        elif kind=='milestone': s+=f'<line x1="{x+7}" y1="{y-2}" x2="{x+7}" y2="{y+12}" stroke="{ACC}" stroke-dasharray="4,3"/>'
         elif kind=='terminal': s+=f'<rect x="{x}" y="{y}" width="14" height="10" rx="2" fill="rgba(45,49,66,0.04)" stroke="{MUTED}"/>'
         elif kind=='optional': s+=f'<rect x="{x}" y="{y}" width="14" height="10" rx="2" fill="none" stroke="rgba(45,49,66,0.40)" stroke-dasharray="4,3"/>'
         elif kind=='decision': s+=f'<polygon points="{x+7},{y-1} {x+14},{y+5} {x+7},{y+11} {x},{y+5}" fill="#fff" stroke="{INK}"/>'
@@ -394,3 +398,63 @@ page('er-data-model','Data model · TCG Event Hub · System-Level SDS §4','Who 
      'Data model',
      'Users organize events and register for them; each event holds registrations limited by capacity, with sessions for sign-in, an event change log from Sprint 2, and login attempts for throttling in Sprint 3.',
      960,660,''.join(b))
+
+# ================= 9. Gantt: three-sprint plan (day 0 = Mon 2 Nov 2026)
+D0X, PX = 200, 18
+def dx(day): return D0X + day*PX
+def nov(d): return d-2
+def dec(d): return 28+d
+b=[]
+vw,vh=980,680
+# week axis
+for day,lab in [(0,'2 NOV'),(7,'9 NOV'),(14,'16 NOV'),(21,'23 NOV'),(28,'30 NOV'),(35,'7 DEC'),(42,'14 DEC')]:
+    b.append(f'<text x="{dx(day)}" y="56" fill="{MUTED}" font-size="8" font-family="{MONO}" text-anchor="middle" letter-spacing="0.06em">{lab}</text>')
+    b.append(f'<line x1="{dx(day)}" y1="64" x2="{dx(day)}" y2="580" stroke="rgba(45,49,66,0.06)" stroke-width="0.8"/>')
+b.append(f'<line x1="20" y1="64" x2="{dx(42)}" y2="64" stroke="rgba(45,49,66,0.16)" stroke-width="0.8"/>')
+# exam period shading
+b.append(f'<rect x="{dx(dec(1))}" y="64" width="{11*PX}" height="516" fill="rgba(45,49,66,0.045)"/>')
+b.append(label(dx(dec(1))+11*PX/2, 70, 'EXAMS 1–11 DEC'))
+rows=[]
+y=88
+def phase(name):
+    global y
+    if rows: y+=8
+    rows.append(('phase',name,y)); y+=24
+def task(name,s,e,kind='muted',sub=None):
+    global y
+    rows.append(('task',name,y,s,e,kind,sub)); y+=40
+phase('SPRINT 1 · ENGINEERING BASELINE + FIRST SLICE')
+task('Baseline: SRS → SDS → plan',nov(4),nov(6),sub='PR #1, PR 2')
+task('Contracts + STS, Feature-A…I',nov(6),nov(6),sub='PR 2')
+task('Build, test, integrate A…I',nov(6),nov(8),'accent',sub='release v0.1.0')
+phase('SPRINT 2 · MANAGE THE EVENT LIFE CYCLE  (+ LABS 5–7)')
+task('Lab 5 · Docker, CI/CD, GCP',nov(9),nov(15),sub='Sprint 1 release')
+task('Lab 6 · cross-team UAT',nov(10),nov(22),sub='tests a release')
+task('Contracts + build J…O, SR-08',nov(9),nov(27),sub='release v0.2.0')
+task('Lab 7 · approved change',nov(17),nov(29),sub='+ metrics')
+phase('SPRINT 3 · ATTENDANCE + HARDENING')
+task('Contracts P…T',nov(23),nov(29),sub='due with D2')
+task('Build P…T, a11y, performance',nov(26),dec(12),sub='around exams')
+task('Final release, report, video',dec(11),dec(13),sub='v1.0.0')
+for r in rows:
+    if r[0]=='phase':
+        b.append(f'<text x="20" y="{r[2]+12}" fill="{MUTED}" font-size="7.5" font-family="{MONO}" letter-spacing="0.14em">{esc(r[1])}</text>')
+    else:
+        _,name,ry,s,e,kind,sub=r
+        b.append(f'<text x="20" y="{ry+21}" fill="{INK}" font-size="11" font-weight="600" font-family="{SANS}">{esc(name)}</text>')
+        if sub: b.append(f'<text x="20" y="{ry+34}" fill="{MUTED}" font-size="8" font-family="{MONO}">{esc(sub)}</text>')
+        fill,stroke=('rgba(191,69,32,0.12)',ACC) if kind=='accent' else ('rgba(79,93,117,0.15)',MUTED)
+        b.append(f'<rect x="{dx(s)}" y="{ry+8}" width="{(e-s+1)*PX}" height="24" rx="4" fill="{fill}" stroke="{stroke}" stroke-width="1"/>')
+# milestones
+for day,lab in [(nov(8),'D1 · 8 NOV'),(nov(29),'D2 · 29 NOV'),(dec(13),'FINAL · 13 DEC')]:
+    x=dx(day+1)
+    b.append(f'<line x1="{x}" y1="76" x2="{x}" y2="580" stroke="{ACC}" stroke-width="1" stroke-dasharray="4,3"/>')
+for day,lab,anchor in [(nov(8),'D1 · 8 NOV','start'),(nov(29),'D2 · 29 NOV','end'),(dec(13),'FINAL 13 DEC','end')]:
+    x=dx(day+1); w=int(len(lab)*8*0.62)+8
+    lx = x+6 if anchor=='start' else x-6-w
+    b.append(f'<rect x="{lx}" y="586" width="{w}" height="12" rx="2" fill="{PAPER}"/><text x="{lx+4}" y="595" fill="{ACC}" font-size="8" font-family="{MONO}" letter-spacing="0.06em">{lab}</text>')
+b.append(legend(632,[('bar-accent','Due now: Sprint 1 slice'),('bar','Planned work'),('milestone','Deadline'),('shade','Exam period')],vw))
+page('gantt-sprints','Gantt · TCG Event Hub · Three-sprint plan','Three sprints to 13 December',
+     'Three-sprint plan',
+     'Sprint 1 runs 4–8 November to Deliverable 1; Sprint 2 and Labs 5–7 run 9–29 November to Deliverable 2; Sprint 3 contracts start 23 November and the final release is due 13 December, around the 1–11 December exams.',
+     vw,vh,''.join(b))

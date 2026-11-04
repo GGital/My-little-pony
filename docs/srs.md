@@ -6,8 +6,8 @@ Team: Phattaratorn Mahatkeerati (67070503433, [@GGital](https://github.com/GGita
 Praewa Thuwatharanimitkul (67070503432, [@MeldyRose](https://github.com/MeldyRose))
 Document version: v0.5 — v0.4 approved in PR #1; the v0.5 change (D-15) is under review in PR 2
 Companion documents: [`docs/features.md`](features.md), [`docs/traceability.md`](traceability.md),
-[`docs/diagrams/`](diagrams/README.md), [`docs/ui/design-direction.md`](ui/design-direction.md), [`docs/system-sds.md`](system-sds.md); to follow:
-`docs/sprints/plan.md`, `docs/sprints/sprint-1/`
+[`docs/diagrams/`](diagrams/README.md), [`docs/ui/design-direction.md`](ui/design-direction.md), [`docs/system-sds.md`](system-sds.md), [`docs/sprints/plan.md`](sprints/plan.md); to follow:
+`docs/sprints/sprint-1/`
 
 This SRS describes the **whole product** across all three sprints. Every requirement has a stable identifier
 (`FR-nn`, `BR-nn`, `NFR-nn`) that never changes meaning once the document is approved. Requirements are never
