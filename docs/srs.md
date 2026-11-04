@@ -4,7 +4,7 @@ Project: **TCG Event Hub** — Event Registration and Attendance System
 Course: CPE 334, Semester 1/2026 — Theme 3 (Event Registration and Attendance System)
 Team: Phattaratorn Mahatkeerati (67070503433, [@GGital](https://github.com/GGital)) ·
 Praewa Thuwatharanimitkul (67070503432, [@MeldyRose](https://github.com/MeldyRose))
-Document version: v0.2 — draft for team review (branch `sprint-1/spec`)
+Document version: v0.3 — draft for team review (branch `sprint-1/spec`)
 Companion documents (to follow): `docs/features.md`, `docs/traceability.md`, `docs/system-sds.md`,
 `docs/sprints/plan.md`, `docs/sprints/sprint-1/`
 
@@ -53,8 +53,10 @@ The reference list page and three public event detail pages were opened in a bro
 | Observed on the reference | What it does for the user | Our product |
 |---|---|---|
 | Two tabs at the top: **Find an Event** and **My Events** | Separates discovering events from "where am I going" | Adopted: participant navigation is *Find an Event* (FR-11) and *My Events* (FR-17) |
+| Site header with the signed-in account's screen name in a drop-down menu (top right) | Shows who is signed in and holds the sign-out action | Adopted: header account menu with display name, role and **Sign out** (FR-27) |
 | Filters: **Where** (location, with a "use my location" button), **Event Type** (multi-select), **Format** | Narrow the list to relevant events | Adopted in Sprint 2 as city/text search, event-type and format filters (FR-13); "use my location" excluded (X-06) |
 | List controls: **Upcoming Events**, **Distance**, **Sort by**, **Show only Favorited stores**, **Map** toggle | Sort and personalise the list | Sorted by start time only (FR-11); distance, map and favourite stores excluded (X-06, X-13) |
+| **Event card** in the list: a date badge (**NOV / 5**), weekday and time (**THURSDAY · 5:00 PM**), title, a line *event type · play style · format* (**Nexus Nights · 1v1 · Constructed**), a store line (store · distance · district), and two chips on the right: entry fee (**THB 250**) and players (**0/16**) | Everything needed to choose an event in one row | Adopted, with our own visual theme (D-13): date badge, weekday/time, title, type · format, venue · city, fee chip and seats chip (FR-11). Distance and the favourite heart are excluded (X-06, X-13) |
 | Detail header: store name, event title, **Date**, **Time**, **Players 0 / 16** | Shows at a glance when it is and how full it is | Adopted: detail shows registered/capacity and seats remaining (FR-12) |
 | One main button whose label follows the state: **Register**, or a disabled **Event is closed** when full (9 / 9) or over | The user always knows whether they can act | Adopted: Register / Registered / Full / Closed states (FR-12, FR-16) |
 | **Event Details**: free-text description written by the store (rules, prizes, house policies such as no-show bans) | Lets each store explain its own event | Adopted as the description field (FR-06) |
@@ -82,6 +84,24 @@ Role rules for accounts:
   (X-01).
 - An organizer **owns** each event they create. An organizer can manage only events they own (BR-14). There is no
   co-organizer or "all events" administrator role (X-09).
+
+### 2.1 Access summary
+
+The table summarises who may use each part of the product. The System-Level SDS turns it into the full
+role/permission matrix, and every "No" is enforced by the backend (BR-17), not only by hiding a button.
+
+| Screen or operation | Visitor (signed out) | Participant | Organizer |
+|---|---|---|---|
+| Find an Event list and event detail (published events only) | Yes | Yes | Yes |
+| Sign in | Yes | — | — |
+| Sign out, see own identity in the header | — | Yes | Yes |
+| Register for an event | No → sent to sign in (FR-26) | Yes, within BR-04 to BR-07 | No (BR-10) |
+| My Events — own registrations | No → sent to sign in | Own only (BR-16) | No |
+| Cancel own registration (Sprint 2) | No | Own only | No |
+| Create / publish an event | No | No (BR-13) | Yes |
+| Organizer dashboard: own events, edit, cancel (Sprint 2) | No | No | Own events only (BR-14) |
+| Registration list of an event | No | No | Own events only (BR-14) |
+| Check-in and attendance report (Sprint 3) | No | No | Own events only (BR-18) |
 
 ---
 
@@ -156,6 +176,11 @@ behaviour but is never the only enforcement point.
   protected operation.
 - **FR-05** The UI shall show navigation that matches the signed-in role and shall send a signed-out user who opens
   a protected page to the sign-in page.
+- **FR-26** When a signed-out visitor chooses **Register** on an event, the UI shall send them to the sign-in page
+  and, after a successful sign-in, return them to the same event page. Registration itself still requires the
+  server-side checks of FR-15.
+- **FR-27** The UI shall show the signed-in user's display name and role in the site header, with a menu that
+  contains **Sign out**; a signed-out header shows **Sign in** instead.
 
 ### 5.2 Event publication and management
 
@@ -346,6 +371,7 @@ Later sprints rerun earlier checks as regression tests.
 | D-10 | The registration deadline defaults to the start time and can only be earlier (BR-08). In Sprint 1, "event has started" is the cut-off | Answers the brief's "registration deadlines" question with the simplest safe default | 4 Nov 2026 | Decided by team |
 | D-11 | Session cookie (server-side session store) rather than a token in browser storage | Logout can truly invalidate the session (NFR-04); the same pattern worked in TokTickIT | 4 Nov 2026 | Decided by team — detailed in SDS |
 | D-12 | Unlike the reference, registered players are **not** listed publicly; the public and other participants see only "registered / capacity" | The brief requires that participants cannot inspect another participant's registration; screen names can identify real people | 4 Nov 2026 | Decided by team |
+| D-13 | Keep the reference's **layout** (tabs, search bar, event cards with chips, two-column detail page) but give the product its **own visual theme**, defined in `docs/ui/design-direction.md` | Familiar flow for TCG players without copying another product's brand | 4 Nov 2026 | Decided by team |
 
 ### 10.2 Open questions
 
@@ -367,3 +393,4 @@ Later sprints rerun earlier checks as regression tests.
 |---|---|---|---|
 | v0.1 | 4 Nov 2026 | First full draft of the whole-product SRS | Team (drafted with AI assistance, see AI-use declaration) |
 | v0.2 | 4 Nov 2026 | Reference UX verified in a browser (§1.2, Q-07 resolved); event gains venue address, play structure note and contact (FR-06, BR-03); list shows registered/capacity (FR-11); added X-13 and D-12 | Team (AI-assisted) |
+| v0.3 | 4 Nov 2026 | Event-card and header patterns from the reference (§1.2); access summary (§2.1); FR-26 sign-in-then-return, FR-27 header account menu; D-13 own visual theme | Team (AI-assisted) |
