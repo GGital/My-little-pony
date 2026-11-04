@@ -4,9 +4,9 @@ Project: **TCG Event Hub** — Event Registration and Attendance System
 Course: CPE 334, Semester 1/2026 — Theme 3 (Event Registration and Attendance System)
 Team: Phattaratorn Mahatkeerati (67070503433, [@GGital](https://github.com/GGital)) ·
 Praewa Thuwatharanimitkul (67070503432, [@MeldyRose](https://github.com/MeldyRose))
-Document version: v0.4 — draft for team review (branch `sprint-1/spec`)
+Document version: v0.5 — draft for team review (branch `sprint-1/spec`)
 Companion documents: [`docs/features.md`](features.md), [`docs/traceability.md`](traceability.md),
-[`docs/diagrams/`](diagrams/README.md), [`docs/ui/design-direction.md`](ui/design-direction.md); to follow: `docs/system-sds.md`,
+[`docs/diagrams/`](diagrams/README.md), [`docs/ui/design-direction.md`](ui/design-direction.md), [`docs/system-sds.md`](system-sds.md); to follow:
 `docs/sprints/plan.md`, `docs/sprints/sprint-1/`
 
 This SRS describes the **whole product** across all three sprints. Every requirement has a stable identifier
@@ -326,7 +326,7 @@ Later sprints rerun earlier checks as regression tests.
 |---|---|---|---|---|
 | **NFR-01** | Security — authentication | Every protected API endpoint returns **401** to a request with no session or an expired session, and the response contains no private data | API integration tests, one per protected endpoint group | 1 |
 | **NFR-02** | Security — authorization | A signed-in user who calls an operation outside their role gets **403**; a request for another user's registration or another organizer's event data gets **404**, with no private fields in the body. Checks run in a fixed order: session (401) → role (403) → ownership (404) → business rules (409/422) | API integration tests for each role/ownership pair in the permission matrix | 1 |
-| **NFR-03** | Security — credentials | Passwords are stored only as salted hashes (bcrypt, cost ≥ 10); no plaintext password exists in the database, logs or API responses | Unit test on the hash; database inspection test on seeded users; API test that no response contains `password`/`passwordHash` | 1 |
+| **NFR-03** | Security — credentials | Passwords are stored only as salted, slow hashes (scrypt, N = 2^15, r = 8, p = 1, 16-byte random salt, parameters stored with the hash); no plaintext password exists in the database, logs or API responses | Unit test on the hash; database inspection test on seeded users; API test that no response contains `password`/`passwordHash` | 1 |
 | **NFR-04** | Security — session lifecycle | The session is an HttpOnly, SameSite=Lax cookie that expires **8 hours after sign-in** (absolute, not extended by activity); after sign-out the old cookie is rejected with 401 | API test: sign in → sign out → reuse cookie → 401; unit test on expiry | 1 |
 | **NFR-05** | Data integrity — concurrency | With **20 simultaneous** registration requests from 20 different participants for an event with **1** seat left, exactly 1 succeeds and active registrations equal capacity; 5 simultaneous requests by one participant create at most 1 registration | API/database integration test against PostgreSQL | 1 |
 | **NFR-06** | Reliability — persistence | Events and registrations are stored in PostgreSQL and remain after the application restarts; the schema is created only by versioned migrations; seed data is reproducible (running the seed twice creates no duplicates) | Integration test re-reading data through a fresh connection; seed-twice test; manual restart check (Sprint 1), container restart check (Lab 5) | 1 |
@@ -391,6 +391,7 @@ Later sprints rerun earlier checks as regression tests.
 | D-12 | Unlike the reference, registered players are **not** listed publicly; the public and other participants see only "registered / capacity" | The brief requires that participants cannot inspect another participant's registration; screen names can identify real people | 4 Nov 2026 | Decided by team |
 | D-13 | Keep the reference's **layout** (tabs, search bar, event cards with chips, two-column detail page) but give the product its **own visual theme**, defined in `docs/ui/design-direction.md` | Familiar flow for TCG players without copying another product's brand | 4 Nov 2026 | Decided by team |
 | D-14 | Organizers see participants' display names only, not emails; contacting players is outside the product (X-03) | Data minimisation: a display name is enough to check a player in | 4 Nov 2026 | Decided by team |
+| D-15 | Password hashing uses **scrypt** from Node's built-in crypto, reusing the team's TokTickIT implementation, instead of bcrypt | No native dependency to build in Docker; parameters already reviewed in TokTickIT Lab 3; memory-hard like bcrypt or better | 4 Nov 2026 | Decided by team (SDS SD-03) |
 
 ### 10.2 Open questions
 
@@ -416,3 +417,4 @@ Later sprints rerun earlier checks as regression tests.
 | v0.2 | 4 Nov 2026 | Reference UX verified in a browser (§1.2, Q-07 resolved); event gains venue address, play structure note and contact (FR-06, BR-03); list shows registered/capacity (FR-11); added X-13 and D-12 | Team (AI-assisted) |
 | v0.3 | 4 Nov 2026 | Event-card and header patterns from the reference (§1.2); access summary (§2.1); FR-26 sign-in-then-return, FR-27 header account menu; D-13 own visual theme | Team (AI-assisted) |
 | v0.4 | 4 Nov 2026 | Review pass: BR-04 rewritten (cancelled events visible, drafts owner-only) to remove a conflict with FR-14 and FR-17; added FR-28 record keeping, NFR-15 input hygiene, NFR-16 sign-in throttling, "Upcoming" definition, problem → requirement links, C-06, D-14, Q-08, Q-09; clarified FR-12, FR-13, FR-17, BR-08, BR-09, BR-12, BR-15, BR-16, NFR-02, NFR-04, NFR-13, A-06; fixed X-08 reference | Team (AI-assisted) |
+| v0.5 | 4 Nov 2026 | NFR-03 hashing changed from bcrypt to scrypt (D-15), decided while writing the System-Level SDS | Team (AI-assisted) |
