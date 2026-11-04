@@ -4,7 +4,7 @@ Project: **TCG Event Hub** — Event Registration and Attendance System
 Course: CPE 334, Semester 1/2026 — Theme 3 (Event Registration and Attendance System)
 Team: Phattaratorn Mahatkeerati (67070503433, [@GGital](https://github.com/GGital)) ·
 Praewa Thuwatharanimitkul (67070503432, [@MeldyRose](https://github.com/MeldyRose))
-Document version: v0.1 — draft for team review (branch `sprint-1/spec`)
+Document version: v0.2 — draft for team review (branch `sprint-1/spec`)
 Companion documents (to follow): `docs/features.md`, `docs/traceability.md`, `docs/system-sds.md`,
 `docs/sprints/plan.md`, `docs/sprints/sprint-1/`
 
@@ -47,9 +47,21 @@ The product's look and flow are informed by the public event locator of a commer
 event card showing store, date/time, format, entry fee and seats, open a detail page, and register. We use only
 these *interaction patterns*; we do not copy names, branding, art or text from that product (decision D-02).
 
-Because the reference page could not be opened from the development environment, the patterns above were taken
-from search-result summaries of public event listings. The UI specification will record what was verified directly
-in a browser (question Q-07).
+The reference list page and three public event detail pages were opened in a browser on 4 Nov 2026
+(question Q-07). What we observed, and what we adopt:
+
+| Observed on the reference | What it does for the user | Our product |
+|---|---|---|
+| Two tabs at the top: **Find an Event** and **My Events** | Separates discovering events from "where am I going" | Adopted: participant navigation is *Find an Event* (FR-11) and *My Events* (FR-17) |
+| Filters: **Where** (location, with a "use my location" button), **Event Type** (multi-select), **Format** | Narrow the list to relevant events | Adopted in Sprint 2 as city/text search, event-type and format filters (FR-13); "use my location" excluded (X-06) |
+| List controls: **Upcoming Events**, **Distance**, **Sort by**, **Show only Favorited stores**, **Map** toggle | Sort and personalise the list | Sorted by start time only (FR-11); distance, map and favourite stores excluded (X-06, X-13) |
+| Detail header: store name, event title, **Date**, **Time**, **Players 0 / 16** | Shows at a glance when it is and how full it is | Adopted: detail shows registered/capacity and seats remaining (FR-12) |
+| One main button whose label follows the state: **Register**, or a disabled **Event is closed** when full (9 / 9) or over | The user always knows whether they can act | Adopted: Register / Registered / Full / Closed states (FR-12, FR-16) |
+| **Event Details**: free-text description written by the store (rules, prizes, house policies such as no-show bans) | Lets each store explain its own event | Adopted as the description field (FR-06) |
+| Event-type label, full **street address**, and a play line such as **Constructed • 1v1 • Swiss**, **4 Rounds • Best of 3 • $20** | Practical facts a player needs before going | Adopted: type, format, venue address, rounds/structure note and entry-fee label (FR-06); no payment (X-02) |
+| **Contact**: store website, email, phone | Lets the player ask the store directly | Adopted as an optional contact field on the event (FR-06) |
+| **Registered Players 9 / 9** with every player's screen name listed publicly; "No registered players at this time" when empty | Social proof; shows who is coming | **Not adopted**: other participants' registrations stay private (BR-16, decision D-12). The empty-state wording pattern is adopted for our lists |
+| After the event starts: **Rounds / Standings / Roster** tabs and table pairings | Runs the tournament itself | Excluded (X-05) |
 
 ---
 
@@ -105,6 +117,7 @@ Role rules for accounts:
 | X-10 | QR-code scanning hardware or a mobile app; check-in is done in the web UI (QR codes are a possible later extension, not a requirement) |
 | X-11 | Hard deletion of events or registrations. Records are cancelled, never deleted, so history and reports stay correct |
 | X-12 | Multi-language UI and multiple time zones (one zone: Asia/Bangkok, NFR-11) |
+| X-13 | Favourite stores, personalised recommendations and a public list of registered players |
 
 ---
 
@@ -147,8 +160,9 @@ behaviour but is never the only enforcement point.
 ### 5.2 Event publication and management
 
 - **FR-06** *(Sprint 1)* The system shall let an organizer create and publish an event with: title, event type,
-  format, venue name, city, start date/time, end date/time, entry-fee label, capacity and description. The
-  organizer becomes the event's owner.
+  format, venue name, venue address, city, start date/time, end date/time, capacity, entry-fee label, play
+  structure note (for example "4 rounds · Best of 3 · Swiss"), contact and description. The organizer becomes the
+  event's owner.
 - **FR-07** *(Sprint 1)* The system shall show an organizer the list of events they own, with each event's status,
   capacity, active registrations and seats remaining.
 - **FR-08** *(Sprint 2)* The system shall let an organizer save an event as a draft that participants cannot see,
@@ -161,7 +175,8 @@ behaviour but is never the only enforcement point.
 ### 5.3 Event discovery
 
 - **FR-11** *(Sprint 1)* The system shall list upcoming published events, ordered by start time (earliest first),
-  showing title, type, format, venue, city, date/time, entry-fee label, capacity and seats remaining. Signed-in
+  showing title, type, format, venue, city, date/time, entry-fee label, registered/capacity (for example
+  "12 / 32") and seats remaining. Signed-in
   and signed-out users may view the list.
 - **FR-12** *(Sprint 1)* The system shall show an event's detail page with all public fields, its seats remaining
   and, for a signed-in participant, whether they are already registered.
@@ -211,8 +226,9 @@ database where a constraint can express it.
   are rejected.
 - **BR-02** *(Sprint 1)* A new event's start time must be **in the future**, and its end time must be **after** its
   start time and **no more than 24 hours** after it.
-- **BR-03** *(Sprint 1)* Title (3–100 characters), event type, format, venue name, city, start, end and capacity
-  are required. Entry-fee label (up to 40 characters) and description (up to 2,000 characters) are optional.
+- **BR-03** *(Sprint 1)* Title (3–100 characters), event type, format, venue name, venue address, city, start,
+  end and capacity are required. Entry-fee label (up to 40 characters), play structure note (up to 80), contact (up
+  to 120) and description (up to 2,000 characters) are optional.
 - **BR-04** *(Sprint 1)* Only `PUBLISHED` events are visible to participants and visitors, and only `PUBLISHED`
   events that have not started (and, from Sprint 2, whose deadline has not passed) accept registrations.
 
@@ -329,6 +345,7 @@ Later sprints rerun earlier checks as regression tests.
 | D-09 | The public (signed-out) event list and detail are allowed; registration and all personal data require sign-in | Event discovery is meant to be open, as in the reference locator; personal data stays protected | 4 Nov 2026 | Decided by team |
 | D-10 | The registration deadline defaults to the start time and can only be earlier (BR-08). In Sprint 1, "event has started" is the cut-off | Answers the brief's "registration deadlines" question with the simplest safe default | 4 Nov 2026 | Decided by team |
 | D-11 | Session cookie (server-side session store) rather than a token in browser storage | Logout can truly invalidate the session (NFR-04); the same pattern worked in TokTickIT | 4 Nov 2026 | Decided by team — detailed in SDS |
+| D-12 | Unlike the reference, registered players are **not** listed publicly; the public and other participants see only "registered / capacity" | The brief requires that participants cannot inspect another participant's registration; screen names can identify real people | 4 Nov 2026 | Decided by team |
 
 ### 10.2 Open questions
 
@@ -340,7 +357,7 @@ Later sprints rerun earlier checks as regression tests.
 | Q-04 | Maximum capacity? | 256 (largest local store event we expect) (BR-01) | Team | Resolved |
 | Q-05 | Can participants see who else is registered? | No, only the seat count (BR-16) | Team | Resolved |
 | Q-06 | Should check-in be allowed after the event ends (late paperwork)? | No; the window closes at the end time (BR-18). Revisit in Sprint 3 if stores need it | Team | Resolved for now |
-| Q-07 | Which reference-UX details (card fields, filter set) can be confirmed directly in a browser? | Team member to open the reference page and record observations in the UI spec | Team | Open |
+| Q-07 | Which reference-UX details (card fields, filter set) can be confirmed directly in a browser? | Opened on 4 Nov 2026; observations recorded in §1.2. The list's event cards come from a separate data service that did not load, so card layout is confirmed in the UI spec from the detail page fields | Team | Resolved |
 
 ---
 
@@ -349,3 +366,4 @@ Later sprints rerun earlier checks as regression tests.
 | Version | Date | Change | Author |
 |---|---|---|---|
 | v0.1 | 4 Nov 2026 | First full draft of the whole-product SRS | Team (drafted with AI assistance, see AI-use declaration) |
+| v0.2 | 4 Nov 2026 | Reference UX verified in a browser (§1.2, Q-07 resolved); event gains venue address, play structure note and contact (FR-06, BR-03); list shows registered/capacity (FR-11); added X-13 and D-12 | Team (AI-assisted) |
