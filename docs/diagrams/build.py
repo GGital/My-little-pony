@@ -289,3 +289,34 @@ page('state-event','State machine · TCG Event Hub · FR-06, FR-08–FR-10, BR-1
      'An event is created as Draft or straight to Published, can be edited or cancelled before it starts, then moves by the clock to In progress and Ended; Cancelled is the terminal outcome.',
      vw,vh,''.join(b))
 print('ok')
+
+# ================= 6. Dependency graph: Sprint 1 feature bundle
+def badge(x,y,w,n):
+    bw=36
+    return (f'<rect x="{x+w-bw-8}" y="{y+8}" width="{bw}" height="12" rx="2" fill="{PAPER}" stroke="rgba(45,49,66,0.25)" stroke-width="0.8"/>'
+            f'<text x="{x+w-bw/2-8}" y="{y+17}" fill="{MUTED}" font-size="8" font-family="{MONO}" text-anchor="middle" letter-spacing="0.06em">{n} in</text>')
+def vline(x1,y1,x2,y2): return f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{MUTED}" stroke-width="1.2" marker-end="url(#arrow)"/>'
+X=[96,312,528,744]; Y=[64,184,304,424]
+b=[]
+b.append(vline(148,120,148,424))                                                     # C -> A
+b.append(path('M204 120 V392 Q204 400 212 400 H324 Q332 400 332 408 V424'))         # C -> B
+b.append(vline(312,452,256,452))                                                     # B -> A
+b.append(vline(392,120,392,184))                                                     # I -> E
+b.append(vline(392,240,392,304))                                                     # E -> D
+b.append(vline(392,360,392,424))                                                     # D -> B
+b.append(vline(608,120,608,184))                                                     # H -> G
+b.append(path('M472 100 H492 Q500 100 500 108 V204 Q500 212 508 212 H528'))          # I -> G
+b.append(path('M636 240 V264 Q636 272 644 272 H808 Q816 272 816 280 V304'))          # G -> F
+b.append(path('M580 240 V392 Q580 400 572 400 H460 Q452 400 452 408 V424'))          # G -> B
+for c,r,l,n,k,f in [(0,3,'A','Authentication','store',2),(1,3,'B','Access control','backend',3),
+                    (0,0,'C','App shell & nav','backend',0),(1,2,'D','Publish event','backend',1),
+                    (1,1,'E','Organizer events','backend',1),(3,2,'F','Event discovery','store',1),
+                    (2,1,'G','Registration','backend',2),(2,0,'H','My Events','backend',0),
+                    (1,0,'I','Registration list','backend',0)]:
+    b.append(node(X[c],Y[r],160,56,n,f'Feature-{l}',k,tag=l)); b.append(badge(X[c],Y[r],160,f))
+b.append(f'<text x="32" y="44" fill="{MUTED}" font-size="8" font-family="{MONO}" letter-spacing="0.14em">EACH ARROW POINTS TO THE FEATURE THAT MUST EXIST FIRST · "N IN" = FEATURES THAT NEED IT</text>')
+b.append(legend(520,[('backend','Needs another feature'),('store','Needs no other feature'),('muted','Depends on')],960))
+page('dep-sprint1','Dependency graph · TCG Event Hub · Sprint 1 bundle','What Sprint 1 must build first',
+     'Sprint 1 feature dependencies',
+     'Nine Sprint 1 features ranked by dependency: Access control is needed by three features, while Authentication and Event discovery need no other feature.',
+     960,560,''.join(b))

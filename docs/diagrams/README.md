@@ -17,6 +17,7 @@ To change a diagram, edit `build.py`, run `python3 docs/diagrams/build.py`, and 
 | D3 | [Registering for an event](#d3-activity--registering-for-an-event) | Activity (swimlane) | Every check a registration passes, and who does each one | FR-15, FR-16, FR-26, BR-04–BR-07, BR-10, BR-17 |
 | D4 | [Life of a registration](#d4-state-machine--life-of-a-registration) | State machine | Every status a registration can have and what moves it | BR-05–BR-12, BR-18–BR-20 |
 | D5 | [Life of an event](#d5-state-machine--life-of-an-event) | State machine | Every status an event can have, stored or worked out from the clock | FR-06, FR-08–FR-10, BR-04, BR-15 |
+| D6 | [What Sprint 1 must build first](../features.md#5-sprint-1-feature-bundle-preview-of-step-5) | Dependency graph | Which Sprint 1 feature needs which | Feature-A … Feature-I |
 
 ---
 
@@ -120,3 +121,4 @@ Source: [`state-event.html`](state-event.html)
 | Version | Date | Change |
 |---|---|---|
 | v0.1 | 4 Nov 2026 | D1–D5 first versions |
+| v0.2 | 4 Nov 2026 | D6 Sprint 1 dependency graph (shown in `docs/features.md`) |
