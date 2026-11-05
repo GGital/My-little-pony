@@ -6,7 +6,8 @@ A full-stack application where trading-card-game (TCG) stores and organizers pub
 players find and register for them, and organizers record attendance.
 
 Engineering documents live in [`docs/`](docs/): start with the [SRS](docs/srs.md), the
-[System-Level SDS](docs/system-sds.md) and the [Sprint 1 package](docs/sprints/sprint-1/README.md).
+[System-Level SDS](docs/system-sds.md) and the [Sprint 1 package](docs/sprints/sprint-1/README.md). Who did
+what is in the [contribution table](docs/contributions.md); AI assistance is in the [AI-use declaration](docs/ai-use.md).
 
 ## Prerequisites
 
