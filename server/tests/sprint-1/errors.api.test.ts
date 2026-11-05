@@ -57,9 +57,11 @@ describe('TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, N
 
     const errors = entries.filter((e) => e.level === 'error')
     expect(errors).toHaveLength(1)
-    const logged = JSON.stringify(errors[0])
-    expect(logged).toContain(LEAKY_ERROR_TEXT.slice(0, 30)) // the real cause is kept for the team
-    expect(logged).not.toMatch(/leak-me-cookie|"cookie"|"headers"/i)
+    // The real cause is kept for the team: the whole original message, read from the field itself
+    // (searching the JSON-encoded entry fails because encoding escapes the quotes in the SQL).
+    expect(String(errors[0]?.fields?.error)).toContain(LEAKY_ERROR_TEXT)
+    expect(Object.keys(errors[0]?.fields ?? {}).sort()).toEqual(['error', 'method', 'path'])
+    expect(JSON.stringify(errors[0])).not.toMatch(/leak-me-cookie|cookie|headers/i)
   })
 
   it('400 lists the failing fields in details', async () => {
