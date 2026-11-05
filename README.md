@@ -40,6 +40,20 @@ in `SEED_PASSWORD`:
 | Organizer | `quantum@organizer.example`, `dragon@organizer.example` |
 | Participant | `mint@player.example`, `ploy@player.example`, `boss@player.example`, `nok@player.example` |
 
+## Run the API
+
+```bash
+npm run dev
+```
+
+The API listens on `http://localhost:3000` (set `PORT` to change it). Check it with
+`curl http://localhost:3000/api/health`, which answers `{"status":"ok"}`, or `503 {"status":"unavailable"}` when
+the database is down.
+
+The server checks `server/.env` when it starts and stops with a one-line message naming any missing or malformed
+variable. Every variable is described in `server/.env.example` and in the
+[SDS §9.1](docs/system-sds.md). `DATABASE_URL` and `APP_ORIGIN` are required; the others have defaults.
+
 ## Tests
 
 Prepare the test database (applies migrations only, never deletes data), then run the suite:

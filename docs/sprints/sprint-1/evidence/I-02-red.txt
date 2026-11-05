@@ -1,0 +1,143 @@
+
+ RUN  v4.0.18 /home/user/my-little-pony/server
+
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > has exactly the SDS §6.2 codes 7ms
+   → expected [] to deeply equal [ 'ALREADY_CANCELLED', …(20) ]
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > VALIDATION_FAILED answers 400 with the standard body 1ms
+   → expected undefined to be 400 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > INVALID_PATH_PARAMETER answers 400 with the standard body 1ms
+   → expected undefined to be 400 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > UNAUTHENTICATED answers 401 with the standard body 0ms
+   → expected undefined to be 401 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > INVALID_CREDENTIALS answers 401 with the standard body 0ms
+   → expected undefined to be 401 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > FORBIDDEN answers 403 with the standard body 0ms
+   → expected undefined to be 403 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > EVENT_NOT_FOUND answers 404 with the standard body 0ms
+   → expected undefined to be 404 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > REGISTRATION_NOT_FOUND answers 404 with the standard body 0ms
+   → expected undefined to be 404 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > NOT_FOUND answers 404 with the standard body 1ms
+   → expected undefined to be 404 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > EVENT_FULL answers 409 with the standard body 0ms
+   → expected undefined to be 409 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > ALREADY_REGISTERED answers 409 with the standard body 0ms
+   → expected undefined to be 409 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > REGISTRATION_CLOSED answers 409 with the standard body 0ms
+   → expected undefined to be 409 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > CAPACITY_BELOW_REGISTERED answers 409 with the standard body 0ms
+   → expected undefined to be 409 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > EVENT_STARTED answers 409 with the standard body 0ms
+   → expected undefined to be 409 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > ALREADY_CANCELLED answers 409 with the standard body 0ms
+   → expected undefined to be 409 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > NOT_IN_CHECK_IN_WINDOW answers 409 with the standard body 0ms
+   → expected undefined to be 409 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > ALREADY_CHECKED_IN answers 409 with the standard body 0ms
+   → expected undefined to be 409 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > PAYLOAD_TOO_LARGE answers 413 with the standard body 0ms
+   → expected undefined to be 413 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > UNSUPPORTED_MEDIA_TYPE answers 415 with the standard body 0ms
+   → expected undefined to be 415 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > EVENT_TIME_INVALID answers 422 with the standard body 0ms
+   → expected undefined to be 422 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > TOO_MANY_ATTEMPTS answers 429 with the standard body 0ms
+   → expected undefined to be 429 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > INTERNAL_ERROR answers 500 with the standard body 0ms
+   → expected undefined to be 500 // Object.is equality
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > adds details only when given 1ms
+   → expected undefined to deeply equal { error: { …(3) } }
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > uses the fixed safe wording for 500 (contracts §2 item 6) 1ms
+   → expected undefined to deeply equal { error: { …(2) } }
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > throws at run time for a code outside the catalogue 1ms
+   → expected [Function] to throw an error
+ × tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > refuses an unknown code at compile time, and accepts a known one 1107ms
+   → expected +0 to be 1 // Object.is equality
+ × tests/sprint-1/validation.api.test.ts > TEST-SR2-02 — zod .strict() reports every failing field (AC-SR2-02, NFR-15) > wrong types, a bad date and an unknown field → 400 with one details entry per field 24ms
+   → expected 404 to be 400 // Object.is equality
+ × tests/sprint-1/validation.api.test.ts > TEST-SR2-02 — zod .strict() reports every failing field (AC-SR2-02, NFR-15) > a valid body passes through as the parsed value 4ms
+   → expected 404 to be 201 // Object.is equality
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > calling every Sprint 1 route with GET leaves every table unchanged 5ms
+ × tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > GET on POST-only /api/__test/echo → 404 NOT_FOUND 4ms
+   → expected {} to deeply equal { error: { code: 'NOT_FOUND', …(1) } }
+ × tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > a text/plain body → 415 UNSUPPORTED_MEDIA_TYPE 3ms
+   → expected 404 to be 415 // Object.is equality
+ × tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > a 101 kB body → 413 PAYLOAD_TOO_LARGE 3ms
+   → expected 404 to be 413 // Object.is equality
+ × tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > a foreign Origin → 403 FORBIDDEN 2ms
+   → expected 404 to be 403 // Object.is equality
+ × tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > no Origin at all → 403 FORBIDDEN 2ms
+   → expected 404 to be 403 // Object.is equality
+ × tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > malformed JSON → 400 VALIDATION_FAILED, not a 500 3ms
+   → expected 404 to be 400 // Object.is equality
+ × tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > a POST with no body is not a 415 (E-09 sends none); it reaches validation 2ms
+   → expected 404 to be 400 // Object.is equality
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > none of the rejected requests stored anything 4ms
+ × tests/sprint-1/unit/config.unit.test.ts > TEST-SR4-01 (U) — configuration is complete and checked at start-up (NFR-13) > .env.example, the SDS §9.1 table and config.ts name the same variables 6ms
+   → expected +0 to be 8 // Object.is equality
+ × tests/sprint-1/unit/config.unit.test.ts > TEST-SR4-01 (U) — configuration is complete and checked at start-up (NFR-13) > reads a valid environment into typed values, with defaults for the optional ones 2ms
+   → expected { …(2) } to deeply equal { NODE_ENV: 'development', …(5) }
+ × tests/sprint-1/unit/config.unit.test.ts > TEST-SR4-01 (U) — configuration is complete and checked at start-up (NFR-13) > throws naming DATABASE_URL when it is missing or empty 2ms
+   → expected [Function] to throw an error
+ × tests/sprint-1/unit/config.unit.test.ts > TEST-SR4-01 (U) — configuration is complete and checked at start-up (NFR-13) > throws naming APP_ORIGIN when it is missing or empty 1ms
+   → expected [Function] to throw an error
+ × tests/sprint-1/unit/config.unit.test.ts > TEST-SR4-01 (U) — configuration is complete and checked at start-up (NFR-13) > rejects malformed values without echoing them (they may be secrets) 1ms
+   → expected [Function bad] to throw an error
+ × tests/sprint-1/unit/config.unit.test.ts > TEST-SR4-01 (U) — configuration is complete and checked at start-up (NFR-13) > the real server refuses to start without DATABASE_URL and says why 141ms
+   → expected +0 to be 1 // Object.is equality
+ × tests/sprint-1/time.api.test.ts > TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-SR3-01, NFR-11) > now() returns the fixed time T, and a copy that cannot move the clock 62ms
+   → expected '2026-11-05T03:14:34.858Z' to be '2026-11-05T10:00:00.000Z' // Object.is equality
+ × tests/sprint-1/time.api.test.ts > TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-SR3-01, NFR-11) > only the T + 1 min event is upcoming in the database query 18ms
+   → expected [ { id: 1 }, { id: 2 }, { id: 3 } ] to deeply equal [ { id: 1 } ]
+ × tests/sprint-1/time.api.test.ts > TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-SR3-01, NFR-11) > an event starting exactly at T counts as started, like T − 1 min; T + 1 min has not started 12ms
+   → expected false to be true // Object.is equality
+ ✓ tests/sprint-1/time.api.test.ts > TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-SR3-01, NFR-11) > times survive the database to the millisecond and serialise as UTC ending in Z 12ms
+ ✓ tests/sprint-1/time.api.test.ts > TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-SR3-01, NFR-11) > after resetNow() the clock follows real time again 7ms
+ × tests/sprint-1/time.api.test.ts > TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-SR3-01, NFR-11) > setNow() refuses to run outside NODE_ENV=test 8ms
+   → expected [Function] to throw an error
+ ✓ tests/sprint-1/time.api.test.ts > TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-SR3-01, NFR-11) > rule code in src/domain never reads the system clock directly (contracts §3 item 1) 7ms
+ × tests/sprint-1/errors.api.test.ts > TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, NFR-07) > 400 'VALIDATION_FAILED' 20ms
+   → expected 404 to be 400 // Object.is equality
+ × tests/sprint-1/errors.api.test.ts > TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, NFR-07) > 401 'UNAUTHENTICATED' 4ms
+   → expected 404 to be 401 // Object.is equality
+ × tests/sprint-1/errors.api.test.ts > TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, NFR-07) > 403 'FORBIDDEN' 3ms
+   → expected 404 to be 403 // Object.is equality
+ × tests/sprint-1/errors.api.test.ts > TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, NFR-07) > 404 'NOT_FOUND' 3ms
+   → expected 'text/html; charset=utf-8' to match /^application\/json/json
+ × tests/sprint-1/errors.api.test.ts > TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, NFR-07) > 409 'EVENT_FULL' 3ms
+   → expected 404 to be 409 // Object.is equality
+ × tests/sprint-1/errors.api.test.ts > TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, NFR-07) > 500 'INTERNAL_ERROR' 3ms
+   → expected 404 to be 500 // Object.is equality
+ × tests/sprint-1/errors.api.test.ts > TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, NFR-07) > 500 logs the real error on the server, without cookies or headers 4ms
+   → expected [] to have a length of 1 but got +0
+ × tests/sprint-1/errors.api.test.ts > TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, NFR-07) > 400 lists the failing fields in details 3ms
+   → expected 404 to be 400 // Object.is equality
+ × tests/sprint-1/health.api.test.ts > TEST-SR4-01 (I) — E-12 GET /api/health > answers 200 {status:"ok"} when the database is up 24ms
+   → expected 404 to be 200 // Object.is equality
+ × tests/sprint-1/health.api.test.ts > TEST-SR4-01 (I) — E-12 GET /api/health > answers 503 {status:"unavailable"} when the database cannot be reached, and logs why 5ms
+   → expected 404 to be 503 // Object.is equality
+ ✓ tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > creates 2 organizers, 4 participants and the 6 events of contracts §0.3 570ms
+ ✓ tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > gives EV-3 no free seat, EV-2 exactly one, and EV-4 a start in the past and an end in the future 4ms
+ ✓ tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > stores scrypt hashes that verify with the seed password 171ms
+ ✓ tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > adds nothing when it runs a second time 21ms
+ ✓ tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > refuses to run without a password of at least 12 characters 1ms
+ ✓ tests/sprint-1/persistence.api.test.ts > TEST-SR1-01 data survives a new database connection > reads back an event and a registration, with identical values, through a separate Prisma client 52ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-03 capacity must be a whole number from 1 to 256 (BR-01) > rejects capacity 0 at database level 8ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-03 capacity must be a whole number from 1 to 256 (BR-01) > rejects capacity -1 at database level 2ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-03 capacity must be a whole number from 1 to 256 (BR-01) > rejects capacity 257 at database level 1ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-03 capacity must be a whole number from 1 to 256 (BR-01) > accepts capacity 1 2ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-03 capacity must be a whole number from 1 to 256 (BR-01) > accepts capacity 256 1ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-04 an event ends after it starts and lasts at most 24 hours (BR-02) > rejects an end equal to the start 1ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-04 an event ends after it starts and lasts at most 24 hours (BR-02) > rejects an end before the start 1ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-04 an event ends after it starts and lasts at most 24 hours (BR-02) > rejects an end 24 hours and 1 minute after the start 1ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-04 an event ends after it starts and lasts at most 24 hours (BR-02) > accepts an end exactly 24 hours after the start 1ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-05 one ACTIVE registration per participant per event (BR-06) > is enforced by a partial unique index that covers only active statuses 3ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-05 one ACTIVE registration per participant per event (BR-06) > rejects a second active registration, then allows one again after the first is cancelled 8ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-05 one ACTIVE registration per participant per event (BR-06) > lets two different participants hold active registrations for the same event 3ms
+
+(failure details omitted: each failure above is an AssertionError; full log reproduced by `npm test` at this commit)
+⎯⎯⎯⎯⎯⎯ Failed Tests 55 ⎯⎯⎯⎯⎯⎯⎯
+ Test Files  6 failed | 3 passed (9)
+      Tests  55 failed | 23 passed (78)
+   Start at  03:14:31
+   Duration  5.19s (transform 272ms, setup 0ms, import 1.17s, tests 3.18s, environment 1ms)

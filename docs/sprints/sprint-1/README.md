@@ -1,6 +1,6 @@
 # Sprint 1: engineering contracts, tests and Definition of Done
 
-Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Version v1.0 — draft for team review (PR 2)
+Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Version v1.1 (v1.0 reviewed in PR 2; changes in §5)
 
 | Document | What it is |
 |---|---|
@@ -46,7 +46,10 @@ must turn green. Branches start from `sprint-1-staging` and are named `feature/s
 | I-11 | Feature-I: registration list | §12 | TEST-I-01 … 03 | I-08, I-09 | 2 | Sat 7 |
 | I-12 | Integration, journeys, responsive check, release evidence | §13 SR-05, SR-07 | TEST-C-03, TEST-SR5-01, TEST-SR7-01, JRN-01, JRN-02 | all | both | Sun 8 |
 
-Every test ID in the STS belongs to exactly one Issue (checked by script). "Student 1" and "Student 2" match the
+Every test ID in the STS belongs to exactly one Issue (checked by script). Some Issues **add cases** to a test owned by an earlier
+Issue once the endpoint exists (contracts v1.2): I-04 → TEST-SR2-03 (sessions); I-05 → TEST-SR3-01 (E-04);
+I-07 → TEST-SR2-02 (E-06); I-08 → TEST-SR2-05 and TEST-SR3-01 (E-09); I-12 → TEST-SR1-01 (API, restart),
+TEST-SR2-01 (real 401 and 409) and TEST-SR2-03 (all twelve routes). "Student 1" and "Student 2" match the
 build-order table in [`../plan.md`](../plan.md) §2.4. Names are set when the Issues are created.
 
 ## 3. Test-driven workflow for every Issue
@@ -96,3 +99,4 @@ claim by a person or an AI agent is not evidence.
 | Version | Date | Change | Author |
 |---|---|---|---|
 | v1.0 | 4 Nov 2026 | First Sprint 1 package: contracts v1.0, STS v1.0, Issue plan I-01 … I-12, TDD workflow, DoD-1 … DoD-10 | Team (AI-assisted) |
+| v1.1 | 5 Nov 2026 | §2: which later Issues add real-endpoint cases to I-01 and I-02 tests (contracts v1.1, v1.2) | Team (AI-assisted) |

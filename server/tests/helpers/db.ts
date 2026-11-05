@@ -57,3 +57,14 @@ export function insertRegistrationRaw(eventId: number, participantId: number, st
     INSERT INTO "Registration" ("eventId", "participantId", "status")
     VALUES (${eventId}, ${participantId}, ${status}::"RegistrationStatus")`
 }
+
+/** Row count of every table, read independently of the code under test (STS §1.1 rule 3). */
+export async function tableCounts() {
+  const [users, sessions, events, registrations] = await Promise.all([
+    prisma.user.count(),
+    prisma.session.count(),
+    prisma.event.count(),
+    prisma.registration.count(),
+  ])
+  return { users, sessions, events, registrations }
+}
