@@ -1,0 +1,16 @@
+
+ RUN  v4.0.18 <repo>/client
+
+ ✓ tests/sprint-1/unit/api.unit.test.ts (4 tests) 14ms
+ ✓ tests/sprint-1/unit/formatEventTime.unit.test.ts (3 tests) 22ms
+ ✓ tests/sprint-1/RouteGuards.test.tsx (4 tests) 76ms
+ ✓ tests/sprint-1/States.test.tsx (5 tests) 149ms
+ ✓ tests/sprint-1/AppRoutes.test.tsx (5 tests) 153ms
+ ✓ tests/sprint-1/AppShell.test.tsx (7 tests) 308ms
+ ✓ tests/sprint-1/SignInPage.test.tsx (8 tests) 360ms
+
+ Test Files  7 passed (7)
+      Tests  36 passed (36)
+   Start at  23:59:55
+   Duration  3.73s (transform 801ms, setup 4.25s, import 2.64s, tests 1.08s, environment 12.75s)
+
