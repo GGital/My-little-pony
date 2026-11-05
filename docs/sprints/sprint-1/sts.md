@@ -248,7 +248,7 @@ the evidence the TA checks (Deliverable 1 §4.2).
 |---|---|---|---|---|---|
 | I-01 SR-01 data foundation | TEST-SR1-01 … 05 | `4725528` | **10 failed / 17** (all on assertions: constraints accepted bad rows; seed created nothing) — `evidence/I-01-red.txt` | `3486e31` (implementation, 16 / 17), then `47bba2c` (explained test correction) | **18 passed / 18** — `evidence/I-01-green-2.txt` |
 | I-02 SR-02, SR-03 API foundation | TEST-SR2-01 … 05, TEST-SR3-01, TEST-SR4-01 (U, I) | `7895809` | **55 failed / 78** (all AssertionError: empty app answers 404 HTML, empty catalogue, unfixable clock, no config check; the 18 I-01 tests and 5 guard checks pass) — `evidence/I-02-red.txt` | `d8971df` (implementation, 77 / 78), then `c53184e` (explained test correction) | **78 passed / 78** — `evidence/I-02-green-2.txt` |
-| I-03 Client shell | TEST-C-01, C-02, C-05, TEST-SR3-02 | Pending | Pending | Pending | Pending |
+| I-03 Client shell | TEST-C-01, C-02, C-05, TEST-SR3-02 | `5c01c99`, `5e9f4aa` | **7 failed / 11** (TEST-C-01, C-02, SR3-02 on assertions; TEST-C-05 4 tests passed: components were committed with the tests; M1/M2 red commit `5e9f4aa` 2 failed / 18; AppRoutes test added in review; passes on first run; red shown by mutating the guard) — `evidence/I-03-red.txt` | `7401930`, `96ae073`, `ca5f9a9` (+ review fixes) | **24 passed / 24** — `evidence/I-03-green.txt` |
 | I-04 Feature-A | TEST-A-01 … 06, TEST-C-04 | Pending | Pending | Pending | Pending |
 | I-05 Feature-F | TEST-F-01 … 05, TEST-C-06 | Pending | Pending | Pending | Pending |
 | I-06 Feature-B | TEST-B-01 … 03 | Pending | Pending | Pending | Pending |
@@ -277,7 +277,7 @@ output.
 | Build: `npm --prefix server run build && npm --prefix client run build` | Pending |
 | Concurrency: TEST-G-06, 20 rounds | Pending |
 | Manual checks: TEST-SR1-01 (restart), TEST-SR4-01 (secret scan) | Pending, with screenshots in `evidence/` |
-| Failed / skipped tests and known limitations | Pending |
+| Failed / skipped tests and known limitations | Pending (I-03: AuthProvider is a stub (status stays `loading`) until I-04, so the running app shows no Sign in link and protected routes stay on the loading state. The `dangerouslySetInnerHTML` lint rule (Behaviour 6) and TEST-C-06 come with I-05) |
 
 The AC → test → actual file/name → result table for the PDF (Deliverable 1 §4.2) is produced from §2 and this
 section.
@@ -310,3 +310,4 @@ npm --prefix server run db:seed && npx playwright test e2e/sprint-1
 | v1.0 | 4 Nov 2026 | First STS: 53 planned test rows + 2 journeys for 47 ACs, BR rejection map, TDD record, commands | Team (AI-assisted) |
 | v1.1 | 4 Nov 2026 | I-01 TDD record filled from real runs; TEST-SR1-01 split between I-01 (data layer) and I-12 (API, restart); TEST-SR1-05 expected result states the index shape and SQLSTATE 23505 | Team (AI-assisted) |
 | v1.2 | 5 Nov 2026 | I-02 TDD record filled from real runs; TEST-SR2-01 … 05 and TEST-SR3-01 describe the I-02 probe-route form and which Issue adds each real-endpoint case (contracts v1.2); 413 is `PAYLOAD_TOO_LARGE`; forced 500 route moved into the test helpers | Team (AI-assisted) |
+| v1.3 | 5 Nov 2026 | I-03 TDD record filled from real runs; TEST-SR3-02 multi-timezone verification, AppRoutes suite, route guard role protection on /me/registrations, and session expiry 401 handling | Team (AI-assisted) |

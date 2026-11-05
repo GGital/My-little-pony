@@ -1,0 +1,33 @@
+ RUN  v3.2.7 C:/Users/Praewa/My-little-pony/client
+
+ ❯ tests/sprint-1/unit/formatEventTime.unit.test.ts (2 tests | 2 failed) 24ms
+   × formatEventTime (TEST-SR3-02) > formats UTC ISO timestamp into Asia/Bangkok time with en-GB format 18ms
+     → expected '' to be 'Thu 5 Nov 2026 · 17:00' // Object.is equality
+   × formatEventTime (TEST-SR3-02) > correctly handles date rollover across time zones 1ms
+     → expected '' to be 'Fri 6 Nov 2026 · 03:00' // Object.is equality
+ ❯ tests/sprint-1/RouteGuards.test.tsx (2 tests | 2 failed) 84ms
+   × Route Guards (TEST-C-02) > redirects signed-out visitor from protected route to /login?returnTo=... 72ms
+     → expect(element).not.toBeInTheDocument()
+
+expected document not to contain element, found <div>
+  Protected Registrations
+</div> instead
+   × Route Guards (TEST-C-02) > renders "This page isn't available for your account" and fires NO organizer api call when participant accesses organizer route 9ms
+     → expect(element).not.toBeInTheDocument()
+
+expected document not to contain element, found <div>
+  Organizer Dashboard Secret
+</div> instead
+ ✓ tests/sprint-1/States.test.tsx (4 tests) 207ms
+ ❯ tests/sprint-1/AppShell.test.tsx (3 tests | 3 failed) 198ms
+   × AppShell navigation (TEST-C-01) > renders links exactly for Visitor (signed out): Events only, and Sign in button 162ms
+     → Unable to find an accessible element with the role "link" and name `/^Events$/i`
+   × AppShell navigation (TEST-C-01) > renders links exactly for Participant: Events, My Events, PLAYER badge, display name 18ms
+     → Unable to find an accessible element with the role "link" and name `/^Events$/i`
+   × AppShell navigation (TEST-C-01) > renders links exactly for Organizer: Events, Dashboard, + Create event, ORGANIZER badge 15ms
+     → Unable to find an accessible element with the role "link" and name `/^Events$/i`
+
+ Test Files  3 failed | 1 passed (4)
+      Tests  7 failed | 4 passed (11)
+   Start at  01:34:43
+   Duration  6.22s (transform 537ms, setup 4.72s, collect 3.17s, tests 513ms, environment 12.30s, prepare 1.29s)
