@@ -1,6 +1,6 @@
 # System-Level Software Design Specification (SDS)
 
-Project: **TCG Event Hub** · Document version: v0.2 — draft for team review (PR 2)
+Project: **TCG Event Hub** · Document version: v0.4 (v0.2 reviewed in PR 2; changes in §14)
 Inputs: [`srs.md`](srs.md) v0.5 · [`features.md`](features.md) v0.2 · [`traceability.md`](traceability.md) v0.2 ·
 [`ui/design-direction.md`](ui/design-direction.md) v0.2 · [`diagrams/`](diagrams/README.md)
 
@@ -101,11 +101,11 @@ Two notes on the order:
 | UI base | Bootstrap 5 re-themed with Arcane Ink tokens, IBM Plex Sans Thai + Chakra Petch, drawn SVG icon set | Bootstrap 5.3 | Grid, forms and focus basics for free; our tokens give the look | SD-06 |
 | Routing | React Router | 7 | As in TokTickIT | — |
 | Server | Node.js + Express + TypeScript (`tsx`) | Node 22, Express 5 | Same as TokTickIT; Express 5 forwards async errors | SD-02 |
-| Validation | zod | 3.x | One schema per endpoint: typed input, `.strict()` unknown-field rejection, field details for 400 | SD-05 |
+| Validation | zod | 4.x (4.6.7) | One schema per endpoint: typed input, `.strict()` unknown-field rejection, field details for 400 | SD-05 |
 | Database | PostgreSQL | 16 | Transactions, row locks, partial unique indexes, `timestamptz` | SD-04 |
 | ORM and migrations | Prisma | 6 | Versioned migrations, typed queries, seed script; raw SQL allowed in migrations for checks and partial index | SD-04 |
 | Passwords | scrypt (`node:crypto`) | built in | Reuses reviewed TokTickIT `password.ts`; no native dependency | SD-03 (D-15) |
-| Tests | Vitest + Supertest (server), Vitest + Testing Library (client), Playwright (E2E) | Vitest 4 | Same as TokTickIT; real PostgreSQL in integration tests | SD-09 |
+| Tests | Vitest + Supertest (server), Vitest + Testing Library (client), Playwright (E2E) | Vitest 4.0 (4.0.18; 4.1 cannot be installed by npm 10) | Same as TokTickIT; real PostgreSQL in integration tests | SD-09 |
 | Lint/format | oxlint, TypeScript `--noEmit` | — | Fast; already used by the client in TokTickIT | — |
 | Container (Lab 5) | Docker multi-stage, `node:22-slim`, non-root user | — | One image for API and static files | SD-01 |
 
@@ -329,7 +329,8 @@ wrong role. They exist only for convenience. The server repeats every check.
 | 409 | `ALREADY_REGISTERED` | Active registration exists (BR-06) |
 | 409 | `REGISTRATION_CLOSED` | Event started, not published, cancelled, or (Sprint 2) past its deadline (BR-04, BR-08) |
 | 409 | `CAPACITY_BELOW_REGISTERED`, `EVENT_STARTED`, `ALREADY_CANCELLED`, `NOT_IN_CHECK_IN_WINDOW`, `ALREADY_CHECKED_IN` | Sprint 2–3 rule conflicts (BR-09, BR-15, BR-12, BR-18, BR-19) |
-| 415 | `UNSUPPORTED_MEDIA_TYPE` | Body without JSON content type |
+| 413 | `PAYLOAD_TOO_LARGE` | Request body over 100 kB |
+| 415 | `UNSUPPORTED_MEDIA_TYPE` | Body without JSON content type (a request with no body is not checked) |
 | 422 | `EVENT_TIME_INVALID` | Valid shape but impossible times: start not in the future, end too late (BR-02) |
 | 429 | `TOO_MANY_ATTEMPTS` | Sign-in throttled (NFR-16, Sprint 3) |
 | 500 | `INTERNAL_ERROR` | Anything unexpected |
@@ -443,7 +444,12 @@ The full flow is in diagram D2 ([`diagrams/seq-auth.png`](diagrams/seq-auth.png)
 | `TRUST_PROXY` | `1` on Cloud Run | Express `trust proxy` for correct protocol | no |
 
 Rules:
-- `config.ts` reads and validates every variable at start-up with zod, and **refuses to start** if one is missing.
+- `config.ts` reads and validates every server variable at start-up with zod, and **refuses to start** with a
+  one-line message naming the variable (never its value) if `DATABASE_URL` or `APP_ORIGIN` is missing or any value
+  is malformed. `NODE_ENV`, `PORT`, `LOG_LEVEL` and `TRUST_PROXY` default to the examples above (`TRUST_PROXY` to 0).
+  `DATABASE_URL_TEST` and `SEED_PASSWORD` are read by the tests and the seed script only.
+- `index.ts` checks the configuration **before** loading Prisma, because `@prisma/client` reads `server/.env` when
+  it is imported and would otherwise hide a missing `DATABASE_URL`.
 - Real values live only in local `.env` files, which `.gitignore` excludes, and in GCP Secret Manager (Lab 5).
 - The client has **no secrets**. Vite only exposes `VITE_*` variables, and we define none in Sprint 1.
 - A secret scan of the repository (gitleaks or the GitHub secret scanner) is part of the release checklist
@@ -539,3 +545,4 @@ Design points:
 | v0.1 | 4 Nov 2026 | First draft: architecture, stack, data model with constraints and seat-lock transaction, UI and API conventions, endpoint catalogue E-01 … E-22, permission matrix, session design, configuration and GCP plan, testing architecture, SD-01 … SD-10 | Team (AI-assisted) |
 | v0.2 | 4 Nov 2026 | `Event.seedKey` added for the idempotent seed (Sprint 1 contracts §1); seed reference to contracts §0.3 | Team (AI-assisted) |
 | v0.3 | 4 Nov 2026 | §4.3 names the migration that holds the constraints (`0002_rule_constraints`, from I-01) | Team (AI-assisted) |
+| v0.4 | 5 Nov 2026 | §6.2 adds `413 PAYLOAD_TOO_LARGE`; §3 zod 4.x (zod 3 has advisory GHSA-mrhx-c7xc-m3w5) and Vitest 4.0.18; §9.1 which variables are required, defaults, and config check before Prisma loads (from I-02) | Team (AI-assisted) |
