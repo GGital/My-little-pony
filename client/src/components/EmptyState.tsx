@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export interface EmptyStateAction {
   label: string;
@@ -19,7 +20,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ title, description, acti
       {description && <p>{description}</p>}
       {action && (
         action.href ? (
-          <a href={action.href}>{action.label}</a>
+          <Link to={action.href}>{action.label}</Link>
         ) : (
           <button type="button" onClick={action.onClick}>
             {action.label}

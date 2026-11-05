@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { RequireAuth, RequireRole } from '../../src/routes/RouteGuards';
@@ -13,6 +13,9 @@ function LocationDisplay() {
 }
 
 describe('Route Guards (TEST-C-02)', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
   it('redirects signed-out visitor from protected route to /login?returnTo=...', () => {
     render(
       <AuthProvider initialStatus="signedOut" initialUser={null}>

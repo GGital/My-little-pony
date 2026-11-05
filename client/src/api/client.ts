@@ -1,7 +1,6 @@
 import { parseApiError } from './errors';
 
 export interface RequestOptions extends RequestInit {
-  onUnauthorized?: () => void;
   /** 'optional' for calls where 401 is a normal answer: E-01 sign-in, E-03 who-am-I. */
   auth?: 'required' | 'optional';
 }
@@ -14,7 +13,7 @@ export function setSessionExpiredHandler(fn: (() => void) | null) {
 }
 
 export async function apiRequest<T>(url: string, options: RequestOptions = {}): Promise<T> {
-  const { onUnauthorized, auth = 'required', headers, ...rest } = options;
+  const { auth = 'required', headers, ...rest } = options;
 
   const defaultHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -30,9 +29,6 @@ export async function apiRequest<T>(url: string, options: RequestOptions = {}): 
   });
 
   if (response.status === 401) {
-    if (onUnauthorized) {
-      onUnauthorized();
-    }
     if (auth === 'required') {
       onSessionExpired?.();
     }

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { Loading } from '../../src/components/Loading';
 import { EmptyState } from '../../src/components/EmptyState';
 import { ErrorState } from '../../src/components/ErrorState';
@@ -32,6 +33,22 @@ describe('Shared UI States (TEST-C-05)', () => {
     expect(actionButton).toBeInTheDocument();
     fireEvent.click(actionButton);
     expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders link when action provides href', () => {
+    render(
+      <MemoryRouter>
+        <EmptyState
+          title="No registrations"
+          description="Find an event to join."
+          action={{ label: 'Browse Events', href: '/events' }}
+        />
+      </MemoryRouter>
+    );
+
+    const link = screen.getByRole('link', { name: 'Browse Events' });
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute('href', '/events');
   });
 
   it('renders error state with server message and Try again button that retries', () => {
