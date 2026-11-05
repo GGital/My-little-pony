@@ -4,4 +4,9 @@
  */
 export type RouteRow = { id: string; method: 'GET' | 'POST'; path: string }
 
-export const SPRINT1_ROUTES: RouteRow[] = [{ id: 'E-12', method: 'GET', path: '/api/health' }]
+export const SPRINT1_ROUTES: RouteRow[] = [
+  { id: 'E-01', method: 'POST', path: '/api/auth/login' },
+  { id: 'E-02', method: 'POST', path: '/api/auth/logout' },
+  { id: 'E-03', method: 'GET', path: '/api/auth/me' },
+  { id: 'E-12', method: 'GET', path: '/api/health' },
+]
