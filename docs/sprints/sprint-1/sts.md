@@ -248,7 +248,7 @@ the evidence the TA checks (Deliverable 1 §4.2).
 |---|---|---|---|---|---|
 | I-01 SR-01 data foundation | TEST-SR1-01 … 05 | `4725528` | **10 failed / 17** (all on assertions: constraints accepted bad rows; seed created nothing) — `evidence/I-01-red.txt` | `3486e31` (implementation, 16 / 17), then `47bba2c` (explained test correction) | **18 passed / 18** — `evidence/I-01-green-2.txt` |
 | I-02 SR-02, SR-03 API foundation | TEST-SR2-01 … 05, TEST-SR3-01, TEST-SR4-01 (U, I) | Pending | Pending | Pending | Pending |
-| I-03 Client shell | TEST-C-01, C-02, C-05, TEST-SR3-02 | Pending | Pending | Pending | Pending |
+| I-03 Client shell | TEST-C-01, C-02, C-05, TEST-SR3-02 | `5c01c99`, `5e9f4aa` | **7 failed / 11** (TEST-C-01, C-02, SR3-02 on assertions; TEST-C-05 4 tests passed: components were committed with the tests; M1/M2 red commit `5e9f4aa` 2 failed / 18) — `evidence/I-03-red.txt` | `7401930`, `96ae073`, `ca5f9a9` | **18 passed / 18** — `evidence/I-03-green.txt` |
 | I-04 Feature-A | TEST-A-01 … 06, TEST-C-04 | Pending | Pending | Pending | Pending |
 | I-05 Feature-F | TEST-F-01 … 05, TEST-C-06 | Pending | Pending | Pending | Pending |
 | I-06 Feature-B | TEST-B-01 … 03 | Pending | Pending | Pending | Pending |
@@ -309,3 +309,4 @@ npm --prefix server run db:seed && npx playwright test e2e/sprint-1
 |---|---|---|---|
 | v1.0 | 4 Nov 2026 | First STS: 53 planned test rows + 2 journeys for 47 ACs, BR rejection map, TDD record, commands | Team (AI-assisted) |
 | v1.1 | 4 Nov 2026 | I-01 TDD record filled from real runs; TEST-SR1-01 split between I-01 (data layer) and I-12 (API, restart); TEST-SR1-05 expected result states the index shape and SQLSTATE 23505 | Team (AI-assisted) |
+| v1.2 | 5 Nov 2026 | I-03 TDD record filled from real runs; TEST-SR3-02 multi-timezone verification, route guard role protection on /me/registrations, and session expiry 401 handling | Team (AI-assisted) |
