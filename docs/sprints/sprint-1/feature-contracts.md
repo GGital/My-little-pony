@@ -1,6 +1,6 @@
 # Sprint 1 Feature Engineering Contracts
 
-Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.0 — draft for team review (PR 2)
+Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.2 (v1.0 reviewed in PR 2; changes in §15)
 Inputs: [`../../srs.md`](../../srs.md) v0.5 · [`../../features.md`](../../features.md) v0.2 ·
 [`../../traceability.md`](../../traceability.md) v0.2 · [`../../system-sds.md`](../../system-sds.md) v0.2 ·
 [`../plan.md`](../plan.md) v0.1 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.2 ·
@@ -142,7 +142,8 @@ support BR-01, BR-02 and BR-06 at database level.
    body is always `{ "error": { "code", "message", "details?" } }`.
 2. `validate(schema)` middleware parses `req.body`, `req.query` or `req.params` with a zod `.strict()` schema.
    Failure returns `400 VALIDATION_FAILED` with `details: [{ "field", "message" }]` for **every** failing field.
-3. Requests with a body must be `application/json`, else `415 UNSUPPORTED_MEDIA_TYPE`. Bodies over 100 kB give `413`.
+3. Requests with a body must be `application/json`, else `415 UNSUPPORTED_MEDIA_TYPE`. Bodies over 100 kB give
+   `413 PAYLOAD_TOO_LARGE` (added to SDS §6.2 in SDS v0.4). A `POST` with no body (E-09) is not a 415.
 4. `requireOrigin` (on POST/PATCH/DELETE, after `requireAuth`, SDS §6.1): `Origin` must equal `APP_ORIGIN`, else
    `403 FORBIDDEN`. Sign-in (E-01) runs it too.
 5. Unknown routes under `/api` → `404 NOT_FOUND`. A `GET` route never writes.
@@ -159,6 +160,15 @@ support BR-01, BR-02 and BR-06 at database level.
 
 **Planned tests:** TEST-SR2-01 … 03 (I), TEST-SR2-04 (U, error mapper), TEST-SR2-05 (I, 415 / 413 / origin).
 
+**How I-02 proves SR-02 before the endpoints exist (v1.2).** E-06 and E-09 are built in I-07 and I-08, so in I-02
+the tests drive the real shared pipeline through **probe routes** that exist only in the tests (mounted with
+`createApp({ extraRoutes })`, never in the production app): `POST /api/__test/echo` (origin check + a `.strict()`
+schema with the E-06 field names `title`, `capacity`, `startAt`), `GET /api/__test/error/:code` (sends a catalogue
+error, for the 401 and 409 shapes) and `GET /api/__test/boom` (the forced 500). The Issues that add the real
+endpoints add their cases to the same tests: I-04 adds the participant and organizer sessions to TEST-SR2-03;
+I-07 adds the real E-06 case to TEST-SR2-02; I-08 adds the E-09 cases to TEST-SR2-05; I-12 adds real 401 and 409
+cases to TEST-SR2-01 and checks that TEST-SR2-03's route table lists all twelve Sprint 1 routes.
+
 ---
 
 ## 3. SR-03 — Time handling
@@ -167,7 +177,7 @@ support BR-01, BR-02 and BR-06 at database level.
 
 **Behaviour**
 1. `server/src/clock.ts` exports `now(): Date`. In `NODE_ENV=test`, `setNow(date)` and `resetNow()` fix it. All
-   rule code calls `now()`, never `new Date()` or `Date.now()` (enforced by a lint rule in `server/src/domain/`).
+   rule code calls `now()`, never `new Date()` or `Date.now()` (enforced by a source check in TEST-SR3-01 over `server/src/domain/`).
 2. Times are stored as `timestamptz` and returned as UTC ISO strings.
 3. The client formats every time with `formatEventTime(iso)` (Asia/Bangkok, `en-GB`), for example
    `Thu 5 Nov 2026 · 17:00`.
@@ -178,6 +188,10 @@ support BR-01, BR-02 and BR-06 at database level.
 | **AC-SR3-01** | the clock fixed at T and events starting at T + 1 min, T, and T − 1 min | the event list is read and registration is attempted on each | only the T + 1 min event is listed and accepts registration; the T and T − 1 min events are absent from the list and reject with `409 REGISTRATION_CLOSED`. API times end in `Z`; the client shows `2026-11-05T10:00:00Z` as `Thu 5 Nov 2026 · 17:00` on a machine set to any time zone |
 
 **Planned tests:** TEST-SR3-01 (I, boundaries), TEST-SR3-02 (U, client formatter in two machine time zones).
+
+**Split of TEST-SR3-01 (v1.2).** I-02 proves the rule itself: `domain/time.ts` (`hasStarted`, `upcomingWhere`)
+against real PostgreSQL rows at T + 1 min, T and T − 1 min with the clock fixed at T, plus the UTC `Z` round trip.
+I-05 adds the E-04 list case and I-08 the E-09 `409 REGISTRATION_CLOSED` case, both through these same helpers.
 
 ---
 
@@ -588,3 +602,4 @@ the same Pull Request, so the history stays visible (Deliverable 1 §3.5).
 |---|---|---|---|---|
 | v1.0 | 4 Nov 2026 | First contracts for SR-01 … SR-03, Feature-A … I, SR-04, SR-05, SR-07; 47 ACs | Sprint 1 baseline before implementation | Team (AI-assisted) |
 | v1.1 | 4 Nov 2026 | §1 SR-01: constraints moved to migration `0002_rule_constraints`; `db:migrate:test` (non-destructive) added beside `db:reset:test`; in I-01, AC-SR1-01 is checked through the data layer, and through the API plus a real restart in I-12 | Found while implementing #3 (I-01): no API exists yet in I-01, and Prisma blocks agents from running `migrate reset` | Team (AI-assisted) |
+| v1.2 | 5 Nov 2026 | §2 SR-02: 413 is `PAYLOAD_TOO_LARGE`; body-less POST is not a 415; I-02 proves the pipeline through test-only probe routes, and I-04, I-07, I-08, I-12 add their real-endpoint cases to TEST-SR2-01 … 05. §3 SR-03: the no-`Date.now()` rule is a source check in TEST-SR3-01, not a lint rule; TEST-SR3-01 split between I-02 (rule + database) and I-05 / I-08 (E-04 / E-09) | Found while implementing #4 (I-02): E-04, E-06 and E-09 are built in later Issues, and the catalogue had no code for 413 | Team (AI-assisted) |

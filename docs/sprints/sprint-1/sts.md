@@ -1,7 +1,7 @@
 # Sprint 1 Software Test Specification (STS)
 
-Project: **TCG Event Hub** · Sprint 1 · Document version: v1.0 — draft for team review (PR 2)
-Contracts: [`feature-contracts.md`](feature-contracts.md) v1.0 · Issues and Definition of Done: [`README.md`](README.md)
+Project: **TCG Event Hub** · Sprint 1 · Document version: v1.2 (v1.0 reviewed in PR 2; changes in §8)
+Contracts: [`feature-contracts.md`](feature-contracts.md) v1.2 · Issues and Definition of Done: [`README.md`](README.md)
 
 This document turns every Sprint 1 acceptance criterion into planned tests, **before** the code exists. It
 follows the method we used in TokTickIT: **Spec DD → Test DD → TDD**. A Pull Request that adds behaviour without
@@ -53,7 +53,7 @@ its planned tests is not reviewable, and every result in this document comes fro
 | **Last-seat race (TEST-G-06)** | An event with capacity 5 and 4 active registrations; 20 participants each with their own signed-in Supertest agent; `await Promise.all(agents.map(a => a.post(url)))`. The test runs inside `for (let i = 0; i < 20; i++)` so the release shows 20 passing rounds |
 | Same participant double-click | 5 simultaneous E-09 calls from one agent |
 | Database down (health) | A second Prisma client pointed at an unreachable URL is injected into the health handler in the test |
-| Forced 500 | A test-only route `/api/__test/boom` that throws, registered only when `NODE_ENV=test` |
+| Forced 500 | A probe route `/api/__test/boom` that throws. It lives in `tests/helpers/probes.ts` and is mounted with `createApp({ extraRoutes })`, so the production app never has it |
 | Slow, empty and failing API in the UI | `fetch` stubs in component tests; `page.route('**/api/**')` in Playwright |
 | Server restart (TEST-SR1-01) | Integration: a new Prisma client. Manual: stop and start the server, then reload the page |
 
@@ -84,12 +84,12 @@ the commit id in §6.
 
 | Test ID | Level | AC / Req | Precondition / input | Action | Expected result | File | Result |
 |---|---|---|---|---|---|---|---|
-| TEST-SR2-01 | I | AC-SR2-01, NFR-07 | Requests producing 400, 401, 403, 404, 409 and the test-only 500 | Send each; inspect body text | Every body is exactly `{error:{code,message,details?}}`; no `stack`, `at `, `SELECT`, `prisma`, file path or other user's email in any body | `server/tests/sprint-1/errors.api.test.ts` | Pending |
-| TEST-SR2-02 | I | AC-SR2-02, NFR-15 | Organizer session | E-06 with `capacity:"ten"`, `title:7`, `startAt:"tomorrow"`, `organizerId:99` | `400 VALIDATION_FAILED`; `details` has exactly those 4 fields; 0 events stored | `server/tests/sprint-1/validation.api.test.ts` | Pending |
-| TEST-SR2-03 | I | AC-SR2-03, NFR-15 | Seeded test DB; row counts of all tables recorded | Call every Sprint 1 route with GET (with a participant and an organizer session) | Row counts unchanged; GET on POST-only paths → `404 NOT_FOUND` | `server/tests/sprint-1/validation.api.test.ts` | Pending |
-| TEST-SR2-04 | U | NFR-07 | — | `sendError` for every code in SDS §6.2 | Each code gets its status from the catalogue; unknown code throws at compile time (type test) | `server/tests/sprint-1/unit/errors.unit.test.ts` | Pending |
-| TEST-SR2-05 | I | NFR-15 | Participant session | E-09 with `text/plain` body; with a 101 kB body; with `Origin: https://evil.example`; with no Origin | `415`; `413`; `403 FORBIDDEN`; `403 FORBIDDEN`; nothing stored | `server/tests/sprint-1/validation.api.test.ts` | Pending |
-| TEST-SR3-01 | I | AC-SR3-01, NFR-11 | Clock at T; events start T + 1 min, T, T − 1 min; participant session | E-04; E-09 on each | Only T + 1 min listed and accepted (201); the others absent and `409 REGISTRATION_CLOSED`; every time string ends in `Z` | `server/tests/sprint-1/time.api.test.ts` | Pending |
+| TEST-SR2-01 | I | AC-SR2-01, NFR-07 | (I-02) probe routes: invalid body → 400, catalogue 401 and 409, foreign Origin → 403, unknown route → 404, `/api/__test/boom` → 500; a cookie on every request. (I-12) adds real 401 (E-03 signed out) and 409 (E-09 on a full event) | Send each; inspect body text and the server log | Every body is exactly `{error:{code,message,details?}}`; no `stack`, `at `, `SELECT`, `prisma`, file path, other user's email or cookie in any body; the 500 is logged once with only method, path and the real error | `server/tests/sprint-1/errors.api.test.ts` | Pending |
+| TEST-SR2-02 | I | AC-SR2-02, NFR-15 | (I-02) `POST /api/__test/echo` with a `.strict()` schema using the E-06 field names. (I-07) organizer session, real E-06 | Send `capacity:"ten"`, `title:7`, `startAt:"tomorrow"`, `organizerId:99` | `400 VALIDATION_FAILED`; `details` has exactly those 4 fields; 0 rows stored (table counts unchanged) | `server/tests/sprint-1/validation.api.test.ts` | Pending |
+| TEST-SR2-03 | I | AC-SR2-03, NFR-15 | Seeded test DB; row counts of all tables recorded; route table `tests/helpers/routes.ts` (each Issue adds its endpoints; I-04 adds participant and organizer sessions; I-12 checks all 12 routes are listed) | Call every listed route with GET | Row counts unchanged; GET on POST-only paths → `404 NOT_FOUND` | `server/tests/sprint-1/validation.api.test.ts` | Pending |
+| TEST-SR2-04 | U | NFR-07 | — | `sendError` for every code in SDS §6.2 (21 codes, incl. `PAYLOAD_TOO_LARGE`); the TypeScript compiler on `sendError(res, 'NOT_A_CODE')` | Each code gets its status from the catalogue; the 500 wording is fixed; an unknown code is a compile error and also throws at run time | `server/tests/sprint-1/unit/errors.unit.test.ts` | Pending |
+| TEST-SR2-05 | I | NFR-15 | (I-02) `POST /api/__test/echo`. (I-08) participant session, real E-09 | `text/plain` body; 101 kB body; `Origin: https://evil.example`; no Origin; malformed JSON; no body | `415`; `413 PAYLOAD_TOO_LARGE`; `403 FORBIDDEN`; `403 FORBIDDEN`; `400 VALIDATION_FAILED`; no body is not a 415; nothing stored | `server/tests/sprint-1/validation.api.test.ts` | Pending |
+| TEST-SR3-01 | I | AC-SR3-01, NFR-11 | Clock at T; events start T + 1 min, T, T − 1 min. (I-02) rule helpers against the database. (I-05) E-04. (I-08) E-09 with a participant session | (I-02) `upcomingWhere()` query, `hasStarted()`, read back; (I-05) E-04; (I-08) E-09 on each | Only T + 1 min is upcoming / listed and accepted (201); T and T − 1 min have started, are absent and get `409 REGISTRATION_CLOSED`; times keep milliseconds and end in `Z`; `setNow` refuses outside tests; no `Date.now()` / `new Date()` in `src/domain` | `server/tests/sprint-1/time.api.test.ts` | Pending |
 | TEST-SR3-02 | U | AC-SR3-01, NFR-11 | `TZ=UTC` and `TZ=America/New_York` | `formatEventTime('2026-11-05T10:00:00Z')` | `Thu 5 Nov 2026 · 17:00` in both | `client/tests/sprint-1/unit/formatEventTime.unit.test.ts` | Pending |
 
 ### 2.3 Feature-A — authentication and session
@@ -247,7 +247,7 @@ the evidence the TA checks (Deliverable 1 §4.2).
 | Issue | Tests written first | Red commit | Red run (failed / total) | Green commit | Green run (passed / total) |
 |---|---|---|---|---|---|
 | I-01 SR-01 data foundation | TEST-SR1-01 … 05 | `4725528` | **10 failed / 17** (all on assertions: constraints accepted bad rows; seed created nothing) — `evidence/I-01-red.txt` | `3486e31` (implementation, 16 / 17), then `47bba2c` (explained test correction) | **18 passed / 18** — `evidence/I-01-green-2.txt` |
-| I-02 SR-02, SR-03 API foundation | TEST-SR2-01 … 05, TEST-SR3-01, TEST-SR4-01 (U, I) | Pending | Pending | Pending | Pending |
+| I-02 SR-02, SR-03 API foundation | TEST-SR2-01 … 05, TEST-SR3-01, TEST-SR4-01 (U, I) | `7895809` | **55 failed / 78** (all AssertionError: empty app answers 404 HTML, empty catalogue, unfixable clock, no config check; the 18 I-01 tests and 5 guard checks pass) — `evidence/I-02-red.txt` | `d8971df` (implementation, 77 / 78), then `c53184e` (explained test correction) | **78 passed / 78** — `evidence/I-02-green-2.txt` |
 | I-03 Client shell | TEST-C-01, C-02, C-05, TEST-SR3-02 | Pending | Pending | Pending | Pending |
 | I-04 Feature-A | TEST-A-01 … 06, TEST-C-04 | Pending | Pending | Pending | Pending |
 | I-05 Feature-F | TEST-F-01 … 05, TEST-C-06 | Pending | Pending | Pending | Pending |
@@ -309,3 +309,4 @@ npm --prefix server run db:seed && npx playwright test e2e/sprint-1
 |---|---|---|---|
 | v1.0 | 4 Nov 2026 | First STS: 53 planned test rows + 2 journeys for 47 ACs, BR rejection map, TDD record, commands | Team (AI-assisted) |
 | v1.1 | 4 Nov 2026 | I-01 TDD record filled from real runs; TEST-SR1-01 split between I-01 (data layer) and I-12 (API, restart); TEST-SR1-05 expected result states the index shape and SQLSTATE 23505 | Team (AI-assisted) |
+| v1.2 | 5 Nov 2026 | I-02 TDD record filled from real runs; TEST-SR2-01 … 05 and TEST-SR3-01 describe the I-02 probe-route form and which Issue adds each real-endpoint case (contracts v1.2); 413 is `PAYLOAD_TOO_LARGE`; forced 500 route moved into the test helpers | Team (AI-assisted) |
