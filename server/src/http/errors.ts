@@ -9,7 +9,7 @@ export const ERRORS = {
   VALIDATION_FAILED: { status: 400, message: 'Some details need fixing.' },
   INVALID_PATH_PARAMETER: { status: 400, message: "That link doesn't look right." },
   UNAUTHENTICATED: { status: 401, message: 'Please sign in to continue.' },
-  INVALID_CREDENTIALS: { status: 401, message: "That email and password don't match." },
+  INVALID_CREDENTIALS: { status: 401, message: 'Email or password is incorrect.' },
   FORBIDDEN: { status: 403, message: "You don't have access to that." },
   EVENT_NOT_FOUND: { status: 404, message: 'This event could not be found.' },
   REGISTRATION_NOT_FOUND: { status: 404, message: 'This registration could not be found.' },

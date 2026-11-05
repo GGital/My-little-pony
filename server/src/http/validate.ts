@@ -32,7 +32,7 @@ function toDetails(error: z.ZodError, part: string): ErrorDetail[] {
     const at = issue.path.map(String)
     const entries: [string, string][] =
       issue.code === 'unrecognized_keys'
-        ? issue.keys.map((key) => [[...at, key].join('.'), 'This field is not allowed.'])
+        ? issue.keys.map((key) => [[...at, key].join('.'), 'This value cannot be set.'])
         : [[at.join('.') || part, issue.message]]
     for (const [field, message] of entries) if (!byField.has(field)) byField.set(field, message)
   }
