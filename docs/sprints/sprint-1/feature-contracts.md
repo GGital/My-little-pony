@@ -1,6 +1,6 @@
 # Sprint 1 Feature Engineering Contracts
 
-Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.2 (v1.0 reviewed in PR 2; changes in §15)
+Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.3 (v1.0 reviewed in PR 2; changes in §15)
 Inputs: [`../../srs.md`](../../srs.md) v0.5 · [`../../features.md`](../../features.md) v0.2 ·
 [`../../traceability.md`](../../traceability.md) v0.2 · [`../../system-sds.md`](../../system-sds.md) v0.2 ·
 [`../plan.md`](../plan.md) v0.1 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.2 ·
@@ -253,6 +253,14 @@ Diagram: D2 ([`../../diagrams/seq-auth.png`](../../diagrams/seq-auth.png))
 | **AC-A-06** | a successful sign-in at fixed time T | the cookie is read, then E-03 is called at T + 7 h 59 min and at T + 8 h | cookie has `HttpOnly`, `SameSite=Lax`, `Path=/`, `Max-Age=28800`; first call `200`, second `401` |
 
 **Planned tests:** TEST-A-01 … 06 (U, I, E). See STS §3.1.
+
+**How I-04 proves Feature-A before E-09 and E-10 exist (v1.3).** AC-A-04 sends the old cookie to E-09 and E-10,
+which arrive in I-08 and I-10. In I-04 the old cookie goes to E-03, E-02 and a test-only `GET /api/__test/protected`
+that runs the real `requireAuth` (mounted with `createApp({ extraRoutes })`, never in the production app); I-08 and
+I-10 add their E-09 and E-10 rows to TEST-A-04. The E2E half of TEST-A-04 (sign out, press Back) moves to I-12 with
+the other Playwright journeys; in I-04 the Back case is covered by the route guards (TEST-C-02, `AppRoutes`) and was
+checked by hand in the browser. AC-A-05's scan checks that no response has a `password` or `passwordHash` **key**,
+a scrypt hash or the seed password: the 400 for a bad password legitimately names the field `password`.
 
 ---
 
@@ -603,3 +611,4 @@ the same Pull Request, so the history stays visible (Deliverable 1 §3.5).
 | v1.0 | 4 Nov 2026 | First contracts for SR-01 … SR-03, Feature-A … I, SR-04, SR-05, SR-07; 47 ACs | Sprint 1 baseline before implementation | Team (AI-assisted) |
 | v1.1 | 4 Nov 2026 | §1 SR-01: constraints moved to migration `0002_rule_constraints`; `db:migrate:test` (non-destructive) added beside `db:reset:test`; in I-01, AC-SR1-01 is checked through the data layer, and through the API plus a real restart in I-12 | Found while implementing #3 (I-01): no API exists yet in I-01, and Prisma blocks agents from running `migrate reset` | Team (AI-assisted) |
 | v1.2 | 5 Nov 2026 | §2 SR-02: 413 is `PAYLOAD_TOO_LARGE`; body-less POST is not a 415; I-02 proves the pipeline through test-only probe routes, and I-04, I-07, I-08, I-12 add their real-endpoint cases to TEST-SR2-01 … 05. §3 SR-03: the no-`Date.now()` rule is a source check in TEST-SR3-01, not a lint rule; TEST-SR3-01 split between I-02 (rule + database) and I-05 / I-08 (E-04 / E-09) | Found while implementing #4 (I-02): E-04, E-06 and E-09 are built in later Issues, and the catalogue had no code for 413 | Team (AI-assisted) |
+| v1.3 | 6 Nov 2026 | §4 Feature-A: TEST-A-04 uses a test-only protected probe until E-09 / E-10 exist, and its E2E half moves to I-12; AC-A-05's response scan is defined as keys, hashes and the seed password; the server error texts now match this section (`INVALID_CREDENTIALS` "Email or password is incorrect.", unknown keys "This value cannot be set.") | Found while implementing #6 (I-04): E-09 and E-10 are built in I-08 / I-10, Playwright is set up in I-12, and `errors.ts` / `validate.ts` (I-02) used different words from this contract | Team (AI-assisted) |

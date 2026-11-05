@@ -2,6 +2,7 @@ import request from 'supertest'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { seed } from '../../prisma/seed.js'
 import { TEST_ORIGIN, makeApp } from '../helpers/app.js'
+import { cookieHeader, readSessionCookie, signIn } from '../helpers/auth.js'
 import { prisma, resetDb, tableCounts } from '../helpers/db.js'
 import { PROBE_POST_ONLY, probeRoutes } from '../helpers/probes.js'
 import { SPRINT1_ROUTES } from '../helpers/routes.js'
@@ -45,6 +46,24 @@ describe('TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15)', () => {
     expect(before.users).toBeGreaterThan(0) // the seed really ran
     for (const route of SPRINT1_ROUTES) {
       const res = await request(app).get(route.path)
+      expect(res.status, `${route.id} ${route.path}`).toBeLessThan(500)
+    }
+    expect(await tableCounts()).toEqual(before)
+  })
+
+  // Contracts v1.2 §2: I-04 adds the participant and organizer sessions. Sign-in itself writes a Session row,
+  // so the counts are taken after signing in and before the GETs.
+  it.each([
+    ['participant', 'mint@player.example'],
+    ['organizer', 'quantum@organizer.example'],
+  ])('with a signed-in %s, GET on every Sprint 1 route leaves every table unchanged', async (_role, email) => {
+    const signedIn = await signIn(request(app), email, 'test-only-seed-password')
+    expect(signedIn.status).toBe(200)
+    const cookie = cookieHeader(readSessionCookie(signedIn)!.value)
+
+    const before = await tableCounts()
+    for (const route of SPRINT1_ROUTES) {
+      const res = await request(app).get(route.path).set('Cookie', cookie)
       expect(res.status, `${route.id} ${route.path}`).toBeLessThan(500)
     }
     expect(await tableCounts()).toEqual(before)
