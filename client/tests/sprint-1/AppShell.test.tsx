@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, within, fireEvent } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { render, screen, within, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter, useLocation } from 'react-router-dom';
+import { AppRoutes } from '../../src/routes';
 import { AppShell } from '../../src/components/AppShell';
 import { AuthProvider } from '../../src/auth/AuthContext';
 import type { AuthUser } from '../../src/api/types';
@@ -137,3 +138,30 @@ describe('AppShell session header (TEST-C-04)', () => {
     expect(screen.queryByText('Mint')).not.toBeInTheDocument();
   });
 });
+
+describe('Sign out from a protected page (TEST-C-04, AC-C-04 with the real route table)', () => {
+  it('lands on /events with "You are signed out.", not on the sign-in redirect', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(json(204));
+    render(
+      <AuthProvider initialStatus="signedIn" initialUser={MINT}>
+        <MemoryRouter initialEntries={['/me/registrations']}>
+          <AppShell>
+            <AppRoutes />
+          </AppShell>
+          <LocationDisplay />
+        </MemoryRouter>
+      </AuthProvider>
+    );
+
+    fireEvent.click(screen.getByTestId('user-menu-btn'));
+    fireEvent.click(screen.getByRole('button', { name: 'Sign out' }));
+
+    expect(await screen.findByText('You are signed out.')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId('location-display')).toHaveTextContent(/^\/events$/));
+  });
+});
+
+function LocationDisplay() {
+  const location = useLocation();
+  return <div data-testid="location-display">{location.pathname + location.search}</div>;
+}
