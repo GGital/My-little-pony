@@ -3,11 +3,12 @@ import type { PrismaClient } from '@prisma/client'
 import type { Config } from './config.js'
 import { jsonBody } from './http/body.js'
 import { errorHandler, sendError } from './http/errors.js'
+import { eventsRouter } from './http/events.routes.js'
 import { healthRouter } from './http/health.js'
 import { createLogger, type Logger } from './log.js'
 
 export type AppDeps = {
-  prisma: Pick<PrismaClient, '$queryRaw'>
+  prisma: PrismaClient
   config: Config
   log?: Logger
   /** Extra routes mounted under /api before the 404 handler. Tests use it for probe routes. */
@@ -23,6 +24,7 @@ export function createApp({ prisma, config, log = createLogger(config.LOG_LEVEL)
   const api = express.Router()
   api.use(jsonBody())
   api.use(healthRouter(prisma, log))
+  api.use(eventsRouter(prisma))
   extraRoutes?.(api)
   api.use((_req, res) => sendError(res, 'NOT_FOUND'))
   api.use(errorHandler(log))

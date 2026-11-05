@@ -1,5 +1,4 @@
-import React from 'react'
-import { readdirSync, readFileSync } from 'node:fs'
+﻿import { readdirSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
@@ -22,7 +21,7 @@ const MOCK_EVENT: EventDetailType = {
   seatsRemaining: 21,
   status: 'PUBLISHED',
   feeLabel: 'THB 250',
-  structureNote: '4 rounds ? Best of 1',
+  structureNote: '4 rounds · Best of 1',
   contact: 'hello@quantumcards.example',
   description: '<script>alert(1)</script><b>bold</b>',
   organizer: { displayName: 'Quantum Cards' },
@@ -30,7 +29,7 @@ const MOCK_EVENT: EventDetailType = {
   viewer: { action: 'REGISTER', registrationId: null },
 }
 
-describe('TEST-C-06 (C) � XSS prevention and safe text rendering (AC-C-06, NFR-15)', () => {
+describe('TEST-C-06 (C) — XSS prevention and safe text rendering (AC-C-06, NFR-15)', () => {
   it('renders dangerous description text literally, executes no script, and creates no <b> DOM element', async () => {
     const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {})
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
