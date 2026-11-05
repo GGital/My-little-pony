@@ -2,15 +2,19 @@ import { parseApiError } from './errors';
 
 export interface RequestOptions extends RequestInit {
   onUnauthorized?: () => void;
+  /** 'optional' for calls where 401 is a normal answer: E-01 sign-in, E-03 who-am-I. */
   auth?: 'required' | 'optional';
 }
 
-export function setSessionExpiredHandler(_fn: (() => void) | null): void {
-  // Stub for red test step
+let onSessionExpired: (() => void) | null = null;
+
+/** AuthProvider registers this; it sets { status: 'signedOut', user: null }. */
+export function setSessionExpiredHandler(fn: (() => void) | null) {
+  onSessionExpired = fn;
 }
 
 export async function apiRequest<T>(url: string, options: RequestOptions = {}): Promise<T> {
-  const { onUnauthorized, headers, ...rest } = options;
+  const { onUnauthorized, auth = 'required', headers, ...rest } = options;
 
   const defaultHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -28,9 +32,9 @@ export async function apiRequest<T>(url: string, options: RequestOptions = {}): 
   if (response.status === 401) {
     if (onUnauthorized) {
       onUnauthorized();
-    } else if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
-      const returnTo = encodeURIComponent(window.location.pathname + window.location.search);
-      window.location.href = `/login?returnTo=${returnTo}`;
+    }
+    if (auth === 'required') {
+      onSessionExpired?.();
     }
   }
 

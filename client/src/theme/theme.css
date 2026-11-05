@@ -2,12 +2,17 @@
   --ink-900: #16112b;
   --ink-800: #2a1f55;
   --surface: #ffffff;
-  --accent-ink: #007a78;
-  --primary-violet: #6c4ce0;
-  --primary-violet-hover: #583bb8;
-  --text-main: #1f2937;
-  --text-muted: #6b7280;
-  --border-color: #e5e7eb;
+  --surface-muted: #f5f3fb;
+  --primary: #6c4ce0;
+  --primary-hover: #5838c9;
+  --accent: #0e8f80;
+  --accent-ink: #0b6b60;
+  --accent-tint: #e6f6f3;
+  --text: #1f1a33;
+  --text-muted: #5f5878;
+  --border: #e3dff0;
+  --warning: #b45309;
+  --danger: #c8303f;
   --radius-panel: 16px;
   --radius-card: 12px;
   --radius-pill: 999px;
@@ -19,15 +24,25 @@
 body {
   margin: 0;
   font-family: var(--font-body);
-  color: var(--text-main);
+  color: var(--text);
   background: linear-gradient(180deg, var(--ink-900) 0%, var(--ink-800) 100%);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }
 
+.app-panel {
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--radius-panel);
+  margin: 24px auto;
+  padding: 24px;
+  max-width: 1200px;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   font-weight: 700;
+  color: var(--text);
 }
 
 ::selection {
@@ -35,12 +50,20 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 :focus-visible {
-  outline: 2px solid var(--primary-violet);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+.text-white-hover {
+  transition: color 150ms var(--ease-out);
+}
+
+.text-white-hover:hover {
+  color: #ffffff !important;
 }
 
 .badge-role-player {
@@ -56,7 +79,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .badge-role-organizer {
-  background-color: var(--primary-violet);
+  background-color: var(--primary);
   color: #ffffff;
   font-family: var(--font-body);
   font-weight: 600;

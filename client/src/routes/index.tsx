@@ -1,15 +1,15 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { RequireAuth, RequireRole } from './RouteGuards';
+import { RequireRole } from './RouteGuards';
 import { NotAvailablePage } from './pages/NotAvailablePage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 // Placeholder route pages for Sprint 1 routing shell
-const EventsStub = () => <div className="container py-4 text-white"><h2>Events</h2></div>;
-const LoginStub = () => <div className="container py-4 text-white"><h2>Sign in</h2></div>;
-const MyEventsStub = () => <div className="container py-4 text-white"><h2>My Events</h2></div>;
-const OrganizerDashboardStub = () => <div className="container py-4 text-white"><h2>Organizer Dashboard</h2></div>;
-const CreateEventStub = () => <div className="container py-4 text-white"><h2>Create Event</h2></div>;
+const EventsStub = () => <div><h2>Events</h2></div>;
+const LoginStub = () => <div><h2>Sign in</h2></div>;
+const MyEventsStub = () => <div><h2>My Events</h2></div>;
+const OrganizerDashboardStub = () => <div><h2>Organizer Dashboard</h2></div>;
+const CreateEventStub = () => <div><h2>Create Event</h2></div>;
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -22,9 +22,9 @@ export const AppRoutes: React.FC = () => {
       <Route
         path="/me/registrations"
         element={
-          <RequireAuth>
+          <RequireRole role="PARTICIPANT">
             <MyEventsStub />
-          </RequireAuth>
+          </RequireRole>
         }
       />
 

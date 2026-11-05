@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 
@@ -6,7 +6,31 @@ export const AppShell: React.FC<{ children?: React.ReactNode }> = ({ children })
   const { status, user, signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMenuOpen(false);
+      }
+    };
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [menuOpen]);
 
   const handleSignOut = async () => {
     try {
@@ -25,12 +49,12 @@ export const AppShell: React.FC<{ children?: React.ReactNode }> = ({ children })
       <header
         data-testid="app-header"
         className="navbar navbar-expand border-bottom px-3 py-2 text-white"
-        style={{ backgroundColor: 'var(--ink-900)', borderColor: 'rgba(255, 255, 255, 0.1)' }}
+        style={{ backgroundColor: 'var(--ink-900)', borderColor: 'rgba(255, 255, 255, 0.12)' }}
       >
         <div className="container-fluid d-flex align-items-center justify-content-between">
           <div className="d-flex align-items-center gap-4">
             <Link to="/events" className="navbar-brand text-white fw-bold d-flex align-items-center gap-2">
-              <span style={{ color: 'var(--primary-violet)' }}>✦</span>
+              <span style={{ color: 'var(--primary)' }}>✦</span>
               <span>TCG Event Hub</span>
             </Link>
 
@@ -69,12 +93,13 @@ export const AppShell: React.FC<{ children?: React.ReactNode }> = ({ children })
             )}
 
             {status === 'signedIn' && user && (
-              <div className="dropdown position-relative">
+              <div className="dropdown position-relative" ref={menuRef}>
                 <button
                   type="button"
                   className="btn btn-sm d-flex align-items-center gap-2 text-white p-1"
                   onClick={() => setMenuOpen(!menuOpen)}
                   aria-expanded={menuOpen}
+                  aria-haspopup="menu"
                   data-testid="user-menu-btn"
                 >
                   <span className="fw-semibold">{user.displayName}</span>
@@ -127,7 +152,9 @@ export const AppShell: React.FC<{ children?: React.ReactNode }> = ({ children })
         </div>
       )}
 
-      <main className="flex-grow-1">{children}</main>
+      <main className="flex-grow-1 px-3">
+        <div className="app-panel">{children}</div>
+      </main>
     </div>
   );
 };

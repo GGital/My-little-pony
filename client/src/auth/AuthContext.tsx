@@ -1,4 +1,5 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { setSessionExpiredHandler } from '../api/client';
 import type { AuthUser } from '../api/types';
 
 export type AuthStatus = 'loading' | 'signedOut' | 'signedIn';
@@ -30,13 +31,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
   initialStatus = 'loading',
   initialUser = null,
 }) => {
-  // Stub for initial setup
+  const [status, setStatus] = useState<AuthStatus>(initialStatus);
+  const [user, setUser] = useState<AuthUser | null>(initialUser);
+
+  useEffect(() => {
+    setStatus(initialStatus);
+    setUser(initialUser);
+  }, [initialStatus, initialUser]);
+
+  useEffect(() => {
+    setSessionExpiredHandler(() => {
+      setStatus('signedOut');
+      setUser(null);
+    });
+    return () => {
+      setSessionExpiredHandler(null);
+    };
+  }, []);
+
+  const signOut = async () => {
+    setStatus('signedOut');
+    setUser(null);
+  };
+
   return (
     <AuthContext.Provider
       value={{
-        status: initialStatus,
-        user: initialUser,
-        signOut: async () => {},
+        status,
+        user,
+        signOut,
       }}
     >
       {children}
