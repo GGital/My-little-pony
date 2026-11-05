@@ -2,6 +2,7 @@ import type { Router } from 'express'
 import { z } from 'zod'
 import { sendError, type ErrorCode } from '../../src/http/errors.js'
 import { requireOrigin } from '../../src/http/origin.js'
+import { requireAuth } from '../../src/http/session.js'
 import { validate } from '../../src/http/validate.js'
 import { TEST_ORIGIN } from './app.js'
 
@@ -36,6 +37,11 @@ export function probeRoutes(api: Router) {
   // The forced 500 of STS §1.4.
   api.get('/__test/boom', () => {
     throw new Error(LEAKY_ERROR_TEXT)
+  })
+  // A protected route behind the real requireAuth (I-04, contracts v1.3 §4): stands in for E-09 and E-10 in
+  // TEST-A-04 until I-08 and I-10 add those endpoints.
+  api.get('/__test/protected', requireAuth, (req, res) => {
+    res.json({ actorId: req.actor!.id })
   })
 }
 

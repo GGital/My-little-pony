@@ -1,11 +1,12 @@
 # Sprint 1: engineering contracts, tests and Definition of Done
 
-Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Version v1.1 (v1.0 reviewed in PR 2; changes in §5)
+Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Version v1.2 (v1.0 reviewed in PR 2; changes in §5)
 
 | Document | What it is |
 |---|---|
 | [`feature-contracts.md`](feature-contracts.md) | One engineering contract per Sprint 1 feature and responsibility: design, UI/API/data, 47 acceptance criteria |
 | [`sts.md`](sts.md) | Software Test Specification: every planned test, AC → test map, BR rejection map, TDD record, results |
+| [`../../contributions.md`](../../contributions.md), [`../../ai-use.md`](../../ai-use.md) | Contribution table and AI-use declaration; every Issue PR updates its row in both |
 | This file | Sprint goal, Issue plan, the TDD workflow every Issue follows, the Product Definition of Done |
 
 **Sprint goal** (from [`../plan.md`](../plan.md) §2): a player can sign in, find an event, take a seat that can never
@@ -69,7 +70,7 @@ failing before implementation and passing afterward"):
 |---|---|
 | Commit A | Message `test(<feature>): add failing tests TEST-X-nn … (red)`. Contains **only** test files and the minimum stubs needed to compile (for example an empty route that returns 501). Run the suite and paste the failure summary (failed / total) into `sts.md` §5 |
 | Commit B | Message `feat(<feature>): <behaviour> (green)`. Makes exactly the planned tests pass. **Never** edits an assertion to make it pass. If a test was wrong, change the contract and the test in a separate, explained commit |
-| PR body | Links the Issue, the contract section and the test IDs; shows the red and green commit ids and their run summaries; lists anything not done |
+| PR body | Links the Issue, the contract section and the test IDs; shows the red and green commit ids and their run summaries; states the AI assistance and who built and reviewed it; lists anything not done |
 | Review | The teammate runs the tests locally and writes at least one specific check, question or finding. Authors never approve their own PR |
 | AI use | The agent gets the Issue, the contract section and the test IDs, and implements one bounded Issue at a time (Lecture 10 step 7). Its output is reviewed like any other code |
 
@@ -90,7 +91,7 @@ claim by a person or an AI agent is not evidence.
 | DoD-5 | The PR was reviewed by the teammate, with a specific comment, and merged into `sprint-1-staging` | PR link and review text |
 | DoD-6 | Permissions are enforced by the server, and the permission-matrix test covers any new endpoint | TEST-B-03 rows |
 | DoD-7 | No secret, real password or token in Git, logs or the PDF | Secret scan (TEST-SR4-01); log check |
-| DoD-8 | Documents are current: contract (with a version row if it changed), STS results, traceability, README setup | Diff of `docs/` in the PR |
+| DoD-8 | Documents are current: contract (with a version row if it changed), STS results, traceability, README setup, the Issue's row in `contributions.md` and in `ai-use.md` | Diff of `docs/` in the PR |
 | DoD-9 | Anything not finished, failing or skipped is written down | "Known limitations" in the PR and `sts.md` §6 |
 | DoD-10 | **Release only:** release PR `sprint-1-staging` → `main` reviewed and merged after the staging suite, journeys and three-width check pass; tag `v0.1.0`; README lets a fresh clone run | Tag, release PR, fresh-clone run log |
 
@@ -100,3 +101,4 @@ claim by a person or an AI agent is not evidence.
 |---|---|---|---|
 | v1.0 | 4 Nov 2026 | First Sprint 1 package: contracts v1.0, STS v1.0, Issue plan I-01 … I-12, TDD workflow, DoD-1 … DoD-10 | Team (AI-assisted) |
 | v1.1 | 5 Nov 2026 | §2: which later Issues add real-endpoint cases to I-01 and I-02 tests (contracts v1.1, v1.2) | Team (AI-assisted) |
+| v1.2 | 6 Nov 2026 | Contribution table (`docs/contributions.md`) and AI-use declaration (`docs/ai-use.md`) added; the PR body rule and DoD-8 now require each Issue to update its row in both | Team (AI-assisted) |

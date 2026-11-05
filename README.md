@@ -6,7 +6,8 @@ A full-stack application where trading-card-game (TCG) stores and organizers pub
 players find and register for them, and organizers record attendance.
 
 Engineering documents live in [`docs/`](docs/): start with the [SRS](docs/srs.md), the
-[System-Level SDS](docs/system-sds.md) and the [Sprint 1 package](docs/sprints/sprint-1/README.md).
+[System-Level SDS](docs/system-sds.md) and the [Sprint 1 package](docs/sprints/sprint-1/README.md). Who did
+what is in the [contribution table](docs/contributions.md); AI assistance is in the [AI-use declaration](docs/ai-use.md).
 
 ## Prerequisites
 
@@ -18,8 +19,12 @@ Engineering documents live in [`docs/`](docs/): start with the [SRS](docs/srs.md
 ```bash
 cd server
 npm install
+npm run db:generate
 cp .env.example .env
 ```
+
+`npm run db:generate` builds the Prisma client. npm 11 blocks Prisma's install script, so without it the seed
+fails with `@prisma/client did not initialize yet`.
 
 Edit `server/.env` with your own values (it is git-ignored). `DATABASE_URL_TEST` must point at a separate test
 database: the tests empty every table in it.
@@ -54,6 +59,20 @@ The server checks `server/.env` when it starts and stops with a one-line message
 variable. Every variable is described in `server/.env.example` and in the
 [SDS §9.1](docs/system-sds.md). `DATABASE_URL` and `APP_ORIGIN` are required; the others have defaults.
 
+## Run the app (API + client)
+
+In one terminal, `cd server && npm run dev`. In a second one:
+
+```bash
+cd client
+npm install
+npm run dev
+```
+
+Open `http://localhost:5173`. The Vite dev server forwards `/api` to the API on port 3000, so the session cookie
+is same-origin. **Sign in** with a demo account above and the `SEED_PASSWORD` you chose. The session lasts 8 hours
+from sign-in; **Sign out** in the header menu ends it on the server.
+
 ## Tests
 
 Prepare the test database (applies migrations only, never deletes data), then run the suite:
@@ -67,3 +86,5 @@ To rebuild the test database from scratch, run `npm run db:reset:test` (this **d
 database**). Both commands refuse to run when `DATABASE_URL_TEST` is missing or equal to `DATABASE_URL`.
 
 Type check: `npm run typecheck`.
+
+Client tests and build: `cd client && npm test && npm run build`.

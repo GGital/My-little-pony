@@ -11,10 +11,15 @@ export async function resetDb() {
 let counter = 0
 const next = () => ++counter
 
-export async function makeUser(role: Role, name?: string) {
+export async function makeUser(role: Role, name?: string, over: { email?: string; passwordHash?: string } = {}) {
   const i = next()
   return prisma.user.create({
-    data: { email: `user${i}@test.example`, displayName: name ?? `User ${i}`, passwordHash: 'scrypt$test', role },
+    data: {
+      email: over.email ?? `user${i}@test.example`,
+      displayName: name ?? `User ${i}`,
+      passwordHash: over.passwordHash ?? 'scrypt$test',
+      role,
+    },
   })
 }
 export const makeOrganizer = (name?: string) => makeUser('ORGANIZER', name)

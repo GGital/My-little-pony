@@ -413,7 +413,7 @@ Later sprints rerun earlier checks as regression tests.
 
 | Version | Date | Change | Author |
 |---|---|---|---|
-| v0.1 | 4 Nov 2026 | First full draft of the whole-product SRS | Team (drafted with AI assistance, see AI-use declaration) |
+| v0.1 | 4 Nov 2026 | First full draft of the whole-product SRS | Team (drafted with AI assistance, see the [AI-use declaration](ai-use.md)) |
 | v0.2 | 4 Nov 2026 | Reference UX verified in a browser (§1.2, Q-07 resolved); event gains venue address, play structure note and contact (FR-06, BR-03); list shows registered/capacity (FR-11); added X-13 and D-12 | Team (AI-assisted) |
 | v0.3 | 4 Nov 2026 | Event-card and header patterns from the reference (§1.2); access summary (§2.1); FR-26 sign-in-then-return, FR-27 header account menu; D-13 own visual theme | Team (AI-assisted) |
 | v0.4 | 4 Nov 2026 | Review pass: BR-04 rewritten (cancelled events visible, drafts owner-only) to remove a conflict with FR-14 and FR-17; added FR-28 record keeping, NFR-15 input hygiene, NFR-16 sign-in throttling, "Upcoming" definition, problem → requirement links, C-06, D-14, Q-08, Q-09; clarified FR-12, FR-13, FR-17, BR-08, BR-09, BR-12, BR-15, BR-16, NFR-02, NFR-04, NFR-13, A-06; fixed X-08 reference | Team (AI-assisted) |

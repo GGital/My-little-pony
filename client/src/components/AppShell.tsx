@@ -32,16 +32,13 @@ export const AppShell: React.FC<{ children?: React.ReactNode }> = ({ children })
     };
   }, [menuOpen]);
 
+  // Leave the page first: if the session ended while still on a protected route, its guard would win the
+  // race and send the user to /login instead of /events (contracts §4 UI).
   const handleSignOut = async () => {
-    try {
-      await signOut();
-      setMenuOpen(false);
-      setNotification('You are signed out.');
-      navigate('/events');
-    } catch {
-      // Fallback
-      navigate('/events');
-    }
+    setMenuOpen(false);
+    navigate('/events');
+    await signOut();
+    setNotification('You are signed out.');
   };
 
   return (
