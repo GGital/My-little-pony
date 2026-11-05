@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { AppShell } from '../../src/components/AppShell';
 import { AuthProvider } from '../../src/auth/AuthContext';
@@ -15,19 +15,13 @@ describe('AppShell navigation (TEST-C-01)', () => {
       </AuthProvider>
     );
 
-    // Links present
-    const eventsLink = screen.getByRole('link', { name: /^Events$/i });
-    expect(eventsLink).toBeInTheDocument();
-    expect(eventsLink).toHaveAttribute('href', '/events');
+    const nav = screen.getByRole('navigation');
+    const navLinks = within(nav).getAllByRole('link').map((el) => el.textContent?.trim());
+    expect(navLinks).toEqual(['Events']);
 
     const signInLink = screen.getByRole('link', { name: /Sign in/i });
     expect(signInLink).toBeInTheDocument();
     expect(signInLink).toHaveAttribute('href', '/login');
-
-    // Forbidden links for Visitor
-    expect(screen.queryByRole('link', { name: /My Events/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('link', { name: /Dashboard/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('link', { name: /\+ Create event/i })).not.toBeInTheDocument();
   });
 
   it('renders links exactly for Participant: Events, My Events, PLAYER badge, display name', () => {
@@ -46,17 +40,13 @@ describe('AppShell navigation (TEST-C-01)', () => {
       </AuthProvider>
     );
 
-    // Links present
-    expect(screen.getByRole('link', { name: /^Events$/i })).toHaveAttribute('href', '/events');
-    expect(screen.getByRole('link', { name: /My Events/i })).toHaveAttribute('href', '/me/registrations');
+    const nav = screen.getByRole('navigation');
+    const navLinks = within(nav).getAllByRole('link').map((el) => el.textContent?.trim());
+    expect(navLinks).toEqual(['Events', 'My Events']);
 
     // User display & role badge
     expect(screen.getByText('Mint')).toBeInTheDocument();
     expect(screen.getByText('PLAYER')).toBeInTheDocument();
-
-    // Forbidden links for Participant
-    expect(screen.queryByRole('link', { name: /Dashboard/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('link', { name: /\+ Create event/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('link', { name: /Sign in/i })).not.toBeInTheDocument();
   });
 
@@ -76,17 +66,13 @@ describe('AppShell navigation (TEST-C-01)', () => {
       </AuthProvider>
     );
 
-    // Links present
-    expect(screen.getByRole('link', { name: /^Events$/i })).toHaveAttribute('href', '/events');
-    expect(screen.getByRole('link', { name: /^Dashboard$/i })).toHaveAttribute('href', '/organizer');
-    expect(screen.getByRole('link', { name: /\+ Create event/i })).toHaveAttribute('href', '/organizer/events/new');
+    const nav = screen.getByRole('navigation');
+    const navLinks = within(nav).getAllByRole('link').map((el) => el.textContent?.trim());
+    expect(navLinks).toEqual(['Events', 'Dashboard', '+ Create event']);
 
     // User display & role badge
     expect(screen.getByText('Quantum Cards')).toBeInTheDocument();
     expect(screen.getByText('ORGANIZER')).toBeInTheDocument();
-
-    // Forbidden links for Organizer
-    expect(screen.queryByRole('link', { name: /My Events/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('link', { name: /Sign in/i })).not.toBeInTheDocument();
   });
 });

@@ -4,6 +4,7 @@ import { Loading } from '../../src/components/Loading';
 import { EmptyState } from '../../src/components/EmptyState';
 import { ErrorState } from '../../src/components/ErrorState';
 import { FormFieldError } from '../../src/components/FormFieldError';
+import { SubmitButton } from '../../src/components/SubmitButton';
 import type { ApiErrorDetail } from '../../src/api/types';
 
 describe('Shared UI States (TEST-C-05)', () => {
@@ -74,9 +75,9 @@ describe('Shared UI States (TEST-C-05)', () => {
           <FormFieldError field="capacity" details={details} />
         </div>
 
-        <button type="submit" disabled={isSubmitting} aria-busy={isSubmitting}>
-          {isSubmitting ? 'Saving...' : 'Submit'}
-        </button>
+        <SubmitButton busy={isSubmitting} busyLabel="Saving...">
+          Submit
+        </SubmitButton>
       </form>
     );
 

@@ -2,6 +2,11 @@ import { parseApiError } from './errors';
 
 export interface RequestOptions extends RequestInit {
   onUnauthorized?: () => void;
+  auth?: 'required' | 'optional';
+}
+
+export function setSessionExpiredHandler(_fn: (() => void) | null): void {
+  // Stub for red test step
 }
 
 export async function apiRequest<T>(url: string, options: RequestOptions = {}): Promise<T> {

@@ -1,10 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { api, apiRequest } from '../../../src/api/client';
+import { api, apiRequest, setSessionExpiredHandler } from '../../../src/api/client';
 import { ApiError, parseApiError } from '../../../src/api/errors';
 
 describe('api client & errors (Feature-C Behaviour 4)', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+    setSessionExpiredHandler(null);
   });
 
   it('turns error response JSON into ApiError { status, code, message, details }', async () => {
@@ -32,28 +33,40 @@ describe('api client & errors (Feature-C Behaviour 4)', () => {
     ]);
   });
 
-  it('calls onUnauthorized callback on 401 responses', async () => {
-    const errorPayload = {
-      error: {
-        code: 'UNAUTHENTICATED',
-        message: 'Authentication required',
-      },
-    };
+  it('calls no handler and does not navigate when auth: "optional" call returns 401', async () => {
+    const handler = vi.fn();
+    setSessionExpiredHandler(handler);
 
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response(JSON.stringify(errorPayload), {
+      new Response(JSON.stringify({ error: { code: 'UNAUTHENTICATED', message: 'Unauthenticated' } }), {
         status: 401,
         headers: { 'Content-Type': 'application/json' },
       })
     );
 
-    const onUnauthorized = vi.fn();
+    await expect(
+      apiRequest('/api/auth/me', { auth: 'optional' })
+    ).rejects.toThrow('Unauthenticated');
+
+    expect(handler).not.toHaveBeenCalled();
+  });
+
+  it('calls onSessionExpired handler once when default (auth: "required") call returns 401', async () => {
+    const handler = vi.fn();
+    setSessionExpiredHandler(handler);
+
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ error: { code: 'UNAUTHENTICATED', message: 'Session expired' } }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    );
 
     await expect(
-      apiRequest('/api/me/registrations', { onUnauthorized })
-    ).rejects.toThrow('Authentication required');
+      apiRequest('/api/me/registrations')
+    ).rejects.toThrow('Session expired');
 
-    expect(onUnauthorized).toHaveBeenCalledTimes(1);
+    expect(handler).toHaveBeenCalledTimes(1);
   });
 
   it('sends credentials same-origin and Content-Type application/json on post', async () => {

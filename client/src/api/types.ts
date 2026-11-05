@@ -29,7 +29,7 @@ export interface EventSummary {
   capacity: number;
   registeredCount: number;
   seatsRemaining: number;
-  status: 'PUBLISHED' | 'DRAFT';
+  status: 'PUBLISHED' | 'DRAFT' | 'CANCELLED';
 }
 
 export interface EventDetail extends EventSummary {
