@@ -1,7 +1,7 @@
 > test
 > vitest run
 
- RUN  v4.0.18 C:/Users/Praewa/My-little-pony/server
+ RUN  v4.0.18 <repo>/server
 
  ❯ tests/sprint-1/organizer.api.test.ts (9 tests | 5 failed)
        × O1 gets 200 with three rows in registration order, display names, times, REGISTERED, and counts 3/24/21

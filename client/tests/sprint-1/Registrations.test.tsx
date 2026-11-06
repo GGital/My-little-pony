@@ -1,25 +1,14 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { Registrations } from '../../src/pages/organizer/Registrations'
-import type { OrganizerRegistrationRow } from '../../src/api/types'
+import type { EventRegistrationsResponse as RegistrationsResponse } from '../../src/api/types'
 
 // TEST-I-01 (C) and the Registrations part of TEST-C-05 (contracts §12, §6 Behaviour 5).
 // The E2E half of TEST-I-01 is in I-12.
 
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
-
-type RegistrationsResponse = {
-  event: {
-    id: number
-    title: string
-    capacity: number
-    registeredCount: number
-    seatsRemaining: number
-  }
-  items: OrganizerRegistrationRow[]
-}
 
 const renderPage = (eventId = '1') =>
   render(
@@ -72,10 +61,13 @@ describe('TEST-I-01 (C) — Event Registration List (AC-I-01, FR-18)', () => {
     expect(screen.getByText(/3 \/ 24/)).toBeInTheDocument()
     expect(screen.getByText(/21 seats left/)).toBeInTheDocument()
 
-    // Table rows in order
-    expect(screen.getByText('Mint')).toBeInTheDocument()
-    expect(screen.getByText('Ploy')).toBeInTheDocument()
-    expect(screen.getByText('Boss')).toBeInTheDocument()
+    // Table rows in the server's order, numbered from 1
+    const rows = within(screen.getByRole('table')).getAllByRole('row').slice(1)
+    expect(rows.map((r) => within(r).getAllByRole('cell').slice(0, 2).map((c) => c.textContent))).toEqual([
+      ['1', 'Mint'],
+      ['2', 'Ploy'],
+      ['3', 'Boss'],
+    ])
 
     // Bangkok formatted time for 2026-11-05T10:00:00.000Z (+07:00 -> 17:00)
     expect(screen.getByText('Thu 5 Nov 2026 · 17:00')).toBeInTheDocument()
@@ -103,6 +95,19 @@ describe('TEST-I-01 (C) — Event Registration List (AC-I-01, FR-18)', () => {
 
     expect(await screen.findByText('Release Weekend Sealed')).toBeInTheDocument()
     expect(screen.getByText('No registrations yet.')).toBeInTheDocument()
+  })
+})
+
+describe("TEST-I-02 (C) — another organizer's event or a malformed id shows the not-found page (AC-I-02)", () => {
+  it.each([
+    [404, 'EVENT_NOT_FOUND', 'Event not found.'],
+    [400, 'INVALID_PATH_PARAMETER', 'This id is not valid.'],
+  ])('a %i answer shows the not-found page, with no Try again', async (status, code, message) => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(json(status, { error: { code, message } }))
+    renderPage('1')
+
+    expect(await screen.findByTestId('not-found-page')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Try again/i })).not.toBeInTheDocument()
   })
 })
 

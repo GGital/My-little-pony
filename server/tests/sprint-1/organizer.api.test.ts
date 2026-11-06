@@ -182,15 +182,21 @@ describe('Feature-I — Event Registration List (E-08, contracts §12)', () => {
       startAt: new Date(T.getTime() + 7 * DAY),
     })
 
-    // Create registrations in order: Mint, Ploy, Boss at known distinct timestamps
+    // Registered Mint, Ploy, Boss (createdAt order), but inserted Boss first, so id order and insert order differ
+    // from createdAt order and the test proves the sort. Fern's CANCELLED registration is the earliest and must
+    // be neither listed nor counted.
+    const fern = await makeParticipant('Fern')
+    const r3 = await prisma.registration.create({
+      data: { eventId: ev1.id, participantId: boss.id, createdAt: new Date(T.getTime() + 3000) },
+    })
     const r1 = await prisma.registration.create({
       data: { eventId: ev1.id, participantId: mint.id, createdAt: new Date(T.getTime() + 1000) },
     })
+    await prisma.registration.create({
+      data: { eventId: ev1.id, participantId: fern.id, status: 'CANCELLED', createdAt: new Date(T.getTime() + 500) },
+    })
     const r2 = await prisma.registration.create({
       data: { eventId: ev1.id, participantId: ploy.id, createdAt: new Date(T.getTime() + 2000) },
-    })
-    const r3 = await prisma.registration.create({
-      data: { eventId: ev1.id, participantId: boss.id, createdAt: new Date(T.getTime() + 3000) },
     })
     regTimes = [r1.createdAt.toISOString(), r2.createdAt.toISOString(), r3.createdAt.toISOString()]
   })

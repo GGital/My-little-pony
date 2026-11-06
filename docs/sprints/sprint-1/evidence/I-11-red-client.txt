@@ -1,7 +1,7 @@
 > tcg-event-hub-client@0.1.0 test
 > vitest run
 
- RUN  v4.0.18 C:/Users/Praewa/My-little-pony/client
+ RUN  v4.0.18 <repo>/client
 
  ❯ tests/sprint-1/Registrations.test.tsx (3 tests | 3 failed)
      × shows event title, seat counts chip, and table with players in order with Bangkok time and status

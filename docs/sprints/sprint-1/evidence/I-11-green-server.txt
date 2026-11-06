@@ -1,7 +1,7 @@
 > test
 > vitest run
 
- RUN  v4.0.18 C:/Users/Praewa/My-little-pony/server
+ RUN  v4.0.18 <repo>/server
 
  ✓ tests/sprint-1/organizer.api.test.ts (9 tests)
  ✓ tests/sprint-1/auth.api.test.ts (21 tests)

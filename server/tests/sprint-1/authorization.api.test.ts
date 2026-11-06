@@ -4,12 +4,11 @@ import { seed } from '../../prisma/seed.js'
 import { TEST_ORIGIN, makeApp } from '../helpers/app.js'
 import { cookieHeader, readSessionCookie, signIn } from '../helpers/auth.js'
 import { prisma, resetDb, tableCounts } from '../helpers/db.js'
-import { accessProbes } from '../helpers/probes.js'
 
 // Feature-B (contracts §5): roles and ownership enforced by the server, identity only from the session.
-// E-06 … E-11 are built in I-07 … I-11; until then their cells run against the I-06 probes, which use the same
-// guards and ownership helpers (contracts v1.5 §5). Each of those Issues points its rows at the real path.
-const app = makeApp({ extraRoutes: accessProbes(prisma) })
+// Every cell calls the real endpoint: the I-06 probes (contracts v1.5 §5) were replaced one by one in I-07 … I-11,
+// and the last one (E-08) was removed in I-11.
+const app = makeApp()
 const SEED_PASSWORD = 'test-only-seed-password'
 const VALID_EVENT = {
   title: 'Matrix Night',
