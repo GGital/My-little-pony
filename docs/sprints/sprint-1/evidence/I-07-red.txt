@@ -1,0 +1,576 @@
+
+> test
+> vitest run
+
+
+ RUN  v4.0.18 C:/Users/Praewa/My-little-pony/server
+
+ ❯ tests/sprint-1/events.create.api.test.ts (20 tests | 20 failed) 1039ms
+     × posts a valid event tomorrow with capacity 24 → 201, stored row PUBLISHED, listed in E-04 16ms
+     × capacity = 0 → 400 VALIDATION_FAILED with exact message, 0 rows stored 80ms
+     × capacity = -1 → 400 VALIDATION_FAILED with exact message, 0 rows stored 16ms
+     × capacity = 1.5 → 400 VALIDATION_FAILED with exact message, 0 rows stored 12ms
+     × capacity = 257 → 400 VALIDATION_FAILED with exact message, 0 rows stored 12ms
+     × capacity = 24 → 400 VALIDATION_FAILED with exact message, 0 rows stored 9ms
+     × capacity = null → 400 VALIDATION_FAILED with exact message, 0 rows stored 10ms
+     × capacity = 1 gives 201 and stores row 6ms
+     × capacity = 256 gives 201 and stores row 5ms
+     × start = T → 422 EVENT_TIME_INVALID naming () => T.toISOString(), 0 rows stored 6ms
+     × start = T - 1 min → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() - 6e4).toISOString(), 0 rows stored 5ms
+     × end = start → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() + 36e5).toISOString(), 0 rows stored 5ms
+     × end = start + 24 h 1 min → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() + 36e5).toISOString(), 0 rows stored 5ms
+     × end = start + 24 h → 201 accepted 5ms
+     × body missing all required fields → 400 with details for EVERY failing field in one response, 0 rows stored 5ms
+     × whitespace-only text counts as missing, 0 rows stored 5ms
+     × rejects title of 2 chars and 101 chars, description 2,001 chars 5ms
+     × accepts 3-char and 100-char titles → 201 5ms
+     × participant (Mint) → 403 FORBIDDEN, 0 rows stored 6ms
+     × visitor (signed out) → 401 UNAUTHENTICATED, 0 rows stored 4ms
+ ✓ tests/sprint-1/auth.api.test.ts (21 tests) 5193ms
+     ✓ an unknown email takes as long as a wrong password (dummy hash): mean difference < 50 ms over 20 tries  3192ms
+ ✓ tests/sprint-1/authorization.api.test.ts (58 tests) 2104ms
+ ❯ tests/sprint-1/unit/event-input.unit.test.ts (16 tests | 16 failed) 25ms
+       × rejects capacity = 0 (0) with exact message: Capacity must be a whole number from 1 to 256. 8ms
+       × rejects capacity = -1 (negative number -1) with exact message: Capacity must be a whole number from 1 to 256. 1ms
+       × rejects capacity = 1.5 (fractional number 1.5) with exact message: Capacity must be a whole number from 1 to 256. 1ms
+       × rejects capacity = 257 (257 (> 256)) with exact message: Capacity must be a whole number from 1 to 256. 1ms
+       × rejects capacity = 24 (string "24") with exact message: Capacity must be a whole number from 1 to 256. 1ms
+       × rejects capacity = null (null) with exact message: Capacity must be a whole number from 1 to 256. 0ms
+       × accepts boundary capacity = 1 3ms
+       × accepts boundary capacity = 256 1ms
+       × reports every failing field in one response when all required fields are missing 1ms
+       × whitespace-only strings count as missing 2ms
+       × rejects title shorter than 3 chars ("ab") with "Use 3 to 100 characters for the title." 1ms
+       × rejects title longer than 100 chars (101 chars) with "Use 3 to 100 characters for the title." 1ms
+       × accepts title of 3 chars and 100 chars 1ms
+       × rejects description longer than 2,000 chars (2,001 chars) with "Use up to 2,000 characters." 1ms
+       × accepts description up to 2,000 chars 1ms
+       × rejects unknown keys (.strict()) with "This value cannot be set." 1ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts (26 tests) 1723ms
+     ✓ refuses an unknown code at compile time, and accepts a known one  1708ms
+ ❯ tests/sprint-1/unit/event-rules.unit.test.ts (7 tests | 5 failed) 11ms
+     × rejects start equal to now (start = T) with startAt: The start must be in the future. 7ms
+     × rejects start in the past (start = T - 1 min) with startAt: The start must be in the future. 1ms
+     × rejects end equal to start (end = start) with endAt: The end must be after the start. 1ms
+     × rejects end before start (end < start) with endAt: The end must be after the start. 1ms
+     × rejects duration over 24 h (end = start + 24 h 1 min) with endAt: An event can last at most 24 hours. 1ms
+     ✓ accepts duration exactly 24 h (end = start + 24 h) 0ms
+     ✓ source check: event-rules.ts uses clock.now() and never calls Date.now() directly 1ms
+ ✓ tests/sprint-1/health.api.test.ts (2 tests) 2109ms
+     ✓ answers 503 {status:"unavailable"} when the database cannot be reached, and logs why  2028ms
+ ✓ tests/sprint-1/events.read.api.test.ts (11 tests) 1335ms
+     ✓ returns matching viewer.action and all public fields across visitor, player, owner, other organizer  370ms
+ ✓ tests/sprint-1/unit/config.unit.test.ts (6 tests) 480ms
+     ✓ the real server refuses to start without DATABASE_URL and says why  468ms
+ ✓ tests/sprint-1/validation.api.test.ts (15 tests) 1053ms
+ ✓ tests/sprint-1/seed.api.test.ts (5 tests) 946ms
+     ✓ creates 2 organizers, 4 participants and the 6 events of contracts §0.3  535ms
+ ✓ tests/sprint-1/unit/password.unit.test.ts (2 tests) 409ms
+ ✓ tests/sprint-1/time.api.test.ts (8 tests) 406ms
+ ✓ tests/sprint-1/constraints.api.test.ts (12 tests) 165ms
+ ✓ tests/sprint-1/persistence.api.test.ts (1 test) 175ms
+ ✓ tests/sprint-1/errors.api.test.ts (8 tests) 113ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 41 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-01 (I) — Valid event creation and publication (AC-D-01, FR-06) > posts a valid event tomorrow with capacity 24 → 201, stored row PUBLISHED, listed in E-04
+AssertionError: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ tests/sprint-1/events.create.api.test.ts:72:26
+     70|         })
+     71| 
+     72|       expect(res.status).toBe(201)
+       |                          ^
+     73|       expect(res.body.title).toBe('Tomorrow Constructed Clash')
+     74|       expect(res.body.status).toBe('PUBLISHED')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/41]⎯
+
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = 0 → 400 VALIDATION_FAILED with exact message, 0 rows stored
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = -1 → 400 VALIDATION_FAILED with exact message, 0 rows stored
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = 1.5 → 400 VALIDATION_FAILED with exact message, 0 rows stored
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = 257 → 400 VALIDATION_FAILED with exact message, 0 rows stored
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = 24 → 400 VALIDATION_FAILED with exact message, 0 rows stored
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = null → 400 VALIDATION_FAILED with exact message, 0 rows stored
+AssertionError: expected 404 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 404
+
+ ❯ tests/sprint-1/events.create.api.test.ts:113:26
+    111|         .send({ ...VALID_EVENT_PAYLOAD, capacity: cap })
+    112| 
+    113|       expect(res.status).toBe(400)
+       |                          ^
+    114|       expect(res.body.error.code).toBe('VALIDATION_FAILED')
+    115|       const capErr = res.body.error.details.find((d: { field: string }…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/41]⎯
+
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = 1 gives 201 and stores row
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = 256 gives 201 and stores row
+AssertionError: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ tests/sprint-1/events.create.api.test.ts:131:24
+    129|       .send({ ...VALID_EVENT_PAYLOAD, title: `Cap ${cap} Event`, capac…
+    130| 
+    131|     expect(res.status).toBe(201)
+       |                        ^
+    132|     expect(res.body.capacity).toBe(cap)
+    133|     expect(res.body.seatsRemaining).toBe(cap)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/41]⎯
+
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I) — Time rules enforcement (AC-D-03, BR-02) > start = T → 422 EVENT_TIME_INVALID naming () => T.toISOString(), 0 rows stored
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I) — Time rules enforcement (AC-D-03, BR-02) > start = T - 1 min → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() - 6e4).toISOString(), 0 rows stored
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I) — Time rules enforcement (AC-D-03, BR-02) > end = start → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() + 36e5).toISOString(), 0 rows stored
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I) — Time rules enforcement (AC-D-03, BR-02) > end = start + 24 h 1 min → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() + 36e5).toISOString(), 0 rows stored
+AssertionError: expected 404 to be 422 // Object.is equality
+
+- Expected
++ Received
+
+- 422
++ 404
+
+ ❯ tests/sprint-1/events.create.api.test.ts:160:26
+    158|         })
+    159| 
+    160|       expect(res.status).toBe(422)
+       |                          ^
+    161|       expect(res.body.error.code).toBe('EVENT_TIME_INVALID')
+    162|       const detail = res.body.error.details.find((d: { field: string }…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/41]⎯
+
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I) — Time rules enforcement (AC-D-03, BR-02) > end = start + 24 h → 201 accepted
+AssertionError: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ tests/sprint-1/events.create.api.test.ts:187:26
+    185|         })
+    186| 
+    187|       expect(res.status).toBe(201)
+       |                          ^
+    188|     } finally {
+    189|       resetNow()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/41]⎯
+
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-04 (I) — Validation details and string rules (AC-D-04, BR-03) > body missing all required fields → 400 with details for EVERY failing field in one response, 0 rows stored
+AssertionError: expected 404 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 404
+
+ ❯ tests/sprint-1/events.create.api.test.ts:203:24
+    201|       .send({})
+    202| 
+    203|     expect(res.status).toBe(400)
+       |                        ^
+    204|     expect(res.body.error.code).toBe('VALIDATION_FAILED')
+    205|     const fields = res.body.error.details.map((d: { field: string }) =…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/41]⎯
+
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-04 (I) — Validation details and string rules (AC-D-04, BR-03) > whitespace-only text counts as missing, 0 rows stored
+AssertionError: expected 404 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 404
+
+ ❯ tests/sprint-1/events.create.api.test.ts:225:24
+    223|       })
+    224| 
+    225|     expect(res.status).toBe(400)
+       |                        ^
+    226|     expect(res.body.error.code).toBe('VALIDATION_FAILED')
+    227|     const fields = res.body.error.details.map((d: { field: string }) =…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/41]⎯
+
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-04 (I) — Validation details and string rules (AC-D-04, BR-03) > rejects title of 2 chars and 101 chars, description 2,001 chars
+AssertionError: expected 404 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 404
+
+ ❯ tests/sprint-1/events.create.api.test.ts:242:25
+    240|       .set('Cookie', quantumCookie)
+    241|       .send({ ...VALID_EVENT_PAYLOAD, title: 'ab' })
+    242|     expect(res1.status).toBe(400)
+       |                         ^
+    243| 
+    244|     const res2 = await request(app)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/41]⎯
+
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-04 (I) — Validation details and string rules (AC-D-04, BR-03) > accepts 3-char and 100-char titles → 201
+AssertionError: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ tests/sprint-1/events.create.api.test.ts:270:25
+    268|       .set('Cookie', quantumCookie)
+    269|       .send({ ...VALID_EVENT_PAYLOAD, title: 'TCG', startAt, endAt })
+    270|     expect(res1.status).toBe(201)
+       |                         ^
+    271| 
+    272|     const res2 = await request(app)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/41]⎯
+
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-05 (I) — Access control: organizer only (AC-D-05, BR-13) > participant (Mint) → 403 FORBIDDEN, 0 rows stored
+AssertionError: expected 404 to be 403 // Object.is equality
+
+- Expected
++ Received
+
+- 403
++ 404
+
+ ❯ tests/sprint-1/events.create.api.test.ts:290:24
+    288|       .send(VALID_EVENT_PAYLOAD)
+    289| 
+    290|     expect(res.status).toBe(403)
+       |                        ^
+    291|     expect(res.body).toEqual({ error: { code: 'FORBIDDEN', message: ex…
+    292|     expect(await tableCounts()).toEqual(before)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/41]⎯
+
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-05 (I) — Access control: organizer only (AC-D-05, BR-13) > visitor (signed out) → 401 UNAUTHENTICATED, 0 rows stored
+AssertionError: expected 404 to be 401 // Object.is equality
+
+- Expected
++ Received
+
+- 401
++ 404
+
+ ❯ tests/sprint-1/events.create.api.test.ts:302:24
+    300|       .send(VALID_EVENT_PAYLOAD)
+    301| 
+    302|     expect(res.status).toBe(401)
+       |                        ^
+    303|     expect(res.body).toEqual({ error: { code: 'UNAUTHENTICATED', messa…
+    304|     expect(await tableCounts()).toEqual(before)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/41]⎯
+
+ FAIL  tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-02 (U) — Capacity validation (BR-01, AC-D-02) > rejects capacity = 0 (0) with exact message: Capacity must be a whole number from 1 to 256.
+ FAIL  tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-02 (U) — Capacity validation (BR-01, AC-D-02) > rejects capacity = -1 (negative number -1) with exact message: Capacity must be a whole number from 1 to 256.
+ FAIL  tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-02 (U) — Capacity validation (BR-01, AC-D-02) > rejects capacity = 1.5 (fractional number 1.5) with exact message: Capacity must be a whole number from 1 to 256.
+ FAIL  tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-02 (U) — Capacity validation (BR-01, AC-D-02) > rejects capacity = 257 (257 (> 256)) with exact message: Capacity must be a whole number from 1 to 256.
+ FAIL  tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-02 (U) — Capacity validation (BR-01, AC-D-02) > rejects capacity = 24 (string "24") with exact message: Capacity must be a whole number from 1 to 256.
+ FAIL  tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-02 (U) — Capacity validation (BR-01, AC-D-02) > rejects capacity = null (null) with exact message: Capacity must be a whole number from 1 to 256.
+AssertionError: expected undefined to be defined
+ ❯ tests/sprint-1/unit/event-input.unit.test.ts:30:24
+     28|       if (!res.success) {
+     29|         const capErr = res.error.issues.find((i) => i.path.includes('c…
+     30|         expect(capErr).toBeDefined()
+       |                        ^
+     31|         expect(capErr?.message).toBe('Capacity must be a whole number …
+     32|       }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/41]⎯
+
+ FAIL  tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-02 (U) — Capacity validation (BR-01, AC-D-02) > accepts boundary capacity = 1
+ FAIL  tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-02 (U) — Capacity validation (BR-01, AC-D-02) > accepts boundary capacity = 256
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/sprint-1/unit/event-input.unit.test.ts:37:27
+     35|     it.each([1, 256])('accepts boundary capacity = %d', (cap) => {
+     36|       const res = createEventInputSchema.safeParse({ ...VALID_BASE, ca…
+     37|       expect(res.success).toBe(true)
+       |                           ^
+     38|     })
+     39|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/41]⎯
+
+ FAIL  tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-04 (U) — Field rules and missing fields (BR-03, AC-D-04) > reports every failing field in one response when all required fields are missing
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/sprint-1/unit/event-input.unit.test.ts:44:27
+     42|     it('reports every failing field in one response when all required …
+     43|       const res = createEventInputSchema.safeParse({})
+     44|       expect(res.success).toBe(false)
+       |                           ^
+     45|       if (!res.success) {
+     46|         const fields = res.error.issues.map((i) => i.path[0]).sort()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/41]⎯
+
+ FAIL  tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-04 (U) — Field rules and missing fields (BR-03, AC-D-04) > whitespace-only strings count as missing
+AssertionError: expected [ undefined ] to include 'title'
+ ❯ tests/sprint-1/unit/event-input.unit.test.ts:63:27
+     61|       if (!res.success) {
+     62|         const errFields = res.error.issues.map((i) => i.path[0])
+     63|         expect(errFields).toContain('title')
+       |                           ^
+     64|         expect(errFields).toContain('venueName')
+     65|         expect(errFields).toContain('venueAddress')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/41]⎯
+
+ FAIL  tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-04 (U) — Field rules and missing fields (BR-03, AC-D-04) > rejects title shorter than 3 chars ("ab") with "Use 3 to 100 characters for the title."
+AssertionError: expected undefined to be 'Use 3 to 100 characters for the title.' // Object.is equality
+
+- Expected: 
+"Use 3 to 100 characters for the title."
+
++ Received: 
+undefined
+
+ ❯ tests/sprint-1/unit/event-input.unit.test.ts:75:32
+     73|       if (!res.success) {
+     74|         const issue = res.error.issues.find((i) => i.path.includes('ti…
+     75|         expect(issue?.message).toBe('Use 3 to 100 characters for the t…
+       |                                ^
+     76|       }
+     77|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/41]⎯
+
+ FAIL  tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-04 (U) — Field rules and missing fields (BR-03, AC-D-04) > rejects title longer than 100 chars (101 chars) with "Use 3 to 100 characters for the title."
+AssertionError: expected undefined to be 'Use 3 to 100 characters for the title.' // Object.is equality
+
+- Expected: 
+"Use 3 to 100 characters for the title."
+
++ Received: 
+undefined
+
+ ❯ tests/sprint-1/unit/event-input.unit.test.ts:84:32
+     82|       if (!res.success) {
+     83|         const issue = res.error.issues.find((i) => i.path.includes('ti…
+     84|         expect(issue?.message).toBe('Use 3 to 100 characters for the t…
+       |                                ^
+     85|       }
+     86|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/41]⎯
+
+ FAIL  tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-04 (U) — Field rules and missing fields (BR-03, AC-D-04) > accepts title of 3 chars and 100 chars
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/sprint-1/unit/event-input.unit.test.ts:89:89
+     87| 
+     88|     it('accepts title of 3 chars and 100 chars', () => {
+     89|       expect(createEventInputSchema.safeParse({ ...VALID_BASE, title: …
+       |                                                                                         ^
+     90|       expect(createEventInputSchema.safeParse({ ...VALID_BASE, title: …
+     91|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/41]⎯
+
+ FAIL  tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-04 (U) — Field rules and missing fields (BR-03, AC-D-04) > rejects description longer than 2,000 chars (2,001 chars) with "Use up to 2,000 characters."
+AssertionError: expected undefined to be 'Use up to 2,000 characters.' // Object.is equality
+
+- Expected: 
+"Use up to 2,000 characters."
+
++ Received: 
+undefined
+
+ ❯ tests/sprint-1/unit/event-input.unit.test.ts:98:32
+     96|       if (!res.success) {
+     97|         const issue = res.error.issues.find((i) => i.path.includes('de…
+     98|         expect(issue?.message).toBe('Use up to 2,000 characters.')
+       |                                ^
+     99|       }
+    100|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/41]⎯
+
+ FAIL  tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-04 (U) — Field rules and missing fields (BR-03, AC-D-04) > accepts description up to 2,000 chars
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/sprint-1/unit/event-input.unit.test.ts:103:106
+    101| 
+    102|     it('accepts description up to 2,000 chars', () => {
+    103|       expect(createEventInputSchema.safeParse({ ...VALID_BASE, descrip…
+       |                                                                                                          ^
+    104|     })
+    105| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/41]⎯
+
+ FAIL  tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-04 (U) — Field rules and missing fields (BR-03, AC-D-04) > rejects unknown keys (.strict()) with "This value cannot be set."
+AssertionError: expected undefined to be 'This value cannot be set.' // Object.is equality
+
+- Expected: 
+"This value cannot be set."
+
++ Received: 
+undefined
+
+ ❯ tests/sprint-1/unit/event-input.unit.test.ts:111:32
+    109|       if (!res.success) {
+    110|         const issue = res.error.issues.find((i) => i.path.includes('or…
+    111|         expect(issue?.message).toBe('This value cannot be set.')
+       |                                ^
+    112|       }
+    113|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/41]⎯
+
+ FAIL  tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U) — Event time rules validation (BR-02, AC-D-03) > rejects start equal to now (start = T) with startAt: The start must be in the future.
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/sprint-1/unit/event-rules.unit.test.ts:16:25
+     14|       const end = new Date(start.getTime() + 4 * 60 * 60 * 1000)
+     15|       const res = validateEventTimes(start, end)
+     16|       expect(res.valid).toBe(false)
+       |                         ^
+     17|       if (!res.valid) {
+     18|         expect(res.field).toBe('startAt')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/41]⎯
+
+ FAIL  tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U) — Event time rules validation (BR-02, AC-D-03) > rejects start in the past (start = T - 1 min) with startAt: The start must be in the future.
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/sprint-1/unit/event-rules.unit.test.ts:32:25
+     30|       const end = new Date(T.getTime() + 2 * 60 * 60 * 1000)
+     31|       const res = validateEventTimes(start, end)
+     32|       expect(res.valid).toBe(false)
+       |                         ^
+     33|       if (!res.valid) {
+     34|         expect(res.field).toBe('startAt')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/41]⎯
+
+ FAIL  tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U) — Event time rules validation (BR-02, AC-D-03) > rejects end equal to start (end = start) with endAt: The end must be after the start.
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/sprint-1/unit/event-rules.unit.test.ts:48:25
+     46|       const end = new Date(start)
+     47|       const res = validateEventTimes(start, end)
+     48|       expect(res.valid).toBe(false)
+       |                         ^
+     49|       if (!res.valid) {
+     50|         expect(res.field).toBe('endAt')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/41]⎯
+
+ FAIL  tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U) — Event time rules validation (BR-02, AC-D-03) > rejects end before start (end < start) with endAt: The end must be after the start.
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/sprint-1/unit/event-rules.unit.test.ts:64:25
+     62|       const end = new Date(start.getTime() - 60 * 1000)
+     63|       const res = validateEventTimes(start, end)
+     64|       expect(res.valid).toBe(false)
+       |                         ^
+     65|       if (!res.valid) {
+     66|         expect(res.field).toBe('endAt')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/41]⎯
+
+ FAIL  tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U) — Event time rules validation (BR-02, AC-D-03) > rejects duration over 24 h (end = start + 24 h 1 min) with endAt: An event can last at most 24 hours.
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/sprint-1/unit/event-rules.unit.test.ts:80:25
+     78|       const end = new Date(start.getTime() + (24 * 60 + 1) * 60 * 1000)
+     79|       const res = validateEventTimes(start, end)
+     80|       expect(res.valid).toBe(false)
+       |                         ^
+     81|       if (!res.valid) {
+     82|         expect(res.field).toBe('endAt')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/41]⎯
+
+
+ Test Files  3 failed | 13 passed (16)
+      Tests  41 failed | 177 passed (218)
+   Start at  13:56:19
+   Duration  26.63s (transform 479ms, setup 0ms, import 5.55s, tests 17.29s, environment 2ms)
+
