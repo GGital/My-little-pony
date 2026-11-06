@@ -46,7 +46,8 @@ export function probeRoutes(api: Router) {
 export const PROBE_POST_ONLY = ['/api/__test/echo']
 
 /**
- * Stand-ins for E-06 … E-08 until I-07, I-09, I-11 build them (E-09 … E-11 are real since I-08 / I-10) (I-06, contracts v1.5 §5). Each probe runs the guard
+ * Stand-ins for E-07 and E-08 until I-09 and I-11 build them (E-06, E-09 … E-11 are real since I-07, I-08,
+ * I-10; I-06, contracts v1.5 §5). Each probe runs the guard
  * chain and the ownership helper its endpoint must use, then answers with a minimal body. TEST-B-01 … 03 call
  * them through `PROBE_PATHS`; each later Issue points its rows at the real path, and I-12 checks none are left.
  */
