@@ -6,6 +6,7 @@ import { jsonBody } from './http/body.js'
 import { errorHandler, sendError } from './http/errors.js'
 import { eventsRouter } from './http/events.routes.js'
 import { healthRouter } from './http/health.js'
+import { meRouter } from './http/me.routes.js'
 import { loadSession } from './http/session.js'
 import { createLogger, type Logger } from './log.js'
 
@@ -29,6 +30,7 @@ export function createApp({ prisma, config, log = createLogger(config.LOG_LEVEL)
   api.use(loadSession(prisma)) // SDS §2.3 step 2: every route after health knows its caller
   api.use('/auth', authRouter(prisma, config))
   api.use(eventsRouter(prisma, config))
+  api.use(meRouter(prisma))
   extraRoutes?.(api)
   api.use((_req, res) => sendError(res, 'NOT_FOUND'))
   api.use(errorHandler(log))

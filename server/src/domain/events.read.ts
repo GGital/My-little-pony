@@ -61,7 +61,7 @@ export async function listUpcomingEvents(prisma: PrismaClient): Promise<{ items:
 /** Active registrations count towards the seats (contracts §0.1). */
 export const ACTIVE_STATUSES = { in: ['REGISTERED', 'CHECKED_IN'] as ('REGISTERED' | 'CHECKED_IN')[] }
 
-const summarySelect = {
+export const summarySelect = {
   id: true,
   title: true,
   type: true,
@@ -79,7 +79,7 @@ const summarySelect = {
 type SummaryRow = Prisma.EventGetPayload<{ select: typeof summarySelect }>
 
 /** registeredCount and seatsRemaining are computed on every read (contracts §0.1). */
-function toSummary(e: SummaryRow): EventSummary {
+export function toSummary(e: SummaryRow): EventSummary {
   const registeredCount = e._count.registrations
   return {
     id: e.id,

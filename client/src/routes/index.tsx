@@ -6,7 +6,7 @@ import { NotFoundPage } from './pages/NotFoundPage';
 import { SignInPage } from './pages/SignInPage';
 import { EventList } from '../pages/EventList';
 import { EventDetail } from '../pages/EventDetail';
-const MyEventsStub = () => <div><h2>My Events</h2></div>;
+import { MyEvents } from '../pages/MyEvents';
 const OrganizerDashboardStub = () => <div><h2>Organizer Dashboard</h2></div>;
 const CreateEventStub = () => <div><h2>Create Event</h2></div>;
 
@@ -23,7 +23,7 @@ export const AppRoutes: React.FC = () => {
         path="/me/registrations"
         element={
           <RequireRole role="PARTICIPANT">
-            <MyEventsStub />
+            <MyEvents />
           </RequireRole>
         }
       />
