@@ -130,3 +130,68 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid var(--danger);
 }
 
+
+/* Seats card and the "seat secured" flip (design-direction §7, contracts §10 Behaviour 3). */
+.seat-card {
+  perspective: 1200px;
+}
+.seat-card__inner {
+  display: grid;
+  transition: transform 620ms var(--ease-out);
+  transform-style: preserve-3d;
+}
+.seat-card__face {
+  grid-area: 1 / 1;
+  backface-visibility: hidden;
+}
+.seat-card__back {
+  transform: rotateY(180deg);
+  background: linear-gradient(180deg, var(--accent-tint) 0%, var(--surface) 45%);
+}
+.seat-card.is-flipped .seat-card__inner {
+  transform: rotateY(180deg);
+}
+.seat-bar {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-muted);
+  overflow: hidden;
+}
+.seat-bar__fill {
+  height: 100%;
+  background: var(--accent);
+  transform-origin: left;
+  transition: transform 620ms var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .seat-card__inner {
+    transform: none !important;
+    transition: none;
+  }
+  .seat-card__face {
+    backface-visibility: visible;
+    transition: opacity 200ms linear;
+  }
+  .seat-card__back {
+    transform: none;
+    opacity: 0;
+  }
+  .seat-card.is-flipped .seat-card__back {
+    opacity: 1;
+  }
+  .seat-card.is-flipped .seat-card__face:not(.seat-card__back) {
+    opacity: 0;
+  }
+  .seat-bar__fill {
+    transition: none;
+  }
+}
+
+.visually-hidden-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

@@ -2,10 +2,11 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { api } from '../api/client'
 import { ApiError } from '../api/errors'
-import type { EventDetail as EventDetailType } from '../api/types'
+import type { EventDetail as EventDetailType, ParticipantRegistration } from '../api/types'
 import { ActionButton } from '../components/ActionButton'
 import { ErrorState } from '../components/ErrorState'
 import { Loading } from '../components/Loading'
+import { SeatCard } from '../components/SeatCard'
 import { NotFoundPage } from '../routes/pages/NotFoundPage'
 import { formatEventTime } from '../utils/formatEventTime'
 
@@ -15,15 +16,20 @@ export const EventDetail: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   const [notFound, setNotFound] = useState<boolean>(false)
+  const [registering, setRegistering] = useState(false)
+  const [secured, setSecured] = useState(false)
+  const [alert, setAlert] = useState<string | null>(null)
+  const [announcement, setAnnouncement] = useState('')
 
-  const fetchDetail = useCallback(async () => {
+  /** `silent` refreshes the counts after a 409 without replacing the page by the loading state. */
+  const fetchDetail = useCallback(async (silent = false) => {
     if (!id || !/^[1-9]\d*$/.test(id)) {
       setNotFound(true)
       setLoading(false)
       return
     }
 
-    setLoading(true)
+    if (!silent) setLoading(true)
     setError(null)
     setNotFound(false)
 
@@ -45,6 +51,27 @@ export const EventDetail: React.FC = () => {
     fetchDetail()
   }, [fetchDetail])
 
+  // Contracts §10 Behaviour 1–4: E-09, then the "seat secured" moment on 201, or the server's reason on 409.
+  const onRegister = async () => {
+    if (!event || registering) return
+    setRegistering(true)
+    setAlert(null)
+    try {
+      const registration = await api.post<ParticipantRegistration>(`/api/events/${event.id}/registrations`)
+      const { registeredCount, seatsRemaining } = registration.event
+      setEvent({ ...event, registeredCount, seatsRemaining, viewer: { action: 'REGISTERED', registrationId: registration.id } })
+      setSecured(true)
+      setAnnouncement(
+        `You're registered for ${event.title}. ${seatsRemaining} seat${seatsRemaining === 1 ? '' : 's'} left.`
+      )
+    } catch (err) {
+      setAlert(err instanceof ApiError ? err.message : 'Something went wrong. Please try again.')
+      await fetchDetail(true)
+    } finally {
+      setRegistering(false)
+    }
+  }
+
   if (loading) {
     return <Loading />
   }
@@ -59,6 +86,14 @@ export const EventDetail: React.FC = () => {
 
   return (
     <div className="container py-4">
+      <div aria-live="polite" className="visually-hidden-live">
+        {announcement}
+      </div>
+      {alert && (
+        <div className="alert alert-danger" role="alert">
+          {alert}
+        </div>
+      )}
       {/* Event Header Banner */}
       <div className="card p-4 shadow-sm mb-4 border-0">
         <div className="d-flex justify-content-between align-items-start flex-wrap gap-3">
@@ -89,6 +124,8 @@ export const EventDetail: React.FC = () => {
               registrationId={event.viewer.registrationId}
               capacity={event.capacity}
               registeredCount={event.registeredCount}
+              onRegister={onRegister}
+              busy={registering}
             />
           </div>
         </div>
@@ -148,35 +185,8 @@ export const EventDetail: React.FC = () => {
 
         {/* Right Column: Seats Panel */}
         <div className="col-lg-4">
-          <div className="card p-4 shadow-sm border-0">
-            <h4 className="fw-bold mb-2">Seats</h4>
-            <div className="d-flex justify-content-between align-items-baseline mb-2">
-              <span className="fs-4 fw-bold">
-                {event.registeredCount} / {event.capacity}
-              </span>
-              <span className="text-muted small">
-                {event.seatsRemaining} seat{event.seatsRemaining === 1 ? '' : 's'} left
-              </span>
-            </div>
-
-            {/* Progress bar */}
-            <div className="progress mb-3" style={{ height: '8px' }}>
-              <div
-                className="progress-bar bg-success"
-                role="progressbar"
-                style={{
-                  width: `${Math.min(100, (event.registeredCount / event.capacity) * 100)}%`,
-                }}
-                aria-valuenow={event.registeredCount}
-                aria-valuemin={0}
-                aria-valuemax={event.capacity}
-              />
-            </div>
-
-            <p className="text-muted small mb-3">
-              Player names are private.
-            </p>
-
+          <SeatCard event={event} secured={secured} />
+          <div className="mt-3">
             {event.viewer.action === 'MANAGE' && (
               <div className="mt-2 pt-2 border-top">
                 <Link

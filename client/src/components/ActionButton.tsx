@@ -9,6 +9,8 @@ export interface ActionButtonProps {
   capacity?: number
   registeredCount?: number
   onRegister?: () => void
+  /** E-09 in flight: REGISTER reads HOLDING YOUR SEAT… and ignores presses (contracts §10 Behaviour 1). */
+  busy?: boolean
   disabled?: boolean
   className?: string
 }
@@ -18,6 +20,7 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
   eventId,
   capacity,
   onRegister,
+  busy = false,
   disabled,
   className = '',
 }) => {
@@ -40,10 +43,12 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
         <button
           type="button"
           className={`btn btn-primary ${className}`}
-          onClick={onRegister}
-          disabled={disabled}
+          onClick={busy ? undefined : onRegister}
+          disabled={disabled || busy}
+          aria-busy={busy}
         >
-          REGISTER
+          {busy && <span className="spinner-border spinner-border-sm me-2" aria-hidden="true" />}
+          {busy ? 'HOLDING YOUR SEAT…' : 'REGISTER'}
         </button>
       )
 

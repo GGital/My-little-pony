@@ -1,4 +1,5 @@
 import type { EventStatus } from '@prisma/client'
+import { hasStarted } from './time.js'
 
 export type RegistrationDecision = 'OK' | 'REGISTRATION_CLOSED' | 'ALREADY_REGISTERED' | 'EVENT_FULL'
 
@@ -12,7 +13,13 @@ export type RegistrationFacts = {
   alreadyRegistered: boolean
 }
 
-// I-08 red stub: allows everything.
-export function decideRegistration(_facts: RegistrationFacts): RegistrationDecision {
+/**
+ * The registration rules in the order of contracts §10: closed (BR-04: started, or not published) →
+ * already registered (BR-06) → full (BR-05) → OK. The time comes from the server clock (SR-03).
+ */
+export function decideRegistration(facts: RegistrationFacts): RegistrationDecision {
+  if (facts.status !== 'PUBLISHED' || hasStarted(facts.startAt)) return 'REGISTRATION_CLOSED'
+  if (facts.alreadyRegistered) return 'ALREADY_REGISTERED'
+  if (facts.active >= facts.capacity) return 'EVENT_FULL'
   return 'OK'
 }
