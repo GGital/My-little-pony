@@ -14,7 +14,7 @@ what is in the [contribution table](docs/contributions.md); AI assistance is in 
 - Node.js 22 or later, npm 10 or later
 - PostgreSQL 16, with **two** databases: one for development and one for tests
 
-## Server setup (Sprint 1, so far)
+## Server setup
 
 ```bash
 cd server
@@ -88,3 +88,40 @@ database**). Both commands refuse to run when `DATABASE_URL_TEST` is missing or 
 Type check: `npm run typecheck`.
 
 Client tests and build: `cd client && npm test && npm run build`.
+
+## End-to-end tests (Playwright)
+
+From the repository root, once:
+
+```bash
+npm install
+npx playwright install chromium
+```
+
+Then run the suite (`server/.env` must be set up as above, and the server suite must not be running at the same
+time, because both use the test database):
+
+```bash
+npm run e2e
+```
+
+It starts its own API on port 3100 and client on port 5174 against the **test** database, loads a fresh demo seed
+before each file, and signs in with your `SEED_PASSWORD`. It covers the Sprint 1 journeys, the end-to-end halves of
+the feature tests, and the three-width check, which saves screenshots in `docs/sprints/sprint-1/evidence/responsive/`.
+Open the report of the last run with `npx playwright show-report`.
+
+## Release checks
+
+```bash
+npm run sts:check
+```
+
+checks that every Sprint 1 acceptance criterion has a test with a recorded result in the
+[STS](docs/sprints/sprint-1/sts.md), and that every business rule has a rejection test.
+
+```bash
+npm run secret:scan
+```
+
+searches every commit and the evidence files for your local secret values and common key shapes, printing only
+where something was found, never the value. The Sprint 1 results are in [STS §6](docs/sprints/sprint-1/sts.md).

@@ -1,6 +1,6 @@
 # Requirements-to-Features Traceability
 
-Project: **TCG Event Hub** · Document version: v0.2 — v0.1 approved in PR #1; CH-10 is under review in PR 2
+Project: **TCG Event Hub** · Document version: v0.3 — v0.1 approved in PR #1; CH-10 in PR 2; Sprint 1 results in I-12
 Inputs: [`docs/srs.md`](srs.md) v0.5 · [`docs/features.md`](features.md) v0.2 · Diagrams: [`docs/diagrams/`](diagrams/README.md)
 
 This is step 3 of the course design process. Every requirement is followed through four links, so anyone can
@@ -43,24 +43,24 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 
 | Req. | What it requires (short) | Feature / SR | Established | Planned verification | Re-verified |
 |---|---|---|---|---|---|
-| FR-01 | Sign in, session with role | Feature-A | Sprint 1 | AC-A-01 · I, E | 2, 3 |
-| FR-02 | One generic message for bad credentials | Feature-A | Sprint 1 | AC-A-02 · I | 3 (Feature-T) |
-| FR-03 | Current-user request | Feature-A | Sprint 1 | AC-A-03 · I | 2, 3 |
-| FR-04 | Sign-out ends the session | Feature-A | Sprint 1 | AC-A-04 · I, E | 2, 3 |
-| FR-05 | Role navigation; protected pages redirect | Feature-C | Sprint 1 | AC-C-01, AC-C-02 · E | 2, 3 |
-| FR-06 | Create and publish an event; owner recorded | Feature-D | Sprint 1 | AC-D-01 · I, E | 2 |
-| FR-07 | Organizer's own events with counts | Feature-E | Sprint 1 | AC-E-01 · I, E | 2 |
+| FR-01 | Sign in, session with role | Feature-A | Sprint 1 | AC-A-01 · I, E → **Pass**: TEST-A-01 | 2, 3 |
+| FR-02 | One generic message for bad credentials | Feature-A | Sprint 1 | AC-A-02 · I → **Pass**: TEST-A-02 | 3 (Feature-T) |
+| FR-03 | Current-user request | Feature-A | Sprint 1 | AC-A-03 · I → **Pass**: TEST-A-03 | 2, 3 |
+| FR-04 | Sign-out ends the session | Feature-A | Sprint 1 | AC-A-04 · I, E → **Pass**: TEST-A-04 | 2, 3 |
+| FR-05 | Role navigation; protected pages redirect | Feature-C | Sprint 1 | AC-C-01, AC-C-02 · E → **Pass**: TEST-C-01, TEST-C-02 | 2, 3 |
+| FR-06 | Create and publish an event; owner recorded | Feature-D | Sprint 1 | AC-D-01 · I, E → **Pass**: TEST-D-01, JRN-01 | 2 |
+| FR-07 | Organizer's own events with counts | Feature-E | Sprint 1 | AC-E-01 · I, E → **Pass**: TEST-E-01 | 2 |
 | FR-08 | Draft events | Feature-K | Sprint 2 | I (draft hidden from others), E | 3 |
 | FR-09 | Edit event, capacity, deadline | Feature-L, Feature-M | Sprint 2 | U (limits), I, E | 3 |
 | FR-10 | Cancel event with reason, cascade | Feature-O | Sprint 2 | I (one transaction), E | 3 |
-| FR-11 | Public list of upcoming events with counts | Feature-F | Sprint 1 | AC-F-01 · I, E | 2 (with filters) |
-| FR-12 | Event detail with server-decided action; not found | Feature-F | Sprint 1 | AC-F-02, AC-F-03 · I, E | 2, 3 |
+| FR-11 | Public list of upcoming events with counts | Feature-F | Sprint 1 | AC-F-01 · I, E → **Pass**: TEST-F-01 | 2 (with filters) |
+| FR-12 | Event detail with server-decided action; not found | Feature-F | Sprint 1 | AC-F-02, AC-F-03 · I, E → **Pass**: TEST-F-02, TEST-F-03 | 2, 3 |
 | FR-13 | Search, filters, paging | Feature-J | Sprint 2 | I, E | 3 (NFR-12) |
 | FR-14 | Past/cancelled only on request, never registrable | Feature-J | Sprint 2 | I | 3 |
-| FR-15 | Register → `REGISTERED` record returned | Feature-G | Sprint 1 | AC-G-01 · I, E | 2, 3 |
-| FR-16 | Rejections store nothing and give a reason | Feature-G, SR-02 | Sprint 1 | AC-G-02 … AC-G-05 · I, E | 2 (deadline) |
-| FR-17 | My Events: own registrations | Feature-H | Sprint 1 | AC-H-01 · I, E | 2 (statuses) |
-| FR-18 | Organizer's registration list for own event | Feature-I | Sprint 1 | AC-I-01 · I, E | 3 (check-in) |
+| FR-15 | Register → `REGISTERED` record returned | Feature-G | Sprint 1 | AC-G-01 · I, E → **Pass**: TEST-G-01, JRN-01 | 2, 3 |
+| FR-16 | Rejections store nothing and give a reason | Feature-G, SR-02 | Sprint 1 | AC-G-02 … AC-G-05 · I, E → **Pass**: TEST-G-02, TEST-G-03, TEST-G-04, TEST-G-05 | 2 (deadline) |
+| FR-17 | My Events: own registrations | Feature-H | Sprint 1 | AC-H-01 · I, E → **Pass**: TEST-H-01, JRN-01 | 2 (statuses) |
+| FR-18 | Organizer's registration list for own event | Feature-I | Sprint 1 | AC-I-01 · I, E → **Pass**: TEST-I-01, JRN-01 | 3 (check-in) |
 | FR-19 | Participant cancels before deadline | Feature-N | Sprint 2 | I, E | 3 |
 | FR-20 | Re-register after cancelling | Feature-N | Sprint 2 | I | 3 |
 | FR-21 | Check in during window | Feature-P | Sprint 3 | I, E | — |
@@ -68,31 +68,31 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | FR-23 | Per-event attendance report | Feature-Q | Sprint 3 | U (rates), I | — |
 | FR-24 | Organizer summary over a date range | Feature-R | Sprint 3 | U, I | — |
 | FR-25 | Participant event history | Feature-S | Sprint 3 | I, E | — |
-| FR-26 | Sign in, then return to the same event | Feature-C | Sprint 1 | AC-C-03 · E | 2, 3 |
-| FR-27 | Header shows name, role, sign-out | Feature-C | Sprint 1 | AC-C-04 · E | 2, 3 |
+| FR-26 | Sign in, then return to the same event | Feature-C | Sprint 1 | AC-C-03 · E → **Pass**: TEST-C-03 | 2, 3 |
+| FR-27 | Header shows name, role, sign-out | Feature-C | Sprint 1 | AC-C-04 · E → **Pass**: TEST-C-04 | 2, 3 |
 | FR-28 | Who and when for every state change | SR-08 (Feature-L, N, O, P) | Sprint 2 | I (fields set from the session) | 3 (check-in) |
 
 ### 2.2 Business rules
 
 | Req. | Rule (short) | Feature / SR | Established | Planned verification | Re-verified |
 |---|---|---|---|---|---|
-| BR-01 | Capacity 1–256 whole number | Feature-D | Sprint 1 | AC-D-02 · U, I | 2 (Feature-L) |
-| BR-02 | Start in future; end after start, ≤ 24 h | Feature-D, SR-03 | Sprint 1 | AC-D-03 · U, I | 2 |
-| BR-03 | Required fields and lengths | Feature-D | Sprint 1 | AC-D-04 · U, I | 2 |
-| BR-04 | Visibility (published/cancelled public, drafts owner-only); only open events accept registrations | Feature-F, Feature-G | Sprint 1 | AC-F-04, AC-G-04 · I | 2 (drafts, cancelled, deadline) |
-| BR-05 | Active registrations never exceed capacity | Feature-G, SR-01 | Sprint 1 | AC-G-02 · U, I | 2, 3 |
-| BR-06 | One active registration per participant per event | Feature-G, SR-01 | Sprint 1 | AC-G-03 · I | 2 (re-register) |
-| BR-07 | Exactly one winner for the last seat | Feature-G | Sprint 1 | AC-G-06 · I | 2, 3 |
+| BR-01 | Capacity 1–256 whole number | Feature-D | Sprint 1 | AC-D-02 · U, I → **Pass**: TEST-D-02, TEST-SR1-03 | 2 (Feature-L) |
+| BR-02 | Start in future; end after start, ≤ 24 h | Feature-D, SR-03 | Sprint 1 | AC-D-03 · U, I → **Pass**: TEST-D-03, TEST-SR1-04 | 2 |
+| BR-03 | Required fields and lengths | Feature-D | Sprint 1 | AC-D-04 · U, I → **Pass**: TEST-D-04 | 2 |
+| BR-04 | Visibility (published/cancelled public, drafts owner-only); only open events accept registrations | Feature-F, Feature-G | Sprint 1 | AC-F-04, AC-G-04 · I → **Pass**: TEST-F-04, TEST-G-04 | 2 (drafts, cancelled, deadline) |
+| BR-05 | Active registrations never exceed capacity | Feature-G, SR-01 | Sprint 1 | AC-G-02 · U, I → **Pass**: TEST-G-02 | 2, 3 |
+| BR-06 | One active registration per participant per event | Feature-G, SR-01 | Sprint 1 | AC-G-03 · I → **Pass**: TEST-G-03 | 2 (re-register) |
+| BR-07 | Exactly one winner for the last seat | Feature-G | Sprint 1 | AC-G-06 · I → **Pass**: TEST-G-06, JRN-02 | 2, 3 |
 | BR-08 | Registration deadline | Feature-M, SR-03 | Sprint 2 | U (boundaries), I | 3 |
 | BR-09 | Capacity up to max; down only to active count | Feature-L | Sprint 2 | U, I | 3 |
-| BR-10 | Only participants register | Feature-G, Feature-B | Sprint 1 | AC-G-05 · I | 2, 3 |
+| BR-10 | Only participants register | Feature-G, Feature-B | Sprint 1 | AC-G-05 · I → **Pass**: TEST-G-05 | 2, 3 |
 | BR-11 | Cancel own, `REGISTERED`, before deadline | Feature-N | Sprint 2 | I | 3 |
 | BR-12 | Event cancel: not started, reason, cascade, final | Feature-O | Sprint 2 | I | 3 |
-| BR-13 | Only organizers create events | Feature-B, Feature-D | Sprint 1 | AC-D-05 · I | 2 |
-| BR-14 | Organizers manage only their own events | Feature-B, Feature-E, Feature-I | Sprint 1 | AC-E-02, AC-I-02 · I | 2, 3 |
+| BR-13 | Only organizers create events | Feature-B, Feature-D | Sprint 1 | AC-D-05 · I → **Pass**: TEST-D-05 | 2 |
+| BR-14 | Organizers manage only their own events | Feature-B, Feature-E, Feature-I | Sprint 1 | AC-E-02, AC-I-02 · I → **Pass**: TEST-E-02, TEST-I-02 | 2, 3 |
 | BR-15 | Frozen fields once started | Feature-L | Sprint 2 | U, I | 3 |
-| BR-16 | Own registrations only; public sees counts; organizers see display names | Feature-B, F, H, I | Sprint 1 | AC-F-05, AC-H-02, AC-I-03 · I | 2, 3 |
-| BR-17 | Identity only from the session | Feature-B | Sprint 1 | AC-B-01 · I | 2, 3 |
+| BR-16 | Own registrations only; public sees counts; organizers see display names | Feature-B, F, H, I | Sprint 1 | AC-F-05, AC-H-02, AC-I-03 · I → **Pass**: TEST-F-05, TEST-H-02, TEST-I-03 | 2, 3 |
+| BR-17 | Identity only from the session | Feature-B | Sprint 1 | AC-B-01 · I → **Pass**: TEST-B-01 | 2, 3 |
 | BR-18 | Check-in: registered, owner, window | Feature-P, SR-03 | Sprint 3 | U (window), I | — |
 | BR-19 | Check in once; undo in window | Feature-P | Sprint 3 | I | — |
 | BR-20 | No-show and attendance-rate rule | Feature-Q, R, S | Sprint 3 | U | — |
@@ -101,21 +101,21 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 
 | Req. | Quality target (short) | Feature / SR | Established | Planned verification | Re-verified |
 |---|---|---|---|---|---|
-| NFR-01 | 401 without a valid session, no private data | Feature-B, Feature-A | Sprint 1 | AC-B-02 · I | 2, 3 (each new endpoint) |
-| NFR-02 | 403 wrong role, 404 not owner; fixed check order | Feature-B, SR-02 | Sprint 1 | AC-B-03 · I | 2, 3 |
-| NFR-03 | scrypt hash, no password in data or responses | Feature-A | Sprint 1 | AC-A-05 · U, I | — |
-| NFR-04 | HttpOnly SameSite cookie, 8 h absolute, dead after sign-out | Feature-A | Sprint 1 | AC-A-04, AC-A-06 · U, I | Lab 5 (deployed) |
-| NFR-05 | 20 simultaneous requests → exactly 1 wins | Feature-G | Sprint 1 | AC-G-06 · I | 2 (with cancel) |
-| NFR-06 | Data survives restart; migrations only; seed reproducible | SR-01 | Sprint 1 | AC-SR1-01, AC-SR1-02 · I, M | 2, 3, Lab 5 |
-| NFR-07 | One safe error shape | SR-02 | Sprint 1 | AC-SR2-01 · I | 2, 3 |
-| NFR-08 | No horizontal scroll at 390 / 768 / 1440 px | SR-05, Feature-C | Sprint 1 (Sprint 1 screens) | AC-SR5-01 · E | 2, 3 (all screens) |
-| NFR-09 | Loading, empty, error, field-validation states | Feature-C | Sprint 1 | AC-C-05 · E | 2, 3 |
+| NFR-01 | 401 without a valid session, no private data | Feature-B, Feature-A | Sprint 1 | AC-B-02 · I → **Pass**: TEST-B-02 | 2, 3 (each new endpoint) |
+| NFR-02 | 403 wrong role, 404 not owner; fixed check order | Feature-B, SR-02 | Sprint 1 | AC-B-03 · I → **Pass**: TEST-B-03 | 2, 3 |
+| NFR-03 | scrypt hash, no password in data or responses | Feature-A | Sprint 1 | AC-A-05 · U, I → **Pass**: TEST-A-05 | — |
+| NFR-04 | HttpOnly SameSite cookie, 8 h absolute, dead after sign-out | Feature-A | Sprint 1 | AC-A-04, AC-A-06 · U, I → **Pass**: TEST-A-04, TEST-A-06 | Lab 5 (deployed) |
+| NFR-05 | 20 simultaneous requests → exactly 1 wins | Feature-G | Sprint 1 | AC-G-06 · I → **Pass**: TEST-G-06, JRN-02 | 2 (with cancel) |
+| NFR-06 | Data survives restart; migrations only; seed reproducible | SR-01 | Sprint 1 | AC-SR1-01, AC-SR1-02 · I, M → **Pass**: TEST-SR1-01, TEST-SR1-02 | 2, 3, Lab 5 |
+| NFR-07 | One safe error shape | SR-02 | Sprint 1 | AC-SR2-01 · I → **Pass**: TEST-SR2-01, TEST-SR2-04 | 2, 3 |
+| NFR-08 | No horizontal scroll at 390 / 768 / 1440 px | SR-05, Feature-C | Sprint 1 (Sprint 1 screens) | AC-SR5-01 · E → **Pass**: TEST-SR5-01 | 2, 3 (all screens) |
+| NFR-09 | Loading, empty, error, field-validation states | Feature-C | Sprint 1 | AC-C-05 · E → **Pass**: TEST-C-05 | 2, 3 |
 | NFR-10 | Keyboard, labels, contrast, 0 serious axe issues | SR-05 | Sprint 3 | E (axe scan), M (keyboard walk-through) | — |
-| NFR-11 | UTC storage, Bangkok display, server clock | SR-03 | Sprint 1 | AC-SR3-01 · U | 2, 3 |
+| NFR-11 | UTC storage, Bangkok display, server clock | SR-03 | Sprint 1 | AC-SR3-01 · U → **Pass**: TEST-SR3-01, TEST-SR3-02 | 2, 3 |
 | NFR-12 | < 500 ms p95 with 500 events / 5,000 registrations | SR-06 | Sprint 3 | M (scripted load run, results recorded) | — |
-| NFR-13 | Environment config, no secrets, health check, Docker-ready | SR-04 | Sprint 1 (design) | AC-SR4-01 · I, M | Lab 5 (Docker, CI/CD, GCP) |
-| NFR-14 | Every AC linked to a test; every BR has a negative test | SR-07 | Sprint 1 | AC-SR7-01 · M (traceability review) | 2, 3 |
-| NFR-15 | Schema validation, no state change by GET, text shown as text | SR-02, Feature-C | Sprint 1 | AC-SR2-02, AC-SR2-03, AC-C-06 · I, E | 2, 3 |
+| NFR-13 | Environment config, no secrets, health check, Docker-ready | SR-04 | Sprint 1 (design) | AC-SR4-01 · I, M → **Pass**: TEST-SR4-01 | Lab 5 (Docker, CI/CD, GCP) |
+| NFR-14 | Every AC linked to a test; every BR has a negative test | SR-07 | Sprint 1 | AC-SR7-01 · M (traceability review) → **Pass**: TEST-SR7-01 | 2, 3 |
+| NFR-15 | Schema validation, no state change by GET, text shown as text | SR-02, Feature-C | Sprint 1 | AC-SR2-02, AC-SR2-03, AC-C-06 · I, E → **Pass**: TEST-SR2-02, TEST-SR2-03, TEST-SR2-05, TEST-C-06 | 2, 3 |
 | NFR-16 | 5 failed sign-ins in 10 min → 429 | Feature-T | Sprint 3 | I (fixed clock) | — |
 
 ### 2.4 Allocation summary
@@ -254,6 +254,7 @@ No requirement was withdrawn and no ID was renumbered.
 - At each sprint release, the "Planned verification" column gains the **actual test file/name and result**
   (Deliverable 1 Part F results table). A requirement is "verified" only when its tests ran on the release commit.
 - When a later sprint's contract is written, its rows gain AC IDs in the same `AC-<feature>-nn` form.
+- **Sprint 1 release (8 Nov 2026):** all 40 Sprint 1 rows show their tests and **Pass**, from the runs on `fc429d9`. The file and test names for each ID are in the STS §2, and the commands and counts in the STS §6.
 
 ## 6. Change log
 
@@ -261,3 +262,4 @@ No requirement was withdrawn and no ID was renumbered.
 |---|---|---|---|
 | v0.1 | 4 Nov 2026 | First matrix: 64 requirements (40 in Sprint 1), 47 planned Sprint 1 ACs, shared-requirement table, problem trace, gaps and approved changes CH-01 … CH-09 | Team (AI-assisted) |
 | v0.2 | 4 Nov 2026 | CH-10: scrypt instead of bcrypt (NFR-03, AC-A-05) | Team (AI-assisted) |
+| v0.3 | 8 Nov 2026 | Sprint 1 results: every Sprint 1 row names its tests and their result (I-12, STS §6) | Team (AI-assisted) |
