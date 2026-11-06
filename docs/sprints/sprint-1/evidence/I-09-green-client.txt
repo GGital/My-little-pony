@@ -1,0 +1,25 @@
+> tcg-event-hub-client@0.1.0 test
+> vitest run
+
+
+ RUN  v4.0.18 C:/Users/Praewa/My-little-pony/client
+
+ ✓ tests/sprint-1/unit/formatEventTime.unit.test.ts (3 tests) 31ms
+ ✓ tests/sprint-1/unit/api.unit.test.ts (4 tests) 19ms
+ ✓ tests/sprint-1/RouteGuards.test.tsx (4 tests) 112ms
+ ✓ tests/sprint-1/EventList.test.tsx (1 test) 120ms
+ ✓ tests/sprint-1/ActionButton.test.tsx (7 tests) 206ms
+ ✓ tests/sprint-1/States.test.tsx (5 tests) 208ms
+ ✓ tests/sprint-1/EventDetail.test.tsx (3 tests) 200ms
+ ✓ tests/sprint-1/AppRoutes.test.tsx (5 tests) 197ms
+ ✓ tests/sprint-1/Dashboard.test.tsx (3 tests) 313ms
+ ✓ tests/sprint-1/Registration.test.tsx (2 tests) 388ms
+     ✓ holds the seat while sending, ignores extra presses, then flips, updates counts and announces  313ms
+ ✓ tests/sprint-1/AppShell.test.tsx (7 tests) 367ms
+ ✓ tests/sprint-1/SignInPage.test.tsx (8 tests) 480ms
+ ✓ tests/sprint-1/CreateEvent.test.tsx (4 tests) 500ms
+
+ Test Files  13 passed (13)
+      Tests  56 passed (56)
+   Start at  23:08:50
+   Duration  6.28s

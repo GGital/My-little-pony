@@ -30,6 +30,7 @@ tasks they assisted. Both students are responsible for, and must be able to expl
 | I-06 role and ownership guards | #8 · PR [#20](https://github.com/GGital/My-little-pony/pull/20) | Wrote the red matrix test and probes, then `requireRole` and the owner-in-where helpers; ran everything on the real database; drafted the docs and PR text | Phattaratorn set the scope (probe form for E-06 … E-11), committed and opened the PR; Praewa reviewed and approved |
 | I-07 create and publish event | #9 · PR [#21](https://github.com/GGital/My-little-pony/pull/21) | Wrote red tests (TEST-D-01 … 05), validation schema, domain rules, POST /api/events HTTP route and wiring, CreateEvent client page, client tests, and evidence; review fixes (M1–M3, S1–S4) and merge conflict resolution with I-08 | Praewa directed TDD steps, supervised implementation, resolved conflicts, and updated PR |
 | I-08 registration with the last-seat lock | #10 · PR [#22](https://github.com/GGital/My-little-pony/pull/22) | Wrote the red tests (rules unit, API, 20-round race, client flow, the owed E-09 rows), the locked transaction, E-09, the Seats card flip, one explained test correction and the docs and PR text; ran everything on the real database, mutation-checked the lock, and checked the flow in the browser | Phattaratorn set the scope, committed and opened PR; reviewed by Praewa |
+| I-09 organizer event dashboard | #11 | Wrote red tests (TEST-E-01, 02; Dashboard.test.tsx), domain query and HTTP route for E-07, Dashboard client page, wired route, updated authorization matrix, and recorded run evidence | Praewa directed TDD steps, supervised implementation, verified test runs, and prepared PR |
 
 ## 3. How we supervise the agent
 
@@ -54,3 +55,4 @@ same way it fills its row in `sts.md` §5 and in [`contributions.md`](contributi
 | v0.3 | 6 Nov 2026 | PR #19 review rows, I-06 row | Team (AI-assisted) |
 | v0.4 | 6 Nov 2026 | I-06 merged; I-08 merged (PR #22) | Team (AI-assisted) |
 | v0.5 | 6 Nov 2026 | I-07 PR #21 updated with review fixes and merge resolution | Praewa (MeldyRose) |
+| v0.6 | 6 Nov 2026 | I-09 organizer event dashboard assisted tasks declared | Praewa (MeldyRose) |
