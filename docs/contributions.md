@@ -24,17 +24,17 @@ the Issues, branches and PRs. AI assistance is listed in [`ai-use.md`](ai-use.md
 | I-06 Feature-B: role and ownership guards | [#8](https://github.com/GGital/My-little-pony/issues/8) | `feature/s1-06-access-control` · [#20](https://github.com/GGital/My-little-pony/pull/20) | Phattaratorn | Praewa (approved 6 Nov) | Merged 6 Nov |
 | I-07 Feature-D: create and publish event | [#9](https://github.com/GGital/My-little-pony/issues/9) | `feature/s1-07-create-event` · [#21](https://github.com/GGital/My-little-pony/pull/21) | Praewa | Phattaratorn (1 × changes requested, then approved 6 Nov) | Merged 6 Nov |
 | I-08 Feature-G: registration with seat lock | [#10](https://github.com/GGital/My-little-pony/issues/10) | `feature/s1-08-registration` · [#22](https://github.com/GGital/My-little-pony/pull/22) | Phattaratorn | Praewa (approved 6 Nov) | Merged 6 Nov |
-| I-09 Feature-E: organizer dashboard | [#11](https://github.com/GGital/My-little-pony/issues/11) | `feature/s1-09-organizer-dashboard` · [#24](https://github.com/GGital/My-little-pony/pull/24) | Praewa (dashboard); Phattaratorn (review fixes, app-wide UI polish) | Phattaratorn | In review |
+| I-09 Feature-E: organizer dashboard | [#11](https://github.com/GGital/My-little-pony/issues/11) | `feature/s1-09-organizer-dashboard` · [#24](https://github.com/GGital/My-little-pony/pull/24) | Praewa (dashboard); Phattaratorn (review fixes, app-wide UI polish) | Phattaratorn (approved 7 Nov) | Merged 7 Nov |
 | I-10 Feature-H: My Events | [#12](https://github.com/GGital/My-little-pony/issues/12) | `feature/s1-10-my-events` · [#23](https://github.com/GGital/My-little-pony/pull/23) | Phattaratorn | Praewa (approved 6 Nov) | Merged 6 Nov |
-| I-11 Feature-I: registration list | [#13](https://github.com/GGital/My-little-pony/issues/13) | — | Praewa (assigned) | Phattaratorn | Planned |
+| I-11 Feature-I: registration list | [#13](https://github.com/GGital/My-little-pony/issues/13) | `feature/s1-11-registration-list` · [#25](https://github.com/GGital/My-little-pony/pull/25) | Praewa (registration list); Phattaratorn (review fixes) | Phattaratorn | In review |
 | I-12 Integration, journeys, release | [#14](https://github.com/GGital/My-little-pony/issues/14) | — | Both (pair) | Both | Planned |
 
 ## 2. Summary per student (Sprint 1 so far)
 
 | Student | Built | Reviewed | Learning outcomes touched (spec §2) |
 |---|---|---|---|
-| Phattaratorn | Baseline documents (PR #1, #2), I-01, I-02, I-04, I-06, I-08, I-10 (merged) | PR #16 (three rounds), PR #19 (two rounds), PR #21 (two rounds), PR #24 (with the UI polish), each tested on the real database | Requirements and design, server implementation, TDD, AI supervision, review |
-| Praewa | I-03, I-05, I-07 (merged), I-09 (PR #24 in review) | PR #1, #2, #15, #17, #18, #20, #22, #23 | Requirements and design review, client and server implementation, TDD, review |
+| Phattaratorn | Baseline documents (PR #1, #2), I-01, I-02, I-04, I-06, I-08, I-10 (merged) | PR #16 (three rounds), PR #19 (two rounds), PR #21 (two rounds), PR #24 (with the UI polish), PR #25, each tested on the real database | Requirements and design, server implementation, TDD, AI supervision, review |
+| Praewa | I-03, I-05, I-07, I-09 (merged), I-11 (in review) | PR #1, #2, #15, #17, #18, #20, #22, #23 | Requirements and design review, client and server implementation, TDD, review |
 
 Both students must be able to explain a sampled requirement, test, design decision and release step. The plan gives
 each student server and client Issues in Sprint 1 (I-05 … I-11 alternate), and I-12 is pair work.
@@ -54,3 +54,5 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.6 | 6 Nov 2026 | I-07 merged with its reviewer; PR #21 review rounds; I-10 in progress | Team (AI-assisted) |
 | v0.7 | 6 Nov 2026 | I-09 Feature-E organizer dashboard implemented; Praewa summary updated | Praewa (MeldyRose) |
 | v0.8 | 7 Nov 2026 | I-09 in review as PR #24; Phattaratorn's review fixes and UI polish recorded | Team (AI-assisted) |
+| v0.9 | 7 Nov 2026 | I-09 merged; I-11 Feature-I event registration list implemented; Praewa summary updated | Praewa (MeldyRose) |
+| v0.10 | 7 Nov 2026 | I-11 in review as PR #25; Phattaratorn's review fixes recorded | Team (AI-assisted) |

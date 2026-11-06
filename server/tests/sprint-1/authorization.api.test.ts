@@ -4,12 +4,11 @@ import { seed } from '../../prisma/seed.js'
 import { TEST_ORIGIN, makeApp } from '../helpers/app.js'
 import { cookieHeader, readSessionCookie, signIn } from '../helpers/auth.js'
 import { prisma, resetDb, tableCounts } from '../helpers/db.js'
-import { PROBE_PATHS, accessProbes } from '../helpers/probes.js'
 
 // Feature-B (contracts §5): roles and ownership enforced by the server, identity only from the session.
-// E-06 … E-11 are built in I-07 … I-11; until then their cells run against the I-06 probes, which use the same
-// guards and ownership helpers (contracts v1.5 §5). Each of those Issues points its rows at the real path.
-const app = makeApp({ extraRoutes: accessProbes(prisma) })
+// Every cell calls the real endpoint: the I-06 probes (contracts v1.5 §5) were replaced one by one in I-07 … I-11,
+// and the last one (E-08) was removed in I-11.
+const app = makeApp()
 const SEED_PASSWORD = 'test-only-seed-password'
 const VALID_EVENT = {
   title: 'Matrix Night',
@@ -33,6 +32,7 @@ const EMAIL: Record<Exclude<Caller, 'visitor'>, string> = {
 const cookies = {} as Record<Exclude<Caller, 'visitor'>, string>
 const ids = { ev1: 0, ev5: 0, ev6: 0, mintReg: 0, ployReg: 0, mint: 0, ploy: 0, dragon: 0 }
 const E07 = '/api/organizer/events' // real since I-09
+const E08 = (id: number | string) => `/api/organizer/events/${id}/registrations` // real since I-11
 const E09 = (id: number | string) => `/api/events/${id}/registrations` // real since I-08
 const E10 = '/api/me/registrations' // real since I-10
 const E11 = (id: number | string) => `/api/me/registrations/${id}` // real since I-10
@@ -115,7 +115,7 @@ describe('TEST-B-02 — no session: every protected endpoint answers 401 with on
     ['E-03', 'GET', (): string => '/api/auth/me'],
     ['E-06', 'POST', (): string => '/api/events'],
     ['E-07', 'GET', (): string => E07],
-    ['E-08', 'GET', (): string => PROBE_PATHS['E-08'](ids.ev1)],
+    ['E-08', 'GET', (): string => E08(ids.ev1)],
     ['E-09', 'POST', (): string => E09(ids.ev5)],
     ['E-10', 'GET', (): string => E10],
     ['E-11', 'GET', (): string => E11(ids.mintReg)],
@@ -158,13 +158,13 @@ const MATRIX: Cell[] = [
   ['E-07', 'GET', () => E07, 'mint', 403],
   ...ANY_ORGANIZER.map((who): Cell => ['E-07', 'GET', () => E07, who, 200]),
   // E-08 registration list of EV-1: organizer + owner; another organizer gets 404 (D-08).
-  ['E-08', 'GET', () => PROBE_PATHS['E-08'](ids.ev1), 'visitor', 401],
-  ['E-08', 'GET', () => PROBE_PATHS['E-08'](ids.ev1), 'mint', 403],
-  ['E-08', 'GET', () => PROBE_PATHS['E-08'](ids.ev1), 'quantum', 200],
-  ['E-08', 'GET', () => PROBE_PATHS['E-08'](ids.ev1), 'dragon', 404],
+  ['E-08', 'GET', () => E08(ids.ev1), 'visitor', 401],
+  ['E-08', 'GET', () => E08(ids.ev1), 'mint', 403],
+  ['E-08', 'GET', () => E08(ids.ev1), 'quantum', 200],
+  ['E-08', 'GET', () => E08(ids.ev1), 'dragon', 404],
   // A malformed id on a protected route is checked after authentication (SDS §2.3).
-  ['E-08', 'GET', () => PROBE_PATHS['E-08']('abc'), 'visitor', 401],
-  ['E-08', 'GET', () => PROBE_PATHS['E-08']('abc'), 'quantum', 400],
+  ['E-08', 'GET', () => E08('abc'), 'visitor', 401],
+  ['E-08', 'GET', () => E08('abc'), 'quantum', 400],
   // E-09 register for EV-5 (owned by Dragon's Den): participant only. Quantum Cards is the wrong role AND not
   // the owner: role is checked first, so 403 (AC-B-03).
   ['E-09', 'POST', () => E09(ids.ev5), 'visitor', 401],
@@ -204,8 +204,8 @@ describe('TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, N
   })
 
   it('404 bodies are byte-identical whether the record exists and is someone else\'s, or does not exist', async () => {
-    const otherEvent = await call('GET', PROBE_PATHS['E-08'](ids.ev1), 'dragon')
-    const noEvent = await call('GET', PROBE_PATHS['E-08'](999999), 'dragon')
+    const otherEvent = await call('GET', E08(ids.ev1), 'dragon')
+    const noEvent = await call('GET', E08(999999), 'dragon')
     expect(otherEvent.status).toBe(404)
     expect(otherEvent.text).toBe(noEvent.text)
 

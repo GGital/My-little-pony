@@ -1,11 +1,8 @@
-import type { PrismaClient } from '@prisma/client'
-import type { Response, Router } from 'express'
+import type { Router } from 'express'
 import { z } from 'zod'
 import { sendError, type ErrorCode } from '../../src/http/errors.js'
 import { requireOrigin } from '../../src/http/origin.js'
-import { ownedEventWhere } from '../../src/domain/actor.js'
-import { requireAuth, requireRole } from '../../src/http/guards.js'
-import { parseId, validate } from '../../src/http/validate.js'
+import { validate } from '../../src/http/validate.js'
 import { TEST_ORIGIN } from './app.js'
 
 /**
@@ -44,34 +41,3 @@ export function probeRoutes(api: Router) {
 
 /** POST-only paths, for the "GET on a POST-only path answers 404" check. */
 export const PROBE_POST_ONLY = ['/api/__test/echo']
-
-/**
- * Stand-ins for E-08 until I-11 builds it (E-06, E-07, E-09 … E-11 are real since I-07, I-08, I-09,
- * I-10; I-06, contracts v1.5 §5). Each probe runs the guard chain and the ownership helper its endpoint
- * must use, then answers with a minimal body. TEST-B-01 … 03 call them through `PROBE_PATHS`; each later
- * Issue points its rows at the real path, and I-12 checks none are left.
- */
-export function accessProbes(db: PrismaClient) {
-  return (api: Router) => {
-    const organizer = [requireAuth, requireRole('ORGANIZER')]
-    const pathId = (raw: unknown, res: Response) => {
-      const id = parseId(raw)
-      if (id === null) sendError(res, 'INVALID_PATH_PARAMETER')
-      return id
-    }
-
-    // E-08 registration list: organizer + owner; another organizer's event is a 404.
-    api.get('/__test/e-08/:id', ...organizer, async (req, res) => {
-      const id = pathId(req.params.id, res)
-      if (id === null) return
-      const event = await db.event.findFirst({ where: ownedEventWhere(req.actor!, id) })
-      if (!event) return sendError(res, 'EVENT_NOT_FOUND')
-      res.json({ items: [] })
-    })
-  }
-}
-
-/** Where each Sprint 1 endpoint is reached today: the real path, or its I-06 probe until its Issue lands. */
-export const PROBE_PATHS = {
-  'E-08': (id: number | string) => `/api/__test/e-08/${id}`,
-}

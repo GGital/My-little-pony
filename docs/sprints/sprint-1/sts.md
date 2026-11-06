@@ -1,7 +1,7 @@
 # Sprint 1 Software Test Specification (STS)
 
-Project: **TCG Event Hub** · Sprint 1 · Document version: v1.10 (v1.0 reviewed in PR 2; changes in §8)
-Contracts: [`feature-contracts.md`](feature-contracts.md) v1.10 · Issues and Definition of Done: [`README.md`](README.md)
+Project: **TCG Event Hub** · Sprint 1 · Document version: v1.11 (v1.0 reviewed in PR 2; changes in §8)
+Contracts: [`feature-contracts.md`](feature-contracts.md) v1.11 · Issues and Definition of Done: [`README.md`](README.md)
 
 This document turns every Sprint 1 acceptance criterion into planned tests, **before** the code exists. It
 follows the method we used in TokTickIT: **Spec DD → Test DD → TDD**. A Pull Request that adds behaviour without
@@ -171,7 +171,7 @@ the commit id in §6.
 
 | Test ID | Level | AC / Req | Precondition / input | Action | Expected result | File | Result |
 |---|---|---|---|---|---|---|---|
-| TEST-I-01 | I, E2E | AC-I-01, FR-18 | O1's event with 3 registrations at known times; O1's event with none | E-08 for both. (E2E) Quantum Cards opens EV-1 and EV-6 lists | Rows in `createdAt` order with display names, times, status; counts 3 / 24 / 21; empty list `items: []`. (E2E) table and "No registrations yet." | `server/tests/sprint-1/organizer.api.test.ts`, `e2e/sprint-1/organizer.spec.ts` | Pending |
+| TEST-I-01 | I, E2E | AC-I-01, FR-18 | O1's event with 3 registrations at known times, inserted out of `createdAt` order, plus one `CANCELLED` registration; O1's event with none | E-08 for both. (E2E) Quantum Cards opens EV-1 and EV-6 lists | Rows in `createdAt` order with display names, times, status; counts 3 / 24 / 21; empty list `items: []`. (E2E) table and "No registrations yet." | `server/tests/sprint-1/organizer.api.test.ts`, `e2e/sprint-1/organizer.spec.ts` | Pending |
 | TEST-I-02 | I | AC-I-02, BR-14 | O2; O1's event; a non-existent id | O2 calls E-08 for both | Both `404 EVENT_NOT_FOUND`, byte-identical | `server/tests/sprint-1/organizer.api.test.ts` | Pending |
 | TEST-I-03 | I | AC-I-03, BR-16 | Participant P; O1's response for its event | P calls E-08; scan O1's body | P `403`; O1's body has no `@` email and no `participantId` / `email` keys | `server/tests/sprint-1/organizer.api.test.ts` | Pending |
 
@@ -257,7 +257,7 @@ the evidence the TA checks (Deliverable 1 §4.2).
 | I-09 Feature-E | TEST-E-01, 02 | `913ccb4` | **Server 9 failed / 253** (all on assertions: E-07 answers 404; TEST-E-01, 02 fail; authorization E-07 rows fail) — `evidence/I-09-red-server.txt`; **client 3 failed / 56** (Dashboard stubs) — `evidence/I-09-red-client.txt` | `58492fb` | **Server 253 passed / 253** — `evidence/I-09-green-server.txt`; **client 56 passed / 56** — `evidence/I-09-green-client.txt`. After merging I-10 (`d97bf96`): server 259 / 259, client 59 / 59. Mutation (review): dropping the owner filter fails 3, sorting by `id` only fails 1 |
 | I-09 UI polish (PR #24) | TEST-F-01, F-02, G-01, H-01 (C) display text | `1bd4b9c` | **Client 3 failed / 59**: four explained assertion corrections (named in the commit) run against the old UI; the My Events one passes on both — `evidence/UI-polish-red-client.txt` | `4ff7e75` | **Client 59 passed / 59**, run twice; typecheck and build OK — `evidence/UI-polish-green-client.txt`. No server change |
 | I-10 Feature-H | TEST-H-01, 02 (+ My Events part of TEST-C-05; E-10 / E-11 rows of TEST-A-04, TEST-B-01 … 03) | `dc08846` | **Server 18 failed / 209** (all AssertionError: E-10 / E-11 answer 404). Cells that pass at red: TEST-B-03 "Mint on Ploy's registration → 404" and the byte-identical 404 check, because an unknown route is also a 404 NOT_FOUND — they become meaningful with the real endpoint, and the owner mutation below proves they now bite — `evidence/I-10-red-server.txt`; **client 3 failed / 51** (no cards, no empty state, no loading state) — `evidence/I-10-red-client.txt` | `e2c216f` | **Server 209 passed / 209**, **client 51 passed / 51**, each run twice — `evidence/I-10-green-*.txt`. After merging I-07 (staging `652da0a`): server 255 / 255, client 56 / 56, each run twice. Mutation: dropping the owner from E-11 fails 3, from E-10 fails 2 |
-| I-11 Feature-I | TEST-I-01 … 03 | Pending | Pending | Pending | Pending |
+| I-11 Feature-I | TEST-I-01 … 03 | `2f2461c` | **Server 5 failed / 264** (all on assertions: E-08 answers 404; TEST-I-01 … 03 fail) — `evidence/I-11-red-server.txt`; **client 3 failed / 62** (Registrations stub) — `evidence/I-11-red-client.txt` | `933a7aa` | **Server 264 passed / 264**, **client 62 passed / 62** — `evidence/I-11-green-*.txt`. Review (PR #25): removing the sort, sorting by `id` only, or dropping the status filter passed, so TEST-I-01 now inserts out of order with a `CANCELLED` row (each mutation then fails 1); the page shows the not-found page on 404 / 400 and the last probe is removed: red `ec089bc` client 2 failed / 64, green `1b5ec2b` server 264 / 264 (twice), client 64 / 64 — `evidence/I-11-review-*.txt`. Owner filter mutation fails 3 |
 | I-12 Integration and release | TEST-C-03, TEST-SR5-01, TEST-SR7-01, JRN-01, JRN-02 | Pending | Pending | Pending | Pending |
 
 **What counts as red:** the new tests compile and run, and fail **on their assertions** (for example, expected
@@ -319,3 +319,4 @@ npm --prefix server run db:seed && npx playwright test e2e/sprint-1
 | v1.8 | 6 Nov 2026 | I-07 TDD record filled from real runs; TEST-D-01 gains a component level (CreateEvent.test.tsx) and moves its E2E half to I-12 (contracts v1.7); real E-06 replaces probe in TEST-B-01 … 03; TEST-SR2-02 real E-06 case added | Praewa (MeldyRose) |
 | v1.9 | 6 Nov 2026 | I-10 TDD record filled from real runs; TEST-H-01 gains a component level (`MyEvents.test.tsx`) and moves its E2E half to I-12 (contracts v1.8) | Team (AI-assisted) |
 | v1.10 | 7 Nov 2026 | I-09 row records the post-merge run and the review mutations; UI polish row (red / green of the four explained assertion corrections); TEST-G-01 names the check-icon REGISTERED button (contracts v1.10) | Team (AI-assisted) |
+| v1.11 | 7 Nov 2026 | I-11 TDD record filled from real runs; TEST-I-01 gains a component level (`Registrations.test.tsx`) and moves its E2E half to I-12; real E-08 replaces probe in TEST-B-02 and TEST-B-03, and the E-08 probe is removed; review: TEST-I-01 data out of order with a cancelled row, not-found page case (PR #25) | Praewa (MeldyRose); review Team (AI-assisted) |

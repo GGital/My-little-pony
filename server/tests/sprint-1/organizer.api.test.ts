@@ -156,3 +156,131 @@ describe('TEST-E-02 — Organizer sees none of another organizer\'s events; part
     expect(visitorRes.body.error.code).toBe('UNAUTHENTICATED')
   })
 })
+
+describe('Feature-I — Event Registration List (E-08, contracts §12)', () => {
+  let qc: SignedIn
+  let dd: SignedIn
+  let mint: SignedIn
+  let ev1: { id: number; title: string }
+  let ev6: { id: number; title: string }
+  let regTimes: string[]
+
+  beforeAll(async () => {
+    qc = await signedIn('ORGANIZER', 'Quantum Cards')
+    dd = await signedIn('ORGANIZER', "Dragon's Den")
+    mint = await signedIn('PARTICIPANT', 'Mint')
+    const ploy = await makeParticipant('Ploy')
+    const boss = await makeParticipant('Boss')
+
+    ev1 = await makeEvent(qc.id, {
+      capacity: 24,
+      startAt: new Date(T.getTime() + 2 * DAY),
+    })
+
+    ev6 = await makeEvent(qc.id, {
+      capacity: 32,
+      startAt: new Date(T.getTime() + 7 * DAY),
+    })
+
+    // Registered Mint, Ploy, Boss (createdAt order), but inserted Boss first, so id order and insert order differ
+    // from createdAt order and the test proves the sort. Fern's CANCELLED registration is the earliest and must
+    // be neither listed nor counted.
+    const fern = await makeParticipant('Fern')
+    const r3 = await prisma.registration.create({
+      data: { eventId: ev1.id, participantId: boss.id, createdAt: new Date(T.getTime() + 3000) },
+    })
+    const r1 = await prisma.registration.create({
+      data: { eventId: ev1.id, participantId: mint.id, createdAt: new Date(T.getTime() + 1000) },
+    })
+    await prisma.registration.create({
+      data: { eventId: ev1.id, participantId: fern.id, status: 'CANCELLED', createdAt: new Date(T.getTime() + 500) },
+    })
+    const r2 = await prisma.registration.create({
+      data: { eventId: ev1.id, participantId: ploy.id, createdAt: new Date(T.getTime() + 2000) },
+    })
+    regTimes = [r1.createdAt.toISOString(), r2.createdAt.toISOString(), r3.createdAt.toISOString()]
+  })
+
+  describe('TEST-I-01 — Owner sees who registered in createdAt order with counts; empty list (AC-I-01, FR-18)', () => {
+    it('O1 gets 200 with three rows in registration order, display names, times, REGISTERED, and counts 3/24/21', async () => {
+      const res = await get(`/api/organizer/events/${ev1.id}/registrations`, qc)
+
+      expect(res.status).toBe(200)
+      expect(res.body.event).toEqual({
+        id: ev1.id,
+        title: ev1.title,
+        capacity: 24,
+        registeredCount: 3,
+        seatsRemaining: 21,
+      })
+
+      expect(res.body.items).toHaveLength(3)
+      expect(res.body.items[0]).toMatchObject({
+        participant: { displayName: 'Mint' },
+        status: 'REGISTERED',
+        createdAt: regTimes[0],
+      })
+      expect(res.body.items[1]).toMatchObject({
+        participant: { displayName: 'Ploy' },
+        status: 'REGISTERED',
+        createdAt: regTimes[1],
+      })
+      expect(res.body.items[2]).toMatchObject({
+        participant: { displayName: 'Boss' },
+        status: 'REGISTERED',
+        createdAt: regTimes[2],
+      })
+    })
+
+    it('O1 gets 200 with items: [] and counts 0/32/32 on an event with no registrations (EV-6)', async () => {
+      const res = await get(`/api/organizer/events/${ev6.id}/registrations`, qc)
+
+      expect(res.status).toBe(200)
+      expect(res.body.event).toEqual({
+        id: ev6.id,
+        title: ev6.title,
+        capacity: 32,
+        registeredCount: 0,
+        seatsRemaining: 32,
+      })
+      expect(res.body.items).toEqual([])
+    })
+  })
+
+  describe("TEST-I-02 — Another organizer gets 404 EVENT_NOT_FOUND, byte-identical to non-existent id (AC-I-02, BR-14)", () => {
+    it("O2 calling E-08 for O1's event and for a non-existent id both get 404 EVENT_NOT_FOUND with identical bodies", async () => {
+      const otherRes = await get(`/api/organizer/events/${ev1.id}/registrations`, dd)
+      const missingRes = await get(`/api/organizer/events/999999/registrations`, dd)
+
+      expect(otherRes.status).toBe(404)
+      expect(otherRes.body.error.code).toBe('EVENT_NOT_FOUND')
+
+      expect(missingRes.status).toBe(404)
+      expect(missingRes.body.error.code).toBe('EVENT_NOT_FOUND')
+
+      expect(otherRes.text).toBe(missingRes.text)
+    })
+  })
+
+  describe('TEST-I-03 — Participant gets 403; response contains no email and no participantId (AC-I-03, BR-16)', () => {
+    it('participant gets 403 FORBIDDEN, visitor gets 401 UNAUTHENTICATED', async () => {
+      const partRes = await get(`/api/organizer/events/${ev1.id}/registrations`, mint)
+      expect(partRes.status).toBe(403)
+      expect(partRes.body.error.code).toBe('FORBIDDEN')
+
+      const visitorRes = await get(`/api/organizer/events/${ev1.id}/registrations`)
+      expect(visitorRes.status).toBe(401)
+      expect(visitorRes.body.error.code).toBe('UNAUTHENTICATED')
+    })
+
+    it("owner's response contains no email address and no participantId / email keys (BR-16)", async () => {
+      const ownerRes = await get(`/api/organizer/events/${ev1.id}/registrations`, qc)
+      expect(ownerRes.status).toBe(200)
+
+      const bodyStr = JSON.stringify(ownerRes.body)
+      expect(bodyStr).not.toContain('@')
+      expect(bodyStr).not.toContain('participantId')
+      expect(bodyStr).not.toContain('"email"')
+    })
+  })
+})

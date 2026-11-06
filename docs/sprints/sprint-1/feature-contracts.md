@@ -1,6 +1,6 @@
 # Sprint 1 Feature Engineering Contracts
 
-Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.10 (v1.0 reviewed in PR 2; changes in §15)
+Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.11 (v1.0 reviewed in PR 2; changes in §15)
 Inputs: [`../../srs.md`](../../srs.md) v0.5 · [`../../features.md`](../../features.md) v0.2 ·
 [`../../traceability.md`](../../traceability.md) v0.2 · [`../../system-sds.md`](../../system-sds.md) v0.2 ·
 [`../plan.md`](../plan.md) v0.1 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.3 ·
@@ -593,6 +593,12 @@ left`, and a table: #, player (display name), registered at (Bangkok time), stat
 
 **Planned tests:** TEST-I-01 … 03 (I, E).
 
+**What I-11 adds and moves (v1.11).** The E2E half of TEST-I-01 moves to I-12 with the other Playwright journeys; in
+I-11 the page is checked at component level (`Registrations.test.tsx`: table with display names, Bangkok formatted
+times and REGISTERED status chip, empty state "No registrations yet.", loading and error with Try again). Real E-08
+replaces the probe in TEST-B-02 and TEST-B-03, and is added to the route table; the E-08 probe, the last one,
+is removed. Another organizer's event or a malformed id shows the not-found page (design-direction §5).
+
 ---
 
 ## 13. SR-04, SR-05 and SR-07 at Sprint 1 level
@@ -644,3 +650,4 @@ the same Pull Request, so the history stays visible (Deliverable 1 §3.5).
 | v1.8 | 6 Nov 2026 | §11 Feature-H: E2E half of TEST-H-01 moves to I-12; the page is checked at component level in I-10; E-10 / E-11 replace their probes in TEST-A-04 and TEST-B-01 … 03 | Found while implementing #12 (I-10): Playwright is set up in I-12 | Team (AI-assisted) |
 | v1.9 | 6 Nov 2026 | §8 Feature-E: Playwright E2E half of TEST-E-01 moves to I-12 (following PR #18 pattern); UI behaviour checked at component level (Dashboard.test.tsx); E-07 replaces probe in TEST-B-02 and TEST-B-03, route table gains E-07 | Found while implementing #11 (I-09): Playwright is set up in I-12 | Praewa (MeldyRose) |
 | v1.10 | 7 Nov 2026 | §0.2, §10 Behaviour 3, AC-G-01: the registered button is **REGISTERED** with the drawn check icon, not the "✓" glyph; the card's type · format line reads "Casual · Constructed" (design-direction v0.3) | UI polish in PR #24: design-direction §8 bans Unicode glyphs as icons | Team (AI-assisted) |
+| v1.11 | 7 Nov 2026 | §12 Feature-I: Playwright E2E half of TEST-I-01 moves to I-12 (following PR #18 pattern); UI behaviour checked at component level (`Registrations.test.tsx`); real E-08 replaces probe in TEST-B-02 and TEST-B-03, route table gains E-08 | Found while implementing #13 (I-11): Playwright is set up in I-12 | Praewa (MeldyRose) |

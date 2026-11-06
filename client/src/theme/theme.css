@@ -320,6 +320,10 @@ p {
 .ptop .host {
   margin-top: 6px;
 }
+.ptop__actions {
+  display: flex;
+  gap: 8px;
+}
 .tabs {
   display: flex;
   gap: 28px;
@@ -1075,6 +1079,13 @@ textarea.form-control {
 }
 .data-table tr:last-child td {
   border-bottom: 0;
+}
+/* A wide table scrolls inside the panel on phones instead of widening the page. */
+.table-scroll {
+  overflow-x: auto;
+}
+.data-table td {
+  white-space: nowrap;
 }
 .data-table th {
   background: var(--surface-raised);
