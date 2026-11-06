@@ -1,7 +1,7 @@
 # Sprint 1 Software Test Specification (STS)
 
-Project: **TCG Event Hub** · Sprint 1 · Document version: v1.7 (v1.0 reviewed in PR 2; changes in §8)
-Contracts: [`feature-contracts.md`](feature-contracts.md) v1.6 · Issues and Definition of Done: [`README.md`](README.md)
+Project: **TCG Event Hub** · Sprint 1 · Document version: v1.9 (v1.0 reviewed in PR 2; changes in §8)
+Contracts: [`feature-contracts.md`](feature-contracts.md) v1.8 · Issues and Definition of Done: [`README.md`](README.md)
 
 This document turns every Sprint 1 acceptance criterion into planned tests, **before** the code exists. It
 follows the method we used in TokTickIT: **Spec DD → Test DD → TDD**. A Pull Request that adds behaviour without
@@ -164,7 +164,7 @@ the commit id in §6.
 
 | Test ID | Level | AC / Req | Precondition / input | Action | Expected result | File | Result |
 |---|---|---|---|---|---|---|---|
-| TEST-H-01 | I, E2E | AC-H-01, FR-17 | P1 registered for three events with different starts; P2 for none | E-10 as P1 and P2. (E2E) `/me/registrations` as Mint and as Nok | P1: three, soonest first, each with its event; P2: `items: []`. (E2E) cards link to event pages; Nok sees the empty state with Find an Event | `server/tests/sprint-1/me.api.test.ts`, `e2e/sprint-1/my-events.spec.ts` | Pending |
+| TEST-H-01 | I, C, E2E | AC-H-01, FR-17 | P1 registered for three events with different starts; P2 for none | E-10 as P1 and P2. (C) render `/me/registrations` with E-10 stubbed (three items; empty). (E2E, in I-12) `/me/registrations` as Mint and as Nok | P1: three, soonest first, each with its event; P2: `items: []`. (E2E) cards link to event pages; Nok sees the empty state with Find an Event | `server/tests/sprint-1/me.api.test.ts`, `client/tests/sprint-1/MyEvents.test.tsx`, `e2e/sprint-1/my-events.spec.ts` (I-12) | Pending |
 | TEST-H-02 | I | AC-H-02, BR-16 | P2's registration id; a non-existent id; organizer O1 | P1 calls E-11 with each id; O1 calls E-10 | Both `404 REGISTRATION_NOT_FOUND`, byte-identical bodies; no P2 field; O1 `403` | `server/tests/sprint-1/me.api.test.ts` | Pending |
 
 ### 2.11 Feature-I — registration list
@@ -255,7 +255,7 @@ the evidence the TA checks (Deliverable 1 §4.2).
 | I-07 Feature-D | TEST-D-01 … 05 | `5db1262` | **Server 41 failed / 218** (all on assertions: E-06 answers 404; time rules stub returns valid; input schema rejects extra fields/valid fields; access control tests: visitor 404 instead of 401, participant 404 instead of 403; earlier 177 tests all pass) — `evidence/I-07-red.txt`. Client tests (`CreateEvent.test.tsx`, 4) were written with the page in `bf5daf8` and have no red run. | `bf5daf8` | **Server 220 passed / 220, client 50 passed / 50** — `evidence/I-07-green.txt` |
 | I-08 Feature-G | TEST-G-01 … 06 (+ E-09 cases in TEST-SR2-05, TEST-SR3-01, TEST-A-04, TEST-B-01 … 03) | `ea05646` | **Server 33 failed / 203** (all AssertionError: E-09 answers 404; `decideRegistration` stub says OK; the race gets 20 × 404) — `evidence/I-08-red-server.txt`; **client 2 failed / 48** (no HOLDING YOUR SEAT…, no alert) — `evidence/I-08-red-client.txt` | `9f72800` (implementation: server 203 / 203, client 47 / 48), then `115a722` (explained test correction: an ambiguous query in the new client test) | **Server 203 passed / 203**, three runs, TEST-G-06 20 rounds each — `evidence/I-08-green-server.txt`; **client 48 passed / 48** — `evidence/I-08-green-client-2.txt`. Mutation: without `FOR UPDATE` the race sells the seat many times (round 1 fails) |
 | I-09 Feature-E | TEST-E-01, 02 | `913ccb4` | **Server 9 failed / 253** (all on assertions: E-07 answers 404; TEST-E-01, 02 fail; authorization E-07 rows fail) — `evidence/I-09-red-server.txt`; **client 3 failed / 56** (Dashboard stubs) — `evidence/I-09-red-client.txt` | `58492fb` | **Server 253 passed / 253** — `evidence/I-09-green-server.txt`; **client 56 passed / 56** — `evidence/I-09-green-client.txt` |
-| I-10 Feature-H | TEST-H-01, 02 | Pending | Pending | Pending | Pending |
+| I-10 Feature-H | TEST-H-01, 02 (+ My Events part of TEST-C-05; E-10 / E-11 rows of TEST-A-04, TEST-B-01 … 03) | `dc08846` | **Server 18 failed / 209** (all AssertionError: E-10 / E-11 answer 404). Cells that pass at red: TEST-B-03 "Mint on Ploy's registration → 404" and the byte-identical 404 check, because an unknown route is also a 404 NOT_FOUND — they become meaningful with the real endpoint, and the owner mutation below proves they now bite — `evidence/I-10-red-server.txt`; **client 3 failed / 51** (no cards, no empty state, no loading state) — `evidence/I-10-red-client.txt` | `e2c216f` | **Server 209 passed / 209**, **client 51 passed / 51**, each run twice — `evidence/I-10-green-*.txt`. After merging I-07 (staging `652da0a`): server 255 / 255, client 56 / 56, each run twice. Mutation: dropping the owner from E-11 fails 3, from E-10 fails 2 |
 | I-11 Feature-I | TEST-I-01 … 03 | Pending | Pending | Pending | Pending |
 | I-12 Integration and release | TEST-C-03, TEST-SR5-01, TEST-SR7-01, JRN-01, JRN-02 | Pending | Pending | Pending | Pending |
 
@@ -277,7 +277,7 @@ output.
 | Build: `npm --prefix server run build && npm --prefix client run build` | Pending |
 | Concurrency: TEST-G-06, 20 rounds | Pending |
 | Manual checks: TEST-SR1-01 (restart), TEST-SR4-01 (secret scan) | Pending, with screenshots in `evidence/` |
-| Failed / skipped tests and known limitations | Pending (I-03: the `dangerouslySetInnerHTML` lint rule (Behaviour 6) and TEST-C-06 come with I-05. I-08: the E2E halves of TEST-G-01 / G-02 are in I-12; E-09 rows of TEST-B-01 … 03 now use the real endpoint. I-06: E-06 … E-11 cells of TEST-B-01 … 03 run against test-only probes until I-07 … I-11 point them at the real endpoints; I-12 checks no probe rows remain. I-04: the E2E half of TEST-A-04 is in I-12 with the other Playwright tests; the E-09 / E-10 old-cookie rows of TEST-A-04 come with I-08 / I-10; the AuthProvider stub noted for I-03 is resolved) |
+| Failed / skipped tests and known limitations | Pending (I-03: the `dangerouslySetInnerHTML` lint rule (Behaviour 6) and TEST-C-06 come with I-05. I-10: the E2E half of TEST-H-01 is in I-12; E-10 / E-11 rows of TEST-A-04 and TEST-B-01 … 03 now use the real endpoints. I-08: the E2E halves of TEST-G-01 / G-02 are in I-12; E-09 rows of TEST-B-01 … 03 now use the real endpoint. I-06: E-06 … E-11 cells of TEST-B-01 … 03 run against test-only probes until I-07 … I-11 point them at the real endpoints; I-12 checks no probe rows remain. I-04: the E2E half of TEST-A-04 is in I-12 with the other Playwright tests; the E-09 / E-10 old-cookie rows of TEST-A-04 come with I-08 / I-10; the AuthProvider stub noted for I-03 is resolved) |
 
 The AC → test → actual file/name → result table for the PDF (Deliverable 1 §4.2) is produced from §2 and this
 section.
@@ -316,3 +316,4 @@ npm --prefix server run db:seed && npx playwright test e2e/sprint-1
 | v1.6 | 6 Nov 2026 | I-06 TDD record filled from real runs; TEST-B-01 … 03 rows describe the probe form for E-06 … E-11 and which Issue adds each real-endpoint case (contracts v1.5) | Team (AI-assisted) |
 | v1.7 | 6 Nov 2026 | I-08 TDD record filled from real runs; TEST-G-01 / G-02 gain a component level (`Registration.test.tsx`) and move their E2E halves to I-12 (contracts v1.6) | Team (AI-assisted) |
 | v1.8 | 6 Nov 2026 | I-07 TDD record filled from real runs; TEST-D-01 gains a component level (CreateEvent.test.tsx) and moves its E2E half to I-12 (contracts v1.7); real E-06 replaces probe in TEST-B-01 … 03; TEST-SR2-02 real E-06 case added | Praewa (MeldyRose) |
+| v1.9 | 6 Nov 2026 | I-10 TDD record filled from real runs; TEST-H-01 gains a component level (`MyEvents.test.tsx`) and moves its E2E half to I-12 (contracts v1.8) | Team (AI-assisted) |

@@ -6,9 +6,9 @@ import { NotFoundPage } from './pages/NotFoundPage';
 import { SignInPage } from './pages/SignInPage';
 import { EventList } from '../pages/EventList';
 import { EventDetail } from '../pages/EventDetail';
+import { MyEvents } from '../pages/MyEvents';
 import { CreateEvent } from '../pages/organizer/CreateEvent';
 import { Dashboard as OrganizerDashboard } from '../pages/organizer/Dashboard';
-const MyEventsStub = () => <div><h2>My Events</h2></div>;
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -23,7 +23,7 @@ export const AppRoutes: React.FC = () => {
         path="/me/registrations"
         element={
           <RequireRole role="PARTICIPANT">
-            <MyEventsStub />
+            <MyEvents />
           </RequireRole>
         }
       />

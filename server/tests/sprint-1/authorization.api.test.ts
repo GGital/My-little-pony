@@ -34,6 +34,8 @@ const cookies = {} as Record<Exclude<Caller, 'visitor'>, string>
 const ids = { ev1: 0, ev5: 0, ev6: 0, mintReg: 0, ployReg: 0, mint: 0, ploy: 0, dragon: 0 }
 const E07 = '/api/organizer/events' // real since I-09
 const E09 = (id: number | string) => `/api/events/${id}/registrations` // real since I-08
+const E10 = '/api/me/registrations' // real since I-10
+const E11 = (id: number | string) => `/api/me/registrations/${id}` // real since I-10
 
 async function sessionFor(email: string) {
   const res = await signIn(request(app), email, SEED_PASSWORD)
@@ -115,8 +117,8 @@ describe('TEST-B-02 — no session: every protected endpoint answers 401 with on
     ['E-07', 'GET', (): string => E07],
     ['E-08', 'GET', (): string => PROBE_PATHS['E-08'](ids.ev1)],
     ['E-09', 'POST', (): string => E09(ids.ev5)],
-    ['E-10', 'GET', (): string => PROBE_PATHS['E-10']],
-    ['E-11', 'GET', (): string => PROBE_PATHS['E-11'](ids.mintReg)],
+    ['E-10', 'GET', (): string => E10],
+    ['E-11', 'GET', (): string => E11(ids.mintReg)],
   ] as const)('%s → 401 UNAUTHENTICATED', async (_id, method, path) => {
     const res = await call(method, path(), 'visitor')
     expect(res.status).toBe(401)
@@ -170,14 +172,14 @@ const MATRIX: Cell[] = [
   ['E-09', 'POST', () => E09(ids.ev5), 'quantum', 403],
   ['E-09', 'POST', () => E09(ids.ev5), 'dragon', 403],
   // E-10 my registrations: participant.
-  ['E-10', 'GET', () => PROBE_PATHS['E-10'], 'visitor', 401],
-  ['E-10', 'GET', () => PROBE_PATHS['E-10'], 'mint', 200],
-  ...ANY_ORGANIZER.map((who): Cell => ['E-10', 'GET', () => PROBE_PATHS['E-10'], who, 403]),
+  ['E-10', 'GET', () => E10, 'visitor', 401],
+  ['E-10', 'GET', () => E10, 'mint', 200],
+  ...ANY_ORGANIZER.map((who): Cell => ['E-10', 'GET', () => E10, who, 403]),
   // E-11 one registration: participant + own; Ploy's registration is a 404 for Mint.
-  ['E-11', 'GET', () => PROBE_PATHS['E-11'](ids.mintReg), 'visitor', 401],
-  ['E-11', 'GET', () => PROBE_PATHS['E-11'](ids.mintReg), 'mint', 200],
-  ['E-11', 'GET', () => PROBE_PATHS['E-11'](ids.ployReg), 'mint', 404],
-  ...ANY_ORGANIZER.map((who): Cell => ['E-11', 'GET', () => PROBE_PATHS['E-11'](ids.mintReg), who, 403]),
+  ['E-11', 'GET', () => E11(ids.mintReg), 'visitor', 401],
+  ['E-11', 'GET', () => E11(ids.mintReg), 'mint', 200],
+  ['E-11', 'GET', () => E11(ids.ployReg), 'mint', 404],
+  ...ANY_ORGANIZER.map((who): Cell => ['E-11', 'GET', () => E11(ids.mintReg), who, 403]),
 ]
 
 describe('TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16)', () => {
@@ -207,8 +209,8 @@ describe('TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, N
     expect(otherEvent.status).toBe(404)
     expect(otherEvent.text).toBe(noEvent.text)
 
-    const otherReg = await call('GET', PROBE_PATHS['E-11'](ids.ployReg), 'mint')
-    const noReg = await call('GET', PROBE_PATHS['E-11'](999999), 'mint')
+    const otherReg = await call('GET', E11(ids.ployReg), 'mint')
+    const noReg = await call('GET', E11(999999), 'mint')
     expect(otherReg.status).toBe(404)
     expect(otherReg.text).toBe(noReg.text)
   })
