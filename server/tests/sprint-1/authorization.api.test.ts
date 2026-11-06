@@ -11,7 +11,17 @@ import { PROBE_PATHS, accessProbes } from '../helpers/probes.js'
 // guards and ownership helpers (contracts v1.5 §5). Each of those Issues points its rows at the real path.
 const app = makeApp({ extraRoutes: accessProbes(prisma) })
 const SEED_PASSWORD = 'test-only-seed-password'
-const VALID_EVENT = { title: 'Matrix Night', capacity: 8, startAt: '2027-01-15T10:00:00.000Z' }
+const VALID_EVENT = {
+  title: 'Matrix Night',
+  type: 'CASUAL',
+  format: 'CONSTRUCTED',
+  venueName: 'Matrix Venue',
+  venueAddress: '1 Matrix Way',
+  city: 'Bangkok',
+  startAt: '2027-01-15T10:00:00.000Z',
+  endAt: '2027-01-15T14:00:00.000Z',
+  capacity: 8,
+}
 
 type Caller = 'visitor' | 'mint' | 'quantum' | 'dragon'
 const EMAIL: Record<Exclude<Caller, 'visitor'>, string> = {
@@ -67,7 +77,7 @@ describe('TEST-B-01 — identity comes only from the session (AC-B-01, BR-17)', 
   // The "stored id = the caller" half needs the real E-06 / E-09 and is added by I-07 / I-08 (contracts v1.5).
   it.each([
     ['E-09 with participantId of another user', 'mint', (): string => PROBE_PATHS['E-09'](ids.ev5), (): object => ({ participantId: ids.ploy })],
-    ['E-06 with organizerId of another organizer', 'quantum', (): string => PROBE_PATHS['E-06'], (): object => ({ ...VALID_EVENT, organizerId: ids.dragon })],
+    ['E-06 with organizerId of another organizer', 'quantum', (): string => '/api/events', (): object => ({ ...VALID_EVENT, organizerId: ids.dragon })],
   ] as const)('%s → 400 VALIDATION_FAILED on that field, nothing stored', async (_label, as, path, body) => {
     const before = await tableCounts()
     const res = await call('POST', path(), as, body())
@@ -76,13 +86,22 @@ describe('TEST-B-01 — identity comes only from the session (AC-B-01, BR-17)', 
     expect(res.body.error.details.map((d: { field: string }) => d.field)).toEqual([Object.keys(body()).at(-1)])
     expect(await tableCounts()).toEqual(before)
   })
+
+  it('real E-06: valid event creation stores organizerId = caller.id (AC-B-01, BR-17)', async () => {
+    const res = await call('POST', '/api/events', 'quantum', VALID_EVENT)
+    expect(res.status).toBe(201)
+    const organizer = await prisma.user.findUniqueOrThrow({ where: { email: 'quantum@organizer.example' } })
+    expect(res.body.organizer.displayName).toBe('Quantum Cards')
+    const stored = await prisma.event.findUniqueOrThrow({ where: { id: res.body.id } })
+    expect(stored.organizerId).toBe(organizer.id)
+  })
 })
 
 describe('TEST-B-02 — no session: every protected endpoint answers 401 with only an error (AC-B-02, NFR-01)', () => {
   it.each([
     ['E-02', 'POST', (): string => '/api/auth/logout'],
     ['E-03', 'GET', (): string => '/api/auth/me'],
-    ['E-06', 'POST', (): string => PROBE_PATHS['E-06']],
+    ['E-06', 'POST', (): string => '/api/events'],
     ['E-07', 'GET', (): string => PROBE_PATHS['E-07']],
     ['E-08', 'GET', (): string => PROBE_PATHS['E-08'](ids.ev1)],
     ['E-09', 'POST', (): string => PROBE_PATHS['E-09'](ids.ev5)],
@@ -119,9 +138,9 @@ const MATRIX: Cell[] = [
     ['E-05', 'GET', () => `/api/events/${ids.ev1}`, who, 200],
   ]),
   // E-06 create event: organizer; any organizer becomes the owner.
-  ['E-06', 'POST', () => PROBE_PATHS['E-06'], 'visitor', 401, () => VALID_EVENT],
-  ['E-06', 'POST', () => PROBE_PATHS['E-06'], 'mint', 403, () => VALID_EVENT],
-  ...ANY_ORGANIZER.map((who): Cell => ['E-06', 'POST', () => PROBE_PATHS['E-06'], who, 201, () => VALID_EVENT]),
+  ['E-06', 'POST', () => '/api/events', 'visitor', 401, () => VALID_EVENT],
+  ['E-06', 'POST', () => '/api/events', 'mint', 403, () => VALID_EVENT],
+  ...ANY_ORGANIZER.map((who): Cell => ['E-06', 'POST', () => '/api/events', who, 201, () => VALID_EVENT]),
   // E-07 own dashboard: organizer.
   ['E-07', 'GET', () => PROBE_PATHS['E-07'], 'visitor', 401],
   ['E-07', 'GET', () => PROBE_PATHS['E-07'], 'mint', 403],

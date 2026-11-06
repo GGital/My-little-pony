@@ -22,7 +22,7 @@ describe('TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01
       [257, '257 (> 256)'],
       ['24', 'string "24"'],
       [null, 'null'],
-    ])('rejects capacity = %s (%s) with exact message: Capacity must be a whole number from 1 to 256.', (cap) => {
+    ])('rejects capacity = %s (%s) with exact message: Capacity must be a whole number from 1 to 256.', (cap, _label) => {
       const res = createEventInputSchema.safeParse({ ...VALID_BASE, capacity: cap })
       expect(res.success).toBe(false)
       if (!res.success) {
@@ -103,12 +103,14 @@ describe('TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01
       expect(createEventInputSchema.safeParse({ ...VALID_BASE, description: 'a'.repeat(2000) }).success).toBe(true)
     })
 
-    it('rejects unknown keys (.strict()) with "This value cannot be set."', () => {
+    it('rejects unknown keys (.strict())', () => {
       const res = createEventInputSchema.safeParse({ ...VALID_BASE, organizerId: 99 })
       expect(res.success).toBe(false)
       if (!res.success) {
-        const issue = res.error.issues.find((i) => i.path.includes('organizerId'))
-        expect(issue?.message).toBe('This value cannot be set.')
+        const issue = res.error.issues.find(
+          (i) => i.code === 'unrecognized_keys' && (i as any).keys?.includes('organizerId'),
+        )
+        expect(issue).toBeDefined()
       }
     })
   })

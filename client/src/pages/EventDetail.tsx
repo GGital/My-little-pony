@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { api } from '../api/client'
 import { ApiError } from '../api/errors'
 import type { EventDetail as EventDetailType } from '../api/types'
@@ -11,6 +11,8 @@ import { formatEventTime } from '../utils/formatEventTime'
 
 export const EventDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>()
+  const location = useLocation()
+  const toast = (location.state as { toast?: string } | null)?.toast
   const [event, setEvent] = useState<EventDetailType | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
@@ -59,6 +61,12 @@ export const EventDetail: React.FC = () => {
 
   return (
     <div className="container py-4">
+      {toast && (
+        <div className="alert alert-success alert-dismissible mb-4" role="alert">
+          {toast}
+        </div>
+      )}
+
       {/* Event Header Banner */}
       <div className="card p-4 shadow-sm mb-4 border-0">
         <div className="d-flex justify-content-between align-items-start flex-wrap gap-3">

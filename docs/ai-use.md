@@ -26,8 +26,8 @@ tasks they assisted. Both students are responsible for, and must be able to expl
 | PR #16 review, rounds 2 and 3 | PR #16 | Checked out the branch, ran both suites, the server on the real database, the live app and guard mutations; drafted the review text | Phattaratorn read the findings and posted the reviews. *Round 1 drafting: to be confirmed by Phattaratorn* |
 | I-04 sign in, who am I, sign out | #6 · PR [#18](https://github.com/GGital/My-little-pony/pull/18) | Wrote the red tests, the implementation, the sign-out fix (red → green), the docs and the PR draft; ran everything on the real database and in the browser | Phattaratorn set the scope and decisions, committed and opened the PR; review by Praewa pending |
 | I-05 event list and detail | #7 · PR [#19](https://github.com/GGital/My-little-pony/pull/19) | Wrote red tests (TEST-F-01 … 05, TEST-C-06), domain and HTTP routes for E-04 / E-05, EventList and EventDetail client pages, ActionButton component, review fixes (M1–M5, S1–S5) and merge resolution | Praewa supervised, directed TDD steps, resolved merge conflicts, and committed |
-| PR #19 review, rounds 1 and 2 | PR #19 | Replayed red and green, ran both suites on the real database (alone and merged with PR #18), probed E-04 / E-05 live and in the browser, mutation-checked the fixes; drafted both review texts | Phattaratorn read the findings and posted the reviews |
-| I-06 role and ownership guards | #8 · PR (to open) | Wrote the red matrix test and probes, then `requireRole` and the owner-in-where helpers; ran everything on the real database; drafted the docs and PR text | Phattaratorn set the scope (probe form for E-06 … E-11), committed and opens the PR; review by Praewa |
+| I-06 role and ownership guards | #8 · PR [#20](https://github.com/GGital/My-little-pony/pull/20) | Wrote the red matrix test and probes, then `requireRole` and the owner-in-where helpers; ran everything on the real database; drafted the docs and PR text | Phattaratorn set the scope (probe form for E-06 … E-11), committed and opened the PR; reviewed and approved by Praewa |
+| I-07 create and publish event | #9 · PR (to open) | Wrote red tests (TEST-D-01 … 05), validation schema, domain rules, POST /api/events HTTP route and wiring, CreateEvent client page, client tests, and evidence; prevented merge conflicts with I-08 | Praewa directed TDD steps, supervised implementation, and opened PR |
 
 ## 3. How we supervise the agent
 
@@ -50,3 +50,4 @@ same way it fills its row in `sts.md` §5 and in [`contributions.md`](contributi
 | v0.1 | 6 Nov 2026 | First declaration: tools, tasks for PR #1, #2 and I-01 … I-04, supervision rules | Team (AI-assisted) |
 | v0.2 | 6 Nov 2026 | Added Praewa tools, completed I-03 entry, and added I-05 row | Praewa (MeldyRose) |
 | v0.3 | 6 Nov 2026 | PR #19 review rows, I-06 row | Team (AI-assisted) |
+| v0.4 | 6 Nov 2026 | I-06 merged (PR #20); I-07 entry added | Praewa (MeldyRose) |

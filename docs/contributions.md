@@ -21,8 +21,8 @@ the Issues, branches and PRs. AI assistance is listed in [`ai-use.md`](ai-use.md
 | I-03 Client shell (Feature-C) | [#5](https://github.com/GGital/My-little-pony/issues/5) | `feature/s1-03-client-shell` · [#16](https://github.com/GGital/My-little-pony/pull/16) | Praewa | Phattaratorn (2 × changes requested, then approved 5 Nov) | Merged 5 Nov |
 | I-04 Feature-A: sign in, who am I, sign out | [#6](https://github.com/GGital/My-little-pony/issues/6) | `feature/s1-04-auth` · [#18](https://github.com/GGital/My-little-pony/pull/18) | Phattaratorn | Praewa (approved 5 Nov) | Merged 5 Nov |
 | I-05 Feature-F: event list and detail | [#7](https://github.com/GGital/My-little-pony/issues/7) | `feature/s1-05-event-discovery` · [#19](https://github.com/GGital/My-little-pony/pull/19) | Praewa | Phattaratorn (1 × changes requested, then approved 6 Nov) | Merged 6 Nov |
-| I-06 Feature-B: role and ownership guards | [#8](https://github.com/GGital/My-little-pony/issues/8) | `feature/s1-06-access-control` · PR (to open) | Phattaratorn | Praewa | In progress |
-| I-07 Feature-D: create and publish event | [#9](https://github.com/GGital/My-little-pony/issues/9) | — | Praewa (assigned) | Phattaratorn | Planned |
+| I-06 Feature-B: role and ownership guards | [#8](https://github.com/GGital/My-little-pony/issues/8) | `feature/s1-06-access-control` · [#20](https://github.com/GGital/My-little-pony/pull/20) | Phattaratorn | Praewa (approved 6 Nov) | Merged 6 Nov |
+| I-07 Feature-D: create and publish event | [#9](https://github.com/GGital/My-little-pony/issues/9) | `feature/s1-07-create-event` · PR (to open) | Praewa | Phattaratorn | In progress |
 | I-08 Feature-G: registration with seat lock | [#10](https://github.com/GGital/My-little-pony/issues/10) | — | Phattaratorn (assigned) | Praewa | Planned |
 | I-09 Feature-E: organizer dashboard | [#11](https://github.com/GGital/My-little-pony/issues/11) | — | Praewa (assigned) | Phattaratorn | Planned |
 | I-10 Feature-H: My Events | [#12](https://github.com/GGital/My-little-pony/issues/12) | — | Phattaratorn (assigned) | Praewa | Planned |
@@ -33,8 +33,8 @@ the Issues, branches and PRs. AI assistance is listed in [`ai-use.md`](ai-use.md
 
 | Student | Built | Reviewed | Learning outcomes touched (spec §2) |
 |---|---|---|---|
-| Phattaratorn | Baseline documents (PR #1, #2), I-01, I-02, I-04, I-06 (in progress) | PR #16 (three rounds), PR #19 (two rounds), each tested on the real database | Requirements and design, server implementation, TDD, AI supervision, review |
-| Praewa | I-03, I-05 | PR #1, #2, #15, #17, #18 | Requirements and design review, client and server implementation, TDD, review |
+| Phattaratorn | Baseline documents (PR #1, #2), I-01, I-02, I-04, I-06 (merged) | PR #16 (three rounds), PR #19 (two rounds), each tested on the real database | Requirements and design, server implementation, TDD, AI supervision, review |
+| Praewa | I-03, I-05, I-07 (in progress) | PR #1, #2, #15, #17, #18, #20 | Requirements and design review, client and server implementation, TDD, review |
 
 Both students must be able to explain a sampled requirement, test, design decision and release step. The plan gives
 each student server and client Issues in Sprint 1 (I-05 … I-11 alternate), and I-12 is pair work.
@@ -49,3 +49,4 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.1 | 6 Nov 2026 | First table: PR #1, #2, I-01 … I-04, planned I-05 … I-12 | Team (AI-assisted) |
 | v0.2 | 6 Nov 2026 | Updated I-05 row and Praewa summary | Praewa (MeldyRose) |
 | v0.3 | 6 Nov 2026 | I-04 and I-05 merged with their reviewers; I-06 in progress; summaries updated | Team (AI-assisted) |
+| v0.4 | 6 Nov 2026 | I-06 merged (PR #20); I-07 in progress on feature/s1-07-create-event | Praewa (MeldyRose) |

@@ -38,6 +38,37 @@ describe('TEST-SR2-02 — zod .strict() reports every failing field (AC-SR2-02, 
     expect(res.status).toBe(201)
     expect(res.body).toEqual(VALID_BODY)
   })
+
+  // Contracts v1.2 §2 / STS TEST-SR2-02 (I-07 adds the real E-06 case):
+  it('real E-06 with organizer session, wrong types, bad date and unknown field → 400 VALIDATION_FAILED', async () => {
+    const signedIn = await signIn(request(app), 'quantum@organizer.example', 'test-only-seed-password')
+    expect(signedIn.status).toBe(200)
+    const cookie = cookieHeader(readSessionCookie(signedIn)!.value)
+
+    const before = await tableCounts()
+    const res = await request(app)
+      .post('/api/events')
+      .set('Origin', TEST_ORIGIN)
+      .set('Cookie', cookie)
+      .send({
+        type: 'CASUAL',
+        format: 'CONSTRUCTED',
+        venueName: 'Quantum Cards',
+        venueAddress: '1631 Kanchanaphisek Rd',
+        city: 'Bangkok',
+        endAt: '2026-11-07T14:00:00.000Z',
+        capacity: 'ten',
+        title: 7,
+        startAt: 'tomorrow',
+        organizerId: 99,
+      })
+
+    expect(res.status).toBe(400)
+    expect(res.body.error.code).toBe('VALIDATION_FAILED')
+    const fields = res.body.error.details.map((d: { field: string }) => d.field).sort()
+    expect(fields).toEqual(['capacity', 'organizerId', 'startAt', 'title'])
+    expect(await tableCounts()).toEqual(before)
+  })
 })
 
 describe('TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15)', () => {
@@ -69,7 +100,10 @@ describe('TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15)', () => {
     expect(await tableCounts()).toEqual(before)
   })
 
-  it.each([...SPRINT1_ROUTES.filter((r) => r.method === 'POST').map((r) => r.path), ...PROBE_POST_ONLY])(
+  const getPaths = new Set(SPRINT1_ROUTES.filter((r) => r.method === 'GET').map((r) => r.path))
+  const postOnlyRoutes = SPRINT1_ROUTES.filter((r) => r.method === 'POST' && !getPaths.has(r.path)).map((r) => r.path)
+
+  it.each([...postOnlyRoutes, ...PROBE_POST_ONLY])(
     'GET on POST-only %s → 404 NOT_FOUND',
     async (path) => {
       const res = await request(app).get(path)
