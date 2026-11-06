@@ -1,6 +1,6 @@
 # Sprint 1 Feature Engineering Contracts
 
-Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.4 (v1.0 reviewed in PR 2; changes in §15)
+Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.5 (v1.0 reviewed in PR 2; changes in §15)
 Inputs: [`../../srs.md`](../../srs.md) v0.5 · [`../../features.md`](../../features.md) v0.2 ·
 [`../../traceability.md`](../../traceability.md) v0.2 · [`../../system-sds.md`](../../system-sds.md) v0.2 ·
 [`../plan.md`](../plan.md) v0.1 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.2 ·
@@ -288,6 +288,14 @@ a scrypt hash or the seed password: the 400 for a bad password legitimately name
 | **AC-B-03** | one session each for Visitor, Mint (participant), Quantum Cards (owner of EV-1, EV-2, EV-6), Dragon's Den (other organizer) | every cell of the Sprint 1 permission matrix (SDS §7.1, E-01 … E-11) is exercised, including one request that fails role **and** ownership | every cell returns the status in the matrix; a request that is both wrong role and not owner returns 403 (role is checked first); a 404 body is identical whether the record exists or not |
 
 **Planned tests:** TEST-B-01 … 03 (I). TEST-B-03 is a table-driven test with one row per matrix cell.
+
+**How I-06 proves Feature-B before E-06 … E-11 exist (v1.5).** I-06 builds the shared pieces: `requireAuth` and
+`requireRole` in `http/guards.ts`, and the owner-in-where helpers `ownedEventWhere` / `ownRegistrationWhere` in
+`domain/actor.ts`. E-06 … E-11 arrive in I-07 … I-11, so their matrix cells run against test-only probes
+(`accessProbes`, mounted with `createApp({ extraRoutes })`, never in the production app) that use the same guard
+order (`requireAuth` → `requireRole` → origin → validation → ownership) and the same helpers. Each of those Issues
+replaces its rows' probe path with the real endpoint in TEST-B-01 … 03 and adds the "stored id = caller" half of
+AC-B-01 (I-07: E-06, I-08: E-09). I-12 checks that no probe path is left.
 
 ---
 
@@ -616,3 +624,4 @@ the same Pull Request, so the history stays visible (Deliverable 1 §3.5).
 | v1.2 | 5 Nov 2026 | §2 SR-02: 413 is `PAYLOAD_TOO_LARGE`; body-less POST is not a 415; I-02 proves the pipeline through test-only probe routes, and I-04, I-07, I-08, I-12 add their real-endpoint cases to TEST-SR2-01 … 05. §3 SR-03: the no-`Date.now()` rule is a source check in TEST-SR3-01, not a lint rule; TEST-SR3-01 split between I-02 (rule + database) and I-05 / I-08 (E-04 / E-09) | Found while implementing #4 (I-02): E-04, E-06 and E-09 are built in later Issues, and the catalogue had no code for 413 | Team (AI-assisted) |
 | v1.3 | 6 Nov 2026 | §4 Feature-A: TEST-A-04 uses a test-only protected probe until E-09 / E-10 exist, and its E2E half moves to I-12; AC-A-05's response scan is defined as keys, hashes and the seed password; the server error texts now match this section (`INVALID_CREDENTIALS` "Email or password is incorrect.", unknown keys "This value cannot be set.") | Found while implementing #6 (I-04): E-09 and E-10 are built in I-08 / I-10, Playwright is set up in I-12, and `errors.ts` / `validate.ts` (I-02) used different words from this contract | Team (AI-assisted) |
 | v1.4 | 6 Nov 2026 | §9 Feature-F: Playwright E2E spec deferred to I-12 (following PR #18 pattern); documented known limitations (MANAGE links to I-11, REGISTER onRegister handler in I-08, inactive search controls until Sprint 2); path id integer range validation handled via parseId | Found during review of #19 (I-05) | Team (AI-assisted) |
+| v1.5 | 6 Nov 2026 | §5 Feature-B: E-06 … E-11 cells of TEST-B-01 … 03 run against test-only probes with the real guards until I-07 … I-11; the "stored id = caller" half of AC-B-01 moves to I-07 / I-08 | Found while implementing #8 (I-06): the guards are needed before the endpoints that use them, and those are built in later Issues | Team (AI-assisted) |
