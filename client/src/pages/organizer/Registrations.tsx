@@ -1,32 +1,36 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { api } from '../../api/client'
+import { ApiError } from '../../api/errors'
 import type { EventRegistrationsResponse } from '../../api/types'
 import { EmptyState } from '../../components/EmptyState'
 import { ErrorState } from '../../components/ErrorState'
+import { Icon } from '../../components/Icon'
 import { Loading } from '../../components/Loading'
 import { PageTop } from '../../components/PageTop'
+import { NotFoundPage } from '../../routes/pages/NotFoundPage'
 import { seatsLeft } from '../../utils/eventDisplay'
 import { formatEventTime } from '../../utils/formatEventTime'
 
 /**
- * `/organizer/events/:id/registrations` (contracts §12 Feature-I):
- * Lists registrations for an organizer's own event (display names only, oldest first).
+ * `/organizer/events/:id/registrations` (contracts §12 Feature-I): who registered for the organizer's own event,
+ * display names only, oldest first. Another organizer's event and a malformed id show the not-found page (BR-14).
  */
 export const Registrations: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const [data, setData] = useState<EventRegistrationsResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [notFound, setNotFound] = useState(false)
 
   const load = useCallback(async () => {
-    if (!id) return
     setData(null)
     setError(null)
+    setNotFound(false)
     try {
-      const res = await api.get<EventRegistrationsResponse>(`/api/organizer/events/${id}/registrations`)
-      setData(res)
+      setData(await api.get<EventRegistrationsResponse>(`/api/organizer/events/${id}/registrations`))
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+      if (err instanceof ApiError && (err.status === 404 || err.status === 400)) setNotFound(true)
+      else setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
     }
   }, [id])
 
@@ -34,23 +38,14 @@ export const Registrations: React.FC = () => {
     load()
   }, [load])
 
-  if (error) {
-    return (
-      <>
-        <PageTop title="Registrations" subtitle="Error loading registrations" />
-        <div className="pbody">
-          <ErrorState message={error} onRetry={load} />
-        </div>
-      </>
-    )
-  }
+  if (notFound) return <NotFoundPage />
 
-  if (!data) {
+  if (error || !data) {
     return (
       <>
-        <PageTop title="Registrations" subtitle="Loading event details…" />
+        <PageTop title="Registrations" />
         <div className="pbody">
-          <Loading label="Loading registrations…" cards={3} />
+          {error ? <ErrorState message={error} onRetry={load} /> : <Loading label="Loading registrations…" />}
         </div>
       </>
     )
@@ -58,27 +53,25 @@ export const Registrations: React.FC = () => {
 
   const { event, items } = data
 
-  const actions = (
-    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-      <Link to={`/events/${event.id}`} className="btn-soft" aria-label={`View ${event.title}`}>
-        View
-      </Link>
-      <Link to="/organizer" className="btn-soft">
-        Dashboard
-      </Link>
-    </div>
-  )
-
   return (
     <>
       <PageTop
         title={event.title}
         subtitle={
-          <span className="chip chip--seats tabular-nums">
+          <span className="chip chip--seats">
             {event.registeredCount} / {event.capacity} · {seatsLeft(event.seatsRemaining)}
           </span>
         }
-        action={actions}
+        action={
+          <div className="ptop__actions">
+            <Link to={`/events/${event.id}`} className="btn-soft" aria-label={`View ${event.title}`}>
+              View event
+            </Link>
+            <Link to="/organizer" className="btn-soft">
+              Dashboard
+            </Link>
+          </div>
+        }
       />
       <div className="pbody">
         {items.length === 0 ? (
@@ -88,24 +81,31 @@ export const Registrations: React.FC = () => {
             action={{ label: 'Back to Dashboard', href: '/organizer' }}
           />
         ) : (
-          <div className="box" style={{ padding: 0, overflowX: 'auto' }}>
-            <table className="table" style={{ width: '100%', margin: 0, textAlign: 'left', borderCollapse: 'collapse' }}>
+          <div className="table-scroll">
+            <table className="data-table">
               <thead>
-                <tr style={{ borderBottom: '1px solid var(--border)', background: 'var(--surface-muted)' }}>
-                  <th style={{ padding: '12px 20px', fontWeight: 600, color: 'var(--text-muted)', fontSize: 13, textTransform: 'uppercase' }}>#</th>
-                  <th style={{ padding: '12px 20px', fontWeight: 600, color: 'var(--text-muted)', fontSize: 13, textTransform: 'uppercase' }}>Player</th>
-                  <th style={{ padding: '12px 20px', fontWeight: 600, color: 'var(--text-muted)', fontSize: 13, textTransform: 'uppercase' }}>Registered at</th>
-                  <th style={{ padding: '12px 20px', fontWeight: 600, color: 'var(--text-muted)', fontSize: 13, textTransform: 'uppercase' }}>Status</th>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Player</th>
+                  <th scope="col">Registered at</th>
+                  <th scope="col">Status</th>
                 </tr>
               </thead>
               <tbody>
-                {items.map((row, idx) => (
-                  <tr key={row.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                    <td style={{ padding: '16px 20px' }} className="tabular-nums">{idx + 1}</td>
-                    <td style={{ padding: '16px 20px', fontWeight: 600 }}>{row.participant.displayName}</td>
-                    <td style={{ padding: '16px 20px' }} className="tabular-nums">{formatEventTime(row.createdAt)}</td>
-                    <td style={{ padding: '16px 20px' }}>
-                      <span className="chip chip--seats">{row.status}</span>
+                {items.map((row, i) => (
+                  <tr key={row.id}>
+                    <td>{i + 1}</td>
+                    <td>
+                      <strong>{row.participant.displayName}</strong>
+                    </td>
+                    <td>
+                      <time dateTime={row.createdAt}>{formatEventTime(row.createdAt)}</time>
+                    </td>
+                    <td>
+                      <span className="chip chip--seats">
+                        <Icon name="check" size="sm" />
+                        {row.status}
+                      </span>
                     </td>
                   </tr>
                 ))}
