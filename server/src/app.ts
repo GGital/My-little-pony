@@ -28,7 +28,7 @@ export function createApp({ prisma, config, log = createLogger(config.LOG_LEVEL)
   api.use(healthRouter(prisma, log))
   api.use(loadSession(prisma)) // SDS §2.3 step 2: every route after health knows its caller
   api.use('/auth', authRouter(prisma, config))
-  api.use(eventsRouter(prisma))
+  api.use(eventsRouter(prisma, config))
   extraRoutes?.(api)
   api.use((_req, res) => sendError(res, 'NOT_FOUND'))
   api.use(errorHandler(log))

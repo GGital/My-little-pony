@@ -98,13 +98,6 @@ export function accessProbes(db: PrismaClient) {
       if (!event) return sendError(res, 'EVENT_NOT_FOUND')
       res.json({ items: [] })
     })
-    // E-09 register: participant; the participant comes from the session, never the body.
-    api.post('/__test/e-09/:id', ...participant, requireOrigin(TEST_ORIGIN), validate({ body: z.object({}).strict() }), async (req, res) => {
-      const id = pathId(req.params.id, res)
-      if (id === null) return
-      const registration = await db.registration.create({ data: { eventId: id, participantId: req.actor!.id } })
-      res.status(201).json({ id: registration.id })
-    })
     // E-10 my registrations: participant; own only.
     api.get('/__test/e-10', ...participant, async (req, res) => {
       res.json({ items: await db.registration.findMany({ where: { participantId: req.actor!.id }, select: { id: true } }) })
@@ -125,7 +118,6 @@ export const PROBE_PATHS = {
   'E-06': '/api/__test/e-06',
   'E-07': '/api/__test/e-07',
   'E-08': (id: number | string) => `/api/__test/e-08/${id}`,
-  'E-09': (id: number | string) => `/api/__test/e-09/${id}`,
   'E-10': '/api/__test/e-10',
   'E-11': (id: number | string) => `/api/__test/e-11/${id}`,
 }

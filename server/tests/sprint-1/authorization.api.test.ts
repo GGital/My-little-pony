@@ -21,7 +21,8 @@ const EMAIL: Record<Exclude<Caller, 'visitor'>, string> = {
 }
 
 const cookies = {} as Record<Exclude<Caller, 'visitor'>, string>
-const ids = { ev1: 0, ev5: 0, mintReg: 0, ployReg: 0, mint: 0, ploy: 0, dragon: 0 }
+const ids = { ev1: 0, ev5: 0, ev6: 0, mintReg: 0, ployReg: 0, mint: 0, ploy: 0, dragon: 0 }
+const E09 = (id: number | string) => `/api/events/${id}/registrations` // real since I-08
 
 async function sessionFor(email: string) {
   const res = await signIn(request(app), email, SEED_PASSWORD)
@@ -42,18 +43,20 @@ beforeAll(async () => {
 
   const user = (email: string) => prisma.user.findUniqueOrThrow({ where: { email } })
   const event = (seedKey: string) => prisma.event.findFirstOrThrow({ where: { seedKey } })
-  const [mint, ploy, dragon, ev1, ev5] = await Promise.all([
+  const [mint, ploy, dragon, ev1, ev5, ev6] = await Promise.all([
     user('mint@player.example'),
     user('ploy@player.example'),
     user('dragon@organizer.example'),
     event('EV-1'),
     event('EV-5'),
+    event('EV-6'),
   ])
   const regOf = (participantId: number) =>
     prisma.registration.findFirstOrThrow({ where: { eventId: ev1.id, participantId } })
   Object.assign(ids, {
     ev1: ev1.id,
     ev5: ev5.id,
+    ev6: ev6.id,
     mint: mint.id,
     ploy: ploy.id,
     dragon: dragon.id,
@@ -64,9 +67,16 @@ beforeAll(async () => {
 afterAll(() => prisma.$disconnect())
 
 describe('TEST-B-01 — identity comes only from the session (AC-B-01, BR-17)', () => {
-  // The "stored id = the caller" half needs the real E-06 / E-09 and is added by I-07 / I-08 (contracts v1.5).
+  // The "stored id = the caller" half for E-06 is added by I-07 (contracts v1.5); E-09 is real since I-08.
+  it('E-09 with an empty body stores the caller as participantId (Mint on EV-6)', async () => {
+    const res = await call('POST', E09(ids.ev6), 'mint', {})
+    expect(res.status).toBe(201)
+    const row = await prisma.registration.findUniqueOrThrow({ where: { id: res.body.id } })
+    expect(row.participantId).toBe(ids.mint)
+  })
+
   it.each([
-    ['E-09 with participantId of another user', 'mint', (): string => PROBE_PATHS['E-09'](ids.ev5), (): object => ({ participantId: ids.ploy })],
+    ['E-09 with participantId of another user', 'mint', (): string => E09(ids.ev5), (): object => ({ participantId: ids.ploy })],
     ['E-06 with organizerId of another organizer', 'quantum', (): string => PROBE_PATHS['E-06'], (): object => ({ ...VALID_EVENT, organizerId: ids.dragon })],
   ] as const)('%s → 400 VALIDATION_FAILED on that field, nothing stored', async (_label, as, path, body) => {
     const before = await tableCounts()
@@ -85,7 +95,7 @@ describe('TEST-B-02 — no session: every protected endpoint answers 401 with on
     ['E-06', 'POST', (): string => PROBE_PATHS['E-06']],
     ['E-07', 'GET', (): string => PROBE_PATHS['E-07']],
     ['E-08', 'GET', (): string => PROBE_PATHS['E-08'](ids.ev1)],
-    ['E-09', 'POST', (): string => PROBE_PATHS['E-09'](ids.ev5)],
+    ['E-09', 'POST', (): string => E09(ids.ev5)],
     ['E-10', 'GET', (): string => PROBE_PATHS['E-10']],
     ['E-11', 'GET', (): string => PROBE_PATHS['E-11'](ids.mintReg)],
   ] as const)('%s → 401 UNAUTHENTICATED', async (_id, method, path) => {
@@ -136,10 +146,10 @@ const MATRIX: Cell[] = [
   ['E-08', 'GET', () => PROBE_PATHS['E-08']('abc'), 'quantum', 400],
   // E-09 register for EV-5 (owned by Dragon's Den): participant only. Quantum Cards is the wrong role AND not
   // the owner: role is checked first, so 403 (AC-B-03).
-  ['E-09', 'POST', () => PROBE_PATHS['E-09'](ids.ev5), 'visitor', 401],
-  ['E-09', 'POST', () => PROBE_PATHS['E-09'](ids.ev5), 'mint', 201],
-  ['E-09', 'POST', () => PROBE_PATHS['E-09'](ids.ev5), 'quantum', 403],
-  ['E-09', 'POST', () => PROBE_PATHS['E-09'](ids.ev5), 'dragon', 403],
+  ['E-09', 'POST', () => E09(ids.ev5), 'visitor', 401],
+  ['E-09', 'POST', () => E09(ids.ev5), 'mint', 201],
+  ['E-09', 'POST', () => E09(ids.ev5), 'quantum', 403],
+  ['E-09', 'POST', () => E09(ids.ev5), 'dragon', 403],
   // E-10 my registrations: participant.
   ['E-10', 'GET', () => PROBE_PATHS['E-10'], 'visitor', 401],
   ['E-10', 'GET', () => PROBE_PATHS['E-10'], 'mint', 200],

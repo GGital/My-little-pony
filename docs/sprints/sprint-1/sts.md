@@ -1,7 +1,7 @@
 # Sprint 1 Software Test Specification (STS)
 
-Project: **TCG Event Hub** · Sprint 1 · Document version: v1.6 (v1.0 reviewed in PR 2; changes in §8)
-Contracts: [`feature-contracts.md`](feature-contracts.md) v1.5 · Issues and Definition of Done: [`README.md`](README.md)
+Project: **TCG Event Hub** · Sprint 1 · Document version: v1.7 (v1.0 reviewed in PR 2; changes in §8)
+Contracts: [`feature-contracts.md`](feature-contracts.md) v1.6 · Issues and Definition of Done: [`README.md`](README.md)
 
 This document turns every Sprint 1 acceptance criterion into planned tests, **before** the code exists. It
 follows the method we used in TokTickIT: **Spec DD → Test DD → TDD**. A Pull Request that adds behaviour without
@@ -153,8 +153,8 @@ the commit id in §6.
 
 | Test ID | Level | AC / Req | Precondition / input | Action | Expected result | File | Result |
 |---|---|---|---|---|---|---|---|
-| TEST-G-01 | I, E2E | AC-G-01, FR-15 | Event capacity 24 with 3 active; participant P not registered | E-09; then E-05 as P. (E2E) Nok on EV-1 clicks REGISTER | `201`, `REGISTERED`, counts 4 / 20 (checked by Prisma); `viewer.action REGISTERED`. (E2E) "You're in." card, **✓ REGISTERED**, live-region text | `server/tests/sprint-1/registrations.api.test.ts`, `e2e/sprint-1/register.spec.ts` | Pending |
-| TEST-G-02 | U, I, E2E | AC-G-02, BR-05, FR-16 | Full event (2 / 2) | (U) `decideRegistration({capacity:2, active:2})`; (I) E-09; (E2E) Nok on EV-3 | (U) `EVENT_FULL`; (I) `409 EVENT_FULL`, still 2 rows; (E2E) red alert with the full message, no flip, chip still 2 / 2 | `server/tests/sprint-1/unit/registration-rules.unit.test.ts`, `server/tests/sprint-1/registrations.api.test.ts`, `e2e/sprint-1/register.spec.ts` | Pending |
+| TEST-G-01 | I, C, E2E | AC-G-01, FR-15 | Event capacity 24 with 3 active; participant P not registered | E-09; then E-05 as P. (C) render the detail page and press REGISTER with E-09 stubbed. (E2E, in I-12) Nok on EV-1 clicks REGISTER | `201`, `REGISTERED`, counts 4 / 20 (checked by Prisma); `viewer.action REGISTERED`. (E2E) "You're in." card, **✓ REGISTERED**, live-region text | `server/tests/sprint-1/registrations.api.test.ts`, `client/tests/sprint-1/Registration.test.tsx`, `e2e/sprint-1/register.spec.ts` (I-12) | Pending |
+| TEST-G-02 | U, I, C, E2E | AC-G-02, BR-05, FR-16 | Full event (2 / 2) | (U) `decideRegistration({capacity:2, active:2})`; (I) E-09; (C) E-09 stubbed 409 `EVENT_FULL`; (E2E, in I-12) Nok on EV-3 | (U) `EVENT_FULL`; (I) `409 EVENT_FULL`, still 2 rows; (E2E) red alert with the full message, no flip, chip still 2 / 2 | `server/tests/sprint-1/unit/registration-rules.unit.test.ts`, `server/tests/sprint-1/registrations.api.test.ts`, `client/tests/sprint-1/Registration.test.tsx`, `e2e/sprint-1/register.spec.ts` (I-12) | Pending |
 | TEST-G-03 | I | AC-G-03, BR-06 | P has an active registration on X | E-09 again; then two at once | Every response `409 ALREADY_REGISTERED`; 1 active row | `server/tests/sprint-1/registrations.api.test.ts` | Pending |
 | TEST-G-04 | U, I | AC-G-04, BR-04 | Clock fixed; event started 1 min ago; and one starting exactly now | (U) `decideRegistration` with `startAt ≤ now`; (I) E-09 on both | `REGISTRATION_CLOSED`; `409 REGISTRATION_CLOSED` ×2, 0 rows | `server/tests/sprint-1/unit/registration-rules.unit.test.ts`, `server/tests/sprint-1/registrations.api.test.ts` | Pending |
 | TEST-G-05 | I | AC-G-05, BR-10 | Organizers O1 (owner of X) and O2 | Each calls E-09 on X | Both `403 FORBIDDEN`; 0 rows | `server/tests/sprint-1/registrations.api.test.ts` | Pending |
@@ -253,7 +253,7 @@ the evidence the TA checks (Deliverable 1 §4.2).
 | I-05 Feature-F | TEST-F-01 … 05, TEST-C-06 (+ TEST-SR3-01 E-04 boundary) | `10be7df` | **9 failed / 87** server, **8 failed / 33** client (all on assertions: E-04/E-05 404, ActionButton/EventDetail stubs) — `evidence/I-05-red.txt` | `9adc237` (+ review fixes) | **117 passed / 117** server, **46 passed / 46** client — `evidence/I-05-green.txt` |
 | I-06 Feature-B | TEST-B-01 … 03 | `863cb94` | **12 failed / 175** (all AssertionError: a wrong role gets 200 / 201 instead of 403; another owner's event and registration give 200 instead of 404; the 404 bodies differ). The other new cells pass at red, because they rest on earlier Issues: every 401 (`requireAuth`, I-04), the public E-01 / E-04 / E-05 cells, and TEST-B-01's 400s (`.strict()` schemas, I-02) — `evidence/I-06-red.txt` | `d8c973b` | **175 passed / 175** (twice) — `evidence/I-06-green.txt`; client unchanged, 46 / 46 |
 | I-07 Feature-D | TEST-D-01 … 05 | Pending | Pending | Pending | Pending |
-| I-08 Feature-G | TEST-G-01 … 06 | Pending | Pending | Pending | Pending |
+| I-08 Feature-G | TEST-G-01 … 06 (+ E-09 cases in TEST-SR2-05, TEST-SR3-01, TEST-A-04, TEST-B-01 … 03) | `ea05646` | **Server 33 failed / 203** (all AssertionError: E-09 answers 404; `decideRegistration` stub says OK; the race gets 20 × 404) — `evidence/I-08-red-server.txt`; **client 2 failed / 48** (no HOLDING YOUR SEAT…, no alert) — `evidence/I-08-red-client.txt` | `9f72800` (implementation: server 203 / 203, client 47 / 48), then `115a722` (explained test correction: an ambiguous query in the new client test) | **Server 203 passed / 203**, three runs, TEST-G-06 20 rounds each — `evidence/I-08-green-server.txt`; **client 48 passed / 48** — `evidence/I-08-green-client-2.txt`. Mutation: without `FOR UPDATE` the race sells the seat many times (round 1 fails) |
 | I-09 Feature-E | TEST-E-01, 02 | Pending | Pending | Pending | Pending |
 | I-10 Feature-H | TEST-H-01, 02 | Pending | Pending | Pending | Pending |
 | I-11 Feature-I | TEST-I-01 … 03 | Pending | Pending | Pending | Pending |
@@ -277,7 +277,7 @@ output.
 | Build: `npm --prefix server run build && npm --prefix client run build` | Pending |
 | Concurrency: TEST-G-06, 20 rounds | Pending |
 | Manual checks: TEST-SR1-01 (restart), TEST-SR4-01 (secret scan) | Pending, with screenshots in `evidence/` |
-| Failed / skipped tests and known limitations | Pending (I-03: the `dangerouslySetInnerHTML` lint rule (Behaviour 6) and TEST-C-06 come with I-05. I-06: E-06 … E-11 cells of TEST-B-01 … 03 run against test-only probes until I-07 … I-11 point them at the real endpoints; I-12 checks no probe rows remain. I-04: the E2E half of TEST-A-04 is in I-12 with the other Playwright tests; the E-09 / E-10 old-cookie rows of TEST-A-04 come with I-08 / I-10; the AuthProvider stub noted for I-03 is resolved) |
+| Failed / skipped tests and known limitations | Pending (I-03: the `dangerouslySetInnerHTML` lint rule (Behaviour 6) and TEST-C-06 come with I-05. I-08: the E2E halves of TEST-G-01 / G-02 are in I-12; E-09 rows of TEST-B-01 … 03 now use the real endpoint. I-06: E-06 … E-11 cells of TEST-B-01 … 03 run against test-only probes until I-07 … I-11 point them at the real endpoints; I-12 checks no probe rows remain. I-04: the E2E half of TEST-A-04 is in I-12 with the other Playwright tests; the E-09 / E-10 old-cookie rows of TEST-A-04 come with I-08 / I-10; the AuthProvider stub noted for I-03 is resolved) |
 
 The AC → test → actual file/name → result table for the PDF (Deliverable 1 §4.2) is produced from §2 and this
 section.
@@ -314,3 +314,4 @@ npm --prefix server run db:seed && npx playwright test e2e/sprint-1
 | v1.4 | 6 Nov 2026 | I-04 TDD record filled from real runs. TEST-A-01 / A-02 gain a component level for the sign-in page (contracts §4 UI); TEST-A-02 also covers the timing, field and origin rules of contracts §4; TEST-A-04 uses a test-only protected probe until E-09 / E-10 exist and moves its E2E half to I-12 (contracts v1.3); TEST-C-04 adds sign-out on a guarded route (defect found in the browser, red `9f205c1` → green `6c99a5b`); TEST-SR2-03 sessions added | Team (AI-assisted) |
 | v1.5 | 6 Nov 2026 | I-05 TDD record filled from real runs; TEST-F-01 … 05 server tests and TEST-C-06 client tests; TEST-SR3-01 boundary test with fixed clock; Playwright E2E spec deferred to I-12 | Team (AI-assisted) |
 | v1.6 | 6 Nov 2026 | I-06 TDD record filled from real runs; TEST-B-01 … 03 rows describe the probe form for E-06 … E-11 and which Issue adds each real-endpoint case (contracts v1.5) | Team (AI-assisted) |
+| v1.7 | 6 Nov 2026 | I-08 TDD record filled from real runs; TEST-G-01 / G-02 gain a component level (`Registration.test.tsx`) and move their E2E halves to I-12 (contracts v1.6) | Team (AI-assisted) |

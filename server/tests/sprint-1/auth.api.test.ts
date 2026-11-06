@@ -145,8 +145,9 @@ describe('TEST-A-04 — sign out really ends the session (AC-A-04, FR-04, NFR-04
     expect(cleared?.value).toBe('')
     expect(new Date(cleared!.attributes.get('expires')!).getTime()).toBeLessThan(Date.now())
 
-    // E-09 and E-10 arrive in I-08 / I-10; the probe route runs the same requireAuth (contracts v1.3 §4).
-    for (const res of [await me(token), await logout(token), await request(app).get('/api/__test/protected').set('Cookie', cookieHeader(token))]) {
+    // E-09 is real since I-08; E-10 arrives in I-10, until then the probe runs the same requireAuth (contracts v1.3 §4).
+    const e09 = await request(app).post('/api/events/1/registrations').set('Origin', TEST_ORIGIN).set('Cookie', cookieHeader(token))
+    for (const res of [await me(token), await logout(token), e09, await request(app).get('/api/__test/protected').set('Cookie', cookieHeader(token))]) {
       expect(res.status).toBe(401)
       expect(res.body).toEqual(UNAUTHENTICATED)
     }
