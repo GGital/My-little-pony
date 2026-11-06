@@ -1,4 +1,4 @@
- RUN  v4.0.18 C:/Users/Praewa/My-little-pony/client
+ RUN  v4.0.18 <repo>/client
 
  ✓ tests/sprint-1/unit/api.unit.test.ts > api client & errors (Feature-C Behaviour 4) > turns error response JSON into ApiError { status, code, message, details } 8ms
  ✓ tests/sprint-1/unit/api.unit.test.ts > api client & errors (Feature-C Behaviour 4) > calls no handler and does not navigate when auth: "optional" call returns 401 5ms

@@ -1,5 +1,5 @@
 === Server Vitest Run (Red) ===
- RUN  v4.0.18 C:/Users/Praewa/My-little-pony/server
+ RUN  v4.0.18 <repo>/server
 
  ? tests/sprint-1/events.read.api.test.ts (9 tests | 9 failed) 697ms
      ? returns upcoming published events in startAt then id order with accurate counts 26ms
@@ -25,7 +25,7 @@
       Tests  9 failed | 78 passed (87)
 
 === Client Vitest Run (Red) ===
- RUN  v4.0.18 C:/Users/Praewa/My-little-pony/client
+ RUN  v4.0.18 <repo>/client
 
  ? tests/sprint-1/ActionButton.test.tsx (7 tests | 7 failed) 140ms
      ? renders SIGN IN TO REGISTER as enabled link/button pointing to login with returnTo

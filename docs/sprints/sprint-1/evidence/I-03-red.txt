@@ -1,4 +1,4 @@
- RUN  v3.2.7 C:/Users/Praewa/My-little-pony/client
+ RUN  v3.2.7 <repo>/client
 
  ❯ tests/sprint-1/unit/formatEventTime.unit.test.ts (2 tests | 2 failed) 24ms
    × formatEventTime (TEST-SR3-02) > formats UTC ISO timestamp into Asia/Bangkok time with en-GB format 18ms
