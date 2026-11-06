@@ -89,3 +89,18 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: var(--radius-pill);
   text-transform: uppercase;
 }
+
+/* Bootstrap's primary button in the Arcane Ink colours (design-direction §3: --primary for primary buttons). */
+.btn-primary {
+  --bs-btn-bg: var(--primary);
+  --bs-btn-border-color: var(--primary);
+  --bs-btn-hover-bg: var(--primary-hover);
+  --bs-btn-hover-border-color: var(--primary-hover);
+  --bs-btn-active-bg: var(--primary-hover);
+  --bs-btn-active-border-color: var(--primary-hover);
+  --bs-btn-disabled-bg: var(--primary);
+  --bs-btn-disabled-border-color: var(--primary);
+  --bs-btn-focus-shadow-rgb: 108, 76, 224;
+  font-family: var(--font-heading);
+  letter-spacing: 0.04em;
+}
