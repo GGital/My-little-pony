@@ -8,7 +8,7 @@ function renderButton(ui: React.ReactElement) {
   return render(<MemoryRouter>{ui}</MemoryRouter>)
 }
 
-describe('TEST-F-02 (C) — ActionButton states (AC-F-02, FR-12)', () => {
+describe('TEST-F-02 (C) â€” ActionButton states (AC-F-02, FR-12)', () => {
   it('renders SIGN IN TO REGISTER as enabled link/button pointing to login with returnTo', () => {
     renderButton(<ActionButton action="SIGN_IN_TO_REGISTER" eventId={1} />)
     const btn = screen.getByRole('link', { name: /SIGN IN TO REGISTER/i })
@@ -25,7 +25,7 @@ describe('TEST-F-02 (C) — ActionButton states (AC-F-02, FR-12)', () => {
 
   it('renders REGISTERED as disabled with a link to My Events', () => {
     renderButton(<ActionButton action="REGISTERED" eventId={1} registrationId={42} />)
-    const btn = screen.getByRole('button', { name: /REGISTERED/i })
+    const btn = screen.getByRole('button', { name: 'âœ“ REGISTERED' })
     expect(btn).toBeInTheDocument()
     expect(btn).toBeDisabled()
 

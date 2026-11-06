@@ -65,7 +65,7 @@ export const EventDetail: React.FC = () => {
           <div>
             <h1 className="fw-bold mb-1">{event.title}</h1>
             <div className="text-muted mb-3">
-              at {event.organizer.displayName} ? {event.city}
+              at {event.organizer.displayName} · {event.city}
             </div>
 
             <div className="d-flex gap-4 flex-wrap text-secondary small">

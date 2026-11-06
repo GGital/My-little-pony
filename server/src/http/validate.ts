@@ -9,7 +9,18 @@ export type ValidateSchemas = { body?: z.ZodType; query?: z.ZodType }
  * On failure: 400 VALIDATION_FAILED with one `details` entry per failing field, across both parts.
  * On success the parsed values are in `res.locals.body` / `res.locals.query`.
  */
-// ponytail: path ids (INVALID_PATH_PARAMETER) are added by the first Issue with an `:id` route.
+const MAX_INT = 2_147_483_647
+
+/**
+ * Validates and parses a positive 32-bit signed integer ID from a path parameter (1 .. 2,147,483,647).
+ * Returns null if invalid or out of range (BR: INVALID_PATH_PARAMETER).
+ */
+export function parseId(raw: unknown): number | null {
+  if (typeof raw !== 'string' || !/^[1-9]\d{0,9}$/.test(raw)) return null
+  const num = Number(raw)
+  return num <= MAX_INT ? num : null
+}
+
 export function validate(schemas: ValidateSchemas): RequestHandler {
   return (req, res, next) => {
     const details: ErrorDetail[] = []

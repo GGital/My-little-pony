@@ -1,24 +1,17 @@
-import crypto from 'node:crypto'
 import request from 'supertest'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { seed } from '../../prisma/seed.js'
 import { makeApp } from '../helpers/app.js'
+import { readSessionCookie, signIn } from '../helpers/auth.js'
 import { prisma, resetDb } from '../helpers/db.js'
 
 const app = makeApp()
 
 async function cookieFor(email: string): Promise<string> {
-  const user = await prisma.user.findUniqueOrThrow({ where: { email } })
-  const token = crypto.randomBytes(32).toString('base64url')
-  const id = crypto.createHash('sha256').update(token).digest('hex')
-  await prisma.session.create({
-    data: {
-      id,
-      userId: user.id,
-      expiresAt: new Date(Date.now() + 8 * 60 * 60 * 1000),
-    },
-  })
-  return `tcg.sid=${token}`
+  const res = await signIn(request(app), email, 'test-only-seed-password')
+  const cookie = readSessionCookie(res)
+  if (!cookie) throw new Error(`Could not sign in ${email}`)
+  return `tcg.sid=${cookie.value}`
 }
 
 beforeAll(async () => {
@@ -28,7 +21,7 @@ beforeAll(async () => {
 
 afterAll(() => prisma.$disconnect())
 
-describe('TEST-F-01 ó public event list E-04 (AC-F-01, FR-11)', () => {
+describe('TEST-F-01 ‚Äî public event list E-04 (AC-F-01, FR-11)', () => {
   it('returns upcoming published events in startAt then id order with accurate counts', async () => {
     const res = await request(app).get('/api/events')
     expect(res.status).toBe(200)
@@ -38,6 +31,15 @@ describe('TEST-F-01 ó public event list E-04 (AC-F-01, FR-11)', () => {
     const items = res.body.items
     // EV-4 has started, so 5 events: EV-1, EV-2, EV-3, EV-5, EV-6
     expect(items.length).toBe(5)
+
+    // S2: verify exact titles listed in startAt then id order
+    expect(items.map((e: { title: string }) => e.title)).toEqual([
+      'Friday Night Constructed',
+      'Last Seat Sealed',
+      'Store Championship Qualifier',
+      'Dragon Draft Night',
+      'Release Weekend Sealed ¬∑ ‡πÄ‡∏õ‡∏¥‡∏î‡∏Å‡∏•‡πà‡∏≠‡∏á‡∏™‡∏∏‡∏î‡∏™‡∏±‡∏õ‡∏î‡∏≤‡∏´‡πå',
+    ])
 
     // Check order: startAt asc, then id asc
     for (let i = 1; i < items.length; i++) {
@@ -74,7 +76,7 @@ describe('TEST-F-01 ó public event list E-04 (AC-F-01, FR-11)', () => {
   })
 })
 
-describe('TEST-F-02 ó event detail E-05 and viewer.action (AC-F-02, FR-12)', () => {
+describe('TEST-F-02 ‚Äî event detail E-05 and viewer.action (AC-F-02, FR-12)', () => {
   it('returns matching viewer.action and all public fields across visitor, player, owner, other organizer', async () => {
     const ev1 = await prisma.event.findFirstOrThrow({ where: { seedKey: 'EV-1' } })
     const ev3 = await prisma.event.findFirstOrThrow({ where: { seedKey: 'EV-3' } })
@@ -97,7 +99,7 @@ describe('TEST-F-02 ó event detail E-05 and viewer.action (AC-F-02, FR-12)', () 
     const expectedKeys = [
       'id', 'title', 'type', 'format', 'venueName', 'venueAddress', 'city',
       'startAt', 'endAt', 'capacity', 'registeredCount', 'seatsRemaining', 'status',
-      'feeLabel', 'structureNote', 'contact', 'description', 'organizer', 'hasStarted', 'viewer'
+      'feeLabel', 'structureNote', 'contact', 'description', 'organizer', 'hasStarted', 'viewer',
     ]
     for (const key of expectedKeys) {
       expect(resVisitor.body).toHaveProperty(key)
@@ -132,7 +134,7 @@ describe('TEST-F-02 ó event detail E-05 and viewer.action (AC-F-02, FR-12)', () 
   })
 })
 
-describe('TEST-F-03 ó non-existent and malformed path parameter (AC-F-03, FR-12)', () => {
+describe('TEST-F-03 ‚Äî non-existent and malformed path parameter (AC-F-03, FR-12)', () => {
   it('E-05 /999999 -> 404 EVENT_NOT_FOUND', async () => {
     const res = await request(app).get('/api/events/999999')
     expect(res.status).toBe(404)
@@ -142,7 +144,8 @@ describe('TEST-F-03 ó non-existent and malformed path parameter (AC-F-03, FR-12)
     })
   })
 
-  it.each(['abc', '0', '-1'])('E-05 /%s -> 400 INVALID_PATH_PARAMETER', async (badId) => {
+  // M2: includes 32-bit int bounds: 2147483648 and 99999999999
+  it.each(['abc', '0', '-1', '2147483648', '99999999999'])('E-05 /%s -> 400 INVALID_PATH_PARAMETER', async (badId) => {
     const res = await request(app).get(`/api/events/${badId}`)
     expect(res.status).toBe(400)
     expect(res.body.error).toEqual({
@@ -152,7 +155,7 @@ describe('TEST-F-03 ó non-existent and malformed path parameter (AC-F-03, FR-12)
   })
 })
 
-describe('TEST-F-04 ó started events hidden from list and closed on detail (AC-F-04, BR-04)', () => {
+describe('TEST-F-04 ‚Äî started events hidden from list and closed on detail (AC-F-04, BR-04)', () => {
   it('EV-4 is absent from E-04 list; E-05 returns hasStarted: true and action: CLOSED', async () => {
     const ev4 = await prisma.event.findFirstOrThrow({ where: { seedKey: 'EV-4' } })
     const nokCookie = await cookieFor('nok@player.example')
@@ -171,9 +174,12 @@ describe('TEST-F-04 ó started events hidden from list and closed on detail (AC-F
   })
 })
 
-describe('TEST-F-05 ó privacy: no participant IDs, names, emails, or registrations key (AC-F-05, BR-16)', () => {
+describe('TEST-F-05 ‚Äî privacy: no participant IDs, names, emails, or registrations key (AC-F-05, BR-16)', () => {
   it('neither E-04 nor E-05 responses contain participant data or the registrations key', async () => {
     const ev1 = await prisma.event.findFirstOrThrow({ where: { seedKey: 'EV-1' } })
+    const mint = await prisma.user.findUniqueOrThrow({ where: { email: 'mint@player.example' } })
+    const ploy = await prisma.user.findUniqueOrThrow({ where: { email: 'ploy@player.example' } })
+    const boss = await prisma.user.findUniqueOrThrow({ where: { email: 'boss@player.example' } })
     const nokCookie = await cookieFor('nok@player.example')
 
     const responses = [
@@ -186,11 +192,19 @@ describe('TEST-F-05 ó privacy: no participant IDs, names, emails, or registratio
     for (const res of responses) {
       expect(res.status).toBe(200)
       const text = JSON.stringify(res.body)
+      // S1: Names, emails, and participant keys/IDs must not be leaked
+      expect(text).not.toContain('Mint')
+      expect(text).not.toContain('Ploy')
+      expect(text).not.toContain('Boss')
       expect(text).not.toContain('mint@player.example')
       expect(text).not.toContain('ploy@player.example')
       expect(text).not.toContain('boss@player.example')
       expect(text).not.toContain('"registrations"')
-      expect(text).not.toMatch(/"participantId"\s*:/)
+      expect(text).not.toContain('"participant"')
+      expect(text).not.toContain('"participantId"')
+      expect(text).not.toMatch(new RegExp(`"participantId"\\s*:\\s*${mint.id}`))
+      expect(text).not.toMatch(new RegExp(`"participantId"\\s*:\\s*${ploy.id}`))
+      expect(text).not.toMatch(new RegExp(`"participantId"\\s*:\\s*${boss.id}`))
     }
   })
 })

@@ -1,9 +1,11 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import request from 'supertest'
 import { afterAll, afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { now, resetNow, setNow } from '../../src/clock.js'
 import { hasStarted, upcomingWhere } from '../../src/domain/time.js'
+import { makeApp } from '../helpers/app.js'
 import { MINUTE, makeEvent, makeOrganizer, prisma, resetDb } from '../helpers/db.js'
 
 const T = new Date('2026-11-05T10:00:00.000Z')
@@ -43,6 +45,24 @@ describe('TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-
     expect(hasStarted(after.startAt)).toBe(false)
     expect(hasStarted(at.startAt)).toBe(true)
     expect(hasStarted(before.startAt)).toBe(true)
+  })
+
+  // M4: TEST-SR3-01 boundary case for E-04 and E-05
+  it('E-04 returns only T + 1 min event; E-05 for T returns hasStarted: true and viewer.action: CLOSED', async () => {
+    const { after, at } = await threeEvents()
+    const app = makeApp()
+
+    // E-04 list: only upcoming event (T + 1 min) is returned
+    const listRes = await request(app).get('/api/events')
+    expect(listRes.status).toBe(200)
+    expect(listRes.body.items).toHaveLength(1)
+    expect(listRes.body.items[0].id).toBe(after.id)
+
+    // E-05 detail for T (starting at exact now T): counts as started -> hasStarted: true, CLOSED
+    const detailRes = await request(app).get(`/api/events/${at.id}`)
+    expect(detailRes.status).toBe(200)
+    expect(detailRes.body.hasStarted).toBe(true)
+    expect(detailRes.body.viewer.action).toBe('CLOSED')
   })
 
   it('times survive the database to the millisecond and serialise as UTC ending in Z', async () => {

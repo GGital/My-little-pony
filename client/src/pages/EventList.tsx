@@ -94,11 +94,11 @@ export const EventList: React.FC = () => {
               !isFull &&
               event.seatsRemaining <= Math.max(1, Math.floor(event.capacity * 0.2))
 
-            let seatChipClass = 'badge bg-success-subtle text-success-emphasis border border-success-subtle'
+            let seatChipClass = 'seat-chip'
             if (isFull) {
-              seatChipClass = 'badge bg-danger text-white'
+              seatChipClass = 'seat-chip seat-chip--full'
             } else if (isLowSeats) {
-              seatChipClass = 'badge bg-warning text-dark'
+              seatChipClass = 'seat-chip seat-chip--low'
             }
 
             return (
@@ -114,10 +114,10 @@ export const EventList: React.FC = () => {
                     </small>
                     <h5 className="mb-1 mt-1 fw-bold">{event.title}</h5>
                     <div className="text-muted small">
-                      {event.type} ? {event.format}
+                      {event.type} · {event.format}
                     </div>
                     <div className="text-secondary small mt-1">
-                      {event.venueName} ? {event.city}
+                      {event.venueName} · {event.city}
                     </div>
                   </div>
 

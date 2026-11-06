@@ -55,7 +55,7 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
             className={`btn btn-outline-success ${className}`}
             disabled
           >
-            ? REGISTERED
+            ✓ REGISTERED
           </button>
           <Link to="/me/registrations" className="text-muted small">
             See it in My Events

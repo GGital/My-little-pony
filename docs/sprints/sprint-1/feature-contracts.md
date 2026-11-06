@@ -1,6 +1,6 @@
 # Sprint 1 Feature Engineering Contracts
 
-Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.3 (v1.0 reviewed in PR 2; changes in §15)
+Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.4 (v1.0 reviewed in PR 2; changes in §15)
 Inputs: [`../../srs.md`](../../srs.md) v0.5 · [`../../features.md`](../../features.md) v0.2 ·
 [`../../traceability.md`](../../traceability.md) v0.2 · [`../../system-sds.md`](../../system-sds.md) v0.2 ·
 [`../plan.md`](../plan.md) v0.1 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.2 ·
@@ -436,6 +436,9 @@ event" plus a **+ Create event** button.
    (§0.2). Started events can still be opened by link: the list hides them, the detail shows **REGISTRATION CLOSED**.
 3. The seats chip is teal; amber when `seatsRemaining ≤ 20 %` of capacity (rounded down, minimum 1); red **FULL**
    at 0.
+4. Known limitations in I-05: **MANAGE** links to `/organizer/events/:id/registrations` (unimplemented until I-11);
+   **REGISTER** renders without `onRegister` handler until registration flow in I-08; Playwright E2E spec is deferred
+   to I-12 (following PR #18 pattern).
 
 **Rules:** list = `status = PUBLISHED AND startAt > now()`. Detail = any `PUBLISHED` event (Sprint 1 has no other
 status). A missing id → 404. A non-numeric id → 400. Responses never include registrations, participant names or
@@ -612,3 +615,4 @@ the same Pull Request, so the history stays visible (Deliverable 1 §3.5).
 | v1.1 | 4 Nov 2026 | §1 SR-01: constraints moved to migration `0002_rule_constraints`; `db:migrate:test` (non-destructive) added beside `db:reset:test`; in I-01, AC-SR1-01 is checked through the data layer, and through the API plus a real restart in I-12 | Found while implementing #3 (I-01): no API exists yet in I-01, and Prisma blocks agents from running `migrate reset` | Team (AI-assisted) |
 | v1.2 | 5 Nov 2026 | §2 SR-02: 413 is `PAYLOAD_TOO_LARGE`; body-less POST is not a 415; I-02 proves the pipeline through test-only probe routes, and I-04, I-07, I-08, I-12 add their real-endpoint cases to TEST-SR2-01 … 05. §3 SR-03: the no-`Date.now()` rule is a source check in TEST-SR3-01, not a lint rule; TEST-SR3-01 split between I-02 (rule + database) and I-05 / I-08 (E-04 / E-09) | Found while implementing #4 (I-02): E-04, E-06 and E-09 are built in later Issues, and the catalogue had no code for 413 | Team (AI-assisted) |
 | v1.3 | 6 Nov 2026 | §4 Feature-A: TEST-A-04 uses a test-only protected probe until E-09 / E-10 exist, and its E2E half moves to I-12; AC-A-05's response scan is defined as keys, hashes and the seed password; the server error texts now match this section (`INVALID_CREDENTIALS` "Email or password is incorrect.", unknown keys "This value cannot be set.") | Found while implementing #6 (I-04): E-09 and E-10 are built in I-08 / I-10, Playwright is set up in I-12, and `errors.ts` / `validate.ts` (I-02) used different words from this contract | Team (AI-assisted) |
+| v1.4 | 6 Nov 2026 | §9 Feature-F: Playwright E2E spec deferred to I-12 (following PR #18 pattern); documented known limitations (MANAGE links to I-11, REGISTER onRegister handler in I-08, inactive search controls until Sprint 2); path id integer range validation handled via parseId | Found during review of #19 (I-05) | Team (AI-assisted) |
