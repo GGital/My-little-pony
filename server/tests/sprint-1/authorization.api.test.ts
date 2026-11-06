@@ -32,6 +32,7 @@ const EMAIL: Record<Exclude<Caller, 'visitor'>, string> = {
 
 const cookies = {} as Record<Exclude<Caller, 'visitor'>, string>
 const ids = { ev1: 0, ev5: 0, ev6: 0, mintReg: 0, ployReg: 0, mint: 0, ploy: 0, dragon: 0 }
+const E07 = '/api/organizer/events' // real since I-09
 const E09 = (id: number | string) => `/api/events/${id}/registrations` // real since I-08
 const E10 = '/api/me/registrations' // real since I-10
 const E11 = (id: number | string) => `/api/me/registrations/${id}` // real since I-10
@@ -113,7 +114,7 @@ describe('TEST-B-02 — no session: every protected endpoint answers 401 with on
     ['E-02', 'POST', (): string => '/api/auth/logout'],
     ['E-03', 'GET', (): string => '/api/auth/me'],
     ['E-06', 'POST', (): string => '/api/events'],
-    ['E-07', 'GET', (): string => PROBE_PATHS['E-07']],
+    ['E-07', 'GET', (): string => E07],
     ['E-08', 'GET', (): string => PROBE_PATHS['E-08'](ids.ev1)],
     ['E-09', 'POST', (): string => E09(ids.ev5)],
     ['E-10', 'GET', (): string => E10],
@@ -153,9 +154,9 @@ const MATRIX: Cell[] = [
   ['E-06', 'POST', () => '/api/events', 'mint', 403, () => VALID_EVENT],
   ...ANY_ORGANIZER.map((who): Cell => ['E-06', 'POST', () => '/api/events', who, 201, () => VALID_EVENT]),
   // E-07 own dashboard: organizer.
-  ['E-07', 'GET', () => PROBE_PATHS['E-07'], 'visitor', 401],
-  ['E-07', 'GET', () => PROBE_PATHS['E-07'], 'mint', 403],
-  ...ANY_ORGANIZER.map((who): Cell => ['E-07', 'GET', () => PROBE_PATHS['E-07'], who, 200]),
+  ['E-07', 'GET', () => E07, 'visitor', 401],
+  ['E-07', 'GET', () => E07, 'mint', 403],
+  ...ANY_ORGANIZER.map((who): Cell => ['E-07', 'GET', () => E07, who, 200]),
   // E-08 registration list of EV-1: organizer + owner; another organizer gets 404 (D-08).
   ['E-08', 'GET', () => PROBE_PATHS['E-08'](ids.ev1), 'visitor', 401],
   ['E-08', 'GET', () => PROBE_PATHS['E-08'](ids.ev1), 'mint', 403],

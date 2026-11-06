@@ -67,7 +67,8 @@ describe('TEST-H-01 (C) — My Events cards (AC-H-01, FR-17)', () => {
     renderPage()
 
     expect(await screen.findByText("You haven't registered for any events yet")).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Find an Event' })).toHaveAttribute('href', '/events')
+    // Scoped to the empty state: the page tabs also hold a "Find an Event" link.
+    expect(within(screen.getByTestId('empty-state')).getByRole('link', { name: 'Find an Event' })).toHaveAttribute('href', '/events')
   })
 })
 

@@ -3,7 +3,7 @@
 > vitest run
 
 
- RUN  v4.0.18 C:/Users/Praewa/My-little-pony/server
+ RUN  v4.0.18 <repo>/server
 
  ✓ tests/sprint-1/auth.api.test.ts (21 tests) 5213ms
      ✓ an unknown email takes as long as a wrong password (dummy hash): mean difference < 50 ms over 20 tries  3250ms

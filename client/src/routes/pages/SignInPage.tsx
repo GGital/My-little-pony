@@ -3,7 +3,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ApiError } from '../../api/errors';
 import type { ApiErrorDetail, UserRole } from '../../api/types';
 import { useAuth } from '../../auth/AuthContext';
-import { FormFieldError } from '../../components/FormFieldError';
+import { FormFieldError, fieldErrorProps } from '../../components/FormFieldError';
+import { Icon } from '../../components/Icon';
+import { Notice } from '../../components/Notice';
 import { SubmitButton } from '../../components/SubmitButton';
 
 /**
@@ -49,51 +51,59 @@ export const SignInPage: React.FC = () => {
     }
   };
 
+  const returning = safeReturnTo(params.get('returnTo'));
+
   return (
-    <div className="mx-auto" style={{ maxWidth: 420 }}>
-      <h2 className="mb-4">Sign in</h2>
-      {alert && (
-        <div className="alert alert-danger" role="alert">
-          {alert}
+    <div className="pbody pbody--narrow">
+      <div className="auth">
+        <div>
+          <h1>Sign in</h1>
+          <p className="sub mt-2">
+            {returning ? "Sign in to continue. You'll come back to the page you were on." : 'Sign in to register for events or manage your own.'}
+          </p>
         </div>
-      )}
-      <form onSubmit={onSubmit} noValidate>
-        <div className="mb-3">
-          <label htmlFor="signin-email" className="form-label">
-            Email
-          </label>
-          <input
-            id="signin-email"
-            type="email"
-            autoComplete="username"
-            className="form-control"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <FormFieldError field="email" details={details} />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="signin-password" className="form-label">
-            Password
-          </label>
-          <input
-            id="signin-password"
-            ref={passwordRef}
-            type="password"
-            autoComplete="current-password"
-            className="form-control"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <FormFieldError field="password" details={details} />
-        </div>
-        <SubmitButton busy={busy} className="btn-primary w-100">
-          {busy && <span className="spinner-border spinner-border-sm me-2" aria-hidden="true" />}
-          SIGN IN
-        </SubmitButton>
-      </form>
+        {alert && <Notice tone="error">{alert}</Notice>}
+        <form onSubmit={onSubmit} noValidate className="form-section">
+          <div>
+            <label htmlFor="signin-email" className="form-label">
+              Email
+            </label>
+            <input
+              id="signin-email"
+              type="email"
+              autoComplete="username"
+              className="form-control"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              {...fieldErrorProps('email', details)}
+            />
+            <FormFieldError field="email" details={details} />
+          </div>
+          <div>
+            <label htmlFor="signin-password" className="form-label">
+              Password
+            </label>
+            <input
+              id="signin-password"
+              ref={passwordRef}
+              type="password"
+              autoComplete="current-password"
+              className="form-control"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              {...fieldErrorProps('password', details)}
+            />
+            <FormFieldError field="password" details={details} />
+          </div>
+          <SubmitButton busy={busy} className="btn-big btn-big--block">
+            {busy && <Icon name="spin" spin />}
+            SIGN IN
+          </SubmitButton>
+        </form>
+        <p className="sub small">Demo accounts are listed in the README (local seed only).</p>
+      </div>
     </div>
   );
 };

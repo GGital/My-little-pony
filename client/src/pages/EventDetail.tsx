@@ -8,13 +8,15 @@ import { ErrorState } from '../components/ErrorState'
 import { Loading } from '../components/Loading'
 import { SeatCard } from '../components/SeatCard'
 import { NotFoundPage } from '../routes/pages/NotFoundPage'
-import { formatEventTime } from '../utils/formatEventTime'
+import { Icon, type IconName } from '../components/Icon'
+import { Notice } from '../components/Notice'
+import { formatDate, formatTimeRange, label } from '../utils/eventDisplay'
 
 export const EventDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const location = useLocation()
   const navigate = useNavigate()
-  const [toastMessage] = useState<string | null>(() => (location.state as { toast?: string } | null)?.toast ?? null)
+  const [toastMessage, setToastMessage] = useState<string | null>(() => (location.state as { toast?: string } | null)?.toast ?? null)
 
   useEffect(() => {
     if ((location.state as { toast?: string } | null)?.toast) {
@@ -82,7 +84,7 @@ export const EventDetail: React.FC = () => {
   }
 
   if (loading) {
-    return <Loading />
+    return <Loading label="Loading event…" />
   }
 
   if (notFound) {
@@ -93,127 +95,119 @@ export const EventDetail: React.FC = () => {
     return <ErrorState message={error ?? 'Event not found.'} onRetry={fetchDetail} />
   }
 
+  const info = (icon: IconName, content: React.ReactNode) => (
+    <div className="info-row">
+      <div className="ico">
+        <Icon name={icon} />
+      </div>
+      <div>{content}</div>
+    </div>
+  )
+
   return (
-    <div className="container py-4">
-      {toastMessage && (
-        <div className="alert alert-success alert-dismissible mb-4" role="alert">
-          {toastMessage}
-        </div>
-      )}
+    <>
       <div aria-live="polite" className="visually-hidden-live">
         {announcement}
       </div>
-      {alert && (
-        <div className="alert alert-danger" role="alert">
-          {alert}
+      {(toastMessage || alert) && (
+        <div className="page-alerts">
+          {toastMessage && (
+            <Notice tone="success" onClose={() => setToastMessage(null)}>
+              {toastMessage}
+            </Notice>
+          )}
+          {alert && <Notice tone="error">{alert}</Notice>}
         </div>
       )}
-      {/* Event Header Banner */}
-      <div className="card p-4 shadow-sm mb-4 border-0">
-        <div className="d-flex justify-content-between align-items-start flex-wrap gap-3">
-          <div>
-            <h1 className="fw-bold mb-1">{event.title}</h1>
-            <div className="text-muted mb-3">
-              at {event.organizer.displayName} · {event.city}
-            </div>
 
-            <div className="d-flex gap-4 flex-wrap text-secondary small">
-              <div>
-                <span className="fw-bold text-uppercase d-block">Date & Time</span>
-                <span>{formatEventTime(event.startAt)}</span>
-              </div>
-              <div>
-                <span className="fw-bold text-uppercase d-block">Players</span>
-                <span>
-                  {event.registeredCount} / {event.capacity}
-                </span>
-              </div>
-            </div>
+      {/* Header row: title, host, date, time, players, one wide action (design-direction §5.2). */}
+      <div className="dhead">
+        <div className="dhead__title">
+          <h1>{event.title}</h1>
+          <p className="host">
+            at <strong>{event.venueName}</strong> · {event.city}
+          </p>
+        </div>
+        <div>
+          <div className="lbl">Date</div>
+          <div className="dhead__fact">{formatDate(event.startAt)}</div>
+        </div>
+        <div>
+          <div className="lbl">Time</div>
+          <div className="dhead__fact tabular-nums">{formatTimeRange(event.startAt, event.endAt)}</div>
+        </div>
+        <div>
+          <div className="lbl">Players</div>
+          <div className="dhead__fact tabular-nums">
+            {event.registeredCount} / {event.capacity}
           </div>
-
-          <div className="d-flex flex-column align-items-end">
-            <ActionButton
-              action={event.viewer.action}
-              eventId={event.id}
-              registrationId={event.viewer.registrationId}
-              capacity={event.capacity}
-              registeredCount={event.registeredCount}
-              onRegister={onRegister}
-              busy={registering}
-            />
-          </div>
+        </div>
+        <div className="dhead__action">
+          <ActionButton
+            action={event.viewer.action}
+            eventId={event.id}
+            registrationId={event.viewer.registrationId}
+            capacity={event.capacity}
+            registeredCount={event.registeredCount}
+            onRegister={onRegister}
+            busy={registering}
+          />
         </div>
       </div>
 
-      {/* Two Column Layout (contracts 9, design-direction 5.2) */}
-      <div className="row g-4">
-        {/* Left Column: Details & Description */}
-        <div className="col-lg-8">
-          <div className="card p-4 shadow-sm border-0 mb-4">
-            <h4 className="fw-bold mb-3">Event Details</h4>
-
-            <div className="d-flex gap-2 mb-3">
-              <span className="badge bg-primary-subtle text-primary border border-primary-subtle">
-                {event.type}
-              </span>
-              <span className="badge bg-secondary-subtle text-secondary-emphasis">
-                {event.format}
-              </span>
-              {event.feeLabel && (
-                <span className="badge bg-light text-dark border">
-                  {event.feeLabel}
-                </span>
-              )}
-            </div>
-
-            {event.structureNote && (
-              <div className="mb-3">
-                <span className="fw-bold d-block small text-muted">Structure</span>
-                <span>{event.structureNote}</span>
-              </div>
+      <div className="cols">
+        <div className="cols__main">
+          <section className="box details-box">
+            <h2>Event details</h2>
+            <span className="pill">{label(event.type)}</span>
+            {info(
+              'cal',
+              <>
+                {formatDate(event.startAt)}
+                <br />
+                <span className="tabular-nums">{formatTimeRange(event.startAt, event.endAt)}</span> (Bangkok time)
+              </>
             )}
-
-            <div className="mb-3">
-              <span className="fw-bold d-block small text-muted">Venue Address</span>
-              <span>{event.venueAddress}</span>
-            </div>
-
-            {event.contact && (
-              <div className="mb-3">
-                <span className="fw-bold d-block small text-muted">Contact</span>
-                <span>{event.contact}</span>
-              </div>
+            {info('pin', event.venueAddress)}
+            {info(
+              'trophy',
+              <>
+                {label(event.format)}
+                {event.structureNote && (
+                  <>
+                    <br />
+                    {event.structureNote}
+                  </>
+                )}
+              </>
             )}
+            {info('fee', event.feeLabel || 'Free')}
+            {/* Plain text only: the description is never parsed as HTML (AC-C-06, NFR-15). */}
+            {event.description && <p className="description">{event.description}</p>}
+          </section>
 
-            {event.description && (
-              <div className="mt-4">
-                <span className="fw-bold d-block small text-muted mb-2">Description</span>
-                {/* Safe rendering as plain text (AC-C-06, NFR-15) */}
-                <p className="text-secondary mb-0" style={{ whiteSpace: 'pre-line' }}>
-                  {event.description}
-                </p>
-              </div>
-            )}
-          </div>
+          {event.contact && (
+            <section className="box contact-box">
+              <h2>Contact</h2>
+              {info('mail', event.contact)}
+            </section>
+          )}
         </div>
 
-        {/* Right Column: Seats Panel */}
-        <div className="col-lg-4">
+        <div className="cols__side">
           <SeatCard event={event} secured={secured} />
-          <div className="mt-3">
-            {event.viewer.action === 'MANAGE' && (
-              <div className="mt-2 pt-2 border-top">
-                <Link
-                  to={`/organizer/events/${event.id}/registrations`}
-                  className="btn btn-sm btn-outline-secondary w-100"
-                >
-                  View registrations
-                </Link>
-              </div>
-            )}
-          </div>
+          {event.viewer.action === 'MANAGE' && (
+            <section className="box manage-box">
+              <h2>Your event</h2>
+              <p className="sub mb-3">You can see who registered. Players only see the seat count.</p>
+              <Link to={`/organizer/events/${event.id}/registrations`} className="btn-soft">
+                View registrations
+                <Icon name="arrow" size="sm" />
+              </Link>
+            </section>
+          )}
         </div>
       </div>
-    </div>
+    </>
   )
 }

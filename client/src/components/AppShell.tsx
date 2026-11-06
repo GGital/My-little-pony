@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { Icon } from './Icon';
+import { Notice } from './Notice';
 
 export const AppShell: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const { status, user, signOut } = useAuth();
@@ -32,6 +34,11 @@ export const AppShell: React.FC<{ children?: React.ReactNode }> = ({ children })
     };
   }, [menuOpen]);
 
+  // "You are signed out." belongs to the signed-out moment; signing in again clears it.
+  useEffect(() => {
+    if (status === 'signedIn') setNotification(null);
+  }, [status]);
+
   // Leave the page first: if the session ended while still on a protected route, its guard would win the
   // race and send the user to /login instead of /events (contracts §4 UI).
   const handleSignOut = async () => {
@@ -41,115 +48,87 @@ export const AppShell: React.FC<{ children?: React.ReactNode }> = ({ children })
     setNotification('You are signed out.');
   };
 
+  const signedIn = status === 'signedIn' && user;
+  const organizer = signedIn && user.role === 'ORGANIZER';
+  const home = organizer
+    ? { to: '/organizer', label: 'Dashboard' }
+    : { to: '/me/registrations', label: 'My Events' };
+
   return (
     <div className="d-flex flex-column min-vh-100">
-      <header
-        data-testid="app-header"
-        className="navbar navbar-expand border-bottom px-3 py-2 text-white"
-        style={{ backgroundColor: 'var(--ink-900)', borderColor: 'rgba(255, 255, 255, 0.12)' }}
-      >
-        <div className="container-fluid d-flex align-items-center justify-content-between">
-          <div className="d-flex align-items-center gap-4">
-            <Link to="/events" className="navbar-brand text-white fw-bold d-flex align-items-center gap-2">
-              <span style={{ color: 'var(--primary)' }}>✦</span>
-              <span>TCG Event Hub</span>
+      <header data-testid="app-header" className="app-header">
+        <Link to="/events" className="logo">
+          <span className="logo__mark" aria-hidden="true" />
+          TCG Event Hub
+        </Link>
+
+        <nav className="app-nav" aria-label="Main">
+          <NavLink to="/events" end>
+            Events
+          </NavLink>
+          {signedIn && user.role === 'PARTICIPANT' && <NavLink to="/me/registrations">My Events</NavLink>}
+          {organizer && (
+            <>
+              <NavLink to="/organizer" end>
+                Dashboard
+              </NavLink>
+              <NavLink to="/organizer/events/new">+ Create event</NavLink>
+            </>
+          )}
+        </nav>
+
+        <div className="app-header__end">
+          {status === 'signedOut' && (
+            <Link to="/login" className="btn-signin">
+              Sign in
             </Link>
+          )}
 
-            <nav className="d-flex align-items-center gap-3">
-              <Link to="/events" className="nav-link text-white-50 text-white-hover">
-                Events
-              </Link>
+          {signedIn && (
+            <div ref={menuRef}>
+              <button
+                type="button"
+                className="acct"
+                onClick={() => setMenuOpen(!menuOpen)}
+                aria-expanded={menuOpen}
+                aria-haspopup="menu"
+                data-testid="user-menu-btn"
+              >
+                <span className="acct__name">{user.displayName}</span>
+                <span className={`role-badge${organizer ? ' role-badge--organizer' : ''}`}>
+                  {organizer ? 'ORGANIZER' : 'PLAYER'}
+                </span>
+                <Icon name="chev" size="sm" />
+              </button>
 
-              {status === 'signedIn' && user?.role === 'PARTICIPANT' && (
-                <Link to="/me/registrations" className="nav-link text-white-50 text-white-hover">
-                  My Events
-                </Link>
+              {menuOpen && (
+                <ul className="acct-menu">
+                  <li>
+                    <Link to={home.to} onClick={() => setMenuOpen(false)}>
+                      {home.label}
+                    </Link>
+                  </li>
+                  <li>
+                    <button type="button" className="acct-menu__danger" onClick={handleSignOut}>
+                      Sign out
+                    </button>
+                  </li>
+                </ul>
               )}
-
-              {status === 'signedIn' && user?.role === 'ORGANIZER' && (
-                <>
-                  <Link to="/organizer" className="nav-link text-white-50 text-white-hover">
-                    Dashboard
-                  </Link>
-                  <Link
-                    to="/organizer/events/new"
-                    className="nav-link text-white-50 text-white-hover"
-                  >
-                    + Create event
-                  </Link>
-                </>
-              )}
-            </nav>
-          </div>
-
-          <div className="d-flex align-items-center gap-3">
-            {status === 'signedOut' && (
-              <Link to="/login" className="btn btn-sm btn-outline-light px-3" role="link">
-                Sign in
-              </Link>
-            )}
-
-            {status === 'signedIn' && user && (
-              <div className="dropdown position-relative" ref={menuRef}>
-                <button
-                  type="button"
-                  className="btn btn-sm d-flex align-items-center gap-2 text-white p-1"
-                  onClick={() => setMenuOpen(!menuOpen)}
-                  aria-expanded={menuOpen}
-                  aria-haspopup="menu"
-                  data-testid="user-menu-btn"
-                >
-                  <span className="fw-semibold">{user.displayName}</span>
-                  <span
-                    className={
-                      user.role === 'ORGANIZER'
-                        ? 'badge-role-organizer'
-                        : 'badge-role-player'
-                    }
-                  >
-                    {user.role === 'ORGANIZER' ? 'ORGANIZER' : 'PLAYER'}
-                  </span>
-                </button>
-
-                {menuOpen && (
-                  <ul
-                    className="dropdown-menu dropdown-menu-end show position-absolute mt-2 shadow"
-                    style={{
-                      right: 0,
-                      backgroundColor: 'var(--surface)',
-                      borderRadius: 'var(--radius-card)',
-                    }}
-                  >
-                    <li>
-                      <button
-                        type="button"
-                        className="dropdown-item text-danger"
-                        onClick={handleSignOut}
-                      >
-                        Sign out
-                      </button>
-                    </li>
-                  </ul>
-                )}
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </header>
 
       {notification && (
-        <div className="alert alert-info alert-dismissible m-3 mb-0" role="status">
-          {notification}
-          <button
-            type="button"
-            className="btn-close"
-            onClick={() => setNotification(null)}
-            aria-label="Close"
-          />
+        <div className="app-flash">
+          <Notice tone="info" role="status" onClose={() => setNotification(null)}>
+            {notification}
+          </Notice>
         </div>
       )}
 
-      <main className="flex-grow-1 px-3">
+      <main className="app-main flex-grow-1">
         <div className="app-panel">{children}</div>
       </main>
     </div>

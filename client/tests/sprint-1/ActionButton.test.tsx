@@ -25,7 +25,7 @@ describe('TEST-F-02 (C) — ActionButton states (AC-F-02, FR-12)', () => {
 
   it('renders REGISTERED as disabled with a link to My Events', () => {
     renderButton(<ActionButton action="REGISTERED" eventId={1} registrationId={42} />)
-    const btn = screen.getByRole('button', { name: '✓ REGISTERED' })
+    const btn = screen.getByRole('button', { name: 'REGISTERED' })
     expect(btn).toBeInTheDocument()
     expect(btn).toBeDisabled()
 

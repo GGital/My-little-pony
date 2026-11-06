@@ -1,9 +1,9 @@
 # Sprint 1 Feature Engineering Contracts
 
-Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.8 (v1.0 reviewed in PR 2; changes in §15)
+Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.10 (v1.0 reviewed in PR 2; changes in §15)
 Inputs: [`../../srs.md`](../../srs.md) v0.5 · [`../../features.md`](../../features.md) v0.2 ·
 [`../../traceability.md`](../../traceability.md) v0.2 · [`../../system-sds.md`](../../system-sds.md) v0.2 ·
-[`../plan.md`](../plan.md) v0.1 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.2 ·
+[`../plan.md`](../plan.md) v0.1 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.3 ·
 Tests: [`sts.md`](sts.md) · Issues and Definition of Done: [`README.md`](README.md)
 
 This is step 6 of the course design process: one **engineering contract** per Sprint 1 feature, written and
@@ -64,7 +64,7 @@ registeredCount`. Both are computed by the server on every read.
 |---|---|---|
 | Viewer is the event's owner | `MANAGE` | MANAGE EVENT |
 | Viewer is any other organizer | `ORGANIZER_CANNOT_REGISTER` | no button, note |
-| Viewer is a participant with an active registration | `REGISTERED` (+ `registrationId`) | ✓ REGISTERED |
+| Viewer is a participant with an active registration | `REGISTERED` (+ `registrationId`) | check icon + REGISTERED |
 | Event has started or is not `PUBLISHED` | `CLOSED` | REGISTRATION CLOSED |
 | `seatsRemaining = 0` | `FULL` | FULL |
 | Viewer is signed out | `SIGN_IN_TO_REGISTER` | SIGN IN TO REGISTER |
@@ -431,6 +431,8 @@ event" plus a **+ Create event** button.
 
 **Planned tests:** TEST-E-01, 02 (I, E).
 
+**What I-09 adds and moves (v1.9).** The E2E half of TEST-E-01 moves to I-12 with the other Playwright journeys (following PR #18 pattern); in I-09 the page is checked at component level (`Dashboard.test.tsx`: owned events in start order with links and seat counts, empty state with **+ Create event**, loading and error with **Try again**). E-07 replaces the I-06 probe in TEST-B-02 and TEST-B-03; the probe is removed from `accessProbes`; route table gains E-07.
+
 ---
 
 ## 9. Feature-F — Event Discovery List and Detail
@@ -486,7 +488,7 @@ SR-01 · Issue I-08 · Diagrams: D1 (last-seat race), D3 (activity)
 2. `POST /api/events/:id/registrations` runs the transaction in SDS §4.4: lock the event row → check open → check
    duplicate → count active → insert `REGISTERED`.
 3. On `201` the "seat secured" moment plays (design-direction §7): the Seats card flips to "You're in.", counts
-   update, the button becomes **✓ REGISTERED**, and the screen reader hears the announcement.
+   update, the button becomes **REGISTERED** with the check icon, and the screen reader hears the announcement.
 4. On `409` no flip: a red alert with the server's message, and the seat count refreshes (E-05 is called again).
 
 **Order of checks:** 401 → 403 (not a participant) → 403 (Origin) → 400 (path id, body must be `{}` or empty) →
@@ -512,7 +514,7 @@ SR-01 · Issue I-08 · Diagrams: D1 (last-seat race), D3 (activity)
 
 | AC | Given | When | Then |
 |---|---|---|---|
-| **AC-G-01** | Nok signed in; EV-1 has 3 / 24 | E-09 for EV-1, then E-05 and the UI flow | `201` with `status REGISTERED` and `event.registeredCount 4, seatsRemaining 20`; one new row with `participantId` = Nok; E-05 now gives `viewer.action REGISTERED`; the UI shows "You're in." and **✓ REGISTERED** |
+| **AC-G-01** | Nok signed in; EV-1 has 3 / 24 | E-09 for EV-1, then E-05 and the UI flow | `201` with `status REGISTERED` and `event.registeredCount 4, seatsRemaining 20`; one new row with `participantId` = Nok; E-05 now gives `viewer.action REGISTERED`; the UI shows "You're in." and **REGISTERED** (check icon) |
 | **AC-G-02** | EV-3 is full (2 / 2); Nok signed in | E-09 for EV-3 | `409 EVENT_FULL`; still 2 active rows; the UI shows the full-event message without the flip, and the seat count still reads 2 / 2 |
 | **AC-G-03** | Mint already registered for EV-1 | E-09 for EV-1 by Mint, sequentially, then twice at the same time | every response `409 ALREADY_REGISTERED`; exactly one active row for (EV-1, Mint) |
 | **AC-G-04** | EV-4 has started; clock fixed | E-09 for EV-4 by Nok | `409 REGISTRATION_CLOSED`; no row stored |
@@ -640,3 +642,5 @@ the same Pull Request, so the history stays visible (Deliverable 1 §3.5).
 | v1.6 | 6 Nov 2026 | §10 Feature-G: E2E halves of TEST-G-01 / G-02 move to I-12; the UI behaviour is checked at component level in I-08; E-09 cases added to TEST-SR2-05, TEST-SR3-01, TEST-A-04 and TEST-B-01 … 03 | Found while implementing #10 (I-08): Playwright is set up in I-12 | Team (AI-assisted) |
 | v1.7 | 6 Nov 2026 | §7 Feature-D: Playwright E2E half of TEST-D-01 moves to I-12 (following PR #18 pattern); UI behaviour checked at component level (CreateEvent.test.tsx); E-06 replaces probe in TEST-B-01 … 03 and adds case to TEST-SR2-02 | Found while implementing #9 (I-07): Playwright is set up in I-12 | Praewa (MeldyRose) |
 | v1.8 | 6 Nov 2026 | §11 Feature-H: E2E half of TEST-H-01 moves to I-12; the page is checked at component level in I-10; E-10 / E-11 replace their probes in TEST-A-04 and TEST-B-01 … 03 | Found while implementing #12 (I-10): Playwright is set up in I-12 | Team (AI-assisted) |
+| v1.9 | 6 Nov 2026 | §8 Feature-E: Playwright E2E half of TEST-E-01 moves to I-12 (following PR #18 pattern); UI behaviour checked at component level (Dashboard.test.tsx); E-07 replaces probe in TEST-B-02 and TEST-B-03, route table gains E-07 | Found while implementing #11 (I-09): Playwright is set up in I-12 | Praewa (MeldyRose) |
+| v1.10 | 7 Nov 2026 | §0.2, §10 Behaviour 3, AC-G-01: the registered button is **REGISTERED** with the drawn check icon, not the "✓" glyph; the card's type · format line reads "Casual · Constructed" (design-direction v0.3) | UI polish in PR #24: design-direction §8 bans Unicode glyphs as icons | Team (AI-assisted) |

@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '../../api/client'
 import { ApiError } from '../../api/errors'
 import type { ApiErrorDetail, EventDetail } from '../../api/types'
-import { FormFieldError } from '../../components/FormFieldError'
+import { FormFieldError, fieldErrorProps } from '../../components/FormFieldError'
+import { Notice } from '../../components/Notice'
+import { PageTop } from '../../components/PageTop'
+import { label } from '../../utils/eventDisplay'
 import { SubmitButton } from '../../components/SubmitButton'
 
 export const CreateEvent: React.FC = () => {
@@ -74,286 +77,154 @@ export const CreateEvent: React.FC = () => {
     }
   }
 
-  return (
-    <div className="container py-4" style={{ maxWidth: '720px' }}>
-      <h1 className="fw-bold mb-4">Create & Publish Event</h1>
+  type TextField = {
+    id: keyof typeof values
+    label: string
+    required?: boolean
+    hint?: string
+    type?: string
+    placeholder?: string
+    maxLength?: number
+  }
+  const values = { title, venueName, venueAddress, city, startAt, endAt, capacity, feeLabel, structureNote, contact }
+  const setters: Record<keyof typeof values, (v: string) => void> = {
+    title: setTitle,
+    venueName: setVenueName,
+    venueAddress: setVenueAddress,
+    city: setCity,
+    startAt: setStartAt,
+    endAt: setEndAt,
+    capacity: setCapacity,
+    feeLabel: setFeeLabel,
+    structureNote: setStructureNote,
+    contact: setContact,
+  }
 
-      {generalError && (!details || details.length === 0) && (
-        <div className="alert alert-danger" role="alert">
-          {generalError}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} noValidate>
-        {/* 1. Title */}
-        <div className="mb-3">
-          <label htmlFor="title" className="form-label fw-bold">
-            Title <span className="text-danger">*</span>
-          </label>
-          <input
-            id="title"
-            name="title"
-            type="text"
-            className="form-control"
-            placeholder="e.g. Friday Night Constructed"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            disabled={submitting}
-          />
-          <FormFieldError field="title" details={details} />
-        </div>
-
-        {/* 2. Type & Format (Radio Cards) */}
-        <div className="row g-3 mb-3">
-          <div className="col-md-6">
-            <label className="form-label fw-bold d-block">
-              Event Type <span className="text-danger">*</span>
-            </label>
-            <div className="d-flex gap-2 flex-wrap">
-              {(['CASUAL', 'TOURNAMENT', 'RELEASE'] as const).map((t) => (
-                <label
-                  key={t}
-                  className={`btn btn-sm ${type === t ? 'btn-primary' : 'btn-outline-secondary'}`}
-                >
-                  <input
-                    type="radio"
-                    name="type"
-                    value={t}
-                    checked={type === t}
-                    onChange={() => setType(t)}
-                    className="visually-hidden"
-                    disabled={submitting}
-                  />
-                  {t}
-                </label>
-              ))}
-            </div>
-            <FormFieldError field="type" details={details} />
-          </div>
-
-          <div className="col-md-6">
-            <label className="form-label fw-bold d-block">
-              Format <span className="text-danger">*</span>
-            </label>
-            <div className="d-flex gap-2 flex-wrap">
-              {(['CONSTRUCTED', 'SEALED', 'DRAFT'] as const).map((f) => (
-                <label
-                  key={f}
-                  className={`btn btn-sm ${format === f ? 'btn-primary' : 'btn-outline-secondary'}`}
-                >
-                  <input
-                    type="radio"
-                    name="format"
-                    value={f}
-                    checked={format === f}
-                    onChange={() => setFormat(f)}
-                    className="visually-hidden"
-                    disabled={submitting}
-                  />
-                  {f}
-                </label>
-              ))}
-            </div>
-            <FormFieldError field="format" details={details} />
-          </div>
-        </div>
-
-        {/* 3. Venue Name, Address, City */}
-        <div className="mb-3">
-          <label htmlFor="venueName" className="form-label fw-bold">
-            Venue Name <span className="text-danger">*</span>
-          </label>
-          <input
-            id="venueName"
-            name="venueName"
-            type="text"
-            className="form-control"
-            placeholder="e.g. Quantum Cards"
-            value={venueName}
-            onChange={(e) => setVenueName(e.target.value)}
-            disabled={submitting}
-          />
-          <FormFieldError field="venueName" details={details} />
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="venueAddress" className="form-label fw-bold">
-            Venue Address <span className="text-danger">*</span>
-          </label>
-          <input
-            id="venueAddress"
-            name="venueAddress"
-            type="text"
-            className="form-control"
-            placeholder="e.g. 1631 Kanchanaphisek Rd"
-            value={venueAddress}
-            onChange={(e) => setVenueAddress(e.target.value)}
-            disabled={submitting}
-          />
-          <FormFieldError field="venueAddress" details={details} />
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="city" className="form-label fw-bold">
-            City <span className="text-danger">*</span>
-          </label>
-          <input
-            id="city"
-            name="city"
-            type="text"
-            className="form-control"
-            placeholder="e.g. Bangkok"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            disabled={submitting}
-          />
-          <FormFieldError field="city" details={details} />
-        </div>
-
-        {/* 4. Start & End Date-Time (Bangkok time) */}
-        <div className="row g-3 mb-3">
-          <div className="col-md-6">
-            <label htmlFor="startAt" className="form-label fw-bold">
-              Start Date & Time (Bangkok) <span className="text-danger">*</span>
-            </label>
-            <input
-              id="startAt"
-              name="startAt"
-              type="datetime-local"
-              className="form-control"
-              value={startAt}
-              onChange={(e) => setStartAt(e.target.value)}
-              disabled={submitting}
-            />
-            <FormFieldError field="startAt" details={details} />
-          </div>
-
-          <div className="col-md-6">
-            <label htmlFor="endAt" className="form-label fw-bold">
-              End Date & Time (Bangkok) <span className="text-danger">*</span>
-            </label>
-            <input
-              id="endAt"
-              name="endAt"
-              type="datetime-local"
-              className="form-control"
-              value={endAt}
-              onChange={(e) => setEndAt(e.target.value)}
-              disabled={submitting}
-            />
-            <FormFieldError field="endAt" details={details} />
-          </div>
-        </div>
-
-        {/* 5. Capacity */}
-        <div className="mb-3">
-          <label htmlFor="capacity" className="form-label fw-bold">
-            Capacity (1–256) <span className="text-danger">*</span>
-          </label>
-          <input
-            id="capacity"
-            name="capacity"
-            type="number"
-            min="1"
-            max="256"
-            className="form-control"
-            value={capacity}
-            onChange={(e) => setCapacity(e.target.value)}
-            disabled={submitting}
-          />
-          <FormFieldError field="capacity" details={details} />
-        </div>
-
-        {/* 6. Fee Label */}
-        <div className="mb-3">
-          <label htmlFor="feeLabel" className="form-label fw-bold">
-            Fee Label <span className="text-muted fw-normal">(optional, max 40 chars)</span>
-          </label>
-          <input
-            id="feeLabel"
-            name="feeLabel"
-            type="text"
-            maxLength={40}
-            className="form-control"
-            placeholder="e.g. Free or THB 250"
-            value={feeLabel}
-            onChange={(e) => setFeeLabel(e.target.value)}
-            disabled={submitting}
-          />
-          <FormFieldError field="feeLabel" details={details} />
-        </div>
-
-        {/* 7. Structure Note */}
-        <div className="mb-3">
-          <label htmlFor="structureNote" className="form-label fw-bold">
-            Structure Note <span className="text-muted fw-normal">(optional, max 80 chars)</span>
-          </label>
-          <input
-            id="structureNote"
-            name="structureNote"
-            type="text"
-            maxLength={80}
-            className="form-control"
-            placeholder="e.g. 4 rounds · Best of 1"
-            value={structureNote}
-            onChange={(e) => setStructureNote(e.target.value)}
-            disabled={submitting}
-          />
-          <FormFieldError field="structureNote" details={details} />
-        </div>
-
-        {/* 8. Contact */}
-        <div className="mb-3">
-          <label htmlFor="contact" className="form-label fw-bold">
-            Contact <span className="text-muted fw-normal">(optional, max 120 chars)</span>
-          </label>
-          <input
-            id="contact"
-            name="contact"
-            type="text"
-            maxLength={120}
-            className="form-control"
-            placeholder="e.g. hello@quantumcards.example"
-            value={contact}
-            onChange={(e) => setContact(e.target.value)}
-            disabled={submitting}
-          />
-          <FormFieldError field="contact" details={details} />
-        </div>
-
-        {/* 9. Description with Character Counter */}
-        <div className="mb-4">
-          <div className="d-flex justify-content-between align-items-baseline mb-1">
-            <label htmlFor="description" className="form-label fw-bold mb-0">
-              Description <span className="text-muted fw-normal">(optional, max 2,000 chars)</span>
-            </label>
-            <span className="small text-muted">{description.length} / 2,000</span>
-          </div>
-          <textarea
-            id="description"
-            name="description"
-            rows={5}
-            maxLength={2000}
-            className="form-control"
-            placeholder="Details about deck rules, prizes, schedule..."
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            disabled={submitting}
-          />
-          <FormFieldError field="description" details={details} />
-        </div>
-
-        {/* Submit */}
-        <div className="d-flex gap-3">
-          <SubmitButton
-            busy={submitting}
-            busyLabel="Publishing…"
-            className="btn-primary px-4 py-2"
-          >
-            PUBLISH EVENT
-          </SubmitButton>
-        </div>
-      </form>
+  const field = ({ id, label: text, required, hint, type = 'text', placeholder, maxLength }: TextField) => (
+    <div>
+      <label htmlFor={id} className="form-label">
+        {text} {required && <span className="req" aria-hidden="true">*</span>}
+        {hint && <span className="field-hint">({hint})</span>}
+      </label>
+      <input
+        id={id}
+        name={id}
+        type={type}
+        className="form-control"
+        placeholder={placeholder}
+        maxLength={maxLength}
+        min={type === 'number' ? 1 : undefined}
+        max={type === 'number' ? 256 : undefined}
+        value={values[id]}
+        onChange={(e) => setters[id](e.target.value)}
+        disabled={submitting}
+        aria-required={required || undefined}
+        {...fieldErrorProps(id, details)}
+      />
+      <FormFieldError field={id} details={details} />
     </div>
+  )
+
+  const choices = <T extends string>(name: string, legend: string, options: readonly T[], value: T, set: (v: T) => void) => (
+    <fieldset>
+      <legend className="form-label">
+        {legend} <span className="req" aria-hidden="true">*</span>
+      </legend>
+      <div className="choice-group">
+        {options.map((o) => (
+          <label key={o} className="choice" title={label(o)}>
+            <input
+              type="radio"
+              name={name}
+              value={o}
+              checked={value === o}
+              onChange={() => set(o)}
+              className="visually-hidden"
+              disabled={submitting}
+            />
+            {o}
+          </label>
+        ))}
+      </div>
+      <FormFieldError field={name} details={details} />
+    </fieldset>
+  )
+
+  return (
+    <>
+      <PageTop title="Create an event" subtitle="It goes live as soon as you publish it. Times are Bangkok time." />
+      <div className="pbody">
+        <form onSubmit={handleSubmit} noValidate className="form-section" style={{ maxWidth: 760 }}>
+          {generalError && (!details || details.length === 0) && <Notice tone="error">{generalError}</Notice>}
+
+          <section className="form-card">
+            <h2>The event</h2>
+            {field({ id: 'title', label: 'Title', required: true, placeholder: 'e.g. Friday Night Constructed' })}
+            <div className="form-grid">
+              {choices('type', 'Event Type', ['CASUAL', 'TOURNAMENT', 'RELEASE'] as const, type, setType)}
+              {choices('format', 'Format', ['CONSTRUCTED', 'SEALED', 'DRAFT'] as const, format, setFormat)}
+            </div>
+          </section>
+
+          <section className="form-card">
+            <h2>Where</h2>
+            {field({ id: 'venueName', label: 'Venue Name', required: true, placeholder: 'e.g. Quantum Cards' })}
+            {field({ id: 'venueAddress', label: 'Venue Address', required: true, placeholder: 'e.g. 1631 Kanchanaphisek Rd' })}
+            {field({ id: 'city', label: 'City', required: true, placeholder: 'e.g. Bangkok' })}
+          </section>
+
+          <section className="form-card">
+            <h2>When</h2>
+            <div className="form-grid">
+              {field({ id: 'startAt', label: 'Start Date & Time (Bangkok)', required: true, type: 'datetime-local' })}
+              {field({ id: 'endAt', label: 'End Date & Time (Bangkok)', required: true, type: 'datetime-local' })}
+            </div>
+            <p className="sub small">An event can last at most 24 hours.</p>
+          </section>
+
+          <section className="form-card">
+            <h2>Seats and fee</h2>
+            <div className="form-grid">
+              {field({ id: 'capacity', label: 'Capacity', required: true, hint: '1–256', type: 'number' })}
+              {field({ id: 'feeLabel', label: 'Fee Label', hint: 'optional, max 40', placeholder: 'e.g. Free or THB 250', maxLength: 40 })}
+            </div>
+          </section>
+
+          <section className="form-card">
+            <h2>More details</h2>
+            {field({ id: 'structureNote', label: 'Structure Note', hint: 'optional, max 80', placeholder: 'e.g. 4 rounds · Best of 1', maxLength: 80 })}
+            {field({ id: 'contact', label: 'Contact', hint: 'optional, max 120', placeholder: 'e.g. hello@quantumcards.example', maxLength: 120 })}
+            <div>
+              <div className="d-flex justify-content-between align-items-baseline">
+                <label htmlFor="description" className="form-label">
+                  Description <span className="field-hint">(optional)</span>
+                </label>
+                <span className="small sub tabular-nums">{description.length} / 2,000</span>
+              </div>
+              <textarea
+                id="description"
+                name="description"
+                rows={5}
+                maxLength={2000}
+                className="form-control"
+                placeholder="Deck rules, prizes, schedule…"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                disabled={submitting}
+                {...fieldErrorProps('description', details)}
+              />
+              <FormFieldError field="description" details={details} />
+            </div>
+          </section>
+
+          <div className="form-actions">
+            <SubmitButton busy={submitting} busyLabel="Publishing…" className="btn-big">
+              PUBLISH EVENT
+            </SubmitButton>
+            <span className="sub small">Fields marked * are required.</span>
+          </div>
+        </form>
+      </div>
+    </>
   )
 }

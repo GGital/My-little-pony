@@ -8,7 +8,7 @@ import { EventList } from '../pages/EventList';
 import { EventDetail } from '../pages/EventDetail';
 import { MyEvents } from '../pages/MyEvents';
 import { CreateEvent } from '../pages/organizer/CreateEvent';
-const OrganizerDashboardStub = () => <div><h2>Organizer Dashboard</h2></div>;
+import { Dashboard as OrganizerDashboard } from '../pages/organizer/Dashboard';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -33,7 +33,7 @@ export const AppRoutes: React.FC = () => {
         path="/organizer"
         element={
           <RequireRole role="ORGANIZER">
-            <OrganizerDashboardStub />
+            <OrganizerDashboard />
           </RequireRole>
         }
       />
