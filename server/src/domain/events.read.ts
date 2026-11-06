@@ -1,4 +1,5 @@
-import type { EventFormat, EventStatus, EventType, PrismaClient, Role } from '@prisma/client'
+import type { EventFormat, EventStatus, EventType, PrismaClient } from '@prisma/client'
+import type { Actor } from './actor.js'
 import { hasStarted, upcomingWhere } from './time.js'
 
 export type ViewerAction =
@@ -39,12 +40,6 @@ export type EventDetail = EventSummary & {
     action: ViewerAction
     registrationId: number | null
   }
-}
-
-export type Actor = {
-  id: number
-  role: Role
-  displayName: string
 }
 
 /**

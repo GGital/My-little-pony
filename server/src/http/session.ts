@@ -1,12 +1,9 @@
 import type { RequestHandler } from 'express'
-import type { PrismaClient, Role } from '@prisma/client'
+import type { PrismaClient } from '@prisma/client'
+import type { Actor } from '../domain/actor.js'
 import { findSessionUser } from '../domain/auth.js'
-import { sendError } from './errors.js'
 
 export const SESSION_COOKIE = 'tcg.sid'
-
-/** The signed-in caller (contracts §5 Behaviour 1). */
-export type Actor = { id: number; role: Role; displayName: string }
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -42,10 +39,4 @@ export function loadSession(db: PrismaClient): RequestHandler {
     }
     next()
   }
-}
-
-/** SDS §2.3 step 3: 401 UNAUTHENTICATED without a session. Role checks (step 4) come with Feature-B (I-06). */
-export const requireAuth: RequestHandler = (req, res, next) => {
-  if (!req.actor) return sendError(res, 'UNAUTHENTICATED')
-  next()
 }

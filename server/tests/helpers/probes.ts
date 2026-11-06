@@ -1,9 +1,11 @@
-import type { Router } from 'express'
+import type { PrismaClient } from '@prisma/client'
+import type { Response, Router } from 'express'
 import { z } from 'zod'
 import { sendError, type ErrorCode } from '../../src/http/errors.js'
 import { requireOrigin } from '../../src/http/origin.js'
-import { requireAuth } from '../../src/http/session.js'
-import { validate } from '../../src/http/validate.js'
+import { ownRegistrationWhere, ownedEventWhere } from '../../src/domain/actor.js'
+import { requireAuth, requireRole } from '../../src/http/guards.js'
+import { parseId, validate } from '../../src/http/validate.js'
 import { TEST_ORIGIN } from './app.js'
 
 /**
@@ -47,3 +49,83 @@ export function probeRoutes(api: Router) {
 
 /** POST-only paths, for the "GET on a POST-only path answers 404" check. */
 export const PROBE_POST_ONLY = ['/api/__test/echo']
+
+/**
+ * Stand-ins for E-06 … E-11 until I-07 … I-11 build them (I-06, contracts v1.5 §5). Each probe runs the guard
+ * chain and the ownership helper its endpoint must use, then answers with a minimal body. TEST-B-01 … 03 call
+ * them through `PROBE_PATHS`; each later Issue points its rows at the real path, and I-12 checks none are left.
+ */
+export function accessProbes(db: PrismaClient) {
+  return (api: Router) => {
+    const organizer = [requireAuth, requireRole('ORGANIZER')]
+    const participant = [requireAuth, requireRole('PARTICIPANT')]
+    const pathId = (raw: unknown, res: Response) => {
+      const id = parseId(raw)
+      if (id === null) sendError(res, 'INVALID_PATH_PARAMETER')
+      return id
+    }
+
+    // E-06 create event: organizer; owner comes from the session, never the body.
+    api.post('/__test/e-06', ...organizer, requireOrigin(TEST_ORIGIN), validate({ body: probeEventSchema }), async (req, res) => {
+      const { title, capacity, startAt } = res.locals.body as z.infer<typeof probeEventSchema>
+      const start = new Date(startAt)
+      const event = await db.event.create({
+        data: {
+          organizerId: req.actor!.id,
+          title,
+          capacity,
+          startAt: start,
+          endAt: new Date(start.getTime() + 60 * 60 * 1000),
+          type: 'CASUAL',
+          format: 'CONSTRUCTED',
+          venueName: 'Probe Venue',
+          venueAddress: '1 Probe Road',
+          city: 'Bangkok',
+          publishedAt: start,
+        },
+      })
+      res.status(201).json({ id: event.id })
+    })
+    // E-07 own dashboard: organizer; own events only.
+    api.get('/__test/e-07', ...organizer, async (req, res) => {
+      res.json({ items: await db.event.findMany({ where: { organizerId: req.actor!.id }, select: { id: true } }) })
+    })
+    // E-08 registration list: organizer + owner; another organizer's event is a 404.
+    api.get('/__test/e-08/:id', ...organizer, async (req, res) => {
+      const id = pathId(req.params.id, res)
+      if (id === null) return
+      const event = await db.event.findFirst({ where: ownedEventWhere(req.actor!, id) })
+      if (!event) return sendError(res, 'EVENT_NOT_FOUND')
+      res.json({ items: [] })
+    })
+    // E-09 register: participant; the participant comes from the session, never the body.
+    api.post('/__test/e-09/:id', ...participant, requireOrigin(TEST_ORIGIN), validate({ body: z.object({}).strict() }), async (req, res) => {
+      const id = pathId(req.params.id, res)
+      if (id === null) return
+      const registration = await db.registration.create({ data: { eventId: id, participantId: req.actor!.id } })
+      res.status(201).json({ id: registration.id })
+    })
+    // E-10 my registrations: participant; own only.
+    api.get('/__test/e-10', ...participant, async (req, res) => {
+      res.json({ items: await db.registration.findMany({ where: { participantId: req.actor!.id }, select: { id: true } }) })
+    })
+    // E-11 one registration: participant + own; someone else's is a 404.
+    api.get('/__test/e-11/:id', ...participant, async (req, res) => {
+      const id = pathId(req.params.id, res)
+      if (id === null) return
+      const registration = await db.registration.findFirst({ where: ownRegistrationWhere(req.actor!, id) })
+      if (!registration) return sendError(res, 'REGISTRATION_NOT_FOUND')
+      res.json({ id: registration.id })
+    })
+  }
+}
+
+/** Where each Sprint 1 endpoint is reached today: the real path, or its I-06 probe until its Issue lands. */
+export const PROBE_PATHS = {
+  'E-06': '/api/__test/e-06',
+  'E-07': '/api/__test/e-07',
+  'E-08': (id: number | string) => `/api/__test/e-08/${id}`,
+  'E-09': (id: number | string) => `/api/__test/e-09/${id}`,
+  'E-10': '/api/__test/e-10',
+  'E-11': (id: number | string) => `/api/__test/e-11/${id}`,
+}
