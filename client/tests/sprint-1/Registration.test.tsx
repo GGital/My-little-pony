@@ -97,7 +97,8 @@ describe('TEST-G-01 (C) — REGISTER → HOLDING YOUR SEAT… → "You\'re in." 
     await waitFor(() => expect(youreIn).toHaveFocus())
     expect(screen.getByRole('button', { name: '✓ REGISTERED' })).toBeDisabled()
     expect(screen.getAllByText('4 / 24').length).toBeGreaterThan(0)
-    expect(screen.getByText(/20 seats left/)).toBeInTheDocument()
+    // The "You're in." face states the new counts (the live region repeats "20 seats left", so query the face).
+    expect(within(youreIn.parentElement!).getByText('4 / 24 taken · 20 left')).toBeInTheDocument()
     const live = container.querySelector('[aria-live="polite"]')
     expect(live).toHaveTextContent("You're registered for Friday Night Constructed. 20 seats left.")
   })
