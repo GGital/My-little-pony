@@ -2,6 +2,7 @@ import express, { type Request, type Response, type Router } from 'express'
 import type { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 import type { Config } from '../config.js'
+import { createEvent, createEventInputSchema, EventTimeError } from '../domain/events.create.js'
 import { getEventDetail, listUpcomingEvents } from '../domain/events.read.js'
 import { register } from '../domain/registrations.js'
 import { sendError } from './errors.js'
@@ -36,6 +37,26 @@ export function eventsRouter(prisma: PrismaClient, config: Config): Router {
 
     return res.status(200).json(detail)
   })
+
+  // E-06: POST /api/events (organizer only, contracts §7 Feature-D)
+  router.post(
+    '/events',
+    requireAuth,
+    requireRole('ORGANIZER'),
+    requireOrigin(config.APP_ORIGIN),
+    validate({ body: createEventInputSchema }),
+    async (req: Request, res: Response) => {
+      try {
+        const created = await createEvent(prisma, req.actor!, res.locals.body)
+        return res.status(201).json(created)
+      } catch (err) {
+        if (err instanceof EventTimeError) {
+          return sendError(res, 'EVENT_TIME_INVALID', [{ field: err.field, message: err.message }])
+        }
+        throw err
+      }
+    },
+  )
 
   // E-09: POST /api/events/:id/registrations. Check order of contracts §10: 401 → 403 role → 403 origin →
   // 400 (path id, body) → then the transaction's 404 / 409s.

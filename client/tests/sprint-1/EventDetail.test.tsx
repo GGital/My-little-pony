@@ -61,6 +61,26 @@ describe('TEST-C-06 (C) — XSS prevention and safe text rendering (AC-C-06, NFR
     alertSpy.mockRestore()
   })
 
+  it('renders "Your event is live." alert banner when toast is passed in router location state', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => MOCK_EVENT,
+    } as Response)
+
+    render(
+      <MemoryRouter initialEntries={[{ pathname: '/events/1', state: { toast: 'Your event is live.' } }]}>
+        <Routes>
+          <Route path="/events/:id" element={<EventDetail />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    await waitFor(() => {
+      expect(screen.getByText('Your event is live.')).toBeInTheDocument()
+    })
+  })
+
   it('lint check: dangerouslySetInnerHTML count is strictly 0 across client/src', () => {
     const srcDir = path.resolve(__dirname, '../../src')
     function getFiles(dir: string): string[] {

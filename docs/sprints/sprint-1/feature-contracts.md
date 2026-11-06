@@ -401,7 +401,7 @@ Time rules (BR-02), checked after the shape passes, answer `422 EVENT_TIME_INVAL
 | **AC-D-04** | Quantum Cards signed in | a body with no title, a 2-char title, a 101-char title, a 2,001-char description, and all required fields missing | `400` with a `details` entry for **every** failing field in one response; whitespace-only text counts as missing; nothing stored |
 | **AC-D-05** | Mint signed in; then no session | E-06 with a valid body | Mint: `403 FORBIDDEN`; signed out: `401 UNAUTHENTICATED`; no event stored in either case |
 
-**Planned tests:** TEST-D-01 … 05 (U, I, E).
+**Planned tests:** TEST-D-01 … 05 (U, I, C, E). Playwright E2E spec for TEST-D-01 is deferred to I-12 (contracts v1.7).
 
 ---
 
@@ -633,3 +633,4 @@ the same Pull Request, so the history stays visible (Deliverable 1 §3.5).
 | v1.4 | 6 Nov 2026 | §9 Feature-F: Playwright E2E spec deferred to I-12 (following PR #18 pattern); documented known limitations (MANAGE links to I-11, REGISTER onRegister handler in I-08, inactive search controls until Sprint 2); path id integer range validation handled via parseId | Found during review of #19 (I-05) | Team (AI-assisted) |
 | v1.5 | 6 Nov 2026 | §5 Feature-B: E-06 … E-11 cells of TEST-B-01 … 03 run against test-only probes with the real guards until I-07 … I-11; the "stored id = caller" half of AC-B-01 moves to I-07 / I-08 | Found while implementing #8 (I-06): the guards are needed before the endpoints that use them, and those are built in later Issues | Team (AI-assisted) |
 | v1.6 | 6 Nov 2026 | §10 Feature-G: E2E halves of TEST-G-01 / G-02 move to I-12; the UI behaviour is checked at component level in I-08; E-09 cases added to TEST-SR2-05, TEST-SR3-01, TEST-A-04 and TEST-B-01 … 03 | Found while implementing #10 (I-08): Playwright is set up in I-12 | Team (AI-assisted) |
+| v1.7 | 6 Nov 2026 | §7 Feature-D: Playwright E2E half of TEST-D-01 moves to I-12 (following PR #18 pattern); UI behaviour checked at component level (CreateEvent.test.tsx); E-06 replaces probe in TEST-B-01 … 03 and adds case to TEST-SR2-02 | Found while implementing #9 (I-07): Playwright is set up in I-12 | Praewa (MeldyRose) |
