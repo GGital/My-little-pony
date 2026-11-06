@@ -45,7 +45,7 @@ describe('TEST-F-01 (C) — EventList component (AC-F-01)', () => {
     })
 
     // Card separators (M1: verify dot separators)
-    expect(screen.getByText('CASUAL · CONSTRUCTED')).toBeInTheDocument()
+    expect(screen.getByText('Casual · Constructed')).toBeInTheDocument()
     expect(screen.getByText('Quantum Cards · Bangkok')).toBeInTheDocument()
 
     // Seat count and chips
