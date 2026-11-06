@@ -63,6 +63,17 @@ export interface OrganizerRegistrationRow {
   createdAt: string;
 }
 
+export interface EventRegistrationsResponse {
+  event: {
+    id: number;
+    title: string;
+    capacity: number;
+    registeredCount: number;
+    seatsRemaining: number;
+  };
+  items: OrganizerRegistrationRow[];
+}
+
 export interface ApiErrorDetail {
   field: string;
   message: string;
