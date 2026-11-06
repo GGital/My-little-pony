@@ -7,7 +7,8 @@
   },
   "scripts": {
     "e2e": "playwright test",
-    "sts:check": "node scripts/sts-coverage.mjs"
+    "sts:check": "node scripts/sts-coverage.mjs",
+    "secret:scan": "node scripts/secret-scan.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.56.1"
