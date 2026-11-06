@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import type { ViewerAction } from '../api/types'
+import { Icon } from './Icon'
 
 export interface ActionButtonProps {
   action: ViewerAction
@@ -24,15 +25,12 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
   disabled,
   className = '',
 }) => {
+  const cls = (variant = '') => `btn-big${variant} ${className}`.trim()
   switch (action) {
     case 'SIGN_IN_TO_REGISTER': {
       const returnTo = encodeURIComponent(`/events/${eventId}`)
       return (
-        <Link
-          to={`/login?returnTo=${returnTo}`}
-          className={`btn btn-primary ${className}`}
-          role="link"
-        >
+        <Link to={`/login?returnTo=${returnTo}`} className={cls()}>
           SIGN IN TO REGISTER
         </Link>
       )
@@ -42,73 +40,52 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
       return (
         <button
           type="button"
-          className={`btn btn-primary ${className}`}
+          className={cls()}
           onClick={busy ? undefined : onRegister}
           disabled={disabled || busy}
           aria-busy={busy}
         >
-          {busy && <span className="spinner-border spinner-border-sm me-2" aria-hidden="true" />}
+          {busy && <Icon name="spin" spin />}
           {busy ? 'HOLDING YOUR SEAT…' : 'REGISTER'}
         </button>
       )
 
     case 'REGISTERED':
       return (
-        <div className="d-flex flex-column align-items-start gap-1">
-          <button
-            type="button"
-            className={`btn btn-outline-success ${className}`}
-            disabled
-          >
-            ✓ REGISTERED
+        <>
+          <button type="button" className={cls(' btn-big--registered')} disabled>
+            <Icon name="check" />
+            REGISTERED
           </button>
-          <Link to="/me/registrations" className="text-muted small">
+          <Link to="/me/registrations" className="action-note">
             See it in My Events
           </Link>
-        </div>
+        </>
       )
 
     case 'ORGANIZER_CANNOT_REGISTER':
-      return (
-        <span className="text-muted small">
-          Organizer accounts can't register for events
-        </span>
-      )
+      return <p className="action-note">Organizer accounts can't register for events</p>
 
     case 'MANAGE':
       return (
-        <Link
-          to={`/organizer/events/${eventId}/registrations`}
-          className={`btn btn-outline-primary ${className}`}
-          role="link"
-        >
+        <Link to={`/organizer/events/${eventId}/registrations`} className={cls(' btn-big--outline')}>
           MANAGE EVENT
         </Link>
       )
 
     case 'FULL':
       return (
-        <div className="d-flex flex-column align-items-start gap-1">
-          <button
-            type="button"
-            className={`btn btn-secondary ${className}`}
-            disabled
-          >
+        <>
+          <button type="button" className={cls()} disabled>
             FULL
           </button>
-          {capacity !== undefined && (
-            <span className="text-muted small">All {capacity} seats are taken</span>
-          )}
-        </div>
+          {capacity !== undefined && <p className="action-note">All {capacity} seats are taken</p>}
+        </>
       )
 
     case 'CLOSED':
       return (
-        <button
-          type="button"
-          className={`btn btn-secondary ${className}`}
-          disabled
-        >
+        <button type="button" className={cls()} disabled>
           REGISTRATION CLOSED
         </button>
       )

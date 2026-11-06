@@ -4,8 +4,17 @@ import { api } from '../../api/client'
 import type { EventSummary } from '../../api/types'
 import { EmptyState } from '../../components/EmptyState'
 import { ErrorState } from '../../components/ErrorState'
+import { EventCard, SeatsChip } from '../../components/EventCard'
+import { Icon } from '../../components/Icon'
 import { Loading } from '../../components/Loading'
-import { formatEventTime } from '../../utils/formatEventTime'
+import { PageTop } from '../../components/PageTop'
+import { seatsLeft } from '../../utils/eventDisplay'
+
+const STATUS_LABEL: Record<EventSummary['status'], string> = {
+  PUBLISHED: 'Published',
+  DRAFT: 'Draft',
+  CANCELLED: 'Cancelled',
+}
 
 /**
  * `/organizer` (contracts §8 Feature-E): lists the signed-in organizer's own events,
@@ -30,97 +39,59 @@ export const Dashboard: React.FC = () => {
     load()
   }, [load])
 
-  if (error) return <ErrorState message={error} onRetry={load} />
-  if (!items) return <Loading label="Loading organizer dashboard…" />
+  const create = (
+    <Link to="/organizer/events/new" className="btn-big">
+      <Icon name="plus" />
+      Create event
+    </Link>
+  )
 
   return (
-    <div className="container py-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Organizer Dashboard</h2>
-        {items.length > 0 && (
-          <Link to="/organizer/events/new" className="btn btn-primary">
-            + Create event
-          </Link>
-        )}
-      </div>
-
-      {items.length === 0 ? (
-        <EmptyState
-          title="Create your first event"
-          description="Schedule a new tournament, casual play, or release event."
-          action={{ label: '+ Create event', href: '/organizer/events/new' }}
-        />
-      ) : (
-        <div className="d-flex flex-column gap-3">
-          {items.map((event) => {
-            const isFull = event.seatsRemaining === 0
-            const isLowSeats =
-              !isFull &&
-              event.seatsRemaining <= Math.max(1, Math.floor(event.capacity * 0.2))
-
-            let seatChipClass = 'seat-chip'
-            if (isFull) {
-              seatChipClass = 'seat-chip seat-chip--full'
-            } else if (isLowSeats) {
-              seatChipClass = 'seat-chip seat-chip--low'
-            }
-
-            return (
-              <div
+    <>
+      <PageTop title="Dashboard" subtitle="Your events, earliest first, with live seat counts." action={items?.length ? create : undefined} />
+      <div className="pbody">
+        {error ? (
+          <ErrorState message={error} onRetry={load} />
+        ) : !items ? (
+          <Loading label="Loading your events…" cards={3} />
+        ) : items.length === 0 ? (
+          <EmptyState
+            title="Create your first event"
+            description="Schedule a tournament, casual play or release event. Players can register as soon as it's published."
+            action={{ label: '+ Create event', href: '/organizer/events/new' }}
+          />
+        ) : (
+          <div className="stack">
+            {items.map((event) => (
+              <EventCard
                 key={event.id}
-                className="card p-3 shadow-sm"
-              >
-                <div className="d-flex justify-content-between align-items-start flex-wrap gap-2">
-                  <div className="d-flex flex-column">
-                    <small className="text-muted fw-bold text-uppercase">
-                      {formatEventTime(event.startAt)}
-                    </small>
-                    <h5 className="mb-1 mt-1 fw-bold">
-                      <Link to={`/events/${event.id}`} className="text-decoration-none text-dark">
-                        {event.title}
-                      </Link>
-                    </h5>
-                    <div className="text-muted small">
-                      {event.type} · {event.format}
+                event={event}
+                aside={
+                  <>
+                    <div className="chips">
+                      <span className="chip chip--muted">{STATUS_LABEL[event.status] ?? event.status}</span>
+                      <SeatsChip event={event} />
                     </div>
-                    <div className="text-secondary small mt-1">
-                      {event.venueName} · {event.city}
-                    </div>
-                  </div>
-
-                  <div className="d-flex flex-column align-items-end gap-2">
-                    <div className="d-flex gap-2 align-items-center">
-                      <span className="badge bg-secondary-subtle text-secondary-emphasis">
-                        {event.status}
-                      </span>
-                      <span className={seatChipClass}>
-                        {event.registeredCount} / {event.capacity}
-                      </span>
-                    </div>
-                    <small className="text-muted">
-                      {event.seatsRemaining} seat{event.seatsRemaining === 1 ? '' : 's'} left
-                    </small>
-                    <div className="d-flex gap-2 mt-2">
+                    <span className="event-card__note tabular-nums">{seatsLeft(event.seatsRemaining)}</span>
+                    <div className="event-card__actions">
                       <Link
                         to={`/organizer/events/${event.id}/registrations`}
-                        className="btn btn-sm btn-outline-secondary"
+                        className="btn-soft btn-soft--primary"
+                        aria-label={`Registrations for ${event.title}`}
                       >
                         Registrations
                       </Link>
-                      <Link
-                        to={`/events/${event.id}`}
-                        className="btn btn-sm btn-primary"
-                      >
+                      <Link to={`/events/${event.id}`} className="btn-soft" aria-label={`View ${event.title}`}>
                         View
                       </Link>
                     </div>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
-    </div>
+                  </>
+                }
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   )
 }

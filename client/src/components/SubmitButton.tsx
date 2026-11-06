@@ -19,7 +19,7 @@ export const SubmitButton: React.FC<SubmitButtonProps> = ({
       type="submit"
       disabled={disabled || busy}
       aria-busy={busy}
-      className={`btn ${className}`.trim()}
+      className={className || undefined}
       {...props}
     >
       {busy && busyLabel ? busyLabel : children}
