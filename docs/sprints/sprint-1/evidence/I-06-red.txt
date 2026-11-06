@@ -1,0 +1,173 @@
+
+ RUN  v4.0.18 <repo>/server
+
+ ❯ tests/sprint-1/authorization.api.test.ts (58 tests | 12 failed) 2059ms
+     ✓ E-09 with participantId of another user → 400 VALIDATION_FAILED on that field, nothing stored 36ms
+     ✓ E-06 with organizerId of another organizer → 400 VALIDATION_FAILED on that field, nothing stored 16ms
+     ✓ E-02 → 401 UNAUTHENTICATED 5ms
+     ✓ E-03 → 401 UNAUTHENTICATED 4ms
+     ✓ E-06 → 401 UNAUTHENTICATED 5ms
+     ✓ E-07 → 401 UNAUTHENTICATED 5ms
+     ✓ E-08 → 401 UNAUTHENTICATED 5ms
+     ✓ E-09 → 401 UNAUTHENTICATED 5ms
+     ✓ E-10 → 401 UNAUTHENTICATED 5ms
+     ✓ E-11 → 401 UNAUTHENTICATED 4ms
+     ✓ lists every endpoint E-01 … E-11 (E-02 is in its own case below) 0ms
+     ✓ E-01 POST as visitor → 200 87ms
+     ✓ E-01 POST as mint → 200 87ms
+     ✓ E-01 POST as quantum → 200 86ms
+     ✓ E-01 POST as dragon → 200 90ms
+     ✓ E-03 GET as visitor → 401 5ms
+     ✓ E-03 GET as mint → 200 12ms
+     ✓ E-03 GET as quantum → 200 10ms
+     ✓ E-03 GET as dragon → 200 11ms
+     ✓ E-04 GET as visitor → 200 16ms
+     ✓ E-05 GET as visitor → 200 13ms
+     ✓ E-04 GET as mint → 200 14ms
+     ✓ E-05 GET as mint → 200 15ms
+     ✓ E-04 GET as quantum → 200 12ms
+     ✓ E-05 GET as quantum → 200 17ms
+     ✓ E-04 GET as dragon → 200 12ms
+     ✓ E-05 GET as dragon → 200 12ms
+     ✓ E-06 POST as visitor → 401 5ms
+     × E-06 POST as mint → 403 22ms
+     ✓ E-06 POST as quantum → 201 14ms
+     ✓ E-06 POST as dragon → 201 13ms
+     ✓ E-07 GET as visitor → 401 6ms
+     × E-07 GET as mint → 403 13ms
+     ✓ E-07 GET as quantum → 200 9ms
+     ✓ E-07 GET as dragon → 200 9ms
+     ✓ E-08 GET as visitor → 401 4ms
+     × E-08 GET as mint → 403 11ms
+     ✓ E-08 GET as quantum → 200 9ms
+     × E-08 GET as dragon → 404 10ms
+     ✓ E-08 GET as visitor → 401 4ms
+     ✓ E-08 GET as quantum → 400 7ms
+     ✓ E-09 POST as visitor → 401 5ms
+     ✓ E-09 POST as mint → 201 11ms
+     × E-09 POST as quantum → 403 11ms
+     × E-09 POST as dragon → 403 11ms
+     ✓ E-10 GET as visitor → 401 5ms
+     ✓ E-10 GET as mint → 200 10ms
+     × E-10 GET as quantum → 403 9ms
+     × E-10 GET as dragon → 403 9ms
+     ✓ E-11 GET as visitor → 401 5ms
+     ✓ E-11 GET as mint → 200 10ms
+     × E-11 GET as mint → 404 10ms
+     × E-11 GET as quantum → 403 9ms
+     × E-11 GET as dragon → 403 9ms
+     ✓ E-02 sign out as mint → 204 (its own session) 99ms
+     ✓ E-02 sign out as quantum → 204 (its own session) 99ms
+     ✓ E-02 sign out as dragon → 204 (its own session) 95ms
+     × 404 bodies are byte-identical whether the record exists and is someone else's, or does not exist 16ms
+ ✓ tests/sprint-1/auth.api.test.ts (21 tests) 5108ms
+     ✓ an unknown email takes as long as a wrong password (dummy hash): mean difference < 50 ms over 20 tries  3123ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts (26 tests) 2137ms
+     ✓ refuses an unknown code at compile time, and accepts a known one  2130ms
+ ✓ tests/sprint-1/health.api.test.ts (2 tests) 2067ms
+     ✓ answers 503 {status:"unavailable"} when the database cannot be reached, and logs why  2018ms
+ ✓ tests/sprint-1/events.read.api.test.ts (11 tests) 1408ms
+     ✓ returns matching viewer.action and all public fields across visitor, player, owner, other organizer  425ms
+ ✓ tests/sprint-1/validation.api.test.ts (15 tests) 1039ms
+ ✓ tests/sprint-1/seed.api.test.ts (5 tests) 823ms
+     ✓ creates 2 organizers, 4 participants and the 6 events of contracts §0.3  571ms
+ ✓ tests/sprint-1/unit/config.unit.test.ts (6 tests) 537ms
+     ✓ the real server refuses to start without DATABASE_URL and says why  522ms
+ ✓ tests/sprint-1/unit/password.unit.test.ts (2 tests) 360ms
+ ✓ tests/sprint-1/time.api.test.ts (8 tests) 263ms
+ ✓ tests/sprint-1/constraints.api.test.ts (12 tests) 162ms
+ ✓ tests/sprint-1/errors.api.test.ts (8 tests) 101ms
+ ✓ tests/sprint-1/persistence.api.test.ts (1 test) 92ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-06 POST as mint → 403
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-09 POST as quantum → 403
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-09 POST as dragon → 403
+AssertionError: expected 201 to be 403 // Object.is equality
+
+- Expected
++ Received
+
+- 403
++ 201
+
+ ❯ tests/sprint-1/authorization.api.test.ts:164:26
+    162|     async (_name, [, method, path, as, status, body]) => {
+    163|       const res = await call(method, path(), as, body?.())
+    164|       expect(res.status).toBe(status)
+       |                          ^
+    165|       if (status >= 400) expect(Object.keys(res.body)).toEqual(['error…
+    166|     },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-07 GET as mint → 403
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-08 GET as mint → 403
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-10 GET as quantum → 403
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-10 GET as dragon → 403
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-11 GET as quantum → 403
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-11 GET as dragon → 403
+AssertionError: expected 200 to be 403 // Object.is equality
+
+- Expected
++ Received
+
+- 403
++ 200
+
+ ❯ tests/sprint-1/authorization.api.test.ts:164:26
+    162|     async (_name, [, method, path, as, status, body]) => {
+    163|       const res = await call(method, path(), as, body?.())
+    164|       expect(res.status).toBe(status)
+       |                          ^
+    165|       if (status >= 400) expect(Object.keys(res.body)).toEqual(['error…
+    166|     },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-08 GET as dragon → 404
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-11 GET as mint → 404
+AssertionError: expected 200 to be 404 // Object.is equality
+
+- Expected
++ Received
+
+- 404
++ 200
+
+ ❯ tests/sprint-1/authorization.api.test.ts:164:26
+    162|     async (_name, [, method, path, as, status, body]) => {
+    163|       const res = await call(method, path(), as, body?.())
+    164|       expect(res.status).toBe(status)
+       |                          ^
+    165|       if (status >= 400) expect(Object.keys(res.body)).toEqual(['error…
+    166|     },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > 404 bodies are byte-identical whether the record exists and is someone else's, or does not exist
+AssertionError: expected 200 to be 404 // Object.is equality
+
+- Expected
++ Received
+
+- 404
++ 200
+
+ ❯ tests/sprint-1/authorization.api.test.ts:178:31
+    176|     const otherEvent = await call('GET', PROBE_PATHS['E-08'](ids.ev1),…
+    177|     const noEvent = await call('GET', PROBE_PATHS['E-08'](999999), 'dr…
+    178|     expect(otherEvent.status).toBe(404)
+       |                               ^
+    179|     expect(otherEvent.text).toBe(noEvent.text)
+    180| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+
+ Test Files  1 failed | 12 passed (13)
+      Tests  12 failed | 163 passed (175)
+   Start at  11:41:10
+   Duration  25.60s (transform 465ms, setup 0ms, import 5.78s, tests 16.16s, environment 2ms)
+

@@ -1,7 +1,7 @@
 # Sprint 1 Software Test Specification (STS)
 
-Project: **TCG Event Hub** · Sprint 1 · Document version: v1.4 (v1.0 reviewed in PR 2; changes in §8)
-Contracts: [`feature-contracts.md`](feature-contracts.md) v1.3 · Issues and Definition of Done: [`README.md`](README.md)
+Project: **TCG Event Hub** · Sprint 1 · Document version: v1.6 (v1.0 reviewed in PR 2; changes in §8)
+Contracts: [`feature-contracts.md`](feature-contracts.md) v1.5 · Issues and Definition of Done: [`README.md`](README.md)
 
 This document turns every Sprint 1 acceptance criterion into planned tests, **before** the code exists. It
 follows the method we used in TokTickIT: **Spec DD → Test DD → TDD**. A Pull Request that adds behaviour without
@@ -107,9 +107,9 @@ the commit id in §6.
 
 | Test ID | Level | AC / Req | Precondition / input | Action | Expected result | File | Result |
 |---|---|---|---|---|---|---|---|
-| TEST-B-01 | I | AC-B-01, BR-17 | Participant P, organizers O1, O2 | P: E-09 `{}`; O1: E-06 valid body; then P: E-09 `{participantId: other}`; O1: E-06 with `organizerId: O2.id` | Stored `participantId` = P, `organizerId` = O1; the two id-carrying requests `400` and store nothing | `server/tests/sprint-1/authorization.api.test.ts` | Pending |
-| TEST-B-02 | I | AC-B-02, NFR-01 | No cookie | Call E-02, E-03, E-06, E-07, E-08, E-09, E-10, E-11 | Each `401 UNAUTHENTICATED`; body keys = `["error"]` only | `server/tests/sprint-1/authorization.api.test.ts` | Pending |
-| TEST-B-03 | I | AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16 | Visitor, participant P, owner O1, other organizer O2; data owned by O1 and P | Table-driven: one row per cell of SDS §7.1 for E-01 … E-11; plus O2 calling E-09 (wrong role **and** not owner) | Every status equals the matrix; the double failure gives `403`; 404 bodies for "exists but not yours" and "does not exist" are byte-identical | `server/tests/sprint-1/authorization.api.test.ts` | Pending |
+| TEST-B-01 | I | AC-B-01, BR-17 | Seed; Mint (participant), Quantum Cards (organizer) signed in through E-01 | Mint: E-09 with `{participantId: Ploy}`; Quantum Cards: E-06 with `organizerId: Dragon's Den`. In I-06 through the probes (contracts v1.5 §5); I-07 / I-08 add the real E-06 / E-09 and the "stored id = caller" half (`{}` → stored `participantId` = Mint, valid body → `organizerId` = Quantum Cards) | Stored `participantId` = P, `organizerId` = O1; the two id-carrying requests `400` and store nothing | `server/tests/sprint-1/authorization.api.test.ts` | Pending |
+| TEST-B-02 | I | AC-B-02, NFR-01 | No cookie | Call E-02, E-03 (real) and E-06 … E-11 (I-06 probes until their Issues land) | Each `401 UNAUTHENTICATED`; body keys = `["error"]` only | `server/tests/sprint-1/authorization.api.test.ts` | Pending |
+| TEST-B-03 | I | AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16 | Visitor, participant P, owner O1, other organizer O2; data owned by O1 and P | Table-driven: one row per cell of SDS §7.1 for E-01 … E-11 (E-06 … E-11 through the I-06 probes until I-07 … I-11), Quantum Cards calling E-09 (wrong role **and** not the owner of EV-5), a malformed id on E-08 (401 signed out, 400 signed in), E-02 per caller with its own session | Every status equals the matrix; the double failure gives `403`; 404 bodies for "exists but not yours" and "does not exist" are byte-identical | `server/tests/sprint-1/authorization.api.test.ts` | Pending |
 
 ### 2.5 Feature-C — shell, navigation, shared states
 
@@ -251,7 +251,7 @@ the evidence the TA checks (Deliverable 1 §4.2).
 | I-03 Client shell | TEST-C-01, C-02, C-05, TEST-SR3-02 | `5c01c99`, `5e9f4aa` | **7 failed / 11** (TEST-C-01, C-02, SR3-02 on assertions; TEST-C-05 4 tests passed: components were committed with the tests; M1/M2 red commit `5e9f4aa` 2 failed / 18; AppRoutes test added in review; passes on first run; red shown by mutating the guard) — `evidence/I-03-red.txt` | `7401930`, `96ae073`, `ca5f9a9` (+ review fixes) | **24 passed / 24** — `evidence/I-03-green.txt` |
 | I-04 Feature-A | TEST-A-01 … 06, TEST-C-04 (+ TEST-SR2-03 sessions) | `925d20e`; `9f205c1` (sign-out defect) | **Server 20 failed / 103** (all AssertionError: E-01 … E-03 answer 404; 3 new cases pass at red: the seeded-hash format case and the 2 `password.unit.test.ts` cases, because `password.ts` and the seed came with I-01; the 2 TEST-SR2-03 session cases were added with the docs and passed on their first run, since GET routes already wrote nothing) — `evidence/I-04-red-server.txt`; **client 11 failed / 35** (sign-in form and Sign out call missing) — `evidence/I-04-red-client.txt`; **client 1 failed / 36** at `9f205c1` (received `/login?returnTo=%2Fme%2Fregistrations`) — `evidence/I-04-red-client-2.txt` | `855ee27` (implementation); `6c99a5b` (sign-out fix) | **Server 105 passed / 105** (103 at `855ee27` + 2 TEST-SR2-03 session cases) — `evidence/I-04-green-server.txt`; **client 36 passed / 36** — `evidence/I-04-green-client-2.txt` |
 | I-05 Feature-F | TEST-F-01 … 05, TEST-C-06 (+ TEST-SR3-01 E-04 boundary) | `10be7df` | **9 failed / 87** server, **8 failed / 33** client (all on assertions: E-04/E-05 404, ActionButton/EventDetail stubs) — `evidence/I-05-red.txt` | `9adc237` (+ review fixes) | **117 passed / 117** server, **46 passed / 46** client — `evidence/I-05-green.txt` |
-| I-06 Feature-B | TEST-B-01 … 03 | Pending | Pending | Pending | Pending |
+| I-06 Feature-B | TEST-B-01 … 03 | `863cb94` | **12 failed / 175** (all AssertionError: a wrong role gets 200 / 201 instead of 403; another owner's event and registration give 200 instead of 404; the 404 bodies differ). The other new cells pass at red, because they rest on earlier Issues: every 401 (`requireAuth`, I-04), the public E-01 / E-04 / E-05 cells, and TEST-B-01's 400s (`.strict()` schemas, I-02) — `evidence/I-06-red.txt` | `d8c973b` | **175 passed / 175** (twice) — `evidence/I-06-green.txt`; client unchanged, 46 / 46 |
 | I-07 Feature-D | TEST-D-01 … 05 | Pending | Pending | Pending | Pending |
 | I-08 Feature-G | TEST-G-01 … 06 | Pending | Pending | Pending | Pending |
 | I-09 Feature-E | TEST-E-01, 02 | Pending | Pending | Pending | Pending |
@@ -277,7 +277,7 @@ output.
 | Build: `npm --prefix server run build && npm --prefix client run build` | Pending |
 | Concurrency: TEST-G-06, 20 rounds | Pending |
 | Manual checks: TEST-SR1-01 (restart), TEST-SR4-01 (secret scan) | Pending, with screenshots in `evidence/` |
-| Failed / skipped tests and known limitations | Pending (I-03: the `dangerouslySetInnerHTML` lint rule (Behaviour 6) and TEST-C-06 come with I-05. I-04: the E2E half of TEST-A-04 is in I-12 with the other Playwright tests; the E-09 / E-10 old-cookie rows of TEST-A-04 come with I-08 / I-10; the AuthProvider stub noted for I-03 is resolved) |
+| Failed / skipped tests and known limitations | Pending (I-03: the `dangerouslySetInnerHTML` lint rule (Behaviour 6) and TEST-C-06 come with I-05. I-06: E-06 … E-11 cells of TEST-B-01 … 03 run against test-only probes until I-07 … I-11 point them at the real endpoints; I-12 checks no probe rows remain. I-04: the E2E half of TEST-A-04 is in I-12 with the other Playwright tests; the E-09 / E-10 old-cookie rows of TEST-A-04 come with I-08 / I-10; the AuthProvider stub noted for I-03 is resolved) |
 
 The AC → test → actual file/name → result table for the PDF (Deliverable 1 §4.2) is produced from §2 and this
 section.
@@ -313,3 +313,4 @@ npm --prefix server run db:seed && npx playwright test e2e/sprint-1
 | v1.3 | 5 Nov 2026 | I-03 TDD record filled from real runs; TEST-SR3-02 multi-timezone verification, AppRoutes suite, route guard role protection on /me/registrations, and session expiry 401 handling | Team (AI-assisted) |
 | v1.4 | 6 Nov 2026 | I-04 TDD record filled from real runs. TEST-A-01 / A-02 gain a component level for the sign-in page (contracts §4 UI); TEST-A-02 also covers the timing, field and origin rules of contracts §4; TEST-A-04 uses a test-only protected probe until E-09 / E-10 exist and moves its E2E half to I-12 (contracts v1.3); TEST-C-04 adds sign-out on a guarded route (defect found in the browser, red `9f205c1` → green `6c99a5b`); TEST-SR2-03 sessions added | Team (AI-assisted) |
 | v1.5 | 6 Nov 2026 | I-05 TDD record filled from real runs; TEST-F-01 … 05 server tests and TEST-C-06 client tests; TEST-SR3-01 boundary test with fixed clock; Playwright E2E spec deferred to I-12 | Team (AI-assisted) |
+| v1.6 | 6 Nov 2026 | I-06 TDD record filled from real runs; TEST-B-01 … 03 rows describe the probe form for E-06 … E-11 and which Issue adds each real-endpoint case (contracts v1.5) | Team (AI-assisted) |
