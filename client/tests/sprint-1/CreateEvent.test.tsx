@@ -131,5 +131,14 @@ describe('CreateEvent page (contracts §7 UI, Feature-D)', () => {
         body: expect.stringContaining('"title":"Epic Saturday Sealed"'),
       }),
     )
+
+    // S2: Times must be sent with +07:00 Bangkok offset, not UTC 'Z'
+    const sentBody = JSON.parse(fetchSpy.mock.calls[0][1]?.body as string)
+    expect(sentBody).toMatchObject({
+      title: 'Epic Saturday Sealed',
+      startAt: '2026-11-07T10:00:00.000+07:00',
+      endAt: '2026-11-07T14:00:00.000+07:00',
+      capacity: 32,
+    })
   })
 })

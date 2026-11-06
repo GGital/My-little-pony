@@ -152,6 +152,25 @@ describe('TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15)', () =>
     expect(res.body.error.code).toBe('VALIDATION_FAILED')
   })
 
+  // Contracts v1.2 §2: I-08 adds the real E-09 cases (Nok on EV-5, which has no registrations in the seed).
+  it('real E-09: text/plain → 415, foreign Origin → 403, both storing nothing; no body → 201', async () => {
+    const nok = cookieHeader(readSessionCookie(await signIn(request(app), 'nok@player.example', 'test-only-seed-password'))!.value)
+    const ev5 = await prisma.event.findFirstOrThrow({ where: { seedKey: 'EV-5' } })
+    const e09 = () => request(app).post(`/api/events/${ev5.id}/registrations`).set('Cookie', nok)
+    const before = await tableCounts()
+
+    const text = await e09().set('Origin', TEST_ORIGIN).set('Content-Type', 'text/plain').send('hello')
+    expect(text.status).toBe(415)
+    const foreign = await e09().set('Origin', 'https://evil.example')
+    expect(foreign.status).toBe(403)
+    expect(foreign.body.error.code).toBe('FORBIDDEN')
+    expect(await tableCounts()).toEqual(before)
+
+    const none = await e09().set('Origin', TEST_ORIGIN)
+    expect(none.status).toBe(201)
+    expect(await tableCounts()).toEqual({ ...before, registrations: before.registrations + 1 })
+  })
+
   it('none of the rejected requests stored anything', async () => {
     const before = await tableCounts()
     await echo().set('Origin', TEST_ORIGIN).set('Content-Type', 'text/plain').send('hello')

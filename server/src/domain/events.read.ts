@@ -1,4 +1,4 @@
-import type { EventFormat, EventStatus, EventType, PrismaClient } from '@prisma/client'
+import type { EventFormat, EventStatus, EventType, Prisma, PrismaClient } from '@prisma/client'
 import type { Actor } from './actor.js'
 import { hasStarted, upcomingWhere } from './time.js'
 
@@ -53,51 +53,54 @@ export async function listUpcomingEvents(prisma: PrismaClient): Promise<{ items:
       ...upcomingWhere(),
     },
     orderBy: [{ startAt: 'asc' }, { id: 'asc' }],
-    select: {
-      id: true,
-      title: true,
-      type: true,
-      format: true,
-      venueName: true,
-      city: true,
-      startAt: true,
-      endAt: true,
-      feeLabel: true,
-      capacity: true,
-      status: true,
-      _count: {
-        select: {
-          registrations: {
-            where: {
-              status: { in: ['REGISTERED', 'CHECKED_IN'] },
-            },
-          },
-        },
-      },
-    },
+    select: summarySelect,
   })
+  return { items: events.map(toSummary) }
+}
 
+/** Active registrations count towards the seats (contracts §0.1). */
+export const ACTIVE_STATUSES = { in: ['REGISTERED', 'CHECKED_IN'] as ('REGISTERED' | 'CHECKED_IN')[] }
+
+const summarySelect = {
+  id: true,
+  title: true,
+  type: true,
+  format: true,
+  venueName: true,
+  city: true,
+  startAt: true,
+  endAt: true,
+  feeLabel: true,
+  capacity: true,
+  status: true,
+  _count: { select: { registrations: { where: { status: ACTIVE_STATUSES } } } },
+} as const
+
+type SummaryRow = Prisma.EventGetPayload<{ select: typeof summarySelect }>
+
+/** registeredCount and seatsRemaining are computed on every read (contracts §0.1). */
+function toSummary(e: SummaryRow): EventSummary {
+  const registeredCount = e._count.registrations
   return {
-    items: events.map((e) => {
-      const registeredCount = e._count.registrations
-      const seatsRemaining = Math.max(0, e.capacity - registeredCount)
-      return {
-        id: e.id,
-        title: e.title,
-        type: e.type,
-        format: e.format,
-        venueName: e.venueName,
-        city: e.city,
-        startAt: e.startAt.toISOString(),
-        endAt: e.endAt.toISOString(),
-        feeLabel: e.feeLabel,
-        capacity: e.capacity,
-        registeredCount,
-        seatsRemaining,
-        status: e.status,
-      }
-    }),
+    id: e.id,
+    title: e.title,
+    type: e.type,
+    format: e.format,
+    venueName: e.venueName,
+    city: e.city,
+    startAt: e.startAt.toISOString(),
+    endAt: e.endAt.toISOString(),
+    feeLabel: e.feeLabel,
+    capacity: e.capacity,
+    registeredCount,
+    seatsRemaining: Math.max(0, e.capacity - registeredCount),
+    status: e.status,
   }
+}
+
+/** One event as an EventSummary, with fresh counts (E-09 returns it inside the new registration). */
+export async function getEventSummary(prisma: Pick<PrismaClient, 'event'>, eventId: number): Promise<EventSummary> {
+  return toSummary(await prisma.event.findUniqueOrThrow({ where: { id: eventId }, select: summarySelect }))
 }
 
 /**

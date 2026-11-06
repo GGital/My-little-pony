@@ -5,7 +5,8 @@ import request from 'supertest'
 import { afterAll, afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { now, resetNow, setNow } from '../../src/clock.js'
 import { hasStarted, upcomingWhere } from '../../src/domain/time.js'
-import { makeApp } from '../helpers/app.js'
+import { TEST_ORIGIN, makeApp } from '../helpers/app.js'
+import { cookieHeader, makeUserWithPassword, readSessionCookie, signIn } from '../helpers/auth.js'
 import { MINUTE, makeEvent, makeOrganizer, prisma, resetDb } from '../helpers/db.js'
 
 const T = new Date('2026-11-05T10:00:00.000Z')
@@ -63,6 +64,21 @@ describe('TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-
     expect(detailRes.status).toBe(200)
     expect(detailRes.body.hasStarted).toBe(true)
     expect(detailRes.body.viewer.action).toBe('CLOSED')
+  })
+
+  // Contracts v1.2 §3: I-08 adds the E-09 case. The event starting exactly at T is closed; T + 1 min is open.
+  it('E-09 at T: the T event → 409 REGISTRATION_CLOSED, the T + 1 min event → 201', async () => {
+    const { after, at } = await threeEvents()
+    const app = makeApp()
+    const { user, password } = await makeUserWithPassword('PARTICIPANT')
+    const cookie = cookieHeader(readSessionCookie(await signIn(request(app), user.email, password))!.value)
+    const e09 = (id: number) =>
+      request(app).post(`/api/events/${id}/registrations`).set('Origin', TEST_ORIGIN).set('Cookie', cookie)
+
+    const closed = await e09(at.id)
+    expect(closed.status).toBe(409)
+    expect(closed.body.error.code).toBe('REGISTRATION_CLOSED')
+    expect((await e09(after.id)).status).toBe(201)
   })
 
   it('times survive the database to the millisecond and serialise as UTC ending in Z', async () => {

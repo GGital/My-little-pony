@@ -1,16 +1,20 @@
 import express, { type Request, type Response, type Router } from 'express'
 import type { PrismaClient } from '@prisma/client'
+import { z } from 'zod'
 import type { Config } from '../config.js'
 import { createEvent, createEventInputSchema, EventTimeError } from '../domain/events.create.js'
 import { getEventDetail, listUpcomingEvents } from '../domain/events.read.js'
+import { register } from '../domain/registrations.js'
 import { sendError } from './errors.js'
 import { requireAuth, requireRole } from './guards.js'
 import { requireOrigin } from './origin.js'
 import { parseId, validate } from './validate.js'
 
-export function eventsRouter(prisma: PrismaClient, config?: Config): Router {
+/** E-09 takes no input: the body is `{}` or absent, and the participant is the session's actor (BR-17). */
+const emptyBody = z.object({}).strict()
+
+export function eventsRouter(prisma: PrismaClient, config: Config): Router {
   const router = express.Router()
-  const appOrigin = config?.APP_ORIGIN ?? process.env.APP_ORIGIN ?? 'http://localhost:5173'
 
   // E-04: GET /api/events (public)
   router.get('/events', async (_req: Request, res: Response) => {
@@ -39,7 +43,7 @@ export function eventsRouter(prisma: PrismaClient, config?: Config): Router {
     '/events',
     requireAuth,
     requireRole('ORGANIZER'),
-    requireOrigin(appOrigin),
+    requireOrigin(config.APP_ORIGIN),
     validate({ body: createEventInputSchema }),
     async (req: Request, res: Response) => {
       try {
@@ -51,6 +55,21 @@ export function eventsRouter(prisma: PrismaClient, config?: Config): Router {
         }
         throw err
       }
+    },
+  )
+
+  // E-09: POST /api/events/:id/registrations. Check order of contracts §10: 401 → 403 role → 403 origin →
+  // 400 (path id, body) → then the transaction's 404 / 409s.
+  router.post(
+    '/events/:id/registrations',
+    requireAuth,
+    requireRole('PARTICIPANT'),
+    requireOrigin(config.APP_ORIGIN),
+    validate({ body: emptyBody }),
+    async (req: Request, res: Response) => {
+      const eventId = parseId(req.params.id)
+      if (eventId === null) return sendError(res, 'INVALID_PATH_PARAMETER')
+      return res.status(201).json(await register(prisma, req.actor!, eventId))
     },
   )
 

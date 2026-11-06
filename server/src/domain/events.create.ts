@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { now } from '../clock.js'
 import type { Actor } from './actor.js'
 import { validateEventTimes } from './event-rules.js'
-import type { EventDetail } from './events.read.js'
+import { getEventDetail, type EventDetail } from './events.read.js'
 
 export class EventTimeError extends Error {
   readonly field: 'startAt' | 'endAt'
@@ -112,40 +112,7 @@ export async function createEvent(
       status: 'PUBLISHED',
       publishedAt: currentTime,
     },
-    include: {
-      organizer: {
-        select: {
-          displayName: true,
-        },
-      },
-    },
   })
 
-  return {
-    id: event.id,
-    title: event.title,
-    type: event.type,
-    format: event.format,
-    venueName: event.venueName,
-    venueAddress: event.venueAddress,
-    city: event.city,
-    startAt: event.startAt.toISOString(),
-    endAt: event.endAt.toISOString(),
-    feeLabel: event.feeLabel,
-    capacity: event.capacity,
-    registeredCount: 0,
-    seatsRemaining: event.capacity,
-    status: event.status,
-    structureNote: event.structureNote,
-    contact: event.contact,
-    description: event.description,
-    organizer: {
-      displayName: event.organizer.displayName,
-    },
-    hasStarted: false,
-    viewer: {
-      action: 'MANAGE',
-      registrationId: null,
-    },
-  }
+  return (await getEventDetail(prisma, event.id, actor))!
 }

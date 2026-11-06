@@ -10,6 +10,7 @@ const SEED_PASSWORD = 'test-only-seed-password'
 const app = makeApp()
 
 let quantumCookie: string
+let dragonCookie: string
 let mintCookie: string
 
 const VALID_EVENT_PAYLOAD = {
@@ -32,14 +33,17 @@ beforeAll(async () => {
   await resetDb()
   await seed(prisma, SEED_PASSWORD)
 
-  const [resQuantum, resMint] = await Promise.all([
+  const [resQuantum, resDragon, resMint] = await Promise.all([
     signIn(request(app), 'quantum@organizer.example', SEED_PASSWORD),
+    signIn(request(app), 'dragon@organizer.example', SEED_PASSWORD),
     signIn(request(app), 'mint@player.example', SEED_PASSWORD),
   ])
   expect(resQuantum.status).toBe(200)
+  expect(resDragon.status).toBe(200)
   expect(resMint.status).toBe(200)
 
   quantumCookie = cookieHeader(readSessionCookie(resQuantum)!.value)
+  dragonCookie = cookieHeader(readSessionCookie(resDragon)!.value)
   mintCookie = cookieHeader(readSessionCookie(resMint)!.value)
 })
 
@@ -93,6 +97,36 @@ describe('TEST-D-01 (I) — Valid event creation and publication (AC-D-01, FR-06
       expect(listed).toBeDefined()
       expect(listed.registeredCount).toBe(0)
       expect(listed.seatsRemaining).toBe(24)
+    } finally {
+      resetNow()
+    }
+  })
+
+  it("the owner is the caller, not anyone else (Dragon's Den creates, not id 1)", async () => {
+    const fixedNow = new Date('2026-11-06T10:00:00.000Z')
+    setNow(fixedNow)
+
+    try {
+      const startAt = new Date('2026-11-08T10:00:00.000Z').toISOString()
+      const endAt = new Date('2026-11-08T14:00:00.000Z').toISOString()
+
+      const res = await request(app)
+        .post('/api/events')
+        .set('Origin', TEST_ORIGIN)
+        .set('Cookie', dragonCookie)
+        .send({
+          ...VALID_EVENT_PAYLOAD,
+          title: "Dragon's Sealed Showdown",
+          startAt,
+          endAt,
+        })
+
+      expect(res.status).toBe(201)
+      expect(res.body.organizer.displayName).toBe("Dragon's Den")
+      const dragon = await prisma.user.findUniqueOrThrow({ where: { email: 'dragon@organizer.example' } })
+      const stored = await prisma.event.findUniqueOrThrow({ where: { id: res.body.id } })
+      expect(stored.organizerId).toBe(dragon.id)
+      expect(stored.organizerId).not.toBe(1)
     } finally {
       resetNow()
     }

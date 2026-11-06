@@ -1,6 +1,6 @@
 # Sprint 1 Feature Engineering Contracts
 
-Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.5 (v1.0 reviewed in PR 2; changes in §15)
+Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.6 (v1.0 reviewed in PR 2; changes in §15)
 Inputs: [`../../srs.md`](../../srs.md) v0.5 · [`../../features.md`](../../features.md) v0.2 ·
 [`../../traceability.md`](../../traceability.md) v0.2 · [`../../system-sds.md`](../../system-sds.md) v0.2 ·
 [`../plan.md`](../plan.md) v0.1 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.2 ·
@@ -401,7 +401,7 @@ Time rules (BR-02), checked after the shape passes, answer `422 EVENT_TIME_INVAL
 | **AC-D-04** | Quantum Cards signed in | a body with no title, a 2-char title, a 101-char title, a 2,001-char description, and all required fields missing | `400` with a `details` entry for **every** failing field in one response; whitespace-only text counts as missing; nothing stored |
 | **AC-D-05** | Mint signed in; then no session | E-06 with a valid body | Mint: `403 FORBIDDEN`; signed out: `401 UNAUTHENTICATED`; no event stored in either case |
 
-**Planned tests:** TEST-D-01 … 05 (U, I, E).
+**Planned tests:** TEST-D-01 … 05 (U, I, C, E). Playwright E2E spec for TEST-D-01 is deferred to I-12 (contracts v1.7).
 
 ---
 
@@ -521,6 +521,13 @@ SR-01 · Issue I-08 · Diagrams: D1 (last-seat race), D3 (activity)
 
 **Planned tests:** TEST-G-01 … 06 (U, I, E). TEST-G-06 is the concurrency test (STS §2.4).
 
+**What I-08 adds and moves (v1.6).** The E2E halves of TEST-G-01 and TEST-G-02 move to I-12 with the other
+Playwright journeys. In I-08 the same UI behaviour is checked at component level (`Registration.test.tsx`):
+HOLDING YOUR SEAT… with `aria-busy` and ignored presses, the flip to "You're in.", the new counts, the live-region
+sentence, focus on "You're in.", and on a 409 the alert plus a refreshed seat count. I-08 also adds the E-09 cases
+that earlier Issues reserved for it: TEST-SR2-05 (415, origin, no body), TEST-SR3-01 (E-09 at T), TEST-A-04 (old
+cookie) and TEST-B-01 … 03 (real path instead of the I-06 probe, plus "stored `participantId` = caller").
+
 ---
 
 ## 11. Feature-H — My Events (participant registrations)
@@ -625,3 +632,5 @@ the same Pull Request, so the history stays visible (Deliverable 1 §3.5).
 | v1.3 | 6 Nov 2026 | §4 Feature-A: TEST-A-04 uses a test-only protected probe until E-09 / E-10 exist, and its E2E half moves to I-12; AC-A-05's response scan is defined as keys, hashes and the seed password; the server error texts now match this section (`INVALID_CREDENTIALS` "Email or password is incorrect.", unknown keys "This value cannot be set.") | Found while implementing #6 (I-04): E-09 and E-10 are built in I-08 / I-10, Playwright is set up in I-12, and `errors.ts` / `validate.ts` (I-02) used different words from this contract | Team (AI-assisted) |
 | v1.4 | 6 Nov 2026 | §9 Feature-F: Playwright E2E spec deferred to I-12 (following PR #18 pattern); documented known limitations (MANAGE links to I-11, REGISTER onRegister handler in I-08, inactive search controls until Sprint 2); path id integer range validation handled via parseId | Found during review of #19 (I-05) | Team (AI-assisted) |
 | v1.5 | 6 Nov 2026 | §5 Feature-B: E-06 … E-11 cells of TEST-B-01 … 03 run against test-only probes with the real guards until I-07 … I-11; the "stored id = caller" half of AC-B-01 moves to I-07 / I-08 | Found while implementing #8 (I-06): the guards are needed before the endpoints that use them, and those are built in later Issues | Team (AI-assisted) |
+| v1.6 | 6 Nov 2026 | §10 Feature-G: E2E halves of TEST-G-01 / G-02 move to I-12; the UI behaviour is checked at component level in I-08; E-09 cases added to TEST-SR2-05, TEST-SR3-01, TEST-A-04 and TEST-B-01 … 03 | Found while implementing #10 (I-08): Playwright is set up in I-12 | Team (AI-assisted) |
+| v1.7 | 6 Nov 2026 | §7 Feature-D: Playwright E2E half of TEST-D-01 moves to I-12 (following PR #18 pattern); UI behaviour checked at component level (CreateEvent.test.tsx); E-06 replaces probe in TEST-B-01 … 03 and adds case to TEST-SR2-02 | Found while implementing #9 (I-07): Playwright is set up in I-12 | Praewa (MeldyRose) |
