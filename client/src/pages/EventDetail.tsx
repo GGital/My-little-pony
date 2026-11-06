@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../api/client'
 import { ApiError } from '../api/errors'
 import type { EventDetail as EventDetailType, ParticipantRegistration } from '../api/types'
@@ -12,6 +12,15 @@ import { formatEventTime } from '../utils/formatEventTime'
 
 export const EventDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [toastMessage] = useState<string | null>(() => (location.state as { toast?: string } | null)?.toast ?? null)
+
+  useEffect(() => {
+    if ((location.state as { toast?: string } | null)?.toast) {
+      navigate(location.pathname, { replace: true, state: null })
+    }
+  }, [navigate, location.pathname, location.state])
   const [event, setEvent] = useState<EventDetailType | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
@@ -86,6 +95,11 @@ export const EventDetail: React.FC = () => {
 
   return (
     <div className="container py-4">
+      {toastMessage && (
+        <div className="alert alert-success alert-dismissible mb-4" role="alert">
+          {toastMessage}
+        </div>
+      )}
       <div aria-live="polite" className="visually-hidden-live">
         {announcement}
       </div>

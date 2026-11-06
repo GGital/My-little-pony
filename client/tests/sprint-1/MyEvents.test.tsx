@@ -5,7 +5,7 @@ import { MyEvents } from '../../src/pages/MyEvents'
 import type { EventSummary, ParticipantRegistration } from '../../src/api/types'
 
 // TEST-H-01 (C) and the My Events part of TEST-C-05 (contracts §11, §6 Behaviour 5). The E2E half of TEST-H-01
-// is in I-12 (contracts v1.7).
+// is in I-12 (contracts v1.8).
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
 

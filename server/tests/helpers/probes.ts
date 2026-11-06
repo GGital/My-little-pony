@@ -59,27 +59,6 @@ export function accessProbes(db: PrismaClient) {
       return id
     }
 
-    // E-06 create event: organizer; owner comes from the session, never the body.
-    api.post('/__test/e-06', ...organizer, requireOrigin(TEST_ORIGIN), validate({ body: probeEventSchema }), async (req, res) => {
-      const { title, capacity, startAt } = res.locals.body as z.infer<typeof probeEventSchema>
-      const start = new Date(startAt)
-      const event = await db.event.create({
-        data: {
-          organizerId: req.actor!.id,
-          title,
-          capacity,
-          startAt: start,
-          endAt: new Date(start.getTime() + 60 * 60 * 1000),
-          type: 'CASUAL',
-          format: 'CONSTRUCTED',
-          venueName: 'Probe Venue',
-          venueAddress: '1 Probe Road',
-          city: 'Bangkok',
-          publishedAt: start,
-        },
-      })
-      res.status(201).json({ id: event.id })
-    })
     // E-07 own dashboard: organizer; own events only.
     api.get('/__test/e-07', ...organizer, async (req, res) => {
       res.json({ items: await db.event.findMany({ where: { organizerId: req.actor!.id }, select: { id: true } }) })
@@ -97,7 +76,6 @@ export function accessProbes(db: PrismaClient) {
 
 /** Where each Sprint 1 endpoint is reached today: the real path, or its I-06 probe until its Issue lands. */
 export const PROBE_PATHS = {
-  'E-06': '/api/__test/e-06',
   'E-07': '/api/__test/e-07',
   'E-08': (id: number | string) => `/api/__test/e-08/${id}`,
 }
