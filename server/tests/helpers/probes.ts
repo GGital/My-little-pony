@@ -51,9 +51,9 @@ export function probeRoutes(api: Router) {
 export const PROBE_POST_ONLY = ['/api/__test/echo']
 
 /**
- * Stand-ins for E-06 … E-11 until I-07 … I-11 build them (I-06, contracts v1.5 §5). Each probe runs the guard
- * chain and the ownership helper its endpoint must use, then answers with a minimal body. TEST-B-01 … 03 call
- * them through `PROBE_PATHS`; each later Issue points its rows at the real path, and I-12 checks none are left.
+ * Stand-ins for E-08, E-10 and E-11 until their Issues build them (E-06, E-07, E-09 are real; I-06, contracts v1.5 §5).
+ * Each probe runs the guard chain and the ownership helper its endpoint must use, then answers with a minimal body.
+ * TEST-B-01 … 03 call them through `PROBE_PATHS`; each later Issue points its rows at the real path, and I-12 checks none are left.
  */
 export function accessProbes(db: PrismaClient) {
   return (api: Router) => {
@@ -65,10 +65,6 @@ export function accessProbes(db: PrismaClient) {
       return id
     }
 
-    // E-07 own dashboard: organizer; own events only.
-    api.get('/__test/e-07', ...organizer, async (req, res) => {
-      res.json({ items: await db.event.findMany({ where: { organizerId: req.actor!.id }, select: { id: true } }) })
-    })
     // E-08 registration list: organizer + owner; another organizer's event is a 404.
     api.get('/__test/e-08/:id', ...organizer, async (req, res) => {
       const id = pathId(req.params.id, res)
@@ -94,7 +90,6 @@ export function accessProbes(db: PrismaClient) {
 
 /** Where each Sprint 1 endpoint is reached today: the real path, or its I-06 probe until its Issue lands. */
 export const PROBE_PATHS = {
-  'E-07': '/api/__test/e-07',
   'E-08': (id: number | string) => `/api/__test/e-08/${id}`,
   'E-10': '/api/__test/e-10',
   'E-11': (id: number | string) => `/api/__test/e-11/${id}`,

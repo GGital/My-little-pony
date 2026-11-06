@@ -11,6 +11,7 @@ export const SPRINT1_ROUTES: RouteRow[] = [
   { id: 'E-04', method: 'GET', path: '/api/events' },
   { id: 'E-05', method: 'GET', path: '/api/events/1' },
   { id: 'E-06', method: 'POST', path: '/api/events' },
+  { id: 'E-07', method: 'GET', path: '/api/organizer/events' },
   { id: 'E-09', method: 'POST', path: '/api/events/1/registrations' },
   { id: 'E-12', method: 'GET', path: '/api/health' },
 ]
