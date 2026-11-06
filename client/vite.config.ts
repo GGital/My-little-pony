@@ -9,7 +9,8 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        // The Playwright suite runs its own API on another port (playwright.config.ts).
+        target: process.env.API_TARGET ?? 'http://localhost:3000',
         changeOrigin: true,
       },
     },
