@@ -1,6 +1,6 @@
 # UI Design Direction — "Arcane Ink" theme
 
-Project: TCG Event Hub · Version v0.2 (4 Nov 2026) · v0.1 approved in PR #1; v0.2 under review in PR 2
+Project: TCG Event Hub · Version v0.3 (7 Nov 2026) · v0.1 approved in PR #1; v0.2 in PR 2; v0.3 in PR #24
 Related: `docs/srs.md` §1.2 (reference UX), §2.1 (access summary), D-12, D-13. A visual mock-up is in
 [`mockup.html`](mockup.html) (open it in a browser), with rendered images in [`mockup/`](mockup/).
 
@@ -44,6 +44,7 @@ Bootstrap variables). Contrast pairs were chosen to meet 4.5:1 for text (NFR-10)
 | `--warning` | `#B45309` | "Few seats left" (≤ 20 % of capacity) |
 | `--danger` | `#C8303F` | Errors, *Full*, destructive actions |
 | `--border` | `#E3DFF0` | Card and input borders |
+| Tints and lines | `--primary-tint #EFEBFC` · `--primary-line #C9BEF5` · `--accent-line #B9E5DE` · `--warning-tint #FEF3E2` / `--warning-line #F6D7A8` / `--warning-ink #93400A` · `--danger-tint #FCE8EA` / `--danger-line #F3BCC2` / `--danger-ink #8E1F2B` | Chip, notice and hover backgrounds and borders (values from the mock-up). Text on a tint uses its `-ink` colour (≥ 6:1) |
 | `--focus` | `0 0 0 3px rgba(108,76,224,.45)` | Visible keyboard focus ring on every control |
 | Radius | `16px` panels · `12px` cards · `999px` chips and pill buttons | |
 | Type scale | Chakra Petch 700 — 32 / 24 / 18 px headings · IBM Plex Sans Thai 400/600 — 16 / 14 / 12 px, line height 1.55 | Upper-case labels use IBM Plex Sans Thai 600, 12 px, letter-spacing .08em. Counts use tabular (fixed-width) digits so "3 / 24" does not jump when it changes |
@@ -68,7 +69,9 @@ Bootstrap variables). Contrast pairs were chosen to meet 4.5:1 for text (NFR-10)
 
 - Width: content max 1200 px, centred; side gutter 16 px on phones. No horizontal scroll at 390 / 768 / 1440 px
   (NFR-08).
-- Under 768 px the search bar stacks its three fields vertically and the card chips move under the title.
+- Under 768 px the search bar stacks its three fields vertically and the card chips move under the title. The
+  header keeps its links: they wrap to a second row under the logo (the mock-up hid them, which left phones without
+  navigation).
 
 ---
 
@@ -128,7 +131,7 @@ with the event, so the screen never guesses.
 | Visitor, seats left | **SIGN IN TO REGISTER** (primary) | — |
 | Participant, seats left, not registered | **REGISTER** (primary) | — |
 | Participant, request in flight | **HOLDING YOUR SEAT…** (spinner, `aria-busy`, ignores further clicks) | — |
-| Participant, already registered | **✓ REGISTERED** (`--accent-ink` outline, not clickable) | "See it in My Events" link |
+| Participant, already registered | check icon + **REGISTERED** (`--accent-ink` outline, not clickable) | "See it in My Events" link |
 | Anyone, no seats left | **FULL** (disabled) | "All 16 seats are taken" |
 | Event started / closed | **REGISTRATION CLOSED** (disabled) | — |
 | Organizer, not the owner | *(no button)* | "Organizer accounts can't register for events" |
@@ -190,6 +193,24 @@ refreshes the seat count.
 - On phones (< 768 px) the Seats card moves directly under the Register button, so the result of the tap is
   visible without scrolling.
 
+### 5.3 Other lists and states (v0.3)
+
+- **My Events** and the **organizer dashboard** reuse the event card of §5.1. My Events shows a teal
+  **REGISTERED** chip with a check icon; the dashboard shows a grey status chip (*Published*), the seats chip,
+  "n seats left" and two buttons, **Registrations** (primary) and **View**. A dashboard card holds its own links, so
+  it is not one big link; each button's accessible name includes the event title ("View Friday Night Constructed").
+- **Find an Event** and **My Events** share the page title row and the two tabs of §1; the tabs appear for
+  participants only. The organizer pages use the same title row with the primary action on the right.
+- **Loading**: spinner icon and a short label ("Loading events…"), with skeleton cards on list pages.
+  **Empty**: icon beside the heading, one sentence, one primary button. **Error**: alert icon, "We couldn't load
+  this page", the server's message, **Try again** (outline). **Not available** (403) and **Not found** (404): icon
+  beside the heading, one sentence, **BACK TO FIND AN EVENT**.
+- **Notices** (success, error, info) are one pattern: tinted background, icon, text, optional close button.
+  Errors use `role="alert"`; the others `role="status"`.
+- **Forms**: labels above fields, `*` for required, the server's message under its field with an alert icon, and
+  the field marked `aria-invalid` and linked by `aria-describedby`. Create event groups its fields into five cards
+  (The event · Where · When · Seats and fee · More details); type and format are radio pills in a fieldset.
+
 ---
 
 ## 6. Voice
@@ -212,7 +233,7 @@ the one moment that earns a response. Everything else stays fast and quiet.
 |---|---|---|
 | 1. Tap **Register** | Button reads **HOLDING YOUR SEAT…** with a spinner; extra taps are ignored | `aria-busy="true"`; no fake delay in the real app (the mock-up waits 0.7 s only to show the state) |
 | 2. Server answers 201 | The Seats card **flips over like a dealt card** to show **"You're in."**: event, time, venue, "4 / 24 taken · 20 left", seat bar, check-in note, link to My Events | 3D `rotateY` 620 ms with `--ease-out`; the bar fills with `transform: scaleX` (no layout change) |
-| 3. Same moment | Header count changes 3 / 24 → 4 / 24; button becomes **✓ REGISTERED** | Tabular digits, so nothing shifts |
+| 3. Same moment | Header count changes 3 / 24 → 4 / 24; button becomes check icon + **REGISTERED** | Tabular digits, so nothing shifts |
 | 4. Assistive tech | Screen readers hear "You're registered for Friday Night Constructed. 20 seats left."; focus moves to "You're in." | `aria-live="polite"` region; the hidden card face is `aria-hidden` |
 | Reduced motion | No flip: the two faces cross-fade in 200 ms, and the bar jumps to its new value | `@media (prefers-reduced-motion: reduce)` |
 | Server says no (409) | No flip. Red alert with the reason; seat count refreshes | Same alert pattern as every other error |
@@ -224,7 +245,8 @@ Rendered states: `mockup/detail-1440.png` (before) and `mockup/detail-registered
 
 - **Icons are drawn SVG from one set**: 24 px grid, 1.75 px stroke, round caps (calendar, pin, trophy, fee, mail,
   users, lock, search, check, chevron, alert, arrow, spinner). **Emoji and Unicode symbols are never used as
-  icons.** In Sprint 1 the set is defined once in the client and used with `<use href="#i-…">`. A library with the
+  icons.** In Sprint 1 the set is defined once in `client/src/components/Icon.tsx` (inline SVG, same paths as the
+  mock-up) and used as `<Icon name="…" />`; every icon is `aria-hidden`. A library with the
   same style (for example Lucide) is an acceptable replacement.
 - **No small label above a heading.** A store name goes *below* the event title ("at Quantum Cards · Bang Khae"),
   not as a caption above it.
@@ -239,6 +261,14 @@ automatic detector. The first scan reported three issues: teal badge contrast 4.
 and an overused font. All three were fixed, and the final scan reports **0 findings**. Rendered and checked at 1440 px,
 390 px and with reduced motion, with no console errors and no horizontal scroll.
 
+**Built app, 7 Nov 2026 (v0.3).** An Impeccable `audit` of the client scored it **10 / 20** (accessibility 2,
+performance 3, responsive 2, theming 1, implementation integrity 2): the pages used stock Bootstrap instead of this
+document, with no date badge, tabs or search pill, raw enum text, Unicode glyphs as icons, unstyled empty / error /
+loading states, a seat-chip rule copied into two pages, and a panel that shrank to its content. The `polish` pass
+fixed all of them (PR #24). The detector reports 0 findings on `client/src` and the mock-up; the pages were checked
+at 1100 and 375 px with no horizontal scroll, and the register flip, 403 / 404 and create-event errors were walked
+through in the browser.
+
 ---
 
 ## 10. Change log
@@ -246,4 +276,5 @@ and an overused font. All three were fixed, and the final scan reports **0 findi
 | Version | Date | Change |
 |---|---|---|
 | v0.1 | 4 Nov 2026 | First version: theme tokens, layout, auth/authorization UI rules, Sprint 1 screens |
+| v0.3 | 7 Nov 2026 | Built app brought to this document (Impeccable `audit` + `polish`, PR #24): tint and line tokens (§2), header links wrap on phones (§3), check icon instead of the ✓ glyph (§4.4, §7), §5.3 lists, states, notices and forms, icon component (§8), audit results (§9) |
 | v0.2 | 4 Nov 2026 | Impeccable `delight` pass: "seat secured" moment (§7), voice (§6), icon and browser rules (§8), fonts changed to Chakra Petch + IBM Plex Sans Thai, `--accent-ink` for teal text and badges, store name moved below the title, phone order of the Seats card, design checks (§9) |

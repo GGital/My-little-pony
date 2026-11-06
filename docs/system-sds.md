@@ -1,8 +1,8 @@
 # System-Level Software Design Specification (SDS)
 
-Project: **TCG Event Hub** · Document version: v0.4 (v0.2 reviewed in PR 2; changes in §14)
+Project: **TCG Event Hub** · Document version: v0.5 (v0.2 reviewed in PR 2; changes in §14)
 Inputs: [`srs.md`](srs.md) v0.5 · [`features.md`](features.md) v0.2 · [`traceability.md`](traceability.md) v0.2 ·
-[`ui/design-direction.md`](ui/design-direction.md) v0.2 · [`diagrams/`](diagrams/README.md)
+[`ui/design-direction.md`](ui/design-direction.md) v0.3 · [`diagrams/`](diagrams/README.md)
 
 This is step 4 of the course design process. It fixes the decisions that **every** feature shares: the stack, how
 the parts talk, the data model, the UI and API conventions, who may do what, how sign-in works, and how the app is
@@ -260,7 +260,7 @@ gives the ordering we need (SD-08).
 
 ## 5. UI conventions
 
-The full visual system is in [`ui/design-direction.md`](ui/design-direction.md) v0.2 (Arcane Ink theme, voice,
+The full visual system is in [`ui/design-direction.md`](ui/design-direction.md) v0.3 (Arcane Ink theme, voice,
 the "seat secured" moment, icon and browser rules). This section fixes the structure.
 
 ### 5.1 Screens and navigation
@@ -546,3 +546,4 @@ Design points:
 | v0.2 | 4 Nov 2026 | `Event.seedKey` added for the idempotent seed (Sprint 1 contracts §1); seed reference to contracts §0.3 | Team (AI-assisted) |
 | v0.3 | 4 Nov 2026 | §4.3 names the migration that holds the constraints (`0002_rule_constraints`, from I-01) | Team (AI-assisted) |
 | v0.4 | 5 Nov 2026 | §6.2 adds `413 PAYLOAD_TOO_LARGE`; §3 zod 4.x (zod 3 has advisory GHSA-mrhx-c7xc-m3w5) and Vitest 4.0.18; §9.1 which variables are required, defaults, and config check before Prisma loads (from I-02) | Team (AI-assisted) |
+| v0.5 | 7 Nov 2026 | Inputs and §7 point at design-direction v0.3 (built app brought to the UI document, PR #24) | Team (AI-assisted) |
