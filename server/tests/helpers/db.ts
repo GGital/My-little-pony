@@ -26,6 +26,7 @@ export const makeOrganizer = (name?: string) => makeUser('ORGANIZER', name)
 export const makeParticipant = (name?: string) => makeUser('PARTICIPANT', name)
 
 export const HOUR = 60 * 60 * 1000
+export const DAY = 24 * HOUR
 export const MINUTE = 60 * 1000
 
 export async function makeEvent(organizerId: number, over: Partial<{ capacity: number; startAt: Date; endAt: Date }> = {}) {
