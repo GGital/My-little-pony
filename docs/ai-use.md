@@ -29,6 +29,7 @@ tasks they assisted. Both students are responsible for, and must be able to expl
 | PR #19 review, rounds 1 and 2 | PR #19 | Replayed red and green, ran both suites on the real database (alone and merged with PR #18), probed E-04 / E-05 live and in the browser, mutation-checked the fixes; drafted both review texts | Phattaratorn read the findings and posted the reviews |
 | I-06 role and ownership guards | #8 · PR [#20](https://github.com/GGital/My-little-pony/pull/20) | Wrote the red matrix test and probes, then `requireRole` and the owner-in-where helpers; ran everything on the real database; drafted the docs and PR text | Phattaratorn set the scope (probe form for E-06 … E-11), committed and opened the PR; Praewa reviewed and approved |
 | I-08 registration with the last-seat lock | #10 · PR (to open) | Wrote the red tests (rules unit, API, 20-round race, client flow, the owed E-09 rows), the locked transaction, E-09, the Seats card flip, one explained test correction and the docs and PR text; ran everything on the real database, mutation-checked the lock, and checked the flow in the browser | Phattaratorn set the scope, committed and opens the PR; review by Praewa |
+| PR #21 review, round 1 (I-07) | PR [#21](https://github.com/GGital/My-little-pony/pull/21) | Replayed red and green on the real database, mutation-checked the BR-02 boundaries, the strict schema and the owner rule, probed E-06 live and through the form in the browser, trial-merged with I-08; drafted the review text | Phattaratorn read the findings and decides what to post |
 
 ## 3. How we supervise the agent
 
@@ -52,3 +53,4 @@ same way it fills its row in `sts.md` §5 and in [`contributions.md`](contributi
 | v0.2 | 6 Nov 2026 | Added Praewa tools, completed I-03 entry, and added I-05 row | Praewa (MeldyRose) |
 | v0.3 | 6 Nov 2026 | PR #19 review rows, I-06 row | Team (AI-assisted) |
 | v0.4 | 6 Nov 2026 | I-06 merged; I-08 row | Team (AI-assisted) |
+| v0.5 | 6 Nov 2026 | PR #21 review round 1 | Team (AI-assisted) |

@@ -33,7 +33,7 @@ the Issues, branches and PRs. AI assistance is listed in [`ai-use.md`](ai-use.md
 
 | Student | Built | Reviewed | Learning outcomes touched (spec §2) |
 |---|---|---|---|
-| Phattaratorn | Baseline documents (PR #1, #2), I-01, I-02, I-04, I-06, I-08 (in progress) | PR #16 (three rounds), PR #19 (two rounds), each tested on the real database | Requirements and design, server implementation, TDD, AI supervision, review |
+| Phattaratorn | Baseline documents (PR #1, #2), I-01, I-02, I-04, I-06, I-08 (in progress) | PR #16 (three rounds), PR #19 (two rounds), PR #21 (round 1), each tested on the real database | Requirements and design, server implementation, TDD, AI supervision, review |
 | Praewa | I-03, I-05 | PR #1, #2, #15, #17, #18, #20 | Requirements and design review, client and server implementation, TDD, review |
 
 Both students must be able to explain a sampled requirement, test, design decision and release step. The plan gives
@@ -50,3 +50,4 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.2 | 6 Nov 2026 | Updated I-05 row and Praewa summary | Praewa (MeldyRose) |
 | v0.3 | 6 Nov 2026 | I-04 and I-05 merged with their reviewers; I-06 in progress; summaries updated | Team (AI-assisted) |
 | v0.4 | 6 Nov 2026 | I-06 merged with its reviewer; I-08 in progress | Team (AI-assisted) |
+| v0.5 | 6 Nov 2026 | PR #21 review round 1 | Team (AI-assisted) |
