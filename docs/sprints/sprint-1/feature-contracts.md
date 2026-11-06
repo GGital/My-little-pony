@@ -1,6 +1,6 @@
 # Sprint 1 Feature Engineering Contracts
 
-Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.6 (v1.0 reviewed in PR 2; changes in §15)
+Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.8 (v1.0 reviewed in PR 2; changes in §15)
 Inputs: [`../../srs.md`](../../srs.md) v0.5 · [`../../features.md`](../../features.md) v0.2 ·
 [`../../traceability.md`](../../traceability.md) v0.2 · [`../../system-sds.md`](../../system-sds.md) v0.2 ·
 [`../plan.md`](../plan.md) v0.1 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.2 ·
@@ -557,6 +557,11 @@ registration id answers 404.
 
 **Planned tests:** TEST-H-01, 02 (I, E).
 
+**What I-10 adds and moves (v1.8).** The E2E half of TEST-H-01 moves to I-12 with the other Playwright journeys; in
+I-10 the page is checked at component level (`MyEvents.test.tsx`: cards in order with links and the REGISTERED
+chip, the empty state with **Find an Event**, loading and error with **Try again**). E-10 and E-11 replace the I-06
+probes in TEST-B-01 … 03 and the I-04 protected probe in TEST-A-04; both probes are removed.
+
 ---
 
 ## 12. Feature-I — Event Registration List
@@ -634,3 +639,4 @@ the same Pull Request, so the history stays visible (Deliverable 1 §3.5).
 | v1.5 | 6 Nov 2026 | §5 Feature-B: E-06 … E-11 cells of TEST-B-01 … 03 run against test-only probes with the real guards until I-07 … I-11; the "stored id = caller" half of AC-B-01 moves to I-07 / I-08 | Found while implementing #8 (I-06): the guards are needed before the endpoints that use them, and those are built in later Issues | Team (AI-assisted) |
 | v1.6 | 6 Nov 2026 | §10 Feature-G: E2E halves of TEST-G-01 / G-02 move to I-12; the UI behaviour is checked at component level in I-08; E-09 cases added to TEST-SR2-05, TEST-SR3-01, TEST-A-04 and TEST-B-01 … 03 | Found while implementing #10 (I-08): Playwright is set up in I-12 | Team (AI-assisted) |
 | v1.7 | 6 Nov 2026 | §7 Feature-D: Playwright E2E half of TEST-D-01 moves to I-12 (following PR #18 pattern); UI behaviour checked at component level (CreateEvent.test.tsx); E-06 replaces probe in TEST-B-01 … 03 and adds case to TEST-SR2-02 | Found while implementing #9 (I-07): Playwright is set up in I-12 | Praewa (MeldyRose) |
+| v1.8 | 6 Nov 2026 | §11 Feature-H: E2E half of TEST-H-01 moves to I-12; the page is checked at component level in I-10; E-10 / E-11 replace their probes in TEST-A-04 and TEST-B-01 … 03 | Found while implementing #12 (I-10): Playwright is set up in I-12 | Team (AI-assisted) |
