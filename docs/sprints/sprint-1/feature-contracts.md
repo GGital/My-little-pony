@@ -596,7 +596,8 @@ left`, and a table: #, player (display name), registered at (Bangkok time), stat
 **What I-11 adds and moves (v1.11).** The E2E half of TEST-I-01 moves to I-12 with the other Playwright journeys; in
 I-11 the page is checked at component level (`Registrations.test.tsx`: table with display names, Bangkok formatted
 times and REGISTERED status chip, empty state "No registrations yet.", loading and error with Try again). Real E-08
-replaces the probe in TEST-B-02 and TEST-B-03, and is added to the route table.
+replaces the probe in TEST-B-02 and TEST-B-03, and is added to the route table; the E-08 probe, the last one,
+is removed. Another organizer's event or a malformed id shows the not-found page (design-direction §5).
 
 ---
 
