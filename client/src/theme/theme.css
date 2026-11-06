@@ -104,3 +104,29 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   letter-spacing: 0.04em;
 }
+
+/* Seat chip tokens (design-direction §3, contracts §9) */
+.seat-chip {
+  background-color: var(--accent-tint);
+  color: var(--accent-ink);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  padding: 4px 10px;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.seat-chip--low {
+  background-color: #fef3c7;
+  color: var(--warning);
+  border: 1px solid var(--warning);
+}
+
+.seat-chip--full {
+  background-color: #fee2e2;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
