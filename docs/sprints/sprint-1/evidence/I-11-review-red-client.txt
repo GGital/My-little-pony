@@ -1,0 +1,303 @@
+
+ RUN  v4.0.18 <repo>/client
+
+ ✓ tests/sprint-1/unit/api.unit.test.ts (4 tests) 30ms
+ ✓ tests/sprint-1/unit/formatEventTime.unit.test.ts (3 tests) 68ms
+ ✓ tests/sprint-1/ActionButton.test.tsx (7 tests) 896ms
+     ✓ renders SIGN IN TO REGISTER as enabled link/button pointing to login with returnTo  668ms
+ ✓ tests/sprint-1/RouteGuards.test.tsx (4 tests) 194ms
+ ✓ tests/sprint-1/EventList.test.tsx (1 test) 251ms
+ ✓ tests/sprint-1/States.test.tsx (5 tests) 546ms
+ ✓ tests/sprint-1/EventDetail.test.tsx (3 tests) 715ms
+ ✓ tests/sprint-1/AppRoutes.test.tsx (5 tests) 719ms
+     ✓ redirects signed-out visitor on /me/registrations to /login?returnTo=%2Fme%2Fregistrations  372ms
+ ✓ tests/sprint-1/Dashboard.test.tsx (3 tests) 844ms
+     ✓ shows each owned event in start order with title, date, status, seat count, and links to Registrations and View  756ms
+ ✓ tests/sprint-1/MyEvents.test.tsx (3 tests) 882ms
+     ✓ shows each registration as a card in the order E-10 gives, with a REGISTERED chip, linking to its event  774ms
+ ✓ tests/sprint-1/SignInPage.test.tsx (8 tests) 2141ms
+     ✓ posts E-01 with the typed email and password, then follows a safe returnTo  1287ms
+     ✓ an absolute returnTo lands on the role home  443ms
+ ✓ tests/sprint-1/CreateEvent.test.tsx (4 tests) 2243ms
+     ✓ renders all required form controls in order with character counter  1381ms
+     ✓ displays validation errors from server 400 details under matching fields  354ms
+     ✓ shows Publishing… with aria-busy while submitting and navigates to detail with toast on success  419ms
+ ✓ tests/sprint-1/Registration.test.tsx (2 tests) 1078ms
+     ✓ holds the seat while sending, ignores extra presses, then flips, updates counts and announces  948ms
+ ✓ tests/sprint-1/AppShell.test.tsx (7 tests) 961ms
+     ✓ renders links exactly for Visitor (signed out): Events only, and Sign in button  635ms
+ ❯ tests/sprint-1/Registrations.test.tsx (5 tests | 2 failed) 3411ms
+     ✓ shows event title, seat counts chip, and table with players in order with Bangkok time and status  1081ms
+     ✓ with no registrations: shows empty state "No registrations yet." 55ms
+     × a 404 answer shows the not-found page, with no Try again 1145ms
+     × a 400 answer shows the not-found page, with no Try again 1017ms
+     ✓ shows loading state first, then on a 500 error shows the server message and Try again button that retries 46ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/sprint-1/Registrations.test.tsx > TEST-I-02 (C) — another organizer's event or a malformed id shows the not-found page (AC-I-02) > a 404 answer shows the not-found page, with no Try again
+TestingLibraryElementError: Unable to find an element by: [data-testid="not-found-page"]
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="ptop"
+    >
+      <div
+        class="ptop__row"
+      >
+        <div>
+          <h1>
+            Registrations
+          </h1>
+          <p
+            class="host"
+          >
+            Error loading registrations
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      class="pbody"
+    >
+      <div
+        class="state state--error"
+        data-testid="error-state"
+        role="alert"
+      >
+        <h2>
+          <svg
+            aria-hidden="true"
+            class="i"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M12 4.5l8.5 15h-17zM12 10v4.2M12 17.2v.1"
+            />
+          </svg>
+          We couldn't load this page
+        </h2>
+        <p
+          class="sub"
+        >
+          Event not found.
+        </p>
+        <button
+          class="btn-big btn-big--outline"
+          type="button"
+        >
+          Try again
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="ptop"
+    >
+      <div
+        class="ptop__row"
+      >
+        <div>
+          <h1>
+            Registrations
+          </h1>
+          <p
+            class="host"
+          >
+            Error loading registrations
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      class="pbody"
+    >
+      <div
+        class="state state--error"
+        data-testid="error-state"
+        role="alert"
+      >
+        <h2>
+          <svg
+            aria-hidden="true"
+            class="i"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M12 4.5l8.5 15h-17zM12 10v4.2M12 17.2v.1"
+            />
+          </svg>
+          We couldn't load this page
+        </h2>
+        <p
+          class="sub"
+        >
+          Event not found.
+        </p>
+        <button
+          class="btn-big btn-big--outline"
+          type="button"
+        >
+          Try again
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/sprint-1/Registrations.test.tsx:109:25
+    107|     renderPage('1')
+    108| 
+    109|     expect(await screen.findByTestId('not-found-page')).toBeInTheDocum…
+       |                         ^
+    110|     expect(screen.queryByRole('button', { name: /Try again/i })).not.t…
+    111|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/sprint-1/Registrations.test.tsx > TEST-I-02 (C) — another organizer's event or a malformed id shows the not-found page (AC-I-02) > a 400 answer shows the not-found page, with no Try again
+TestingLibraryElementError: Unable to find an element by: [data-testid="not-found-page"]
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="ptop"
+    >
+      <div
+        class="ptop__row"
+      >
+        <div>
+          <h1>
+            Registrations
+          </h1>
+          <p
+            class="host"
+          >
+            Error loading registrations
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      class="pbody"
+    >
+      <div
+        class="state state--error"
+        data-testid="error-state"
+        role="alert"
+      >
+        <h2>
+          <svg
+            aria-hidden="true"
+            class="i"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M12 4.5l8.5 15h-17zM12 10v4.2M12 17.2v.1"
+            />
+          </svg>
+          We couldn't load this page
+        </h2>
+        <p
+          class="sub"
+        >
+          This id is not valid.
+        </p>
+        <button
+          class="btn-big btn-big--outline"
+          type="button"
+        >
+          Try again
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="ptop"
+    >
+      <div
+        class="ptop__row"
+      >
+        <div>
+          <h1>
+            Registrations
+          </h1>
+          <p
+            class="host"
+          >
+            Error loading registrations
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      class="pbody"
+    >
+      <div
+        class="state state--error"
+        data-testid="error-state"
+        role="alert"
+      >
+        <h2>
+          <svg
+            aria-hidden="true"
+            class="i"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M12 4.5l8.5 15h-17zM12 10v4.2M12 17.2v.1"
+            />
+          </svg>
+          We couldn't load this page
+        </h2>
+        <p
+          class="sub"
+        >
+          This id is not valid.
+        </p>
+        <button
+          class="btn-big btn-big--outline"
+          type="button"
+        >
+          Try again
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/sprint-1/Registrations.test.tsx:109:25
+    107|     renderPage('1')
+    108| 
+    109|     expect(await screen.findByTestId('not-found-page')).toBeInTheDocum…
+       |                         ^
+    110|     expect(screen.queryByRole('button', { name: /Try again/i })).not.t…
+    111|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 14 passed (15)
+      Tests  2 failed | 62 passed (64)
+   Start at  02:09:09
+   Duration  15.40s (transform 8.56s, setup 34.60s, import 39.17s, tests 14.98s, environment 82.83s)
+
