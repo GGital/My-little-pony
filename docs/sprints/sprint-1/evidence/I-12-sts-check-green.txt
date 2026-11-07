@@ -1,5 +1,0 @@
-ACs in the contracts: 47; with a test and a recorded result: 47
-STS §2 rows: 55 (Pass 55, Fail 0, other 0)
-BRs in STS §4: 12, each with a rejection test: 12
-Failed rows (reported in STS §6): none
-TEST-SR7-01: every AC has a test with a recorded result, and every BR has a rejection test.
