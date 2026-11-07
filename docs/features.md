@@ -1,8 +1,8 @@
 # Complete Feature Inventory
 
 Project: **TCG Event Hub** — Event Registration and Attendance System
-Document version: v0.2 — approved in PR #1 (4 Nov 2026)
-Source of requirements: [`docs/srs.md`](srs.md) v0.4 · Next document: `docs/traceability.md`
+Document version: v0.3 — v0.2 approved in PR #1 (4 Nov 2026)
+Source of requirements: [`docs/srs.md`](srs.md) v0.5 · Next document: `docs/traceability.md`
 
 This is step 2 of the course design process. The whole product is split into **features**: pieces small enough to
 specify, build, test and review on their own, yet large enough to give a user something they can see. Each feature
@@ -97,7 +97,7 @@ How the pieces connect:
 
 ## 4. Coverage check
 
-Every SRS requirement must belong to at least one feature or responsibility. Checked against SRS v0.4 (a script compares every ID in the SRS with section 3):
+Every SRS requirement must belong to at least one feature or responsibility. Checked against SRS v0.5 (a script compares every ID in the SRS with section 3):
 
 | Group | IDs in the SRS | Covered | Not covered |
 |---|---|---|---|
@@ -144,3 +144,4 @@ Both students review each other's Pull Requests, so each student reads and appro
 |---|---|---|---|
 | v0.1 | 4 Nov 2026 | First complete inventory: Feature-A … Feature-S, SR-01 … SR-07, coverage check, Sprint 1 bundle and dependency graph | Team (AI-assisted) |
 | v0.2 | 4 Nov 2026 | Follows SRS v0.4: added Feature-T (NFR-16) and SR-08 (FR-28); SR-02 now owns NFR-15 and the check order; FR-28 linked to Feature-L, N, O, P; scope wording for F, I, J | Team (AI-assisted) |
+| v0.3 | 7 Nov 2026 | Source and §4 coverage check point at SRS v0.5 (D-15 changed NFR-03 wording only; all 64 IDs still covered) | Team (AI-assisted) |

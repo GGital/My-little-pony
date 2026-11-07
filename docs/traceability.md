@@ -1,7 +1,7 @@
 # Requirements-to-Features Traceability
 
-Project: **TCG Event Hub** · Document version: v0.3 — v0.1 approved in PR #1; CH-10 in PR 2; Sprint 1 results in I-12
-Inputs: [`docs/srs.md`](srs.md) v0.5 · [`docs/features.md`](features.md) v0.2 · Diagrams: [`docs/diagrams/`](diagrams/README.md)
+Project: **TCG Event Hub** · Document version: v0.4 — v0.1 approved in PR #1; CH-10 in PR 2; Sprint 1 results in I-12
+Inputs: [`docs/srs.md`](srs.md) v0.5 · [`docs/features.md`](features.md) v0.3 · Diagrams: [`docs/diagrams/`](diagrams/README.md)
 
 This is step 3 of the course design process. Every requirement is followed through four links, so anyone can
 answer "where is this built, when, and how do we know it works?":
@@ -217,7 +217,7 @@ has at least one rejection criterion, so NFR-14's "negative test for every BR" h
 
 | Check | Result |
 |---|---|
-| Every FR, BR and NFR in SRS v0.4 appears in the matrix | 64 / 64 — no gaps |
+| Every FR, BR and NFR in SRS v0.5 appears in the matrix | 64 / 64 — no gaps |
 | Every Sprint 1 requirement has at least one planned AC | 40 / 40 |
 | Every planned AC traces back to a requirement | 47 / 47 |
 | Matrix owners agree with the feature inventory | yes. Differences are the later users listed in §2.5 |
@@ -262,4 +262,5 @@ No requirement was withdrawn and no ID was renumbered.
 |---|---|---|---|
 | v0.1 | 4 Nov 2026 | First matrix: 64 requirements (40 in Sprint 1), 47 planned Sprint 1 ACs, shared-requirement table, problem trace, gaps and approved changes CH-01 … CH-09 | Team (AI-assisted) |
 | v0.2 | 4 Nov 2026 | CH-10: scrypt instead of bcrypt (NFR-03, AC-A-05) | Team (AI-assisted) |
-| v0.3 | 8 Nov 2026 | Sprint 1 results: every Sprint 1 row names its tests and their result (I-12, STS §6) | Team (AI-assisted) |
+| v0.3 | 7 Nov 2026 | Sprint 1 results: every Sprint 1 row names its tests and their result (I-12, STS §6) | Team (AI-assisted) |
+| v0.4 | 7 Nov 2026 | §4.1 coverage checked against SRS v0.5 (64 / 64, same IDs as v0.4); input features v0.3; v0.3 date corrected (7 Nov) | Team (AI-assisted) |
