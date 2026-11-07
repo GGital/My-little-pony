@@ -1,6 +1,6 @@
 # Sprint 1 Software Test Specification (STS)
 
-Project: **TCG Event Hub** · Sprint 1 · Document version: v1.12 (v1.0 reviewed in PR 2; changes in §8)
+Project: **TCG Event Hub** · Sprint 1 · Document version: v1.13 (v1.0 reviewed in PR 2; changes in §8)
 Contracts: [`feature-contracts.md`](feature-contracts.md) v1.12 · Issues and Definition of Done: [`README.md`](README.md)
 
 This document turns every Sprint 1 acceptance criterion into planned tests, **before** the code exists. It
@@ -271,7 +271,8 @@ output.
 
 | Item | Value |
 |---|---|
-| Release commit / tag | Release candidate `fc429d9` on `feature/s1-12-integration-release` (Sun 8 Nov 2026). `v0.1.0` is tagged on `main` after the release PR `sprint-1-staging` → `main`, once the same commands pass on the merge commit |
+| Release commit / tag | Release candidate `fc429d9` on `feature/s1-12-integration-release`. After the I-12 merge, staging `8dd1371` passed the same commands: server 268 / 268, client 64 / 64, build, E2E 40 / 40, coverage and scan. `v0.1.0` is tagged on the `main` merge commit of the release PR `sprint-1-staging` → `main` |
+| Fresh clone (DoD-10) | A new clone of staging `8dd1371`, following only the README: install, `db:generate`, `.env`, migrate, seed, then server 268 / 268, typecheck, client 64 / 64, build, E2E 40 / 40, coverage and scan 0 findings — `evidence/I-12-fresh-clone.txt` |
 | Server: `npm --prefix server test` | **268 passed / 0 failed / 0 skipped** (21 files) — `evidence/I-12-server.txt` |
 | Client: `npm --prefix client test` | **64 passed / 0 failed / 0 skipped** (15 files) — `evidence/I-12-client.txt` |
 | E2E: `npm run e2e` | **40 passed / 0 failed / 0 skipped**, two runs — `evidence/I-12-e2e.txt`; 21 screenshots in `evidence/responsive/` |
@@ -336,3 +337,4 @@ npm run secret:scan
 | v1.10 | 7 Nov 2026 | I-09 row records the post-merge run and the review mutations; UI polish row (red / green of the four explained assertion corrections); TEST-G-01 names the check-icon REGISTERED button (contracts v1.10) | Team (AI-assisted) |
 | v1.11 | 7 Nov 2026 | I-11 TDD record filled from real runs; TEST-I-01 gains a component level (`Registrations.test.tsx`) and moves its E2E half to I-12; real E-08 replaces probe in TEST-B-02 and TEST-B-03, and the E-08 probe is removed; review: TEST-I-01 data out of order with a cancelled row, not-found page case (PR #25) | Praewa (MeldyRose); review Team (AI-assisted) |
 | v1.12 | 8 Nov 2026 | I-12: every §2 result filled from the release runs; §5 I-12 row (TEST-SR7-01 red → green, first E2E run and mutations); §6 results; §7 E2E, coverage and scan commands; §1.2 E2E environment; TEST-G-02 E2E uses EV-2 (contracts v1.12) | Team (AI-assisted) |
+| v1.13 | 8 Nov 2026 | §6: staging `8dd1371` re-run after the I-12 merge, and the fresh-clone run (DoD-10) | Team (AI-assisted) |
