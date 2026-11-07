@@ -1,0 +1,31 @@
+ RUN  v4.0.18 <repo>/client
+
+ ✓ tests/sprint-1/unit/api.unit.test.ts > api client & errors (Feature-C Behaviour 4) > turns error response JSON into ApiError { status, code, message, details } 8ms
+ ✓ tests/sprint-1/unit/api.unit.test.ts > api client & errors (Feature-C Behaviour 4) > calls no handler and does not navigate when auth: "optional" call returns 401 5ms
+ ✓ tests/sprint-1/unit/api.unit.test.ts > api client & errors (Feature-C Behaviour 4) > calls onSessionExpired handler once when default (auth: "required") call returns 401 1ms
+ ✓ tests/sprint-1/unit/api.unit.test.ts > api client & errors (Feature-C Behaviour 4) > sends credentials same-origin and Content-Type application/json on post 4ms
+ ✓ tests/sprint-1/unit/formatEventTime.unit.test.ts > formatEventTime (TEST-SR3-02) > formats in Bangkok time when the machine is set to UTC 25ms
+ ✓ tests/sprint-1/unit/formatEventTime.unit.test.ts > formatEventTime (TEST-SR3-02) > formats in Bangkok time when the machine is set to America/New_York 1ms
+ ✓ tests/sprint-1/unit/formatEventTime.unit.test.ts > formatEventTime (TEST-SR3-02) > correctly handles date rollover across time zones 1ms
+ ✓ tests/sprint-1/RouteGuards.test.tsx > Route Guards (TEST-C-02) > redirects signed-out visitor from protected route to /login?returnTo=... 31ms
+ ✓ tests/sprint-1/RouteGuards.test.tsx > Route Guards (TEST-C-02) > renders "This page isn't available for your account" and fires NO organizer api call when participant accesses organizer route 6ms
+ ✓ tests/sprint-1/RouteGuards.test.tsx > Route Guards (TEST-C-02) > renders "This page isn't available for your account" when an organizer accesses /me/registrations 3ms
+ ✓ tests/sprint-1/RouteGuards.test.tsx > Route Guards (TEST-C-02) > redirects to /login?returnTo=%2Fme%2Fregistrations when an api call triggers session expiration 12ms
+ ✓ tests/sprint-1/AppShell.test.tsx > AppShell navigation (TEST-C-01) > renders links exactly for Visitor (signed out): Events only, and Sign in button 86ms
+ ✓ tests/sprint-1/AppRoutes.test.tsx > AppRoutes route table (M5 / AC-C-02) > redirects signed-out visitor on /me/registrations to /login?returnTo=%2Fme%2Fregistrations 74ms
+ ✓ tests/sprint-1/AppRoutes.test.tsx > AppRoutes route table (M5 / AC-C-02) > shows "This page isn't available for your account" when Mint (participant) accesses /organizer 8ms
+ ✓ tests/sprint-1/AppRoutes.test.tsx > AppRoutes route table (M5 / AC-C-02) > shows "This page isn't available for your account" when Mint (participant) accesses /organizer/events/new 5ms
+ ✓ tests/sprint-1/AppRoutes.test.tsx > AppRoutes route table (M5 / AC-C-02) > shows "This page isn't available for your account" when Quantum Cards (organizer) accesses /me/registrations 5ms
+ ✓ tests/sprint-1/AppRoutes.test.tsx > AppRoutes route table (M5 / AC-C-02) > renders NotFoundPage when navigating to an unknown path /nope 4ms
+ ✓ tests/sprint-1/AppShell.test.tsx > AppShell navigation (TEST-C-01) > renders links exactly for Participant: Events, My Events, PLAYER badge, display name 16ms
+ ✓ tests/sprint-1/AppShell.test.tsx > AppShell navigation (TEST-C-01) > renders links exactly for Organizer: Events, Dashboard, + Create event, ORGANIZER badge 14ms
+ ✓ tests/sprint-1/States.test.tsx > Shared UI States (TEST-C-05) > renders loading state with aria-busy and status role 60ms
+ ✓ tests/sprint-1/States.test.tsx > Shared UI States (TEST-C-05) > renders named empty state with primary next action 21ms
+ ✓ tests/sprint-1/States.test.tsx > Shared UI States (TEST-C-05) > renders link when action provides href 10ms
+ ✓ tests/sprint-1/States.test.tsx > Shared UI States (TEST-C-05) > renders error state with server message and Try again button that retries 6ms
+ ✓ tests/sprint-1/States.test.tsx > Shared UI States (TEST-C-05) > renders field errors under matching form inputs and sets submit button aria-busy 15ms
+
+ Test Files  6 passed (6)
+      Tests  24 passed (24)
+   Start at  23:20:53
+   Duration  2.71s (transform 557ms, setup 2.01s, import 1.56s, tests 433ms, environment 9.50s)

@@ -1,0 +1,683 @@
+
+ RUN  v4.0.18 <repo>/server
+
+ ❯ tests/sprint-1/auth.api.test.ts (21 tests | 1 failed) 4789ms
+     ✓ a trimmed, mixed-case email signs in: 200 AuthUser, a tcg.sid cookie, E-03 the same user, one hashed Session row 139ms
+     ✓ wrong password and unknown email: identical 401 INVALID_CREDENTIALS, no Session row, no cookie 223ms
+     ✓ an unknown email takes as long as a wrong password (dummy hash): mean difference < 50 ms over 20 tries  2928ms
+     ✓ E-01 with a missing email → 400 VALIDATION_FAILED on that field, no session 8ms
+     ✓ E-01 with an email without @ → 400 VALIDATION_FAILED on that field, no session 6ms
+     ✓ E-01 with an empty password → 400 VALIDATION_FAILED on that field, no session 6ms
+     ✓ E-01 with a password over 128 characters → 400 VALIDATION_FAILED on that field, no session 6ms
+     ✓ E-01 with an extra key → 400 VALIDATION_FAILED on that field, no session 6ms
+     ✓ E-01 from a foreign Origin → 403 FORBIDDEN even with the right password, no session 6ms
+     ✓ a valid cookie → 200 AuthUser 86ms
+     ✓ no cookie → 401 UNAUTHENTICATED 5ms
+     ✓ a malformed cookie (tcg.sid=abc) → 401 UNAUTHENTICATED 4ms
+     ✓ a well-formed but unknown token → 401 UNAUTHENTICATED 6ms
+     × E-02 → 204, Session row gone, expired cookie; the old cookie then gets 401 everywhere 117ms
+     ✓ E-02 without a cookie → 401 first, even without an Origin (SDS §2.3 check order) 5ms
+     ✓ E-02 with a valid cookie but a foreign Origin → 403 FORBIDDEN, and the session survives 93ms
+     ✓ the protected probe answers 200 with the actor while the session is valid 84ms
+     ✓ HttpOnly, SameSite=Lax, Path=/, Max-Age=28800; E-03 200 at T + 7 h 59 min, 401 at T + 8 h 93ms
+     ✓ signing in again after expiry deletes the expired session row (SDS §8) 157ms
+     ✓ every seeded passwordHash has the scrypt format 4ms
+     ✓ no Sprint 1 response carries a password field, a hash or the seed password 185ms
+ ❯ tests/sprint-1/registrations.concurrency.api.test.ts (1 test | 1 failed) 2026ms
+     × 20 rounds: 20 racers for 1 seat → one 201, 19 × 409 EVENT_FULL; 5 calls by one participant → one 201, four 409 ALREADY_REGISTERED 95ms
+ ❯ tests/sprint-1/authorization.api.test.ts (59 tests | 7 failed) 1869ms
+     × E-09 with an empty body stores the caller as participantId (Mint on EV-6) 17ms
+     × E-09 with participantId of another user → 400 VALIDATION_FAILED on that field, nothing stored 17ms
+     ✓ E-06 with organizerId of another organizer → 400 VALIDATION_FAILED on that field, nothing stored 17ms
+     ✓ E-02 → 401 UNAUTHENTICATED 4ms
+     ✓ E-03 → 401 UNAUTHENTICATED 4ms
+     ✓ E-06 → 401 UNAUTHENTICATED 4ms
+     ✓ E-07 → 401 UNAUTHENTICATED 4ms
+     ✓ E-08 → 401 UNAUTHENTICATED 4ms
+     × E-09 → 401 UNAUTHENTICATED 4ms
+     ✓ E-10 → 401 UNAUTHENTICATED 4ms
+     ✓ E-11 → 401 UNAUTHENTICATED 4ms
+     ✓ lists every endpoint E-01 … E-11 (E-02 is in its own case below) 0ms
+     ✓ E-01 POST as visitor → 200 83ms
+     ✓ E-01 POST as mint → 200 82ms
+     ✓ E-01 POST as quantum → 200 81ms
+     ✓ E-01 POST as dragon → 200 81ms
+     ✓ E-03 GET as visitor → 401 4ms
+     ✓ E-03 GET as mint → 200 10ms
+     ✓ E-03 GET as quantum → 200 9ms
+     ✓ E-03 GET as dragon → 200 7ms
+     ✓ E-04 GET as visitor → 200 12ms
+     ✓ E-05 GET as visitor → 200 8ms
+     ✓ E-04 GET as mint → 200 9ms
+     ✓ E-05 GET as mint → 200 11ms
+     ✓ E-04 GET as quantum → 200 8ms
+     ✓ E-05 GET as quantum → 200 9ms
+     ✓ E-04 GET as dragon → 200 8ms
+     ✓ E-05 GET as dragon → 200 8ms
+     ✓ E-06 POST as visitor → 401 4ms
+     ✓ E-06 POST as mint → 403 7ms
+     ✓ E-06 POST as quantum → 201 11ms
+     ✓ E-06 POST as dragon → 201 9ms
+     ✓ E-07 GET as visitor → 401 4ms
+     ✓ E-07 GET as mint → 403 7ms
+     ✓ E-07 GET as quantum → 200 8ms
+     ✓ E-07 GET as dragon → 200 8ms
+     ✓ E-08 GET as visitor → 401 4ms
+     ✓ E-08 GET as mint → 403 6ms
+     ✓ E-08 GET as quantum → 200 9ms
+     ✓ E-08 GET as dragon → 404 8ms
+     ✓ E-08 GET as visitor → 401 4ms
+     ✓ E-08 GET as quantum → 400 7ms
+     × E-09 POST as visitor → 401 4ms
+     × E-09 POST as mint → 201 7ms
+     × E-09 POST as quantum → 403 7ms
+     × E-09 POST as dragon → 403 7ms
+     ✓ E-10 GET as visitor → 401 4ms
+     ✓ E-10 GET as mint → 200 7ms
+     ✓ E-10 GET as quantum → 403 6ms
+     ✓ E-10 GET as dragon → 403 6ms
+     ✓ E-11 GET as visitor → 401 3ms
+     ✓ E-11 GET as mint → 200 8ms
+     ✓ E-11 GET as mint → 404 8ms
+     ✓ E-11 GET as quantum → 403 7ms
+     ✓ E-11 GET as dragon → 403 6ms
+     ✓ E-02 sign out as mint → 204 (its own session) 94ms
+     ✓ E-02 sign out as quantum → 204 (its own session) 88ms
+     ✓ E-02 sign out as dragon → 204 (its own session) 86ms
+     ✓ 404 bodies are byte-identical whether the record exists and is someone else's, or does not exist 31ms
+ ❯ tests/sprint-1/validation.api.test.ts (17 tests | 1 failed) 1133ms
+     ✓ wrong types, a bad date and an unknown field → 400 with one details entry per field 70ms
+     ✓ a valid body passes through as the parsed value 6ms
+     ✓ calling every Sprint 1 route with GET leaves every table unchanged 54ms
+     ✓ with a signed-in participant, GET on every Sprint 1 route leaves every table unchanged 156ms
+     ✓ with a signed-in organizer, GET on every Sprint 1 route leaves every table unchanged 145ms
+     ✓ GET on POST-only /api/auth/login → 404 NOT_FOUND 4ms
+     ✓ GET on POST-only /api/auth/logout → 404 NOT_FOUND 3ms
+     ✓ GET on POST-only /api/events/1/registrations → 404 NOT_FOUND 3ms
+     ✓ GET on POST-only /api/__test/echo → 404 NOT_FOUND 3ms
+     ✓ a text/plain body → 415 UNSUPPORTED_MEDIA_TYPE 4ms
+     ✓ a 101 kB body → 413 PAYLOAD_TOO_LARGE 5ms
+     ✓ a foreign Origin → 403 FORBIDDEN 3ms
+     ✓ no Origin at all → 403 FORBIDDEN 4ms
+     ✓ malformed JSON → 400 VALIDATION_FAILED, not a 500 5ms
+     ✓ a POST with no body is not a 415 (E-09 sends none); it reaches validation 4ms
+     × real E-09: text/plain → 415, foreign Origin → 403, both storing nothing; no body → 201 97ms
+     ✓ none of the rejected requests stored anything 11ms
+ ❯ tests/sprint-1/registrations.api.test.ts (15 tests | 15 failed) 749ms
+     × 201 ParticipantRegistration with updated counts; one new row for P; E-05 then says REGISTERED 37ms
+     × a body of {} is accepted like no body 12ms
+     × 2 / 2 → 409 EVENT_FULL with the contract message; still 2 active rows 18ms
+     × again, then twice at the same time: every response 409 ALREADY_REGISTERED; one active row 11ms
+     × started 1 min ago → 409 REGISTRATION_CLOSED, no row 10ms
+     × starting exactly now (T) → 409 REGISTRATION_CLOSED, no row 11ms
+     × a draft event → 409 REGISTRATION_CLOSED, no row 16ms
+     × owner and other organizer → 403 FORBIDDEN, no row 9ms
+     × a missing event → 404 EVENT_NOT_FOUND 7ms
+     × path id abc → 400 INVALID_PATH_PARAMETER 7ms
+     × path id 0 → 400 INVALID_PATH_PARAMETER 7ms
+     × path id 2147483648 → 400 INVALID_PATH_PARAMETER 7ms
+     × a body with a field → 400 VALIDATION_FAILED, no row 9ms
+     × without a session → 401 before anything else; with a foreign Origin → 403, no row 7ms
+     × a closed event that is also full answers REGISTRATION_CLOSED; a full one where P is registered answers ALREADY_REGISTERED 12ms
+ ❯ tests/sprint-1/time.api.test.ts (9 tests | 1 failed) 448ms
+     ✓ now() returns the fixed time T, and a copy that cannot move the clock 39ms
+     ✓ only the T + 1 min event is upcoming in the database query 32ms
+     ✓ an event starting exactly at T counts as started, like T − 1 min; T + 1 min has not started 24ms
+     ✓ E-04 returns only T + 1 min event; E-05 for T returns hasStarted: true and viewer.action: CLOSED 66ms
+     × E-09 at T: the T event → 409 REGISTRATION_CLOSED, the T + 1 min event → 201 213ms
+     ✓ times survive the database to the millisecond and serialise as UTC ending in Z 25ms
+     ✓ after resetNow() the clock follows real time again 14ms
+     ✓ setNow() refuses to run outside NODE_ENV=test 15ms
+     ✓ rule code in src/domain never reads the system clock directly (contracts §3 item 1) 19ms
+ ❯ tests/sprint-1/unit/registration-rules.unit.test.ts (8 tests | 7 failed) 12ms
+     × active = capacity → EVENT_FULL; one seat left → OK 6ms
+     × started 1 min ago → REGISTRATION_CLOSED 1ms
+     × starting exactly now → REGISTRATION_CLOSED 1ms
+     × a draft → REGISTRATION_CLOSED 1ms
+     × cancelled → REGISTRATION_CLOSED 1ms
+     ✓ starting 1 min from now → OK 0ms
+     × already registered → ALREADY_REGISTERED, even when the event is also full 0ms
+     × closed beats already registered and full 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts (26 tests) 2186ms
+     ✓ refuses an unknown code at compile time, and accepts a known one  2179ms
+ ✓ tests/sprint-1/health.api.test.ts (2 tests) 2089ms
+     ✓ answers 503 {status:"unavailable"} when the database cannot be reached, and logs why  2037ms
+ ✓ tests/sprint-1/events.read.api.test.ts (11 tests) 1528ms
+     ✓ returns matching viewer.action and all public fields across visitor, player, owner, other organizer  410ms
+ ✓ tests/sprint-1/seed.api.test.ts (5 tests) 964ms
+     ✓ creates 2 organizers, 4 participants and the 6 events of contracts §0.3  710ms
+ ✓ tests/sprint-1/unit/config.unit.test.ts (6 tests) 937ms
+     ✓ the real server refuses to start without DATABASE_URL and says why  910ms
+ ✓ tests/sprint-1/unit/password.unit.test.ts (2 tests) 395ms
+ ✓ tests/sprint-1/constraints.api.test.ts (12 tests) 179ms
+ ✓ tests/sprint-1/errors.api.test.ts (8 tests) 109ms
+ ✓ tests/sprint-1/persistence.api.test.ts (1 test) 117ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 33 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/sprint-1/auth.api.test.ts > TEST-A-04 — sign out really ends the session (AC-A-04, FR-04, NFR-04) > E-02 → 204, Session row gone, expired cookie; the old cookie then gets 401 everywhere
+AssertionError: expected 404 to be 401 // Object.is equality
+
+- Expected
++ Received
+
+- 401
++ 404
+
+ ❯ tests/sprint-1/auth.api.test.ts:151:26
+    149|     const e09 = await request(app).post('/api/events/1/registrations')…
+    150|     for (const res of [await me(token), await logout(token), e09, awai…
+    151|       expect(res.status).toBe(401)
+       |                          ^
+    152|       expect(res.body).toEqual(UNAUTHENTICATED)
+    153|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/33]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-01 — identity comes only from the session (AC-B-01, BR-17) > E-09 with an empty body stores the caller as participantId (Mint on EV-6)
+AssertionError: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ tests/sprint-1/authorization.api.test.ts:73:24
+     71|   it('E-09 with an empty body stores the caller as participantId (Mint…
+     72|     const res = await call('POST', E09(ids.ev6), 'mint', {})
+     73|     expect(res.status).toBe(201)
+       |                        ^
+     74|     const row = await prisma.registration.findUniqueOrThrow({ where: {…
+     75|     expect(row.participantId).toBe(ids.mint)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/33]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-01 — identity comes only from the session (AC-B-01, BR-17) > E-09 with participantId of another user → 400 VALIDATION_FAILED on that field, nothing stored
+AssertionError: expected 404 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 404
+
+ ❯ tests/sprint-1/authorization.api.test.ts:84:24
+     82|     const before = await tableCounts()
+     83|     const res = await call('POST', path(), as, body())
+     84|     expect(res.status).toBe(400)
+       |                        ^
+     85|     expect(res.body.error.code).toBe('VALIDATION_FAILED')
+     86|     expect(res.body.error.details.map((d: { field: string }) => d.fiel…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/33]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-02 — no session: every protected endpoint answers 401 with only an error (AC-B-02, NFR-01) > E-09 → 401 UNAUTHENTICATED
+AssertionError: expected 404 to be 401 // Object.is equality
+
+- Expected
++ Received
+
+- 401
++ 404
+
+ ❯ tests/sprint-1/authorization.api.test.ts:103:24
+    101|   ] as const)('%s → 401 UNAUTHENTICATED', async (_id, method, path) =>…
+    102|     const res = await call(method, path(), 'visitor')
+    103|     expect(res.status).toBe(401)
+       |                        ^
+    104|     expect(Object.keys(res.body)).toEqual(['error'])
+    105|     expect(res.body.error.code).toBe('UNAUTHENTICATED')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/33]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-09 POST as visitor → 401
+AssertionError: expected 404 to be 401 // Object.is equality
+
+- Expected
++ Received
+
+- 401
++ 404
+
+ ❯ tests/sprint-1/authorization.api.test.ts:174:26
+    172|     async (_name, [, method, path, as, status, body]) => {
+    173|       const res = await call(method, path(), as, body?.())
+    174|       expect(res.status).toBe(status)
+       |                          ^
+    175|       if (status >= 400) expect(Object.keys(res.body)).toEqual(['error…
+    176|     },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/33]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-09 POST as mint → 201
+AssertionError: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ tests/sprint-1/authorization.api.test.ts:174:26
+    172|     async (_name, [, method, path, as, status, body]) => {
+    173|       const res = await call(method, path(), as, body?.())
+    174|       expect(res.status).toBe(status)
+       |                          ^
+    175|       if (status >= 400) expect(Object.keys(res.body)).toEqual(['error…
+    176|     },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/33]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-09 POST as quantum → 403
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-09 POST as dragon → 403
+AssertionError: expected 404 to be 403 // Object.is equality
+
+- Expected
++ Received
+
+- 403
++ 404
+
+ ❯ tests/sprint-1/authorization.api.test.ts:174:26
+    172|     async (_name, [, method, path, as, status, body]) => {
+    173|       const res = await call(method, path(), as, body?.())
+    174|       expect(res.status).toBe(status)
+       |                          ^
+    175|       if (status >= 400) expect(Object.keys(res.body)).toEqual(['error…
+    176|     },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/33]⎯
+
+ FAIL  tests/sprint-1/registrations.api.test.ts > TEST-G-01 — a participant takes a seat (AC-G-01, FR-15) > 201 ParticipantRegistration with updated counts; one new row for P; E-05 then says REGISTERED
+AssertionError: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ tests/sprint-1/registrations.api.test.ts:60:24
+     58|     const res = await register(event.id, p)
+     59| 
+     60|     expect(res.status).toBe(201)
+       |                        ^
+     61|     expect(res.body).toMatchObject({
+     62|       id: expect.any(Number),
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/33]⎯
+
+ FAIL  tests/sprint-1/registrations.api.test.ts > TEST-G-01 — a participant takes a seat (AC-G-01, FR-15) > a body of {} is accepted like no body
+AssertionError: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ tests/sprint-1/registrations.api.test.ts:79:54
+     77|   it('a body of {} is accepted like no body', async () => {
+     78|     const event = await eventWith(8, 0)
+     79|     expect((await register(event.id, p, {})).status).toBe(201)
+       |                                                      ^
+     80|   })
+     81| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/33]⎯
+
+ FAIL  tests/sprint-1/registrations.api.test.ts > TEST-G-02 (I) — a full event (AC-G-02, BR-05, FR-16) > 2 / 2 → 409 EVENT_FULL with the contract message; still 2 active rows
+AssertionError: expected 404 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 404
+
+ ❯ tests/sprint-1/registrations.api.test.ts:87:24
+     85|     const event = await eventWith(2, 2)
+     86|     const res = await register(event.id, p)
+     87|     expect(res.status).toBe(409)
+       |                        ^
+     88|     expect(res.body).toEqual({
+     89|       error: { code: 'EVENT_FULL', message: 'This event filled up a mo…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/33]⎯
+
+ FAIL  tests/sprint-1/registrations.api.test.ts > TEST-G-03 — one active registration per participant per event (AC-G-03, BR-06) > again, then twice at the same time: every response 409 ALREADY_REGISTERED; one active row
+AssertionError: expected 404 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 404
+
+ ❯ tests/sprint-1/registrations.api.test.ts:98:50
+     96|   it('again, then twice at the same time: every response 409 ALREADY_R…
+     97|     const event = await eventWith(24, 0)
+     98|     expect((await register(event.id, p)).status).toBe(201)
+       |                                                  ^
+     99| 
+    100|     const responses = [await register(event.id, p), ...(await Promise.…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/33]⎯
+
+ FAIL  tests/sprint-1/registrations.api.test.ts > TEST-G-04 (I) — closed when started or not published (AC-G-04, BR-04) > started 1 min ago → 409 REGISTRATION_CLOSED, no row
+ FAIL  tests/sprint-1/registrations.api.test.ts > TEST-G-04 (I) — closed when started or not published (AC-G-04, BR-04) > starting exactly now (T) → 409 REGISTRATION_CLOSED, no row
+AssertionError: expected 404 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 404
+
+ ❯ tests/sprint-1/registrations.api.test.ts:116:24
+    114|     const event = await eventWith(24, 0, startIn)
+    115|     const res = await register(event.id, p)
+    116|     expect(res.status).toBe(409)
+       |                        ^
+    117|     expect(res.body.error).toEqual({ code: 'REGISTRATION_CLOSED', mess…
+    118|     expect(await activeCount(event.id)).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/33]⎯
+
+ FAIL  tests/sprint-1/registrations.api.test.ts > TEST-G-04 (I) — closed when started or not published (AC-G-04, BR-04) > a draft event → 409 REGISTRATION_CLOSED, no row
+AssertionError: expected 'NOT_FOUND' to be 'REGISTRATION_CLOSED' // Object.is equality
+
+Expected: "REGISTRATION_CLOSED"
+Received: "NOT_FOUND"
+
+ ❯ tests/sprint-1/registrations.api.test.ts:124:59
+    122|     const event = await eventWith(24, 0)
+    123|     await prisma.event.update({ where: { id: event.id }, data: { statu…
+    124|     expect((await register(event.id, p)).body.error.code).toBe('REGIST…
+       |                                                           ^
+    125|     expect(await activeCount(event.id)).toBe(0)
+    126|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/33]⎯
+
+ FAIL  tests/sprint-1/registrations.api.test.ts > TEST-G-05 — organizers cannot register, even for their own event (AC-G-05, BR-10) > owner and other organizer → 403 FORBIDDEN, no row
+AssertionError: expected 404 to be 403 // Object.is equality
+
+- Expected
++ Received
+
+- 403
++ 404
+
+ ❯ tests/sprint-1/registrations.api.test.ts:134:26
+    132|     for (const who of [o1, o2]) {
+    133|       const res = await register(event.id, who)
+    134|       expect(res.status).toBe(403)
+       |                          ^
+    135|       expect(res.body.error.code).toBe('FORBIDDEN')
+    136|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/33]⎯
+
+ FAIL  tests/sprint-1/registrations.api.test.ts > E-09 order of checks (contracts §10) > a missing event → 404 EVENT_NOT_FOUND
+AssertionError: expected 'NOT_FOUND' to be 'EVENT_NOT_FOUND' // Object.is equality
+
+Expected: "EVENT_NOT_FOUND"
+Received: "NOT_FOUND"
+
+ ❯ tests/sprint-1/registrations.api.test.ts:145:33
+    143|     const res = await register(999999, p)
+    144|     expect(res.status).toBe(404)
+    145|     expect(res.body.error.code).toBe('EVENT_NOT_FOUND')
+       |                                 ^
+    146|   })
+    147| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/33]⎯
+
+ FAIL  tests/sprint-1/registrations.api.test.ts > E-09 order of checks (contracts §10) > path id abc → 400 INVALID_PATH_PARAMETER
+ FAIL  tests/sprint-1/registrations.api.test.ts > E-09 order of checks (contracts §10) > path id 0 → 400 INVALID_PATH_PARAMETER
+ FAIL  tests/sprint-1/registrations.api.test.ts > E-09 order of checks (contracts §10) > path id 2147483648 → 400 INVALID_PATH_PARAMETER
+AssertionError: expected 404 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 404
+
+ ❯ tests/sprint-1/registrations.api.test.ts:150:24
+    148|   it.each([['abc'], ['0'], ['2147483648']])('path id %s → 400 INVALID_…
+    149|     const res = await register(id, p)
+    150|     expect(res.status).toBe(400)
+       |                        ^
+    151|     expect(res.body.error.code).toBe('INVALID_PATH_PARAMETER')
+    152|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/33]⎯
+
+ FAIL  tests/sprint-1/registrations.api.test.ts > E-09 order of checks (contracts §10) > a body with a field → 400 VALIDATION_FAILED, no row
+AssertionError: expected 404 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 404
+
+ ❯ tests/sprint-1/registrations.api.test.ts:157:24
+    155|     const event = await eventWith(24, 0)
+    156|     const res = await register(event.id, p, { status: 'CHECKED_IN' })
+    157|     expect(res.status).toBe(400)
+       |                        ^
+    158|     expect(res.body.error.code).toBe('VALIDATION_FAILED')
+    159|     expect(await activeCount(event.id)).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/33]⎯
+
+ FAIL  tests/sprint-1/registrations.api.test.ts > E-09 order of checks (contracts §10) > without a session → 401 before anything else; with a foreign Origin → 403, no row
+AssertionError: expected 404 to be 401 // Object.is equality
+
+- Expected
++ Received
+
+- 401
++ 404
+
+ ❯ tests/sprint-1/registrations.api.test.ts:164:79
+    162|   it('without a session → 401 before anything else; with a foreign Ori…
+    163|     const event = await eventWith(24, 0)
+    164|     expect((await request(app).post(`/api/events/abc/registrations`)).…
+       |                                                                               ^
+    165|     const foreign = await request(app)
+    166|       .post(`/api/events/${event.id}/registrations`)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/33]⎯
+
+ FAIL  tests/sprint-1/registrations.api.test.ts > E-09 order of checks (contracts §10) > a closed event that is also full answers REGISTRATION_CLOSED; a full one where P is registered answers ALREADY_REGISTERED
+AssertionError: expected 'NOT_FOUND' to be 'REGISTRATION_CLOSED' // Object.is equality
+
+Expected: "REGISTRATION_CLOSED"
+Received: "NOT_FOUND"
+
+ ❯ tests/sprint-1/registrations.api.test.ts:175:64
+    173|   it('a closed event that is also full answers REGISTRATION_CLOSED; a …
+    174|     const closedFull = await eventWith(1, 1, -MINUTE)
+    175|     expect((await register(closedFull.id, p)).body.error.code).toBe('R…
+       |                                                                ^
+    176| 
+    177|     const full = await eventWith(2, 1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/33]⎯
+
+ FAIL  tests/sprint-1/registrations.concurrency.api.test.ts > TEST-G-06 — the last seat can never be sold twice (AC-G-06, BR-07, NFR-05) > 20 rounds: 20 racers for 1 seat → one 201, 19 × 409 EVENT_FULL; 5 calls by one participant → one 201, four 409 ALREADY_REGISTERED
+AssertionError: round 1: expected [ '404 NOT_FOUND', …(19) ] to deeply equal [ '201', '409 EVENT_FULL', …(18) ]
+
+- Expected
++ Received
+
+  [
+-   "201",
+-   "409 EVENT_FULL",
+-   "409 EVENT_FULL",
+-   "409 EVENT_FULL",
+-   "409 EVENT_FULL",
+-   "409 EVENT_FULL",
+-   "409 EVENT_FULL",
+-   "409 EVENT_FULL",
+-   "409 EVENT_FULL",
+-   "409 EVENT_FULL",
+-   "409 EVENT_FULL",
+-   "409 EVENT_FULL",
+-   "409 EVENT_FULL",
+-   "409 EVENT_FULL",
+-   "409 EVENT_FULL",
+-   "409 EVENT_FULL",
+-   "409 EVENT_FULL",
+-   "409 EVENT_FULL",
+-   "409 EVENT_FULL",
+-   "409 EVENT_FULL",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
+  ]
+
+ ❯ tests/sprint-1/registrations.concurrency.api.test.ts:57:50
+     55| 
+     56|         const race = await Promise.all(racers.map((cookie) => register…
+     57|         expect(statuses(race), `round ${round}`).toEqual(['201', ...Ar…
+       |                                                  ^
+     58|         expect(await prisma.registration.count({ where: { eventId: eve…
+     59| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/33]⎯
+
+ FAIL  tests/sprint-1/time.api.test.ts > TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-SR3-01, NFR-11) > E-09 at T: the T event → 409 REGISTRATION_CLOSED, the T + 1 min event → 201
+AssertionError: expected 404 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 404
+
+ ❯ tests/sprint-1/time.api.test.ts:79:27
+     77| 
+     78|     const closed = await e09(at.id)
+     79|     expect(closed.status).toBe(409)
+       |                           ^
+     80|     expect(closed.body.error.code).toBe('REGISTRATION_CLOSED')
+     81|     expect((await e09(after.id)).status).toBe(201)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/33]⎯
+
+ FAIL  tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > real E-09: text/plain → 415, foreign Origin → 403, both storing nothing; no body → 201
+AssertionError: expected 404 to be 403 // Object.is equality
+
+- Expected
++ Received
+
+- 403
++ 404
+
+ ❯ tests/sprint-1/validation.api.test.ts:131:28
+    129|     expect(text.status).toBe(415)
+    130|     const foreign = await e09().set('Origin', 'https://evil.example')
+    131|     expect(foreign.status).toBe(403)
+       |                            ^
+    132|     expect(foreign.body.error.code).toBe('FORBIDDEN')
+    133|     expect(await tableCounts()).toEqual(before)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/33]⎯
+
+ FAIL  tests/sprint-1/unit/registration-rules.unit.test.ts > TEST-G-02 (U) — a full event (BR-05) > active = capacity → EVENT_FULL; one seat left → OK
+AssertionError: expected 'OK' to be 'EVENT_FULL' // Object.is equality
+
+Expected: "EVENT_FULL"
+Received: "OK"
+
+ ❯ tests/sprint-1/unit/registration-rules.unit.test.ts:21:69
+     19| describe('TEST-G-02 (U) — a full event (BR-05)', () => {
+     20|   it('active = capacity → EVENT_FULL; one seat left → OK', () => {
+     21|     expect(decideRegistration({ ...open, capacity: 2, active: 2 })).to…
+       |                                                                     ^
+     22|     expect(decideRegistration({ ...open, capacity: 2, active: 1 })).to…
+     23|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/33]⎯
+
+ FAIL  tests/sprint-1/unit/registration-rules.unit.test.ts > TEST-G-04 (U) — registration closes when the event starts or is not published (BR-04) > started 1 min ago → REGISTRATION_CLOSED
+ FAIL  tests/sprint-1/unit/registration-rules.unit.test.ts > TEST-G-04 (U) — registration closes when the event starts or is not published (BR-04) > starting exactly now → REGISTRATION_CLOSED
+ FAIL  tests/sprint-1/unit/registration-rules.unit.test.ts > TEST-G-04 (U) — registration closes when the event starts or is not published (BR-04) > a draft → REGISTRATION_CLOSED
+ FAIL  tests/sprint-1/unit/registration-rules.unit.test.ts > TEST-G-04 (U) — registration closes when the event starts or is not published (BR-04) > cancelled → REGISTRATION_CLOSED
+AssertionError: expected 'OK' to be 'REGISTRATION_CLOSED' // Object.is equality
+
+Expected: "REGISTRATION_CLOSED"
+Received: "OK"
+
+ ❯ tests/sprint-1/unit/registration-rules.unit.test.ts:33:56
+     31|     ['cancelled', { status: 'CANCELLED' as const }],
+     32|   ])('%s → REGISTRATION_CLOSED', (_label, change) => {
+     33|     expect(decideRegistration({ ...open, ...change })).toBe('REGISTRAT…
+       |                                                        ^
+     34|   })
+     35| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/33]⎯
+
+ FAIL  tests/sprint-1/unit/registration-rules.unit.test.ts > Rule order (contracts §10 "Order of checks") > already registered → ALREADY_REGISTERED, even when the event is also full
+AssertionError: expected 'OK' to be 'ALREADY_REGISTERED' // Object.is equality
+
+Expected: "ALREADY_REGISTERED"
+Received: "OK"
+
+ ❯ tests/sprint-1/unit/registration-rules.unit.test.ts:43:70
+     41| describe('Rule order (contracts §10 "Order of checks")', () => {
+     42|   it('already registered → ALREADY_REGISTERED, even when the event is …
+     43|     expect(decideRegistration({ ...open, alreadyRegistered: true })).t…
+       |                                                                      ^
+     44|     expect(decideRegistration({ ...open, alreadyRegistered: true, capa…
+     45|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/33]⎯
+
+ FAIL  tests/sprint-1/unit/registration-rules.unit.test.ts > Rule order (contracts §10 "Order of checks") > closed beats already registered and full
+AssertionError: expected 'OK' to be 'REGISTRATION_CLOSED' // Object.is equality
+
+Expected: "REGISTRATION_CLOSED"
+Received: "OK"
+
+ ❯ tests/sprint-1/unit/registration-rules.unit.test.ts:50:7
+     48|     expect(
+     49|       decideRegistration({ ...open, startAt: new Date(T.getTime() - MI…
+     50|     ).toBe('REGISTRATION_CLOSED')
+       |       ^
+     51|   })
+     52| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/33]⎯
+
+
+ Test Files  7 failed | 9 passed (16)
+      Tests  33 failed | 170 passed (203)
+   Start at  13:46:29
+   Duration  31.08s (transform 551ms, setup 0ms, import 7.02s, tests 19.53s, environment 2ms)
+

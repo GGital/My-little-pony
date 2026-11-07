@@ -1,0 +1,28 @@
+
+ RUN  v4.0.18 <repo>/server
+
+ ✓ tests/sprint-1/auth.api.test.ts (21 tests) 5108ms
+     ✓ an unknown email takes as long as a wrong password (dummy hash): mean difference < 50 ms over 20 tries  3100ms
+ ✓ tests/sprint-1/authorization.api.test.ts (58 tests) 1937ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts (26 tests) 2131ms
+     ✓ refuses an unknown code at compile time, and accepts a known one  2123ms
+ ✓ tests/sprint-1/health.api.test.ts (2 tests) 2077ms
+     ✓ answers 503 {status:"unavailable"} when the database cannot be reached, and logs why  2017ms
+ ✓ tests/sprint-1/events.read.api.test.ts (11 tests) 1417ms
+     ✓ returns matching viewer.action and all public fields across visitor, player, owner, other organizer  403ms
+ ✓ tests/sprint-1/validation.api.test.ts (15 tests) 1036ms
+ ✓ tests/sprint-1/seed.api.test.ts (5 tests) 823ms
+     ✓ creates 2 organizers, 4 participants and the 6 events of contracts §0.3  572ms
+ ✓ tests/sprint-1/unit/config.unit.test.ts (6 tests) 583ms
+     ✓ the real server refuses to start without DATABASE_URL and says why  569ms
+ ✓ tests/sprint-1/unit/password.unit.test.ts (2 tests) 368ms
+ ✓ tests/sprint-1/time.api.test.ts (8 tests) 255ms
+ ✓ tests/sprint-1/constraints.api.test.ts (12 tests) 157ms
+ ✓ tests/sprint-1/errors.api.test.ts (8 tests) 109ms
+ ✓ tests/sprint-1/persistence.api.test.ts (1 test) 100ms
+
+ Test Files  13 passed (13)
+      Tests  175 passed (175)
+   Start at  11:43:12
+   Duration  25.59s (transform 466ms, setup 0ms, import 5.70s, tests 16.10s, environment 2ms)
+

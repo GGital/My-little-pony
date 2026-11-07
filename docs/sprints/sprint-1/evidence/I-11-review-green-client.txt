@@ -1,0 +1,37 @@
+
+ RUN  v4.0.18 <repo>/client
+
+ ✓ tests/sprint-1/unit/api.unit.test.ts (4 tests) 107ms
+ ✓ tests/sprint-1/unit/formatEventTime.unit.test.ts (3 tests) 120ms
+ ✓ tests/sprint-1/RouteGuards.test.tsx (4 tests) 153ms
+ ✓ tests/sprint-1/ActionButton.test.tsx (7 tests) 255ms
+ ✓ tests/sprint-1/EventList.test.tsx (1 test) 198ms
+ ✓ tests/sprint-1/States.test.tsx (5 tests) 810ms
+     ✓ renders error state with server message and Try again button that retries  373ms
+ ✓ tests/sprint-1/EventDetail.test.tsx (3 tests) 1164ms
+     ✓ renders "Your event is live." alert banner when toast is passed in router location state  513ms
+     ✓ lint check: dangerouslySetInnerHTML count is strictly 0 across client/src  459ms
+ ✓ tests/sprint-1/AppRoutes.test.tsx (5 tests) 1871ms
+     ✓ redirects signed-out visitor on /me/registrations to /login?returnTo=%2Fme%2Fregistrations  1258ms
+     ✓ shows "This page isn't available for your account" when Mint (participant) accesses /organizer  389ms
+ ✓ tests/sprint-1/MyEvents.test.tsx (3 tests) 2116ms
+     ✓ shows each registration as a card in the order E-10 gives, with a REGISTERED chip, linking to its event  1882ms
+ ✓ tests/sprint-1/Dashboard.test.tsx (3 tests) 2145ms
+     ✓ shows each owned event in start order with title, date, status, seat count, and links to Registrations and View  1919ms
+ ✓ tests/sprint-1/Registrations.test.tsx (5 tests) 2179ms
+     ✓ shows event title, seat counts chip, and table with players in order with Bangkok time and status  1942ms
+ ✓ tests/sprint-1/Registration.test.tsx (2 tests) 2179ms
+     ✓ holds the seat while sending, ignores extra presses, then flips, updates counts and announces  2060ms
+ ✓ tests/sprint-1/SignInPage.test.tsx (8 tests) 2310ms
+     ✓ posts E-01 with the typed email and password, then follows a safe returnTo  903ms
+     ✓ a participant with no returnTo lands on the role home  856ms
+ ✓ tests/sprint-1/AppShell.test.tsx (7 tests) 2249ms
+     ✓ renders links exactly for Visitor (signed out): Events only, and Sign in button  1600ms
+ ✓ tests/sprint-1/CreateEvent.test.tsx (4 tests) 2423ms
+     ✓ renders all required form controls in order with character counter  1976ms
+
+ Test Files  15 passed (15)
+      Tests  64 passed (64)
+   Start at  02:13:45
+   Duration  16.57s (transform 5.92s, setup 47.49s, import 20.27s, tests 20.28s, environment 119.01s)
+

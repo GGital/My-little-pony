@@ -1,0 +1,35 @@
+=== Server Vitest Run (Green after PR #18 merge and review fixes M1-M5, S1-S5) ===
+ RUN  v4.0.18 <repo>/server
+
+ ✓ tests/sprint-1/events.read.api.test.ts (11 tests) 1293ms
+ ✓ tests/sprint-1/auth.api.test.ts (21 tests) 5033ms
+ ✓ tests/sprint-1/health.api.test.ts (2 tests) 2112ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts (26 tests) 1666ms
+ ✓ tests/sprint-1/validation.api.test.ts (15 tests) 1126ms
+ ✓ tests/sprint-1/unit/config.unit.test.ts (6 tests) 497ms
+ ✓ tests/sprint-1/seed.api.test.ts (5 tests) 819ms
+ ✓ tests/sprint-1/time.api.test.ts (8 tests) 405ms
+ ✓ tests/sprint-1/unit/password.unit.test.ts (2 tests) 382ms
+ ✓ tests/sprint-1/constraints.api.test.ts (12 tests) 180ms
+ ✓ tests/sprint-1/persistence.api.test.ts (1 test) 301ms
+ ✓ tests/sprint-1/errors.api.test.ts (8 tests) 85ms
+
+ Test Files  12 passed (12)
+      Tests  117 passed (117)
+
+=== Client Vitest Run (Green after PR #18 merge and review fixes M1-M5, S1-S5) ===
+ RUN  v4.0.18 <repo>/client
+
+ ✓ tests/sprint-1/unit/api.unit.test.ts (4 tests) 16ms
+ ✓ tests/sprint-1/unit/formatEventTime.unit.test.ts (3 tests) 83ms
+ ✓ tests/sprint-1/RouteGuards.test.tsx (4 tests) 73ms
+ ✓ tests/sprint-1/EventList.test.tsx (1 test) 94ms
+ ✓ tests/sprint-1/EventDetail.test.tsx (2 tests) 101ms
+ ✓ tests/sprint-1/ActionButton.test.tsx (7 tests) 155ms
+ ✓ tests/sprint-1/States.test.tsx (5 tests) 140ms
+ ✓ tests/sprint-1/AppRoutes.test.tsx (5 tests) 137ms
+ ✓ tests/sprint-1/AppShell.test.tsx (7 tests) 264ms
+ ✓ tests/sprint-1/SignInPage.test.tsx (8 tests) 328ms
+
+ Test Files  10 passed (10)
+      Tests  46 passed (46)
