@@ -15,7 +15,8 @@
     "db:reset:test": "node --env-file=.env scripts/test-db.mjs --reset",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "db:migrate:test": "node --env-file=.env scripts/test-db.mjs"
+    "db:migrate:test": "node --env-file=.env scripts/test-db.mjs",
+    "e2e:api": "node --env-file=.env scripts/e2e-api.mjs"
   },
   "dependencies": {
     "@prisma/client": "6.19.3",

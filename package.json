@@ -1,0 +1,16 @@
+{
+  "name": "tcg-event-hub",
+  "private": true,
+  "description": "Root of the TCG Event Hub repository: end-to-end tests only (server/ and client/ have their own packages).",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "e2e": "playwright test",
+    "sts:check": "node scripts/sts-coverage.mjs",
+    "secret:scan": "node scripts/secret-scan.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  }
+}

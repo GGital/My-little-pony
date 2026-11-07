@@ -1,3 +1,6 @@
+import { readFileSync, readdirSync } from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import request from 'supertest'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { seed } from '../../prisma/seed.js'
@@ -72,6 +75,21 @@ describe('TEST-SR2-02 — zod .strict() reports every failing field (AC-SR2-02, 
 })
 
 describe('TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15)', () => {
+  // I-12 (contracts v1.2 §2, v1.5 §5): the route table lists all twelve Sprint 1 endpoints, and no test still calls a
+  // stand-in probe for one of them (the I-06 probes were replaced in I-07 … I-11).
+  it('the route table lists exactly E-01 … E-12, and no test file calls an access probe', async () => {
+    expect(SPRINT1_ROUTES.map((r) => r.id)).toEqual(Array.from({ length: 12 }, (_, i) => `E-${String(i + 1).padStart(2, '0')}`))
+    const testsDir = fileURLToPath(new URL('..', import.meta.url))
+    const self = fileURLToPath(import.meta.url) // this file names the patterns it looks for
+    const files = readdirSync(testsDir, { recursive: true, encoding: 'utf8' })
+      .filter((f) => f.endsWith('.ts'))
+      .map((f) => path.join(testsDir, f))
+      .filter((f) => f !== self)
+    const withProbe = files.filter((f) => /__test\/e-\d\d|PROBE_PATHS|accessProbes/.test(readFileSync(f, 'utf8')))
+    expect(files.length).toBeGreaterThan(20)
+    expect(withProbe).toEqual([])
+  })
+
   it('calling every Sprint 1 route with GET leaves every table unchanged', async () => {
     const before = await tableCounts()
     expect(before.users).toBeGreaterThan(0) // the seed really ran

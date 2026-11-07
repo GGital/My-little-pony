@@ -1,6 +1,8 @@
 import request from 'supertest'
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 import { TEST_ORIGIN, makeApp, spyLogger } from '../helpers/app.js'
+import { cookieHeader, makeUserWithPassword, readSessionCookie, signIn } from '../helpers/auth.js'
+import { makeEvent, makeParticipant, prisma, resetDb } from '../helpers/db.js'
 import { LEAKY_ERROR_TEXT, probeRoutes } from '../helpers/probes.js'
 
 /** Anything a safe error body must never contain (AC-SR2-01). */
@@ -35,20 +37,23 @@ const CASES = [
   { status: 500, code: 'INTERNAL_ERROR', send: (r: request.Agent) => r.get('/api/__test/boom') },
 ]
 
+/** The shape and leak checks of AC-SR2-01, shared by the probe cases and the real-endpoint cases. */
+function expectSafeError(res: request.Response, status: number, code: string) {
+  expect(res.status).toBe(status)
+  expect(res.headers['content-type']).toMatch(/^application\/json/)
+  expect(Object.keys(res.body)).toEqual(['error'])
+  const { error } = res.body
+  expect(error.code).toBe(code)
+  expect(typeof error.message).toBe('string')
+  expect(error.message.length).toBeGreaterThan(0)
+  expect(Object.keys(error).every((k) => ['code', 'message', 'details'].includes(k))).toBe(true)
+  for (const [what, pattern] of LEAKS) expect(res.text, `body leaks ${what}`).not.toMatch(pattern)
+}
+
 describe('TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, NFR-07)', () => {
   it.each(CASES)('$status $code', async ({ status, code, send }) => {
     const agent = request.agent(makeApp({ extraRoutes: probeRoutes }))
-    const res = await send(agent).set('Cookie', COOKIE)
-
-    expect(res.status).toBe(status)
-    expect(res.headers['content-type']).toMatch(/^application\/json/)
-    expect(Object.keys(res.body)).toEqual(['error'])
-    const { error } = res.body
-    expect(error.code).toBe(code)
-    expect(typeof error.message).toBe('string')
-    expect(error.message.length).toBeGreaterThan(0)
-    expect(Object.keys(error).every((k) => ['code', 'message', 'details'].includes(k))).toBe(true)
-    for (const [what, pattern] of LEAKS) expect(res.text, `body leaks ${what}`).not.toMatch(pattern)
+    expectSafeError(await send(agent).set('Cookie', COOKIE), status, code)
   })
 
   it('500 logs the real error on the server, without cookies or headers', async () => {
@@ -73,5 +78,33 @@ describe('TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, N
     expect(res.body.error.details).toEqual(
       expect.arrayContaining([expect.objectContaining({ field: 'title', message: expect.any(String) })]),
     )
+  })
+})
+
+// I-12 (contracts v1.2 §2): the 401 and the 409 from real endpoints, not the catalogue probe.
+describe('TEST-SR2-01 (I-12) — real 401 and 409 bodies have the same safe shape (AC-SR2-01, NFR-07)', () => {
+  const app = makeApp()
+  let cookie = ''
+  let fullEventId = 0
+
+  beforeAll(async () => {
+    await resetDb()
+    const { user, password } = await makeUserWithPassword('PARTICIPANT', 'Nok', 'nok@player.example')
+    cookie = cookieHeader(readSessionCookie(await signIn(request(app), user.email, password))!.value)
+    const { user: organizer } = await makeUserWithPassword('ORGANIZER', 'Quantum Cards')
+    const full = await makeEvent(organizer.id, { capacity: 1 })
+    const other = await makeParticipant('Ploy')
+    await prisma.registration.create({ data: { eventId: full.id, participantId: other.id } })
+    fullEventId = full.id
+  })
+
+  it('E-03 signed out (an unknown cookie) → 401 UNAUTHENTICATED', async () => {
+    expectSafeError(await request(app).get('/api/auth/me').set('Cookie', COOKIE), 401, 'UNAUTHENTICATED')
+  })
+
+  it('E-09 on a full event → 409 EVENT_FULL, and the body names no other participant', async () => {
+    const res = await request(app).post(`/api/events/${fullEventId}/registrations`).set('Origin', TEST_ORIGIN).set('Cookie', cookie)
+    expectSafeError(res, 409, 'EVENT_FULL')
+    expect(res.text).not.toMatch(/Ploy|@/)
   })
 })

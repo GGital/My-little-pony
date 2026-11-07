@@ -1,6 +1,6 @@
 # Sprint 1 Feature Engineering Contracts
 
-Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.11 (v1.0 reviewed in PR 2; changes in §15)
+Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.12 (v1.0 reviewed in PR 2; changes in §15)
 Inputs: [`../../srs.md`](../../srs.md) v0.5 · [`../../features.md`](../../features.md) v0.2 ·
 [`../../traceability.md`](../../traceability.md) v0.2 · [`../../system-sds.md`](../../system-sds.md) v0.2 ·
 [`../plan.md`](../plan.md) v0.1 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.3 ·
@@ -89,6 +89,10 @@ Seed times are **relative to the moment the seed runs**, so upcoming events stay
 
 All seeded accounts use the password in the `SEED_PASSWORD` environment variable (SDS §4.5). No password is
 written in this document or in Git.
+
+The Playwright suite (I-12) runs on the **test** database, never the development one: before each file it empties
+the tables and loads this seed again (ids restart, so EV-1 … EV-6 are ids 1 … 6), and it adds one participant that
+exists only there, **Fern** (`fern@player.example`), the second participant JRN-02 needs.
 
 ### 0.4 Contract template
 
@@ -332,7 +336,7 @@ and I-04 (sign-in wiring)
 |---|---|---|---|
 | **AC-C-01** | the app signed out, as Mint, and as Quantum Cards | the header is rendered | links exactly as the table in Behaviour 2 for each role |
 | **AC-C-02** | signed out; then signed in as Mint | `/me/registrations` is opened signed out; `/organizer` is opened as Mint | the first goes to `/login?returnTo=%2Fme%2Fregistrations`; the second shows "This page isn't available for your account" and calls no organizer endpoint |
-| **AC-C-03** | signed out on the EV-1 detail page | **SIGN IN TO REGISTER** is clicked and Mint signs in | the browser returns to EV-1's detail page, whose button now reads **REGISTER**; a `returnTo` of `https://evil.example` or `//evil.example` goes to `/events` instead |
+| **AC-C-03** | signed out on the EV-1 detail page | **SIGN IN TO REGISTER** is clicked and Nok signs in | the browser returns to EV-1's detail page, whose button now reads **REGISTER**; a `returnTo` of `https://evil.example` or `//evil.example` goes to `/events` instead |
 | **AC-C-04** | signed out, then signed in as Mint | the header is read | signed out: a **Sign in** link; signed in: "Mint", badge `PLAYER`, and a menu containing **Sign out**, which signs out (E-02) and shows "You are signed out." |
 | **AC-C-05** | the event list, My Events, dashboard and registration list with a slow, an empty and a failing API; the create-event form with a 400 response | each screen is rendered | a loading state appears first; the empty state has its named next action; the error state shows the server message and **Try again**, which retries; form errors appear under the matching fields and the submit button is disabled while sending |
 | **AC-C-06** | EV-1 with the description `<script>alert(1)</script><b>bold</b>` | the detail page is rendered | the text appears literally, no script runs, and no `<b>` element is created |
@@ -530,6 +534,11 @@ sentence, focus on "You're in.", and on a 409 the alert plus a refreshed seat co
 that earlier Issues reserved for it: TEST-SR2-05 (415, origin, no body), TEST-SR3-01 (E-09 at T), TEST-A-04 (old
 cookie) and TEST-B-01 … 03 (real path instead of the I-06 probe, plus "stored `participantId` = caller").
 
+**The E2E half of TEST-G-02 in I-12 (v1.12).** EV-3 is already full, so its button reads **FULL** and can never be
+pressed. The 409 path needs a seat that goes while the page is open: Nok opens EV-2 (one seat left), Fern takes the
+seat in her own session, then Nok presses **REGISTER** and sees the red alert, no flip, and the button and count
+refreshed to **FULL** and 4 / 4.
+
 ---
 
 ## 11. Feature-H — My Events (participant registrations)
@@ -651,3 +660,4 @@ the same Pull Request, so the history stays visible (Deliverable 1 §3.5).
 | v1.9 | 6 Nov 2026 | §8 Feature-E: Playwright E2E half of TEST-E-01 moves to I-12 (following PR #18 pattern); UI behaviour checked at component level (Dashboard.test.tsx); E-07 replaces probe in TEST-B-02 and TEST-B-03, route table gains E-07 | Found while implementing #11 (I-09): Playwright is set up in I-12 | Praewa (MeldyRose) |
 | v1.10 | 7 Nov 2026 | §0.2, §10 Behaviour 3, AC-G-01: the registered button is **REGISTERED** with the drawn check icon, not the "✓" glyph; the card's type · format line reads "Casual · Constructed" (design-direction v0.3) | UI polish in PR #24: design-direction §8 bans Unicode glyphs as icons | Team (AI-assisted) |
 | v1.11 | 7 Nov 2026 | §12 Feature-I: Playwright E2E half of TEST-I-01 moves to I-12 (following PR #18 pattern); UI behaviour checked at component level (`Registrations.test.tsx`); real E-08 replaces probe in TEST-B-02 and TEST-B-03, route table gains E-08 | Found while implementing #13 (I-11): Playwright is set up in I-12 | Praewa (MeldyRose) |
+| v1.12 | 8 Nov 2026 | §6 AC-C-03 names Nok instead of Mint; §0.3 says how the Playwright suite uses the seed (test database, fresh seed per file, E2E-only participant Fern); §10 the E2E half of TEST-G-02 loses the last seat of EV-2 while the page is open, since EV-3's button is FULL | Found while implementing #14 (I-12): Mint is registered for EV-1 in §0.3, so after signing in the button reads REGISTERED, and a FULL button cannot be pressed | Team (AI-assisted) |
