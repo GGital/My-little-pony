@@ -1,6 +1,6 @@
 # System-Level Software Design Specification (SDS)
 
-Project: **TCG Event Hub** · Document version: v0.5 (v0.2 reviewed in PR 2; changes in §14)
+Project: **TCG Event Hub** · Document version: v0.6 (v0.2 reviewed in PR 2; changes in §14)
 Inputs: [`srs.md`](srs.md) v0.5 · [`features.md`](features.md) v0.2 · [`traceability.md`](traceability.md) v0.2 ·
 [`ui/design-direction.md`](ui/design-direction.md) v0.3 · [`diagrams/`](diagrams/README.md)
 
@@ -97,7 +97,7 @@ Two notes on the order:
 
 | Layer | Choice | Version line | Why | Decision |
 |---|---|---|---|---|
-| Client | React + TypeScript + Vite | React 19, Vite 8, TS 6 | Same as TokTickIT; fast dev server and build | SD-02 |
+| Client | React + TypeScript + Vite | React 19, Vite 6, TS 5.9 | Same as TokTickIT; fast dev server and build | SD-02 |
 | UI base | Bootstrap 5 re-themed with Arcane Ink tokens, IBM Plex Sans Thai + Chakra Petch, drawn SVG icon set | Bootstrap 5.3 | Grid, forms and focus basics for free; our tokens give the look | SD-06 |
 | Routing | React Router | 7 | As in TokTickIT | — |
 | Server | Node.js + Express + TypeScript (`tsx`) | Node 22, Express 5 | Same as TokTickIT; Express 5 forwards async errors | SD-02 |
@@ -547,3 +547,4 @@ Design points:
 | v0.3 | 4 Nov 2026 | §4.3 names the migration that holds the constraints (`0002_rule_constraints`, from I-01) | Team (AI-assisted) |
 | v0.4 | 5 Nov 2026 | §6.2 adds `413 PAYLOAD_TOO_LARGE`; §3 zod 4.x (zod 3 has advisory GHSA-mrhx-c7xc-m3w5) and Vitest 4.0.18; §9.1 which variables are required, defaults, and config check before Prisma loads (from I-02) | Team (AI-assisted) |
 | v0.5 | 7 Nov 2026 | Inputs and §7 point at design-direction v0.3 (built app brought to the UI document, PR #24) | Team (AI-assisted) |
+| v0.6 | 7 Nov 2026 | §3 client versions match `client/package.json`: Vite 6 and TypeScript 5.9 (was Vite 8, TS 6) | Team (AI-assisted) |
