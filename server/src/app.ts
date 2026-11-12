@@ -17,6 +17,8 @@ export type AppDeps = {
   log?: Logger
   /** Extra routes mounted under /api before the 404 handler. Tests use it for probe routes. */
   extraRoutes?: (api: Router) => void
+  /** Folder holding the built React app (client/dist). */
+  staticDir?: string
 }
 
 /** Builds the Express app. Nothing here reads process.env: everything comes in through `deps`. */
