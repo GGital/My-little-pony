@@ -2,17 +2,29 @@ import { Router } from 'express'
 import type { PrismaClient } from '@prisma/client'
 import type { Logger } from '../log.js'
 
-/** E-12 GET /api/health (SDS §9.2): the Cloud Run startup and liveness probe in Lab 5. */
+/**
+ * E-12 GET /api/health (SDS §9.2): the Cloud Run startup and liveness probe.
+ * GET /api/ready (Lab 5): the same database check in the shape the deploy smoke test reads.
+ */
 export function healthRouter(db: Pick<PrismaClient, '$queryRaw'>, log: Logger) {
-  const router = Router()
-  router.get('/health', async (_req, res) => {
+  const databaseAnswers = async (check: string) => {
     try {
       await db.$queryRaw`SELECT 1`
-      res.json({ status: 'ok' })
+      return true
     } catch (err) {
-      log.error('health_check_failed', { error: err instanceof Error ? err.message : String(err) })
-      res.status(503).json({ status: 'unavailable' })
+      log.error(`${check}_check_failed`, { error: err instanceof Error ? err.message : String(err) })
+      return false
     }
+  }
+
+  const router = Router()
+  router.get('/health', async (_req, res) => {
+    if (await databaseAnswers('health')) res.json({ status: 'ok' })
+    else res.status(503).json({ status: 'unavailable' })
+  })
+  router.get('/ready', async (_req, res) => {
+    if (await databaseAnswers('ready')) res.json({ status: 'ready', db: 'connected' })
+    else res.status(503).json({ status: 'not_ready' })
   })
   return router
 }

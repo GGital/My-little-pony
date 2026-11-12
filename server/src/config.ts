@@ -20,7 +20,11 @@ const schema = z.object({
     .regex(/^postgres(ql)?:\/\//, 'must start with postgresql://'),
   APP_ORIGIN: z
     .string({ error: required('must be text') })
-    .refine(isOrigin, 'must be an origin such as http://localhost:5173 (scheme, host and port only)'),
+    // A comma-separated list is allowed: Cloud Run answers on two URLs (Lab 5).
+    .refine(
+      (value) => value.split(',').every(isOrigin),
+      'must be an origin such as http://localhost:5173 (scheme, host and port only), or several separated by commas',
+    ),
   LOG_LEVEL: z.enum(['silent', 'error', 'warn', 'info', 'debug']).default('info'),
   TRUST_PROXY: z.coerce.number().int().min(0).default(0),
 })

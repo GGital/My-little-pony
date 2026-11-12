@@ -30,7 +30,8 @@ describe('TEST-L5-01 (I) — one container serves the API and the built React ap
   it('serves a built asset as itself, not as index.html', async () => {
     const res = await request(makeApp({ staticDir })).get('/app.js')
     expect(res.status).toBe(200)
-    expect(res.type).toBe('application/javascript')
+    // Express 5 sends text/javascript (RFC 9239); the point is "a script, not the HTML page".
+    expect(res.type).toMatch(/javascript/)
     expect(res.text).toContain('built asset')
   })
 
