@@ -92,7 +92,7 @@ describe('TEST-SR2-04 — every error code gets its status from the catalogue (N
   it('uses the fixed safe wording for 500 (contracts §2 item 6)', () => {
     const res = fakeRes()
     sendError(res as unknown as Response, 'INTERNAL_ERROR')
-    expect(res.body).toEqual({ error: { code: 'INTERNAL_ERROR', message: 'Something went wrong. Please try again.' } })
+    expect(res.body).toEqual({ error: { code: 'INTERNAL_ERROR', message: 'Broken on purpose for 6.6' } })
   })
 
   it('throws at run time for a code outside the catalogue', () => {
