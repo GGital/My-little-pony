@@ -64,6 +64,22 @@ class SmokeTests(unittest.TestCase):
             self.assertEqual(req.call_args.args[1], '/api/auth/logout')
             self.assertEqual(req.call_args.kwargs['token'], 'test-session')
 
+    @patch.dict('os.environ', {'EXPECTED_COMMIT': 'a' * 40}, clear=True)
+    def test_running_commit_matches_the_released_image(self):
+        def version(base, path, **kwargs):
+            return ('{"commit":"%s"}' % ('a' * 40)).encode() if path == '/api/version' else self.response(base, path)
+        with patch.object(smoke, 'request', side_effect=version) as req:
+            smoke.check('https://demo.test')
+            self.assertIn('/api/version', [c.args[1] for c in req.call_args_list])
+
+    @patch.dict('os.environ', {'EXPECTED_COMMIT': 'a' * 40}, clear=True)
+    def test_another_running_commit_fails(self):
+        def stale(base, path, **kwargs):
+            return ('{"commit":"%s"}' % ('b' * 40)).encode() if path == '/api/version' else self.response(base, path)
+        with patch.object(smoke, 'request', side_effect=stale), patch.object(smoke.time, 'sleep'):
+            with self.assertRaisesRegex(RuntimeError, '/api/version'):
+                smoke.check('https://demo.test')
+
     @patch.dict('os.environ', {'SMOKE_EMAIL': 'smoke@example.test'}, clear=True)
     def test_half_set_credentials_are_refused(self):
         with patch.object(smoke, 'request', side_effect=self.response):

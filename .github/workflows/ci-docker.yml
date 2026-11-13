@@ -1,18 +1,8 @@
-# CI — "CI & Docker Build" (Lab 5, Issue #33). Adapted from the Lab 5 Starter Kit.
-#
-# Runs every check on each Pull Request into main or a sprint staging branch, and again inside deploy.yml
-# (workflow_call) before a release. It never deploys and never signs in to Google Cloud.
-#   deploy scripts (offline) -> repository checks -> server (real PostgreSQL) -> client -> end-to-end -> docker build
-#
-# DO NOT RENAME: the job id `test-and-docker` is the required status check in the main ruleset (Episode 6).
-# Changes from the kit: our npm scripts and test database, Playwright E2E, and branches [main, sprint-*-staging].
-
 name: CI & Docker Build
 
 on:
   workflow_call:
   pull_request:
-    # Every branch a Pull Request is opened into (Student Guide 4.2): main and each sprint's staging branch.
     branches: [main, 'sprint-*-staging']
   workflow_dispatch:
 
@@ -20,7 +10,6 @@ on:
 permissions:
   contents: read
 
-# A newer run on the same ref cancels the older one (a cancelled run is not a failure).
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true

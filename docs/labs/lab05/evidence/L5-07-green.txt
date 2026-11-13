@@ -1,0 +1,41 @@
+# L5-7 (#36) green run - 2026-11-13T16:39:49Z - branch ci/l5-7-auto-deploy (Node v24.19.0)
+
+# 1) new tests: server lab5 version tests, client lab5, smoke unit tests
+ ✓ tests/lab5/version.api.test.ts > TEST-L5-05 (I) — GET /api/version names the commit the image was built from > answers {commit} with the full GIT_SHA of the image 31ms
+ ✓ tests/lab5/version.api.test.ts > TEST-L5-05 (I) — GET /api/version names the commit the image was built from > answers {commit:"local"} outside a pipeline build 10ms
+ ✓ tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > defaults to "local" when the image was not built by the pipeline 5ms
+ ✓ tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > keeps a full 40-character commit SHA 1ms
+ ✓ tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > throws naming GIT_SHA for a short SHA 2ms
+ ✓ tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > throws naming GIT_SHA for upper-case hex 0ms
+ ✓ tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > throws naming GIT_SHA for anything else 0ms
+      Tests  7 passed (7)
+ ✓ tests/lab5/BuildFooter.test.tsx > TEST-L5-07 (E) — the page footer shows the commit the build came from > shows the short commit SHA when the pipeline set VITE_GIT_SHA 168ms
+ ✓ tests/lab5/BuildFooter.test.tsx > TEST-L5-07 (E) — the page footer shows the commit the build came from > shows "local" for a build outside the pipeline 15ms
+      Tests  2 passed (2)
+test_an_empty_event_list_still_passes (test_smoke.SmokeTests.test_an_empty_event_list_still_passes) ... ok
+test_another_running_commit_fails (test_smoke.SmokeTests.test_another_running_commit_fails) ... ok
+test_db_not_ready_fails_even_when_http_responds (test_smoke.SmokeTests.test_db_not_ready_fails_even_when_http_responds) ... ok
+test_half_set_credentials_are_refused (test_smoke.SmokeTests.test_half_set_credentials_are_refused) ... ok
+test_public_checks_pass_and_skip_optional_login (test_smoke.SmokeTests.test_public_checks_pass_and_skip_optional_login) ... ok
+test_running_commit_matches_the_released_image (test_smoke.SmokeTests.test_running_commit_matches_the_released_image) ... ok
+test_session_is_signed_out_even_if_me_fails (test_smoke.SmokeTests.test_session_is_signed_out_even_if_me_fails) ... ok
+Ran 7 tests in 0.013s
+OK
+
+# 2) full suites
+server: Tests 292 passed (292)
+client: Tests 66 passed (66); build: built in 2.03s
+deploy stubs: 6 + 5 PASS lines
+e2e (Playwright, run just before): 40 passed (2.0m)
+
+# 3) image built with --build-arg GIT_SHA=389bf72653f7548f4e6ad4eb395ab7c9beb684fc (APP_PORT=3100 docker compose up --build -d)
+$ curl http://localhost:3100/api/version
+{"commit":"389bf72653f7548f4e6ad4eb395ab7c9beb684fc"}
+$ EXPECTED_COMMIT=389bf72... python deploy/smoke_test.py http://localhost:3100
+PASS /api/health
+PASS /api/ready
+PASS /
+PASS /api/events
+PASS /api/version
+SKIP login: optional smoke credentials not configured
+browser at /events: footer text "Build 389bf72"; scrollWidth 1265 <= innerWidth 1280

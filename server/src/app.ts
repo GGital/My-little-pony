@@ -40,7 +40,7 @@ export function createApp({
 
   const api = express.Router()
   api.use(jsonBody())
-  api.use(healthRouter(prisma, log))
+  api.use(healthRouter(prisma, log, config.GIT_SHA))
   api.use(loadSession(prisma)) // SDS §2.3 step 2: every route after health knows its caller
   api.use('/auth', authRouter(prisma, config))
   api.use(organizerRouter(prisma))
