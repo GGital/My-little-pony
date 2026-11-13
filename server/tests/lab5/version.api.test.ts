@@ -19,7 +19,7 @@ describe('TEST-L5-05 (I) — GET /api/version names the commit the image was bui
   })
 
   it('answers {commit:"local"} outside a pipeline build', async () => {
-    const env = { ...process.env, APP_ORIGIN: TEST_ORIGIN, LOG_LEVEL: 'silent' }
+    const env: NodeJS.ProcessEnv = { ...process.env, APP_ORIGIN: TEST_ORIGIN, LOG_LEVEL: 'silent' }
     delete env.GIT_SHA
     const res = await request(makeApp({ config: loadConfig(env) })).get('/api/version')
     expect(res.body).toEqual({ commit: 'local' })

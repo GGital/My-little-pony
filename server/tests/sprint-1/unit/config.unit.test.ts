@@ -27,7 +27,7 @@ const VALID = {
 describe('TEST-SR4-01 (U) — configuration is complete and checked at start-up (NFR-13)', () => {
   it('.env.example, the SDS §9.1 table and config.ts name the same variables', () => {
     const expected = [...CONFIG_KEYS, ...TOOL_KEYS].sort()
-    expect(expected.length).toBe(8)
+    expect(expected.length).toBe(9) // GIT_SHA added in Lab 5 (#36)
     expect(envExampleKeys()).toEqual(expected)
     expect(sdsKeys()).toEqual(expected)
   })
@@ -40,6 +40,7 @@ describe('TEST-SR4-01 (U) — configuration is complete and checked at start-up 
       APP_ORIGIN: VALID.APP_ORIGIN,
       LOG_LEVEL: 'info',
       TRUST_PROXY: 0,
+      GIT_SHA: 'local',
     })
     expect(loadConfig({ ...VALID, PORT: '8080', NODE_ENV: 'production', TRUST_PROXY: '1' })).toMatchObject({
       PORT: 8080,

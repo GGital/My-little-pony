@@ -1,6 +1,6 @@
 # System-Level Software Design Specification (SDS)
 
-Project: **TCG Event Hub** · Document version: v0.8 (v0.2 reviewed in PR 2; changes in §14)
+Project: **TCG Event Hub** · Document version: v0.9 (v0.2 reviewed in PR 2; changes in §14)
 Inputs: [`srs.md`](srs.md) v0.5 · [`features.md`](features.md) v0.2 · [`traceability.md`](traceability.md) v0.2 ·
 [`ui/design-direction.md`](ui/design-direction.md) v0.3 · [`diagrams/`](diagrams/README.md)
 
@@ -355,6 +355,7 @@ path, method, guard and owner feature.
 | E-11 | `GET /api/me/registrations/:id` | participant + own | H | 1 |
 | E-12 | `GET /api/health` | public | SR-04 | 1 |
 | E-12b | `GET /api/ready` | public | Lab 5 (deploy smoke test) | — |
+| E-12c | `GET /api/version` | public | Lab 5 R-08 (running commit) | — |
 | E-13 | `PATCH /api/organizer/events/:id` | organizer + owner | K, L, M | 2 |
 | E-14 | `POST /api/organizer/events/:id/publish` | organizer + owner | K | 2 |
 | E-15 | `POST /api/organizer/events/:id/cancel` | organizer + owner | O | 2 |
@@ -442,6 +443,7 @@ The full flow is in diagram D2 ([`diagrams/seq-auth.png`](diagrams/seq-auth.png)
 | `APP_ORIGIN` | `http://localhost:5173`; on Cloud Run both service URLs, comma-separated | origin check | no |
 | `SEED_PASSWORD` | `CHANGE_ME_LOCAL_ONLY` | seed script | yes (local only) |
 | `LOG_LEVEL` | `info` | server | no |
+| `GIT_SHA` | `local`; the full commit SHA in a pipeline image | `GET /api/version`, page footer (Lab 5 R-08) | no |
 | `TRUST_PROXY` | `1` on Cloud Run | Express `trust proxy` for correct protocol | no |
 
 Rules:
@@ -463,6 +465,8 @@ when the database cannot be reached. Lab 5 uses it as the Cloud Run startup and 
 
 `GET /api/ready` (Lab 5) runs the same check and answers `200 { "status": "ready", "db": "connected" }` or
 `503 { "status": "not_ready" }`: the shape the deploy smoke test reads after every release.
+`GET /api/version` answers `{ "commit": GIT_SHA }`: the full SHA the image was built from (`local` outside the
+pipeline); the smoke test checks it equals the released image tag, and the page footer shows its first 7 characters.
 
 The same Express app serves the built React app (`client/dist`) after `/api`, with `index.html` for client-side
 routes (SD-01). On `SIGTERM` the server stops taking requests, finishes open ones and closes the database pool.
@@ -557,3 +561,4 @@ Design points:
 | v0.6 | 7 Nov 2026 | §3 client versions match `client/package.json`: Vite 6 and TypeScript 5.9 (was Vite 8, TS 6) | Team (AI-assisted) |
 | v0.7 | 13 Nov 2026 | Lab 5 (#31): `APP_ORIGIN` may list several origins (§6.1, §9.1); `GET /api/ready` E-12b, static serving of the built client and SIGTERM shutdown (§9.2); `APP_ORIGIN` no longer listed as the cookie `Secure` input (that is `NODE_ENV`) | Team (AI-assisted) |
 | v0.8 | 13 Nov 2026 | Lab 5 (#32): §3 container row is `node:24-alpine` (was `node:22-slim`), matching development and the Starter Kit | Team (AI-assisted) |
+| v0.9 | 13 Nov 2026 | Lab 5 (#36): `GIT_SHA` (§9.1), `GET /api/version` E-12c and the build footer (§9.2), so the running commit can be read from the live URL (R-08) | Team (AI-assisted) |
