@@ -1,0 +1,121 @@
+# CI — "CI & Docker Build" (Lab 5, Issue #33). Adapted from the Lab 5 Starter Kit.
+#
+# Runs every check on each Pull Request into main or a sprint staging branch, and again inside deploy.yml
+# (workflow_call) before a release. It never deploys and never signs in to Google Cloud.
+#   deploy scripts (offline) -> repository checks -> server (real PostgreSQL) -> client -> end-to-end -> docker build
+#
+# DO NOT RENAME: the job id `test-and-docker` is the required status check in the main ruleset (Episode 6).
+# Changes from the kit: our npm scripts and test database, Playwright E2E, and branches [main, sprint-*-staging].
+
+name: CI & Docker Build
+
+on:
+  workflow_call:
+  pull_request:
+    # Every branch a Pull Request is opened into (Student Guide 4.2): main and each sprint's staging branch.
+    branches: [main, 'sprint-*-staging']
+  workflow_dispatch:
+
+# Read-only: this workflow cannot push, change settings or reach Google Cloud.
+permissions:
+  contents: read
+
+# A newer run on the same ref cancels the older one (a cancelled run is not a failure).
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    # Throw-away PostgreSQL for the tests only. These values are not secrets and exist only inside the runner.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: tcg
+          POSTGRES_PASSWORD: tcg-ci-only
+          POSTGRES_DB: tcg_event_hub
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://tcg:tcg-ci-only@localhost:5432/tcg_event_hub?schema=public
+      DATABASE_URL_TEST: postgresql://tcg:tcg-ci-only@localhost:5432/tcg_event_hub_test?schema=public
+
+    steps:
+      # Third-party actions are pinned to a full commit SHA (the comment is the version); Dependabot proposes updates.
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+
+      # Python runs only the smoke-test unit tests below.
+      - name: Setup Python 3.14
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.14"
+
+      # A fresh random seed password per run, so no password is written in this file.
+      - name: Generate a throw-away SEED_PASSWORD
+        run: echo "SEED_PASSWORD=$(openssl rand -hex 16)" >> "$GITHUB_ENV"
+
+      # Guards deploy.sh / release.sh / smoke_test.py: a broken script fails here, never during a release.
+      - name: Check deployment scripts without accessing GCP
+        run: |
+          bash -n deploy/deploy.sh deploy/teardown.sh deploy/release.sh
+          bash deploy/tests/test_deploy_stub.sh
+          bash deploy/tests/test_release_stub.sh
+          python3 -m unittest discover -s deploy/tests -p 'test_smoke.py'
+
+      # No secret shapes in the repository (TEST-SR4-01); every Sprint 1 AC has a recorded test (TEST-SR7-01).
+      - name: Repository checks (secret scan, STS coverage)
+        run: |
+          npm run secret:scan
+          npm run sts:check
+
+      - name: Create the test database
+        run: psql "postgresql://tcg:tcg-ci-only@localhost:5432/postgres" -c 'CREATE DATABASE tcg_event_hub_test'
+
+      # Real-database integration tests, including the 20-racer last-seat test. npm 11 blocks Prisma's install
+      # script, so the client is generated explicitly.
+      - name: Install & test backend (Prisma migrate + seed + Vitest)
+        working-directory: ./server
+        run: |
+          npm ci
+          npm run db:generate
+          npm run db:deploy
+          npm run db:seed
+          npm run db:migrate:test
+          npm run typecheck
+          npm test
+
+      - name: Install, test & build frontend (Vitest + production build)
+        working-directory: ./client
+        run: |
+          npm ci
+          npm test
+          npm run build
+
+      # Playwright journeys on the test database (playwright.config.ts starts the API and the client itself).
+      - name: End-to-end tests (Playwright, Chromium)
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npx playwright test --reporter=line
+
+      # The production image still builds (it is not pushed here; deploy.yml pushes it).
+      - name: Verify the production Dockerfile builds
+        run: docker build -t tcg-event-hub:ci .

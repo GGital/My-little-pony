@@ -1,6 +1,6 @@
 # Lab 5 deployment: TCG Event Hub on Google Cloud
 
-Version v0.2 (L5-2 [#31](https://github.com/GGital/My-little-pony/issues/31), L5-3 [#32](https://github.com/GGital/My-little-pony/issues/32)). Each later Lab 5 Issue fills in its
+Version v0.3 (L5-2 [#31](https://github.com/GGital/My-little-pony/issues/31), L5-3 [#32](https://github.com/GGital/My-little-pony/issues/32), L5-4 [#33](https://github.com/GGital/My-little-pony/issues/33)). Each later Lab 5 Issue fills in its
 own section: Docker (#32), CI (#33), GCP resources (#34), sign-in from GitHub and the merge gate (#35), release
 procedure (#36), persistence and rollback (#37). The rest is finished in #38. Sections marked *planned* describe
 the design and are not built yet.
@@ -26,16 +26,16 @@ Secret Manager and GitHub Actions with Workload Identity Federation. We keep it,
 Every variable is listed in [`server/.env.example`](../../../server/.env.example) with placeholder values only; a
 test (TEST-SR4-01) checks that `.env.example`, SDS §9.1 and `config.ts` name the same eight. The client reads none.
 
-| Variable | Purpose | Secret? | Local (`server/.env`) | CI (planned, #33) | Cloud Run (planned, #34) |
+| Variable | Purpose | Secret? | Local (`server/.env`) | CI (#33, `ci-docker.yml`) | Cloud Run (planned, #34) |
 |---|---|---|---|---|---|
 | `NODE_ENV` | `production` turns on `Secure` cookies | no | `development` | `test` (set by Vitest) | `production` (env var) |
 | `PORT` | Port the server listens on | no | `3000` | — | set by Cloud Run (3000) |
-| `DATABASE_URL` | PostgreSQL connection for the app, migrations and seed | **yes** | your local database | throwaway CI database | Secret Manager `tcg-event-hub-database-url` (Cloud SQL socket) |
+| `DATABASE_URL` | PostgreSQL connection for the app, migrations and seed | **yes** | your local database | throw-away PostgreSQL service in the runner | Secret Manager `tcg-event-hub-database-url` (Cloud SQL socket) |
 | `APP_ORIGIN` | Origins allowed to send POST/PATCH/DELETE | no | `http://localhost:5173` | test value in the tests | both service URLs, comma-separated (env var) |
 | `LOG_LEVEL` | Log detail | no | `info` | `silent` in tests | `info` (env var) |
 | `TRUST_PROXY` | Proxies in front of Express | no | `0` | — | `1` (env var) |
-| `DATABASE_URL_TEST` | Test database; the tests truncate it | **yes** | your local test database | throwaway CI database | not used |
-| `SEED_PASSWORD` | Password of every seeded demo account (≥ 12 characters) | **yes** | your own local value | throwaway CI value | Secret Manager `tcg-event-hub-seed-password`, given to the migration job only |
+| `DATABASE_URL_TEST` | Test database; the tests truncate it | **yes** | your local test database | second database in the same runner service | not used |
+| `SEED_PASSWORD` | Password of every seeded demo account (≥ 12 characters) | **yes** | your own local value | random per run (`openssl rand -hex 16` in the workflow) | Secret Manager `tcg-event-hub-seed-password`, given to the migration job only |
 
 No real value of a secret is in the repository, the image, the logs or this document. `server/.env` is git-ignored.
 
@@ -70,6 +70,25 @@ because npm 11 blocks Prisma's install script.
 | `.gitattributes` | `*.sh` keep LF, so a Windows checkout still builds a working entrypoint |
 
 Checked in #32: [`evidence/L5-03-compose.txt`](evidence/L5-03-compose.txt) (health, ready, page, a registration that survives `down`/`up`, SIGTERM exit 0, no secret in the image) and [`evidence/L5-03-fresh-clone.txt`](evidence/L5-03-fresh-clone.txt) (C-03: fresh clone, `server/.env` = `.env.example` except `SEED_PASSWORD`, `--no-cache` build, migrate exit 0, health, ready, sign-in).
+
+## 3.2 CI and deploy scripts (#33)
+
+`.github/workflows/ci-docker.yml` (**CI & Docker Build**) runs on every Pull Request into `main` or `sprint-*-staging`, by hand (`workflow_dispatch`), and inside `deploy.yml` before each release (`workflow_call`). One job, **`test-and-docker`** (the required check, #35), read-only permissions, actions pinned to commit SHAs, no Google sign-in:
+
+| Step | What it proves |
+|---|---|
+| Deploy scripts: `bash -n`, `deploy/tests/test_deploy_stub.sh`, `test_release_stub.sh`, `test_smoke.py` | The deploy scripts behave (fake `gcloud`, no cloud, no cost): resources reused on rerun, migration failure stops the release, no project-wide secret access, no secret in the output, dry run calls nothing |
+| `npm run secret:scan`, `npm run sts:check` | No secret shapes in the repository; every Sprint 1 AC has a recorded test |
+| Server: `npm ci`, `db:generate`, `db:deploy`, `db:seed`, `db:migrate:test`, `typecheck`, `npm test` | Migrations and seed apply to an empty PostgreSQL 16; all server tests on a real database, including the 20-racer last-seat test |
+| Client: `npm ci`, `npm test`, `npm run build` | Component tests and the production build |
+| End-to-end: `npx playwright test` (Chromium) | The Sprint 1 journeys and the three-width check through the real API and client |
+| `docker build -t tcg-event-hub:ci .` | The production image still builds (not pushed) |
+
+`.github/dependabot.yml` proposes updates to the pinned actions every week.
+
+Before the first push, the whole job was replayed on a fresh clone with no `.env` against a throw-away PostgreSQL 16: [`evidence/L5-04-ci-replay.txt`](evidence/L5-04-ci-replay.txt) (all steps pass: server 285, client 64, E2E 40, image builds). The GitHub run on the PR is the evidence for C-01.
+
+The `deploy/` scripts come from the kit with these changes: names `tcg-event-hub*`; one generated seed secret (`tcg-event-hub-seed-password`) given only to the migration job; the job runs `npx prisma migrate deploy && npm run db:seed`; the service gets `NODE_ENV`, `TZ`, `TRUST_PROXY=1`, `LOG_LEVEL` and `APP_ORIGIN` (deterministic URL first, then both URLs, set with gcloud's `^;^` delimiter because the list contains a comma); the smoke test checks `/api/events` and signs in with our `tcg.sid` cookie. Preview with `DRY_RUN=1 PROJECT_ID=... bash deploy/deploy.sh`.
 
 ## 4. GCP project and resources (planned, #34)
 
