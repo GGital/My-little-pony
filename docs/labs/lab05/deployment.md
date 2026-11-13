@@ -1,6 +1,6 @@
 # Lab 5 deployment: TCG Event Hub on Google Cloud
 
-Version v0.3 (L5-2 [#31](https://github.com/GGital/My-little-pony/issues/31), L5-3 [#32](https://github.com/GGital/My-little-pony/issues/32), L5-4 [#33](https://github.com/GGital/My-little-pony/issues/33)). Each later Lab 5 Issue fills in its
+Version v0.4 (L5-2 [#31](https://github.com/GGital/My-little-pony/issues/31), L5-3 [#32](https://github.com/GGital/My-little-pony/issues/32), L5-4 [#33](https://github.com/GGital/My-little-pony/issues/33), L5-7 [#36](https://github.com/GGital/My-little-pony/issues/36)). Each later Lab 5 Issue fills in its
 own section: Docker (#32), CI (#33), GCP resources (#34), sign-in from GitHub and the merge gate (#35), release
 procedure (#36), persistence and rollback (#37). The rest is finished in #38. Sections marked *planned* describe
 the design and are not built yet.
@@ -24,7 +24,7 @@ Secret Manager and GitHub Actions with Workload Identity Federation. We keep it,
 ## 2. Environment variables
 
 Every variable is listed in [`server/.env.example`](../../../server/.env.example) with placeholder values only; a
-test (TEST-SR4-01) checks that `.env.example`, SDS §9.1 and `config.ts` name the same eight. The client reads none.
+test (TEST-SR4-01) checks that `.env.example`, SDS §9.1 and `config.ts` name the same nine. The client reads none.
 
 | Variable | Purpose | Secret? | Local (`server/.env`) | CI (#33, `ci-docker.yml`) | Cloud Run (planned, #34) |
 |---|---|---|---|---|---|
@@ -34,6 +34,7 @@ test (TEST-SR4-01) checks that `.env.example`, SDS §9.1 and `config.ts` name th
 | `APP_ORIGIN` | Origins allowed to send POST/PATCH/DELETE | no | `http://localhost:5173` | test value in the tests | both service URLs, comma-separated (env var) |
 | `LOG_LEVEL` | Log detail | no | `info` | `silent` in tests | `info` (env var) |
 | `TRUST_PROXY` | Proxies in front of Express | no | `0` | — | `1` (env var) |
+| `GIT_SHA` | Commit the image was built from: `GET /api/version` and the page footer (R-08) | no | `local` | `local` | full commit SHA, baked in by `docker build --build-arg GIT_SHA` in `deploy.yml` |
 | `DATABASE_URL_TEST` | Test database; the tests truncate it | **yes** | your local test database | second database in the same runner service | not used |
 | `SEED_PASSWORD` | Password of every seeded demo account (≥ 12 characters) | **yes** | your own local value | random per run (`openssl rand -hex 16` in the workflow) | Secret Manager `tcg-event-hub-seed-password`, given to the migration job only |
 
@@ -90,11 +91,11 @@ Before the first push, the whole job was replayed on a fresh clone with no `.env
 
 The `deploy/` scripts come from the kit with these changes: names `tcg-event-hub*`; one generated seed secret (`tcg-event-hub-seed-password`) given only to the migration job; the job runs `npx prisma migrate deploy && npm run db:seed`; the service gets `NODE_ENV`, `TZ`, `TRUST_PROXY=1`, `LOG_LEVEL` and `APP_ORIGIN` (deterministic URL first, then both URLs, set with gcloud's `^;^` delimiter because the list contains a comma); the smoke test checks `/api/events` and signs in with our `tcg.sid` cookie. Preview with `DRY_RUN=1 PROJECT_ID=... bash deploy/deploy.sh`.
 
-## 4. GCP project and resources (planned, #34)
+## 4. GCP project and resources (#34)
 
 | Resource | Name |
 |---|---|
-| Project ID / region | *filled in by #34* / `asia-southeast1` |
+| Project ID / region | `cpe334-en007` / `asia-southeast1` |
 | Cloud Run service / migration job | `tcg-event-hub` / `tcg-event-hub-migrate` |
 | Artifact Registry repository and image | `tcg-event-hub/tcg-event-hub`, tagged with the full commit SHA |
 | Cloud SQL instance / database / user | `tcg-event-hub-pg` (PostgreSQL 16, `db-f1-micro`) / `tcg_event_hub` / `tcg_event_hub` |
@@ -102,8 +103,36 @@ The `deploy/` scripts come from the kit with these changes: names `tcg-event-hub
 | Service accounts | `tcg-event-hub-runner` (runtime), `tcg-event-hub-deployer` (GitHub Actions, no key) |
 | GitHub environment | `demo` (deploys from `main` only) |
 
-## 5. Release procedure (planned, #36)
+## 5. Release procedure (#36)
 
-Feature branch → PR into `sprint-1-staging` (teammate review, `test-and-docker` green) → release PR into `main` →
-**Deploy demo** builds the image tagged with the merge commit SHA, runs the migration job, updates Cloud Run and
-smoke-tests the URL. The running commit is the image tag in the run summary and on the Cloud Run revision.
+Nobody types a deploy command. Every release takes the same path:
+
+1. Issue → branch from `sprint-1-staging` (`git checkout --no-track -b <type>/<issue>-<slug> origin/sprint-1-staging`).
+2. PR into `sprint-1-staging`, label `lab5`; `test-and-docker` must pass and the teammate approves with a specific
+   check, question or finding; merge.
+3. Release PR `sprint-1-staging` → `main`; the same check runs again; teammate approval; merge.
+4. The merge into `main` starts **Deploy demo** (`.github/workflows/deploy.yml`, environment `demo`):
+   `test` (reuses `ci-docker.yml`) → keyless sign-in (Workload Identity Federation) → `docker build --build-arg
+   GIT_SHA=<sha>` and push `tcg-event-hub:<full sha>` → `deploy/release.sh` (resolve the digest, run the migration
+   job `tcg-event-hub-migrate`, point the service at the digest with 100% traffic) → `deploy/smoke_test.py`
+   (health, ready, page, events, and `/api/version` = the released SHA) → run summary.
+
+**Which commit is running** (R-08), four ways that must agree:
+
+| Where | What to read |
+|---|---|
+| The live page | footer `Build <first 7 characters>` |
+| `GET <URL>/api/version` | `{"commit":"<full SHA>"}` |
+| Actions → Deploy demo → run → Summary | Commit image tag, Digest, URL |
+| Cloud Run → `tcg-event-hub` → Revisions | the 100% revision's image digest equals the summary's digest |
+
+**Rollback** (Episode 8): Actions → Deploy demo → Run workflow on `main` with `image_tag` = the full 40-character
+SHA of an earlier release (copy it from that run's summary). Test, build and migration are skipped; the service is
+pointed back at that image, and the smoke test checks `/api/version` reports that SHA. Roll forward the same way
+with the newer SHA. The database is never rolled back, so migrations stay additive.
+
+**Do not merge into `main` while the app is paused** (Episode 9): the migration and the smoke test would fail.
+Resume first, then re-run the failed run.
+
+The first deployment (#34) was made by hand with `deploy/deploy.sh` (Cloud Build, tag `latest`), so it reports
+`commit: local`; every pipeline release after it reports its SHA.

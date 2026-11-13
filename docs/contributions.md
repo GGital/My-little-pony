@@ -48,10 +48,10 @@ Issues are labelled `lab5` (handout R-10). Builders and reviewers are filled in 
 | L5-1 Cloud preparation: GCP project, budget, repo safety | [#30](https://github.com/GGital/My-little-pony/issues/30) | no branch (Console) | — | — | Planned |
 | L5-2 Cloud-ready app: /api/ready, one container, APP_ORIGIN list | [#31](https://github.com/GGital/My-little-pony/issues/31) | `refactor/l5-2-cloud-ready` · [#39](https://github.com/GGital/My-little-pony/pull/39) | Phattaratorn | Praewa (approved 13 Nov) | Merged 13 Nov |
 | L5-3 Docker: one image, Compose, fresh clone | [#32](https://github.com/GGital/My-little-pony/issues/32) | `build/l5-3-docker` · [#40](https://github.com/GGital/My-little-pony/pull/40) | Phattaratorn | Praewa (approved 13 Nov) | Merged 13 Nov |
-| L5-4 CI on PRs and adapted deploy scripts | [#33](https://github.com/GGital/My-little-pony/issues/33) | `ci/l5-4-pr-checks` · PR pending | Phattaratorn | — | In progress |
+| L5-4 CI on PRs and adapted deploy scripts | [#33](https://github.com/GGital/My-little-pony/issues/33) | `ci/l5-4-pr-checks` · [#41](https://github.com/GGital/My-little-pony/pull/41); release [#42](https://github.com/GGital/My-little-pony/pull/42) | Phattaratorn | Praewa (approved #41 and #42, 13 Nov) | Merged 13 Nov |
 | L5-5 First deployment to GCP | [#34](https://github.com/GGital/My-little-pony/issues/34) | no branch (Cloud Shell) | — | — | Planned |
 | L5-6 WIF and the merge gate | [#35](https://github.com/GGital/My-little-pony/issues/35) | no branch; `test/l5-prove-gate` | — | — | Planned |
-| L5-7 Auto deploy, releases A and B | [#36](https://github.com/GGital/My-little-pony/issues/36) | `ci/l5-7-auto-deploy`, `feature/l5-7-deploy-proof` | — | — | Planned |
+| L5-7 Auto deploy, releases A and B | [#36](https://github.com/GGital/My-little-pony/issues/36) | `ci/l5-7-auto-deploy` · PR pending; `feature/l5-7-deploy-proof` (release B) | Phattaratorn (release A); Praewa (release B) | — | In progress |
 | L5-8 Persistence, rollback, roll-forward | [#37](https://github.com/GGital/My-little-pony/issues/37) | no branch (Actions, Console) | — | — | Planned |
 | L5-9 deployment.md, evidence index, PDF | [#38](https://github.com/GGital/My-little-pony/issues/38) | `docs/l5-9-deployment-doc` | — | — | Planned |
 
@@ -77,3 +77,4 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.13 | 13 Nov 2026 | §3 Lab 5 table: Issues #30 … #38; L5-2 in progress | Team (AI-assisted) |
 | v0.14 | 13 Nov 2026 | L5-2 merged (PR #39, approved by Praewa); L5-3 in progress | Team (AI-assisted) |
 | v0.15 | 13 Nov 2026 | L5-3 merged (PR #40, approved by Praewa); L5-4 in progress | Team (AI-assisted) |
+| v0.16 | 13 Nov 2026 | L5-4 merged (PR #41 and release #42, approved by Praewa); L5-7 in progress | Team (AI-assisted) |
