@@ -1,0 +1,423 @@
+# L5-7 (#36) red run - 2026-11-13T16:28:56Z - branch ci/l5-7-auto-deploy, before the implementation (Node v24.19.0)
+
+# server: npx vitest run tests/lab5/version.api.test.ts tests/lab5/unit/version-config.unit.test.ts --reporter=verbose
+
+ RUN  v4.0.18 D:/University works/MylittlePony/My-little-pony/server
+
+ × tests/lab5/version.api.test.ts > TEST-L5-05 (I) — GET /api/version names the commit the image was built from > answers {commit} with the full GIT_SHA of the image 94ms
+   → expected 404 to be 200 // Object.is equality
+ × tests/lab5/version.api.test.ts > TEST-L5-05 (I) — GET /api/version names the commit the image was built from > answers {commit:"local"} outside a pipeline build 18ms
+   → expected { error: { code: 'NOT_FOUND', …(1) } } to deeply equal { commit: 'local' }
+ × tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > defaults to "local" when the image was not built by the pipeline 10ms
+   → expected undefined to be 'local' // Object.is equality
+ × tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > keeps a full 40-character commit SHA 1ms
+   → expected undefined to be 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa…' // Object.is equality
+ × tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > throws naming GIT_SHA for a short SHA 2ms
+   → expected [Function] to throw an error
+ × tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > throws naming GIT_SHA for upper-case hex 1ms
+   → expected [Function] to throw an error
+ × tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > throws naming GIT_SHA for anything else 1ms
+   → expected [Function] to throw an error
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/lab5/version.api.test.ts > TEST-L5-05 (I) — GET /api/version names the commit the image was built from > answers {commit} with the full GIT_SHA of the image
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ tests/lab5/version.api.test.ts:17:24
+     15|   it('answers {commit} with the full GIT_SHA of the image', async () =…
+     16|     const res = await request(makeApp({ config: configWith({ GIT_SHA: …
+     17|     expect(res.status).toBe(200)
+       |                        ^
+     18|     expect(res.body).toEqual({ commit: SHA })
+     19|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  tests/lab5/version.api.test.ts > TEST-L5-05 (I) — GET /api/version names the commit the image was built from > answers {commit:"local"} outside a pipeline build
+AssertionError: expected { error: { code: 'NOT_FOUND', …(1) } } to deeply equal { commit: 'local' }
+
+- Expected
++ Received
+
+  {
+-   "commit": "local",
++   "error": {
++     "code": "NOT_FOUND",
++     "message": "There is nothing here.",
++   },
+  }
+
+ ❯ tests/lab5/version.api.test.ts:25:22
+     23|     delete env.GIT_SHA
+     24|     const res = await request(makeApp({ config: loadConfig(env) })).ge…
+     25|     expect(res.body).toEqual({ commit: 'local' })
+       |                      ^
+     26|   })
+     27| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > defaults to "local" when the image was not built by the pipeline
+AssertionError: expected undefined to be 'local' // Object.is equality
+
+- Expected: 
+"local"
+
++ Received: 
+undefined
+
+ ❯ tests/lab5/unit/version-config.unit.test.ts:11:46
+      9| describe('TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build…
+     10|   it('defaults to "local" when the image was not built by the pipeline…
+     11|     expect(loadConfig({ ...VALID }).GIT_SHA).toBe('local')
+       |                                              ^
+     12|   })
+     13| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > keeps a full 40-character commit SHA
+AssertionError: expected undefined to be 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa…' // Object.is equality
+
+- Expected: 
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+
++ Received: 
+undefined
+
+ ❯ tests/lab5/unit/version-config.unit.test.ts:16:60
+     14|   it('keeps a full 40-character commit SHA', () => {
+     15|     const sha = 'a'.repeat(40)
+     16|     expect(loadConfig({ ...VALID, GIT_SHA: sha }).GIT_SHA).toBe(sha)
+       |                                                            ^
+     17|   })
+     18| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > throws naming GIT_SHA for a short SHA
+ FAIL  tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > throws naming GIT_SHA for upper-case hex
+ FAIL  tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > throws naming GIT_SHA for anything else
+AssertionError: expected [Function] to throw an error
+
+- Expected: 
+null
+
++ Received: 
+undefined
+
+ ❯ tests/lab5/unit/version-config.unit.test.ts:24:60
+     22|     ['anything else', 'latest'],
+     23|   ])('throws naming GIT_SHA for %s', (_name, value) => {
+     24|     expect(() => loadConfig({ ...VALID, GIT_SHA: value })).toThrow(/GI…
+       |                                                            ^
+     25|   })
+     26| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  7 failed (7)
+   Start at  23:29:00
+   Duration  2.46s (transform 420ms, setup 0ms, import 1.61s, tests 134ms, environment 0ms)
+
+
+# client: npx vitest run tests/lab5 --reporter=verbose
+
+ RUN  v4.0.18 D:/University works/MylittlePony/My-little-pony/client
+
+ × tests/lab5/BuildFooter.test.tsx > TEST-L5-07 (E) — the page footer shows the commit the build came from > shows the short commit SHA when the pipeline set VITE_GIT_SHA 113ms
+   → Unable to find an accessible element with the role "contentinfo"
+
+Here are the accessible roles:
+
+  banner:
+
+  Name "":
+  />
+
+  --------------------------------------------------
+  link:
+
+  Name "TCG Event Hub":
+    data-discover="true"
+  />
+
+  Name "Events":
+    data-discover="true"
+  />
+
+  Name "Sign in":
+    data-discover="true"
+  />
+
+  --------------------------------------------------
+  navigation:
+
+  Name "Main":
+    aria-label="Main"
+  />
+
+  --------------------------------------------------
+  main:
+
+  Name "":
+  />
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+          data-discover="true"
+            aria-hidden="true"
+          />
+          TCG Event Hub
+          aria-label="Main"
+            data-discover="true"
+            Events
+            data-discover="true"
+            Sign in
+        />
+ × tests/lab5/BuildFooter.test.tsx > TEST-L5-07 (E) — the page footer shows the commit the build came from > shows "local" for a build outside the pipeline 22ms
+   → Unable to find an accessible element with the role "contentinfo"
+
+Here are the accessible roles:
+
+  banner:
+
+  Name "":
+  />
+
+  --------------------------------------------------
+  link:
+
+  Name "TCG Event Hub":
+    data-discover="true"
+  />
+
+  Name "Events":
+    data-discover="true"
+  />
+
+  Name "Sign in":
+    data-discover="true"
+  />
+
+  --------------------------------------------------
+  navigation:
+
+  Name "Main":
+    aria-label="Main"
+  />
+
+  --------------------------------------------------
+  main:
+
+  Name "":
+  />
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+          data-discover="true"
+            aria-hidden="true"
+          />
+          TCG Event Hub
+          aria-label="Main"
+            data-discover="true"
+            Events
+            data-discover="true"
+            Sign in
+        />
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/lab5/BuildFooter.test.tsx > TEST-L5-07 (E) — the page footer shows the commit the build came from > shows the short commit SHA when the pipeline set VITE_GIT_SHA
+TestingLibraryElementError: Unable to find an accessible element with the role "contentinfo"
+
+Here are the accessible roles:
+
+  banner:
+
+  Name "":
+  />
+
+  --------------------------------------------------
+  link:
+
+  Name "TCG Event Hub":
+    data-discover="true"
+  />
+
+  Name "Events":
+    data-discover="true"
+  />
+
+  Name "Sign in":
+    data-discover="true"
+  />
+
+  --------------------------------------------------
+  navigation:
+
+  Name "Main":
+    aria-label="Main"
+  />
+
+  --------------------------------------------------
+  main:
+
+  Name "":
+  />
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+          data-discover="true"
+            aria-hidden="true"
+          />
+          TCG Event Hub
+          aria-label="Main"
+            data-discover="true"
+            Events
+            data-discover="true"
+            Sign in
+        />
+     23|     vi.stubEnv('VITE_GIT_SHA', '0123456789abcdef0123456789abcdef012345…
+     24|     renderShell();
+     25|     const footer = screen.getByRole('contentinfo');
+       |                           ^
+     26|     expect(footer).toHaveTextContent('Build 0123456');
+     27|     expect(footer).not.toHaveTextContent('0123456789abcdef');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/lab5/BuildFooter.test.tsx > TEST-L5-07 (E) — the page footer shows the commit the build came from > shows "local" for a build outside the pipeline
+TestingLibraryElementError: Unable to find an accessible element with the role "contentinfo"
+
+Here are the accessible roles:
+
+  banner:
+
+  Name "":
+  />
+
+  --------------------------------------------------
+  link:
+
+  Name "TCG Event Hub":
+    data-discover="true"
+  />
+
+  Name "Events":
+    data-discover="true"
+  />
+
+  Name "Sign in":
+    data-discover="true"
+  />
+
+  --------------------------------------------------
+  navigation:
+
+  Name "Main":
+    aria-label="Main"
+  />
+
+  --------------------------------------------------
+  main:
+
+  Name "":
+  />
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+          data-discover="true"
+            aria-hidden="true"
+          />
+          TCG Event Hub
+          aria-label="Main"
+            data-discover="true"
+            Events
+            data-discover="true"
+            Sign in
+        />
+     31|     vi.stubEnv('VITE_GIT_SHA', '');
+     32|     renderShell();
+     33|     expect(screen.getByRole('contentinfo')).toHaveTextContent('Build l…
+       |                   ^
+     34|   });
+     35| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  23:29:06
+   Duration  3.28s (transform 181ms, setup 518ms, import 506ms, tests 137ms, environment 1.77s)
+
+
+# deploy smoke unit tests: python -m unittest discover -s deploy/tests -p test_smoke.py -v
+test_an_empty_event_list_still_passes (test_smoke.SmokeTests.test_an_empty_event_list_still_passes) ... ok
+test_another_running_commit_fails (test_smoke.SmokeTests.test_another_running_commit_fails) ... FAIL
+test_db_not_ready_fails_even_when_http_responds (test_smoke.SmokeTests.test_db_not_ready_fails_even_when_http_responds) ... ok
+test_half_set_credentials_are_refused (test_smoke.SmokeTests.test_half_set_credentials_are_refused) ... ok
+test_public_checks_pass_and_skip_optional_login (test_smoke.SmokeTests.test_public_checks_pass_and_skip_optional_login) ... ok
+test_running_commit_matches_the_released_image (test_smoke.SmokeTests.test_running_commit_matches_the_released_image) ... FAIL
+test_session_is_signed_out_even_if_me_fails (test_smoke.SmokeTests.test_session_is_signed_out_even_if_me_fails) ... ok
+
+======================================================================
+FAIL: test_another_running_commit_fails (test_smoke.SmokeTests.test_another_running_commit_fails)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+AssertionError: RuntimeError not raised
+
+======================================================================
+FAIL: test_running_commit_matches_the_released_image (test_smoke.SmokeTests.test_running_commit_matches_the_released_image)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+AssertionError: '/api/version' not found in ['/api/health', '/api/ready', '/', '/api/events']
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.015s
+
+FAILED (failures=2)
+PASS /api/health
+PASS /api/ready
+PASS /
+PASS /api/events
+SKIP login: optional smoke credentials not configured
+PASS /api/health
+PASS /api/ready
+PASS /
+PASS /api/events
+SKIP login: optional smoke credentials not configured
+PASS /api/health
+PASS /api/health
+PASS /api/ready
+PASS /
+PASS /api/events
+PASS /api/health
+PASS /api/ready
+PASS /
+PASS /api/events
+SKIP login: optional smoke credentials not configured
+PASS /api/health
+PASS /api/ready
+PASS /
+PASS /api/events
+SKIP login: optional smoke credentials not configured
+PASS /api/health
+PASS /api/ready
+PASS /
+PASS /api/events
+PASS logout
