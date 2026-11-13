@@ -1,0 +1,120 @@
+# Deploy demo — automatic release to Google Cloud Run (Lab 5, Issue #36). Adapted from the Lab 5 Starter Kit.
+#
+# On every push to main (a merged release PR), or by hand:
+#   1) runs the CI workflow first (ci-docker.yml, job test-and-docker);
+#   2) signs in to Google Cloud with Workload Identity Federation (no key file);
+#   3) builds and pushes the image, tagged with the full commit SHA (GIT_SHA build argument too);
+#   4) deploy/release.sh: image digest -> migration job -> Cloud Run service at 100% traffic;
+#   5) smoke-tests the public URL, including GET /api/version == the released commit (R-08);
+#   6) writes the commit, digest and URL to the run summary.
+# ROLLBACK: Actions > Deploy demo > Run workflow on main with image_tag = the full 40-character SHA of an earlier
+# release. Tests, build and migration are skipped; only the service is pointed back at that image.
+#
+# Must match Episode 6: the file name deploy.yml and `environment: demo` are in the WIF attribute condition; the
+# environment holds GCP_PROJECT_ID, GCP_REGION, WIF_PROVIDER and WIF_SERVICE_ACCOUNT (variables, not secrets).
+# Keep the `if` conditions on test/deploy: they make the rollback skip the tests and the build.
+# Changes from the kit: tcg-event-hub names, the GIT_SHA build argument and EXPECTED_COMMIT smoke check.
+
+name: Deploy demo
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Rollback: full commit SHA of an existing image. Empty = test, build and deploy current main.'
+        type: string
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+# Queue releases; never interrupt a running migration or deployment.
+concurrency:
+  group: deploy-demo
+  cancel-in-progress: false
+
+jobs:
+  # The same checks as every Pull Request. Skipped for a rollback (image_tag set) and off main.
+  test:
+    if: github.ref == 'refs/heads/main' && !inputs.image_tag
+    uses: ./.github/workflows/ci-docker.yml
+
+  deploy:
+    needs: test
+    if: >-
+      always() && !cancelled() && github.ref == 'refs/heads/main' &&
+      (needs.test.result == 'success' ||
+       (github.event_name == 'workflow_dispatch' && inputs.image_tag != '' && needs.test.result == 'skipped'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: demo
+    permissions:
+      contents: read
+      id-token: write # keyless Google Cloud sign-in (Workload Identity Federation)
+    env:
+      PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+      REGION: ${{ vars.GCP_REGION }}
+      SERVICE_NAME: tcg-event-hub
+      MIGRATE_JOB_NAME: tcg-event-hub-migrate
+      IMAGE_TAG: ${{ inputs.image_tag || github.sha }}
+      ROLLBACK: ${{ inputs.image_tag != '' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Validate deployment settings
+        env:
+          WIF_PROVIDER: ${{ vars.WIF_PROVIDER }}
+          WIF_SERVICE_ACCOUNT: ${{ vars.WIF_SERVICE_ACCOUNT }}
+        run: |
+          test -n "$PROJECT_ID" && test -n "$REGION"
+          test -n "$WIF_PROVIDER" && test -n "$WIF_SERVICE_ACCOUNT"
+          [[ "$IMAGE_TAG" =~ ^[0-9a-f]{40}$ ]] || { echo 'Image tag must be a full 40-character commit SHA.'; exit 1; }
+
+      - name: Authenticate to Google Cloud without a key
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.WIF_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
+
+      # The commit SHA is both the image tag and the GIT_SHA inside the image (footer, GET /api/version).
+      - name: Build and push image
+        if: env.ROLLBACK != 'true'
+        run: |
+          gcloud auth configure-docker "$REGION-docker.pkg.dev" --quiet
+          IMAGE="$REGION-docker.pkg.dev/$PROJECT_ID/tcg-event-hub/tcg-event-hub:$IMAGE_TAG"
+          docker build --build-arg GIT_SHA="$IMAGE_TAG" --tag "$IMAGE" .
+          docker push "$IMAGE"
+
+      - name: Verify image, migrate and deploy
+        run: bash deploy/release.sh
+
+      - name: Setup Python 3.14
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.14"
+
+      # Optional sign-in check: set BOTH SMOKE_EMAIL (variable) and SMOKE_PASSWORD (secret) in `demo`, or neither.
+      # Our team skips it (Episode 7.3): the step prints "SKIP login".
+      - name: Smoke test public URL
+        env:
+          EXPECTED_COMMIT: ${{ env.IMAGE_TAG }}
+          SMOKE_EMAIL: ${{ vars.SMOKE_EMAIL }}
+          SMOKE_PASSWORD: ${{ secrets.SMOKE_PASSWORD }}
+        run: python3 deploy/smoke_test.py "$SERVICE_URL"
+
+      - name: Record deployment
+        run: |
+          {
+            echo '### TCG Event Hub demo deployment'
+            echo "- Commit image tag: \`$IMAGE_TAG\`"
+            echo "- Digest: \`$DEPLOYED_IMAGE\`"
+            echo "- Rollback: $ROLLBACK"
+            echo "- URL: $SERVICE_URL"
+            echo "- Smoke test: passed (health, readiness/DB, HTML page, events, running commit = image tag)."
+          } >> "$GITHUB_STEP_SUMMARY"
