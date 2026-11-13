@@ -38,6 +38,8 @@ tasks they assisted. Both students are responsible for, and must be able to expl
 | PR #25 review (I-11) | PR [#25](https://github.com/GGital/My-little-pony/pull/25) | Ran both suites on the real database and five mutations of E-08; strengthened TEST-I-01 (out-of-order data and a cancelled row) after the sort and status-filter mutations passed; made the page show the not-found page on 404 / 400 and use the theme table; removed the last probe; checked the page in the browser at desktop and phone width with mocked API answers; wrote the doc rows and the review text | Phattaratorn set the scope (fixes committed on the branch), reviewed the result and decides what to push and post |
 | I-12 integration and release | #14 | Set up Playwright on the test database (fresh seed per file, E2E-only participant Fern); wrote the 40 E2E tests (journeys, three-width check, the E2E halves owed by I-04 … I-11) and the I-12 server cases; wrote the STS coverage script and the secret scan; ran every suite and the mutations; ran the restart check in the browser; filled STS §5 / §6, the traceability results, contracts v1.12 and the README | Phattaratorn agreed the split (builds, Praewa reviews), allowed the Playwright and Chromium download, and decides what to push, merge and tag; Praewa reviewed and approved PR [#26](https://github.com/GGital/My-little-pony/pull/26) (7 Nov) |
 | Release errata and Deliverable 1 PDF | release PR | Checked the PDF draft against the deliverable brief (a Claude Sonnet sub-agent graded it); found the stale doc text fixed here (this page's two pending notes, the SDS client versions, the SRS version in the coverage checks, the student IDs); rendered the release documents, took the demonstration and GitHub screenshots with Playwright, and laid out the PDF pages in Canva from the team's Lab template | Phattaratorn chose the template and the fixes, answered the facts the AI could not know (round 1 of the PR #16 review), and decides what to push, merge and tag; Praewa reviews the errata and release PRs |
+| Lab 5 plan and Issues | [#30](https://github.com/GGital/My-little-pony/issues/30) … [#38](https://github.com/GGital/My-little-pony/issues/38) | Read the Lab 5 handout, the Student Guide and the Starter Kit; wrote the plan and the nine Issue bodies, and created them with `gh` | Phattaratorn asked for the Issues, read them and set the board; GCP and GitHub settings stay with the students |
+| L5-2 cloud-ready app | [#31](https://github.com/GGital/My-little-pony/issues/31) | Wrote the red tests TEST-L5-01 … 04, then static serving, `/api/ready`, the APP_ORIGIN list and SIGTERM shutdown; moved `prisma`/`tsx` to runtime deps; ran the suites on the real database and the app in the browser; drafted the docs and the PR text | Phattaratorn supervised, read the diff and opens the PR; the reviewer is filled in from the PR record |
 
 ## 3. How we supervise the agent
 
@@ -48,6 +50,9 @@ tasks they assisted. Both students are responsible for, and must be able to expl
   PR with a specific check, question or finding. Authors do not approve their own PRs.
 - No real secrets, passwords or tokens are given to the agent or written to Git; demo accounts use a local
   `SEED_PASSWORD`.
+- Lab 5: the agent may read the cloud state but never runs a command that creates or changes GCP resources, billing,
+  IAM or the database, and never sees a generated password; students run `deploy/deploy.sh` and every Console step.
+  Lab 5 run outputs are saved under `docs/labs/lab05/evidence/`.
 - Full prompt transcripts are not kept (spec §8.4); commit authorship and trailers show which commits the agent wrote.
 
 ## 4. Keeping this page current
@@ -69,3 +74,4 @@ same way it fills its row in `sts.md` §5 and in [`contributions.md`](contributi
 | v0.10 | 7 Nov 2026 | PR #25 review declared | Team (AI-assisted) |
 | v0.11 | 7 Nov 2026 | I-12 integration and release assisted tasks declared | Team (AI-assisted) |
 | v0.12 | 7 Nov 2026 | Errata before the release: PR #16 round 1 and the I-04 review filled in from the PR record; PR #26 reviewer; release errata and PDF row; Sonnet sub-agent named; v0.11 date corrected (7 Nov) | Team (AI-assisted) |
+| v0.13 | 13 Nov 2026 | Lab 5: plan and Issues #30 … #38, L5-2 row; supervision rule for cloud work | Team (AI-assisted) |

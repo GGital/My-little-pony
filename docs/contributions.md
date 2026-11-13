@@ -39,7 +39,23 @@ the Issues, branches and PRs. AI assistance is listed in [`ai-use.md`](ai-use.md
 Both students must be able to explain a sampled requirement, test, design decision and release step. The plan gives
 each student server and client Issues in Sprint 1 (I-05 … I-11 alternate), and I-12 is pair work.
 
-## 3. Keeping this table current
+## 3. Lab 5: cloud deployment and CI/CD on GCP
+
+Issues are labelled `lab5` (handout R-10). Builders and reviewers are filled in from the PR record as each Issue moves; R-11 asks both students to take part in every kind of work, so no Issue has a fixed owner.
+
+| Item | Issue | Branch · PR | Built by | Reviewed by | Status |
+|---|---|---|---|---|---|
+| L5-1 Cloud preparation: GCP project, budget, repo safety | [#30](https://github.com/GGital/My-little-pony/issues/30) | no branch (Console) | — | — | Planned |
+| L5-2 Cloud-ready app: /api/ready, one container, APP_ORIGIN list | [#31](https://github.com/GGital/My-little-pony/issues/31) | `refactor/l5-2-cloud-ready` · PR pending | Phattaratorn | — | In progress |
+| L5-3 Docker: one image, Compose, fresh clone | [#32](https://github.com/GGital/My-little-pony/issues/32) | `build/l5-3-docker` | — | — | Planned |
+| L5-4 CI on PRs and adapted deploy scripts | [#33](https://github.com/GGital/My-little-pony/issues/33) | `ci/l5-4-pr-checks` | — | — | Planned |
+| L5-5 First deployment to GCP | [#34](https://github.com/GGital/My-little-pony/issues/34) | no branch (Cloud Shell) | — | — | Planned |
+| L5-6 WIF and the merge gate | [#35](https://github.com/GGital/My-little-pony/issues/35) | no branch; `test/l5-prove-gate` | — | — | Planned |
+| L5-7 Auto deploy, releases A and B | [#36](https://github.com/GGital/My-little-pony/issues/36) | `ci/l5-7-auto-deploy`, `feature/l5-7-deploy-proof` | — | — | Planned |
+| L5-8 Persistence, rollback, roll-forward | [#37](https://github.com/GGital/My-little-pony/issues/37) | no branch (Actions, Console) | — | — | Planned |
+| L5-9 deployment.md, evidence index, PDF | [#38](https://github.com/GGital/My-little-pony/issues/38) | `docs/l5-9-deployment-doc` | — | — | Planned |
+
+## 4. Keeping this table current
 
 Every Issue PR updates its own row (branch, PR, built by, reviewed by, status) and the summary in §2, in the same PR
 as the work. Pair work names both students. Reviewers are filled in from the PR's review record, not in advance.
@@ -58,3 +74,4 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.10 | 7 Nov 2026 | I-11 in review as PR #25; Phattaratorn's review fixes recorded | Team (AI-assisted) |
 | v0.11 | 7 Nov 2026 | I-11 merged; I-12 in progress (Phattaratorn builds, Praewa reviews) | Team (AI-assisted) |
 | v0.12 | 7 Nov 2026 | Student IDs filled in; I-11 approval date; I-12 merged (PR #26, approved by Praewa); summaries; v0.11 date corrected (7 Nov) | Team (AI-assisted) |
+| v0.13 | 13 Nov 2026 | §3 Lab 5 table: Issues #30 … #38; L5-2 in progress | Team (AI-assisted) |

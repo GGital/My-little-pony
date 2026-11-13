@@ -1,0 +1,46 @@
+# L5-2 (#31) green run - 2026-11-12T17:41:44Z - branch refactor/l5-2-cloud-ready, after the implementation
+# 1) npx vitest run tests/lab5 --reporter=verbose   (server/, Node v24.19.0)
+
+ RUN  v4.0.18 D:/University works/MylittlePony/My-little-pony/server
+
+ ✓ tests/lab5/ready.api.test.ts > TEST-L5-02 (I) — GET /api/ready for the smoke test and Cloud Run (Lab 5 Ep. 2 point 6) > answers 200 {status:"ready", db:"connected"} when the database answers 94ms
+ ✓ tests/lab5/ready.api.test.ts > TEST-L5-02 (I) — GET /api/ready for the smoke test and Cloud Run (Lab 5 Ep. 2 point 6) > answers 503 {status:"not_ready"} when the database cannot be reached, without leaking why 2040ms
+ ✓ tests/lab5/static.api.test.ts > TEST-L5-01 (I) — one container serves the API and the built React app (SD-01, Lab 5 R-03) > serves index.html at / 31ms
+ ✓ tests/lab5/static.api.test.ts > TEST-L5-01 (I) — one container serves the API and the built React app (SD-01, Lab 5 R-03) > serves index.html for a client-side route, so a reload of /events/1 works 11ms
+ ✓ tests/lab5/static.api.test.ts > TEST-L5-01 (I) — one container serves the API and the built React app (SD-01, Lab 5 R-03) > serves a built asset as itself, not as index.html 9ms
+ ✓ tests/lab5/static.api.test.ts > TEST-L5-01 (I) — one container serves the API and the built React app (SD-01, Lab 5 R-03) > keeps an unknown /api path as the JSON 404, never the page 10ms
+ ✓ tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > lets a POST from https://tcg-event-hub-123.asia-southeast1.run.app through 26ms
+ ✓ tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > lets a POST from https://tcg-event-hub-abc-as.a.run.app through 6ms
+ ✓ tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > rejects another site with 403 FORBIDDEN 5ms
+ ✓ tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > rejects a prefix of a listed origin with 403 FORBIDDEN 5ms
+ ✓ tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > rejects the whole list as one value with 403 FORBIDDEN 6ms
+ ✓ tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > rejects a POST with no Origin header 7ms
+ ✓ tests/lab5/unit/config.unit.test.ts > TEST-L5-03 (U) — APP_ORIGIN accepts a comma-separated list of origins > loads a list of two origins 6ms
+ ✓ tests/lab5/unit/config.unit.test.ts > TEST-L5-03 (U) — APP_ORIGIN accepts a comma-separated list of origins > throws naming APP_ORIGIN for an entry that is not an origin 2ms
+ ✓ tests/lab5/unit/config.unit.test.ts > TEST-L5-03 (U) — APP_ORIGIN accepts a comma-separated list of origins > throws naming APP_ORIGIN for an entry with a path 0ms
+ ✓ tests/lab5/unit/config.unit.test.ts > TEST-L5-03 (U) — APP_ORIGIN accepts a comma-separated list of origins > throws naming APP_ORIGIN for an empty entry 0ms
+ ✓ tests/lab5/unit/config.unit.test.ts > TEST-L5-03 (U) — APP_ORIGIN accepts a comma-separated list of origins > throws naming APP_ORIGIN for a space after the comma 0ms
+
+ Test Files  4 passed (4)
+      Tests  17 passed (17)
+   Start at  00:41:47
+   Duration  6.04s (transform 330ms, setup 0ms, import 2.53s, tests 2.27s, environment 1ms)
+
+
+# 2) full server suite: npx vitest run
+ Test Files  25 passed (25)
+      Tests  285 passed (285)
+
+# 3) client: npm test; npm run build
+ Test Files  15 passed (15)
+      Tests  64 passed (64)
+✓ built in 1.62s
+
+# 4) live check: server on :3100 (APP_ORIGIN=http://localhost:3100) serving client/dist, browser at /events/1
+# GET /events/1 -> React app rendered (title "TCG Event Hub"), path kept
+# GET /api/ready -> {"status":"ready","db":"connected"}
+# POST /api/auth/login, same origin, unknown account -> 401 INVALID_CREDENTIALS (origin check passed; a cross-site origin gets 403)
+# GET /api/nope -> 404 application/json
+
+# 5) end-to-end: npx playwright test (repository root, test database) - 2026-11-12T17:46:15Z
+  40 passed (1.6m)
