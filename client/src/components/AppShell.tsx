@@ -131,6 +131,11 @@ export const AppShell: React.FC<{ children?: React.ReactNode }> = ({ children })
       <main className="app-main flex-grow-1">
         <div className="app-panel">{children}</div>
       </main>
+
+      {/* Lab 5 R-08: which commit this page was built from (full SHA in GET /api/version). */}
+      <footer className="app-footer">
+        Build <code>{import.meta.env.VITE_GIT_SHA?.slice(0, 7) || 'local'}</code>
+      </footer>
     </div>
   );
 };

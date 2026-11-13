@@ -27,6 +27,11 @@ const schema = z.object({
     ),
   LOG_LEVEL: z.enum(['silent', 'error', 'warn', 'info', 'debug']).default('info'),
   TRUST_PROXY: z.coerce.number().int().min(0).default(0),
+  // Lab 5 (R-08): the full commit SHA the image was built from (Docker build argument), or "local".
+  GIT_SHA: z
+    .string()
+    .regex(/^([0-9a-f]{40}|local)$/, 'must be a full 40-character lower-case commit SHA, or "local"')
+    .default('local'),
 })
 
 export type Config = z.infer<typeof schema>

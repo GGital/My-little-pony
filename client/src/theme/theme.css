@@ -288,6 +288,15 @@ p {
 }
 
 /* ---------- Page panel ---------- */
+.app-footer {
+  padding: 0 16px 24px;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+.app-footer code {
+  color: inherit;
+}
 .app-main {
   width: 100%;
   max-width: 1200px;

@@ -10,6 +10,7 @@ Checks, in order (all read-only):
   2. GET /api/ready   -> {"db": "connected"}            (the database answers)
   3. GET /            -> an HTML page                   (the built React app is served, SD-01)
   4. GET /api/events  -> {"items": [...]}               (migrations ran and the event query works)
+     GET /api/version -> {"commit": EXPECTED_COMMIT}    (only when EXPECTED_COMMIT is set; deploy.yml sets it)
   5. OPTIONAL sign-in -> login, /api/auth/me, logout. Runs only when BOTH SMOKE_EMAIL and SMOKE_PASSWORD are set.
      Use a dedicated low-role participant, never a demo account the partner team uses.
      The session is always signed out, even when a check fails.
@@ -57,13 +58,18 @@ def login(base, email, password):
 
 
 def check(base):
-    for path, predicate in (
+    checks = [
         ('/api/health', lambda b: json.loads(b).get('status') == 'ok'),
         ('/api/ready', lambda b: json.loads(b).get('db') == 'connected'),
         ('/', lambda b: b'<html' in b.lower()),
         # A list, possibly empty: seeded events are relative to the first seed run and pass with time.
         ('/api/events', lambda b: isinstance(json.loads(b).get('items'), list)),
-    ):
+    ]
+    # R-08: deploy.yml sets EXPECTED_COMMIT to the released image tag; the running build must report that commit.
+    expected = os.getenv('EXPECTED_COMMIT')
+    if expected:
+        checks.append(('/api/version', lambda b: json.loads(b).get('commit') == expected))
+    for path, predicate in checks:
         for attempt in range(5):
             try:
                 if not predicate(request(base, path)):

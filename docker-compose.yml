@@ -1,7 +1,11 @@
 name: tcg-event-hub
 
 x-app: &app
-  build: .
+  build:
+    context: .
+    # Optional: GIT_SHA=$(git rev-parse HEAD) docker compose up --build  (footer + GET /api/version show it)
+    args:
+      GIT_SHA: ${GIT_SHA:-local}
   image: tcg-event-hub:local
   # SEED_PASSWORD (and nothing else that matters here) comes from server/.env; `environment` wins over it.
   env_file:
@@ -53,6 +57,8 @@ services:
       APP_ORIGIN: http://localhost:${APP_PORT:-8080}
       TRUST_PROXY: "0"
       LOG_LEVEL: info
+      # Wins over a GIT_SHA line in server/.env, so the API reports the same commit as the footer.
+      GIT_SHA: ${GIT_SHA:-local}
     ports:
       - "${APP_PORT:-8080}:3000"
 

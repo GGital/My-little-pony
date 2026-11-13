@@ -4,7 +4,9 @@ WORKDIR /app/client
 COPY client/package.json client/package-lock.json ./
 RUN npm ci
 COPY client/ ./
-RUN npm run build
+# deploy.yml passes --build-arg GIT_SHA=<full commit SHA>; the footer shows its first 7 characters (R-08).
+ARG GIT_SHA=local
+RUN VITE_GIT_SHA="$GIT_SHA" npm run build
 
 # ---- Stage 2: server dependencies + Prisma client for this platform (Alpine, musl, OpenSSL 3) ---
 FROM node:24-alpine AS server-builder
@@ -26,6 +28,9 @@ COPY --from=server-builder /app/server ./
 # server/src/app.ts serves ../../client/dist relative to itself, so the layout mirrors the repository.
 COPY --from=client-builder /app/client/dist /app/client/dist
 RUN chmod +x ./docker-entrypoint.sh
+# The same SHA for GET /api/version (config.ts checks it is a full SHA or "local").
+ARG GIT_SHA=local
+ENV GIT_SHA=$GIT_SHA
 EXPOSE 3000
 # Never run as root inside the container.
 USER node
