@@ -1,0 +1,20 @@
+# From the Lab 5 Starter Kit, plus this repository's own folders. Keeps the build context small and
+# keeps every real .env (server/.env holds local passwords) out of the image.
+**/node_modules
+**/dist
+**/build
+**/.env
+**/.env.*
+!**/.env.example
+*.log
+.git
+.gitignore
+.claude
+test-results
+playwright-report
+gha-creds-*.json
+# Not needed in the image (the server tests run in CI, not in the container).
+docs
+e2e
+scripts
+server/tests

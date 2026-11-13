@@ -1,6 +1,6 @@
 # System-Level Software Design Specification (SDS)
 
-Project: **TCG Event Hub** · Document version: v0.7 (v0.2 reviewed in PR 2; changes in §14)
+Project: **TCG Event Hub** · Document version: v0.8 (v0.2 reviewed in PR 2; changes in §14)
 Inputs: [`srs.md`](srs.md) v0.5 · [`features.md`](features.md) v0.2 · [`traceability.md`](traceability.md) v0.2 ·
 [`ui/design-direction.md`](ui/design-direction.md) v0.3 · [`diagrams/`](diagrams/README.md)
 
@@ -107,7 +107,7 @@ Two notes on the order:
 | Passwords | scrypt (`node:crypto`) | built in | Reuses reviewed TokTickIT `password.ts`; no native dependency | SD-03 (D-15) |
 | Tests | Vitest + Supertest (server), Vitest + Testing Library (client), Playwright (E2E) | Vitest 4.0 (4.0.18; 4.1 cannot be installed by npm 10) | Same as TokTickIT; real PostgreSQL in integration tests | SD-09 |
 | Lint/format | oxlint, TypeScript `--noEmit` | — | Fast; already used by the client in TokTickIT | — |
-| Container (Lab 5) | Docker multi-stage, `node:22-slim`, non-root user | — | One image for API and static files | SD-01 |
+| Container (Lab 5) | Docker multi-stage, `node:24-alpine`, non-root user `node`, production packages only | Node 24 | One image for API and static files; same Node as development and the Lab 5 kit | SD-01 |
 
 ### 3.1 Repository layout
 
@@ -556,3 +556,4 @@ Design points:
 | v0.5 | 7 Nov 2026 | Inputs and §7 point at design-direction v0.3 (built app brought to the UI document, PR #24) | Team (AI-assisted) |
 | v0.6 | 7 Nov 2026 | §3 client versions match `client/package.json`: Vite 6 and TypeScript 5.9 (was Vite 8, TS 6) | Team (AI-assisted) |
 | v0.7 | 13 Nov 2026 | Lab 5 (#31): `APP_ORIGIN` may list several origins (§6.1, §9.1); `GET /api/ready` E-12b, static serving of the built client and SIGTERM shutdown (§9.2); `APP_ORIGIN` no longer listed as the cookie `Secure` input (that is `NODE_ENV`) | Team (AI-assisted) |
+| v0.8 | 13 Nov 2026 | Lab 5 (#32): §3 container row is `node:24-alpine` (was `node:22-slim`), matching development and the Starter Kit | Team (AI-assisted) |
