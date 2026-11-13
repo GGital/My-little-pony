@@ -1,0 +1,60 @@
+name: tcg-event-hub
+
+x-app: &app
+  build: .
+  image: tcg-event-hub:local
+  # SEED_PASSWORD (and nothing else that matters here) comes from server/.env; `environment` wins over it.
+  env_file:
+    - path: server/.env
+      required: false
+  depends_on:
+    db:
+      condition: service_healthy
+
+x-database-url: &database-url postgresql://tcg:${POSTGRES_PASSWORD:-tcg-local-only}@db:5432/tcg_event_hub?schema=public
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tcg
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tcg-local-only}
+      POSTGRES_DB: tcg_event_hub
+    volumes:
+      - tcg_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tcg -d tcg_event_hub"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Runs once, like the Cloud Run job tcg-event-hub-migrate: migrations, then the idempotent seed.
+  migrate:
+    <<: *app
+    restart: "no"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: *database-url
+    command: ["sh", "-c", "npx prisma migrate deploy && npm run db:seed"]
+
+  app:
+    <<: *app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATABASE_URL: *database-url
+      APP_ORIGIN: http://localhost:${APP_PORT:-8080}
+      TRUST_PROXY: "0"
+      LOG_LEVEL: info
+    ports:
+      - "${APP_PORT:-8080}:3000"
+
+volumes:
+  tcg_db:

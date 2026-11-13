@@ -1,0 +1,51 @@
+# L5-3 (#32) Docker Compose checks - 2026-11-13T04:08:17Z - branch build/l5-3-docker @ 22ae8f8, Docker 29.1.3
+$ APP_PORT=3100 docker compose up --build -d   (8080 is taken on this machine)
+Image tcg-event-hub:local Built 
+Image tcg-event-hub:local Built 
+Container tcg-event-hub-db-1 Started 
+Container tcg-event-hub-db-1 Healthy 
+Container tcg-event-hub-migrate-1 Started 
+Container tcg-event-hub-db-1 Healthy 
+Container tcg-event-hub-migrate-1 Exited 
+Container tcg-event-hub-app-1 Started 
+$ docker compose ps -a
+SERVICE   STATUS                     PORTS
+app       Up 2 seconds               0.0.0.0:3100->3000/tcp, [::]:3100->3000/tcp
+db        Up 12 seconds (healthy)    5432/tcp
+migrate   Exited (0) 2 seconds ago   
+$ curl -s -w ' %{http_code} %{content_type}' http://localhost:3100/api/health
+{"status":"ok"} -> 200 application/json; charset=utf-8
+
+$ curl -s -w ' %{http_code} %{content_type}' http://localhost:3100/api/ready
+{"status":"ready","db":"connected"} -> 200 application/json; charset=utf-8
+
+$ curl -s -w ' %{http_code} %{content_type}' http://localhost:3100/events/1
+<!doctype html>... -> 200 text/html; charset=utf-8
+
+
+## Persistence across down / up
+$ sign in as boss@player.example (SEED_PASSWORD from server/.env, not printed), register for the first open event
+registered 201 {"id":10,"status":"REGISTERED","createdAt":"2026-11-13T04:08:51.552Z","event":{"id":5,"title":"Dragon Draft Night","type":"CASUAL","format":"DRAF
+$ docker compose stop app   # sends SIGTERM
+stopped in 1063 ms, exit code 0
+{"time":"2026-11-13T04:08:49.321Z","severity":"INFO","event":"server_started","port":3000,"nodeEnv":"production"}
+{"time":"2026-11-13T04:08:52.148Z","severity":"INFO","event":"server_stopping","signal":"SIGTERM"}
+$ docker compose down && APP_PORT=3100 docker compose up -d
+$ sign in again and list Boss's registrations
+  "id":3,"status":"REGISTERED","createdAt":"2026-11-13T04:08:47.446Z","event":{"id":1,"title":"Friday Night Constructed"
+  "id":6,"status":"REGISTERED","createdAt":"2026-11-13T04:08:47.461Z","event":{"id":2,"title":"Last Seat Sealed"
+  "id":8,"status":"REGISTERED","createdAt":"2026-11-13T04:08:47.472Z","event":{"id":3,"title":"Store Championship Qualifier"
+  "id":10,"status":"REGISTERED","createdAt":"2026-11-13T04:08:51.552Z","event":{"id":5,"title":"Dragon Draft Night"
+
+## Image contents
+user: node
+secret-like env vars: 0
+.env files in the image: 0
+client build: assets index.html 
+$ docker history --no-trunc tcg-event-hub:local | grep -ciE 'password|secret|DATABASE_URL'
+0
+$ docker images tcg-event-hub:local
+tcg-event-hub:local 645MB
+$ docker compose down -v
+Volume tcg-event-hub_tcg_db Removing 
+Volume tcg-event-hub_tcg_db Removed 

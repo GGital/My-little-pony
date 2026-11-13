@@ -1,0 +1,49 @@
+# C-03 (R-01, R-02) fresh clone - 2026-11-13T04:05:45Z
+$ git clone --branch build/l5-3-docker <repository> fresh-clone
+$ git log --oneline -1
+22ae8f8 build(lab5): one production image, Compose with PostgreSQL, LF for shell scripts (#32)
+$ git status --short   (nothing besides the clone)
+ok$ file server/docker-entrypoint.sh
+server/docker-entrypoint.sh: POSIX shell script, ASCII text executable
+$ cp server/.env.example server/.env   # then only SEED_PASSWORD is changed (a generated throwaway value, not shown)
+$ diff <(grep -v SEED_PASSWORD server/.env.example) <(grep -v SEED_PASSWORD server/.env) && echo 'server/.env = .env.example except SEED_PASSWORD'
+server/.env = .env.example except SEED_PASSWORD
+$ APP_PORT=3200 docker compose -p tcg-fresh up --build -d   (built with --no-cache first)
+ Image tcg-event-hub:local Building 
+ Image tcg-event-hub:local Built 
+ Image tcg-event-hub:local Built 
+ Container tcg-fresh-db-1 Started 
+ Container tcg-fresh-db-1 Healthy 
+ Container tcg-fresh-migrate-1 Started 
+ Container tcg-fresh-db-1 Healthy 
+ Container tcg-fresh-migrate-1 Exited 
+ Container tcg-fresh-app-1 Started 
+$ docker compose -p tcg-fresh ps -a
+SERVICE   STATUS
+app       Up Less than a second
+db        Up 10 seconds (healthy)
+migrate   Exited (0) 1 second ago
+$ curl --fail http://localhost:3200/api/health
+{"status":"ok"}
+
+$ curl --fail http://localhost:3200/api/ready
+{"status":"ready","db":"connected"}
+
+$ curl --fail http://localhost:3200/
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" hre
+$ migrate log (last lines)
+migrate-1  | The following migration(s) have been applied:
+migrate-1  | migrations/
+migrate-1  |     └─ migration.sql
+migrate-1  |     └─ migration.sql
+migrate-1  | All migrations have been successfully applied.
+migrate-1  | Seed complete: 2 organizers, 4 participants, 6 events (Sprint 1 contracts §0.3).
+$ sign in as a seeded participant with the SEED_PASSWORD from server/.env, list registrations, sign out (scratch script, password not printed)
+my registrations {"items":[{"id":3,"status":"REGISTERED" ... (first registration)
+$ docker compose -p tcg-fresh down -v
+ Volume tcg-fresh_tcg_db Removed 
+ Network tcg-fresh_default Removed 

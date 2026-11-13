@@ -1,6 +1,6 @@
 # Lab 5 deployment: TCG Event Hub on Google Cloud
 
-Version v0.1 (L5-2, [#31](https://github.com/GGital/My-little-pony/issues/31)). Each later Lab 5 Issue fills in its
+Version v0.2 (L5-2 [#31](https://github.com/GGital/My-little-pony/issues/31), L5-3 [#32](https://github.com/GGital/My-little-pony/issues/32)). Each later Lab 5 Issue fills in its
 own section: Docker (#32), CI (#33), GCP resources (#34), sign-in from GitHub and the merge gate (#35), release
 procedure (#36), persistence and rollback (#37). The rest is finished in #38. Sections marked *planned* describe
 the design and are not built yet.
@@ -54,7 +54,22 @@ because npm 11 blocks Prisma's install script.
 | Build (client) | `npm --prefix client run build` (writes `client/dist`, which the server then serves) |
 | Run (development) | `npm --prefix server run dev` and `npm --prefix client run dev`, then open `http://localhost:5173` |
 | Run (one container, without Docker) | build the client, then `npm --prefix server run dev` and open `http://localhost:3000` (set `APP_ORIGIN=http://localhost:3000`) |
-| Docker | *planned in #32* |
+| Docker: build | `docker build -t tcg-event-hub .` (the same image runs the service and the migration job) |
+| Docker: run with a database | `cp server/.env.example server/.env`, set `SEED_PASSWORD`, then `docker compose up --build -d`; open `http://localhost:8080` (if 8080 is taken: `APP_PORT=3100 docker compose up -d`; `APP_ORIGIN` follows) |
+| Docker: check | `docker compose ps -a` (`migrate` must show `exited (0)`), `curl --fail http://localhost:8080/api/health` and `/api/ready` |
+| Docker: stop | `docker compose down` keeps the data in volume `tcg_db`; `docker compose down -v` deletes it |
+
+## 3.1 Docker files
+
+| File | What it does |
+|---|---|
+| `Dockerfile` | Three stages on `node:24-alpine`: build the client; install server packages, `prisma generate` for Alpine, prune dev packages; runtime as user `node` with `client/dist` beside `server/`. `CMD node --import tsx src/index.ts` |
+| `.dockerignore` | The kit's list plus `.claude`, `docs`, `e2e`, root `scripts`, `server/tests`; every `.env` except `.env.example` |
+| `server/docker-entrypoint.sh` | `exec "$@"`, so Node is PID 1 and receives SIGTERM |
+| `docker-compose.yml` | `db` (PostgreSQL 16, volume `tcg_db`, no host port), `migrate` (migrations + seed, runs once), `app` (host port `APP_PORT`, default 8080, to container 3000). `SEED_PASSWORD` comes from `server/.env`; the database password is a local-only fallback |
+| `.gitattributes` | `*.sh` keep LF, so a Windows checkout still builds a working entrypoint |
+
+Checked in #32: [`evidence/L5-03-compose.txt`](evidence/L5-03-compose.txt) (health, ready, page, a registration that survives `down`/`up`, SIGTERM exit 0, no secret in the image) and [`evidence/L5-03-fresh-clone.txt`](evidence/L5-03-fresh-clone.txt) (C-03: fresh clone, `server/.env` = `.env.example` except `SEED_PASSWORD`, `--no-cache` build, migrate exit 0, health, ready, sign-in).
 
 ## 4. GCP project and resources (planned, #34)
 
