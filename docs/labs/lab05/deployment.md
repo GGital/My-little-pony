@@ -86,6 +86,8 @@ Checked in #32: [`evidence/L5-03-compose.txt`](evidence/L5-03-compose.txt) (heal
 
 `.github/dependabot.yml` proposes updates to the pinned actions every week.
 
+Before the first push, the whole job was replayed on a fresh clone with no `.env` against a throw-away PostgreSQL 16: [`evidence/L5-04-ci-replay.txt`](evidence/L5-04-ci-replay.txt) (all steps pass: server 285, client 64, E2E 40, image builds). The GitHub run on the PR is the evidence for C-01.
+
 The `deploy/` scripts come from the kit with these changes: names `tcg-event-hub*`; one generated seed secret (`tcg-event-hub-seed-password`) given only to the migration job; the job runs `npx prisma migrate deploy && npm run db:seed`; the service gets `NODE_ENV`, `TZ`, `TRUST_PROXY=1`, `LOG_LEVEL` and `APP_ORIGIN` (deterministic URL first, then both URLs, set with gcloud's `^;^` delimiter because the list contains a comma); the smoke test checks `/api/events` and signs in with our `tcg.sid` cookie. Preview with `DRY_RUN=1 PROJECT_ID=... bash deploy/deploy.sh`.
 
 ## 4. GCP project and resources (planned, #34)
