@@ -1,0 +1,54 @@
+# CI replay of test-and-docker - 2026-11-13T04:51:04Z - f0c1050 ci(lab5): test-and-docker on every PR into main and sprint staging, adapted deploy scripts (#33) - Node v24.19.0, Python 3.14.7
+# fresh clone, no .env anywhere: 0 .env files
+
+## Check deployment scripts without accessing GCP
+bash -n: ok
+PASS: first_run (exit, migration gate, credential handling, secret redaction)
+PASS: rerun (exit, migration gate, credential handling, secret redaction)
+PASS: partial (exit, migration gate, credential handling, secret redaction)
+PASS: job-fail (exit, migration gate, credential handling, secret redaction)
+PASS: dry run makes no gcloud calls
+PASS: unknown argument refused before any gcloud call
+PASS normal release uses digest and waits for migration
+PASS rollback reuses image without touching migration job
+PASS image failure blocks service update
+PASS migration failure blocks service update
+PASS invalid tag rejected before GCP calls
+Ran 5 tests in 0.008s
+OK
+
+## Repository checks (secret scan, STS coverage)
+0 findings.
+TEST-SR7-01: every AC has a test with a recorded result, and every BR has a rejection test.
+
+## Create the test database (psql in the workflow; docker exec here)
+CREATE DATABASE
+
+## Install & test backend
+added 184 packages in 21s
+✔ Generated Prisma Client (v6.19.3) to .\node_modules\@prisma\client in 103ms
+2 migrations found in prisma/migrations
+The following migration(s) have been applied:
+All migrations have been successfully applied.
+Seed complete: 2 organizers, 4 participants, 6 events (Sprint 1 contracts §0.3).
+The following migration(s) have been applied:
+All migrations have been successfully applied.
+typecheck: ok
+ Test Files  25 passed (25)
+      Tests  285 passed (285)
+
+## Install, test & build frontend
+added 163 packages in 8s
+ Test Files  15 passed (15)
+      Tests  64 passed (64)
+✓ built in 1.59s
+
+## End-to-end tests (Playwright, Chromium)
+added 3 packages in 2s
+chromium: installed
+  40 passed (1.7m)
+
+## Verify the production Dockerfile builds
+sha256:73a5b742dc9d
+
+# replay finished: every step above ran with set -e

@@ -19,5 +19,10 @@ const log = createLogger(config.LOG_LEVEL)
 const prisma = new PrismaClient({ datasourceUrl: config.DATABASE_URL })
 const app = createApp({ prisma, config, log })
 
-// ponytail: graceful SIGTERM shutdown arrives with the Cloud Run setup in Lab 5.
-app.listen(config.PORT, () => log.info('server_started', { port: config.PORT, nodeEnv: config.NODE_ENV }))
+const server = app.listen(config.PORT, () => log.info('server_started', { port: config.PORT, nodeEnv: config.NODE_ENV }))
+
+// Cloud Run sends SIGTERM before it stops an instance: finish open requests, then close the database pool.
+process.once('SIGTERM', () => {
+  log.info('server_stopping', { signal: 'SIGTERM' })
+  server.close(() => void prisma.$disconnect().finally(() => process.exit(0)))
+})

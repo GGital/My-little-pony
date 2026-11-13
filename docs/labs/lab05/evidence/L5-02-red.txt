@@ -1,0 +1,209 @@
+# L5-2 (#31) red run - 2026-11-12T17:37:05Z - branch refactor/l5-2-cloud-ready, before the implementation
+# npx vitest run tests/lab5 --reporter=verbose   (server/, Node v24.19.0)
+
+ RUN  v4.0.18 D:/University works/MylittlePony/My-little-pony/server
+
+ × tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > lets a POST from https://tcg-event-hub-123.asia-southeast1.run.app through 32ms
+   → expected 403 to be 201 // Object.is equality
+ × tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > lets a POST from https://tcg-event-hub-abc-as.a.run.app through 8ms
+   → expected 403 to be 201 // Object.is equality
+ ✓ tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > rejects another site with 403 FORBIDDEN 6ms
+ ✓ tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > rejects a prefix of a listed origin with 403 FORBIDDEN 5ms
+ × tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > rejects the whole list as one value with 403 FORBIDDEN 6ms
+   → expected 201 to be 403 // Object.is equality
+ ✓ tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > rejects a POST with no Origin header 6ms
+ × tests/lab5/static.api.test.ts > TEST-L5-01 (I) — one container serves the API and the built React app (SD-01, Lab 5 R-03) > serves index.html at / 29ms
+   → expected 404 to be 200 // Object.is equality
+ × tests/lab5/static.api.test.ts > TEST-L5-01 (I) — one container serves the API and the built React app (SD-01, Lab 5 R-03) > serves index.html for a client-side route, so a reload of /events/1 works 7ms
+   → expected 404 to be 200 // Object.is equality
+ × tests/lab5/static.api.test.ts > TEST-L5-01 (I) — one container serves the API and the built React app (SD-01, Lab 5 R-03) > serves a built asset as itself, not as index.html 8ms
+   → expected 404 to be 200 // Object.is equality
+ ✓ tests/lab5/static.api.test.ts > TEST-L5-01 (I) — one container serves the API and the built React app (SD-01, Lab 5 R-03) > keeps an unknown /api path as the JSON 404, never the page 9ms
+ × tests/lab5/ready.api.test.ts > TEST-L5-02 (I) — GET /api/ready for the smoke test and Cloud Run (Lab 5 Ep. 2 point 6) > answers 200 {status:"ready", db:"connected"} when the database answers 33ms
+   → expected 404 to be 200 // Object.is equality
+ × tests/lab5/ready.api.test.ts > TEST-L5-02 (I) — GET /api/ready for the smoke test and Cloud Run (Lab 5 Ep. 2 point 6) > answers 503 {status:"not_ready"} when the database cannot be reached, without leaking why 8ms
+   → expected 404 to be 503 // Object.is equality
+ × tests/lab5/unit/config.unit.test.ts > TEST-L5-03 (U) — APP_ORIGIN accepts a comma-separated list of origins > loads a list of two origins 8ms
+   → Invalid configuration: APP_ORIGIN must be an origin such as http://localhost:5173 (scheme, host and port only). Set it in server/.env (see server/.env.example).
+ × tests/lab5/unit/config.unit.test.ts > TEST-L5-03 (U) — APP_ORIGIN accepts a comma-separated list of origins > throws naming APP_ORIGIN for an entry that is not an origin 3ms
+   → expected [Function] to throw an error
+ ✓ tests/lab5/unit/config.unit.test.ts > TEST-L5-03 (U) — APP_ORIGIN accepts a comma-separated list of origins > throws naming APP_ORIGIN for an entry with a path 0ms
+ × tests/lab5/unit/config.unit.test.ts > TEST-L5-03 (U) — APP_ORIGIN accepts a comma-separated list of origins > throws naming APP_ORIGIN for an empty entry 1ms
+   → expected [Function] to throw an error
+ ✓ tests/lab5/unit/config.unit.test.ts > TEST-L5-03 (U) — APP_ORIGIN accepts a comma-separated list of origins > throws naming APP_ORIGIN for a space after the comma 0ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 11 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > lets a POST from https://tcg-event-hub-123.asia-southeast1.run.app through
+ FAIL  tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > lets a POST from https://tcg-event-hub-abc-as.a.run.app through
+AssertionError: expected 403 to be 201 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 201[39m
+[31m+ 403[39m
+
+ ❯ tests/lab5/origin.api.test.ts:15:24
+     13|   it.each([A, B])('lets a POST from %s through', async (origin) => {
+     14|     const res = await request(app).post('/write').set('Origin', origin)
+     15|     expect(res.status).toBe(201)
+       |                        ^
+     16|   })
+     17| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯
+
+ FAIL  tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > rejects the whole list as one value with 403 FORBIDDEN
+AssertionError: expected 201 to be 403 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 403[39m
+[31m+ 201[39m
+
+ ❯ tests/lab5/origin.api.test.ts:24:24
+     22|   ])('rejects %s with 403 FORBIDDEN', async (_name, origin) => {
+     23|     const res = await request(app).post('/write').set('Origin', origin)
+     24|     expect(res.status).toBe(403)
+       |                        ^
+     25|     expect(res.body.error.code).toBe('FORBIDDEN')
+     26|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯
+
+ FAIL  tests/lab5/ready.api.test.ts > TEST-L5-02 (I) — GET /api/ready for the smoke test and Cloud Run (Lab 5 Ep. 2 point 6) > answers 200 {status:"ready", db:"connected"} when the database answers
+AssertionError: expected 404 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 404[39m
+
+ ❯ tests/lab5/ready.api.test.ts:18:24
+     16|   it('answers 200 {status:"ready", db:"connected"} when the database a…
+     17|     const res = await request(makeApp()).get('/api/ready')
+     18|     expect(res.status).toBe(200)
+       |                        ^
+     19|     expect(res.body).toEqual({ status: 'ready', db: 'connected' })
+     20|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯
+
+ FAIL  tests/lab5/ready.api.test.ts > TEST-L5-02 (I) — GET /api/ready for the smoke test and Cloud Run (Lab 5 Ep. 2 point 6) > answers 503 {status:"not_ready"} when the database cannot be reached, without leaking why
+AssertionError: expected 404 to be 503 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 503[39m
+[31m+ 404[39m
+
+ ❯ tests/lab5/ready.api.test.ts:25:24
+     23|     const { log, entries } = spyLogger()
+     24|     const res = await request(makeApp({ prisma: unreachable, log })).g…
+     25|     expect(res.status).toBe(503)
+       |                        ^
+     26|     expect(res.body).toEqual({ status: 'not_ready' })
+     27|     expect(res.text).not.toMatch(/127\.0\.0\.1|prisma|nobody/i)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/11]⎯
+
+ FAIL  tests/lab5/static.api.test.ts > TEST-L5-01 (I) — one container serves the API and the built React app (SD-01, Lab 5 R-03) > serves index.html at /
+AssertionError: expected 404 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 404[39m
+
+ ❯ tests/lab5/static.api.test.ts:19:24
+     17|   it('serves index.html at /', async () => {
+     18|     const res = await request(makeApp({ staticDir })).get('/')
+     19|     expect(res.status).toBe(200)
+       |                        ^
+     20|     expect(res.type).toBe('text/html')
+     21|     expect(res.text).toContain('<div id="root">')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/11]⎯
+
+ FAIL  tests/lab5/static.api.test.ts > TEST-L5-01 (I) — one container serves the API and the built React app (SD-01, Lab 5 R-03) > serves index.html for a client-side route, so a reload of /events/1 works
+AssertionError: expected 404 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 404[39m
+
+ ❯ tests/lab5/static.api.test.ts:26:24
+     24|   it('serves index.html for a client-side route, so a reload of /event…
+     25|     const res = await request(makeApp({ staticDir })).get('/events/1')
+     26|     expect(res.status).toBe(200)
+       |                        ^
+     27|     expect(res.text).toContain('<div id="root">')
+     28|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/11]⎯
+
+ FAIL  tests/lab5/static.api.test.ts > TEST-L5-01 (I) — one container serves the API and the built React app (SD-01, Lab 5 R-03) > serves a built asset as itself, not as index.html
+AssertionError: expected 404 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 404[39m
+
+ ❯ tests/lab5/static.api.test.ts:32:24
+     30|   it('serves a built asset as itself, not as index.html', async () => {
+     31|     const res = await request(makeApp({ staticDir })).get('/app.js')
+     32|     expect(res.status).toBe(200)
+       |                        ^
+     33|     expect(res.type).toBe('application/javascript')
+     34|     expect(res.text).toContain('built asset')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/11]⎯
+
+ FAIL  tests/lab5/unit/config.unit.test.ts > TEST-L5-03 (U) — APP_ORIGIN accepts a comma-separated list of origins > loads a list of two origins
+Error: Invalid configuration: APP_ORIGIN must be an origin such as http://localhost:5173 (scheme, host and port only). Set it in server/.env (see server/.env.example).
+ ❯ loadConfig src/config.ts:41:9
+     39|   if (result.success) return result.data
+     40|   const problems = result.error.issues.map((issue) => `${issue.path.jo…
+     41|   throw new Error(
+       |         ^
+     42|     `Invalid configuration: ${problems.join('; ')}. Set it in server/.…
+     43|   )
+ ❯ tests/lab5/unit/config.unit.test.ts:13:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/11]⎯
+
+ FAIL  tests/lab5/unit/config.unit.test.ts > TEST-L5-03 (U) — APP_ORIGIN accepts a comma-separated list of origins > throws naming APP_ORIGIN for an entry that is not an origin
+ FAIL  tests/lab5/unit/config.unit.test.ts > TEST-L5-03 (U) — APP_ORIGIN accepts a comma-separated list of origins > throws naming APP_ORIGIN for an empty entry
+AssertionError: expected [Function] to throw an error
+
+[32m- Expected:[39m 
+null
+
+[31m+ Received:[39m 
+undefined
+
+ ❯ tests/lab5/unit/config.unit.test.ts:22:63
+     20|     ['a space after the comma', 'https://a.run.app, https://b.run.app'…
+     21|   ])('throws naming APP_ORIGIN for %s', (_name, value) => {
+     22|     expect(() => loadConfig({ ...VALID, APP_ORIGIN: value })).toThrow(…
+       |                                                               ^
+     23|   })
+     24| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/11]⎯
+
+
+ Test Files  4 failed (4)
+      Tests  11 failed | 6 passed (17)
+   Start at  00:37:08
+   Duration  3.76s (transform 335ms, setup 0ms, import 2.44s, tests 175ms, environment 1ms)
+

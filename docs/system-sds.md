@@ -1,6 +1,6 @@
 # System-Level Software Design Specification (SDS)
 
-Project: **TCG Event Hub** · Document version: v0.6 (v0.2 reviewed in PR 2; changes in §14)
+Project: **TCG Event Hub** · Document version: v0.8 (v0.2 reviewed in PR 2; changes in §14)
 Inputs: [`srs.md`](srs.md) v0.5 · [`features.md`](features.md) v0.2 · [`traceability.md`](traceability.md) v0.2 ·
 [`ui/design-direction.md`](ui/design-direction.md) v0.3 · [`diagrams/`](diagrams/README.md)
 
@@ -107,7 +107,7 @@ Two notes on the order:
 | Passwords | scrypt (`node:crypto`) | built in | Reuses reviewed TokTickIT `password.ts`; no native dependency | SD-03 (D-15) |
 | Tests | Vitest + Supertest (server), Vitest + Testing Library (client), Playwright (E2E) | Vitest 4.0 (4.0.18; 4.1 cannot be installed by npm 10) | Same as TokTickIT; real PostgreSQL in integration tests | SD-09 |
 | Lint/format | oxlint, TypeScript `--noEmit` | — | Fast; already used by the client in TokTickIT | — |
-| Container (Lab 5) | Docker multi-stage, `node:22-slim`, non-root user | — | One image for API and static files | SD-01 |
+| Container (Lab 5) | Docker multi-stage, `node:24-alpine`, non-root user `node`, production packages only | Node 24 | One image for API and static files; same Node as development and the Lab 5 kit | SD-01 |
 
 ### 3.1 Repository layout
 
@@ -312,7 +312,7 @@ wrong role. They exist only for convenience. The server repeats every check.
 | Created | `201` with the created resource; `204` for sign-out |
 | Validation | zod `.strict()` schemas: wrong types, out-of-range values and **unknown fields** → `400 VALIDATION_FAILED` with `details: [{ field, message }]` |
 | Errors | Always `{ "error": { "code", "message", "details?" } }` (NFR-07). The code fixes the status. Messages are safe to show. `500` is always "Something went wrong" with the real error logged server-side only |
-| Origin check | State-changing requests (`POST/PATCH/DELETE`) must carry an `Origin` header equal to `APP_ORIGIN`, otherwise `403 FORBIDDEN` (cross-site request defence alongside SameSite=Lax). It runs **right after `requireAuth`** (step 3), so a signed-out caller still gets 401 first (NFR-01). Sign-in (E-01) also checks it. Tests send the header explicitly |
+| Origin check | State-changing requests (`POST/PATCH/DELETE`) must carry an `Origin` header equal to `APP_ORIGIN` (or to one of its entries when it lists several origins separated by commas, as on Cloud Run), otherwise `403 FORBIDDEN` (cross-site request defence alongside SameSite=Lax). It runs **right after `requireAuth`** (step 3), so a signed-out caller still gets 401 first (NFR-01). Sign-in (E-01) also checks it. Tests send the header explicitly |
 | Viewer-aware fields | Responses that depend on who asks (for example `viewer.action` on event detail) are computed by the server; the client never derives them |
 
 ### 6.2 Error code catalogue
@@ -354,6 +354,7 @@ path, method, guard and owner feature.
 | E-10 | `GET /api/me/registrations` | participant | H | 1 |
 | E-11 | `GET /api/me/registrations/:id` | participant + own | H | 1 |
 | E-12 | `GET /api/health` | public | SR-04 | 1 |
+| E-12b | `GET /api/ready` | public | Lab 5 (deploy smoke test) | — |
 | E-13 | `PATCH /api/organizer/events/:id` | organizer + owner | K, L, M | 2 |
 | E-14 | `POST /api/organizer/events/:id/publish` | organizer + owner | K | 2 |
 | E-15 | `POST /api/organizer/events/:id/cancel` | organizer + owner | O | 2 |
@@ -438,7 +439,7 @@ The full flow is in diagram D2 ([`diagrams/seq-auth.png`](diagrams/seq-auth.png)
 | `PORT` | `3000` (Cloud Run sets it) | server | no |
 | `DATABASE_URL` | `postgresql://tcg:CHANGE_ME@localhost:5432/tcg_event_hub` | server, Prisma | **yes** (password) |
 | `DATABASE_URL_TEST` | `postgresql://tcg:CHANGE_ME@localhost:5432/tcg_event_hub_test` | tests | yes |
-| `APP_ORIGIN` | `http://localhost:5173` | origin check, cookie `Secure` decision | no |
+| `APP_ORIGIN` | `http://localhost:5173`; on Cloud Run both service URLs, comma-separated | origin check | no |
 | `SEED_PASSWORD` | `CHANGE_ME_LOCAL_ONLY` | seed script | yes (local only) |
 | `LOG_LEVEL` | `info` | server | no |
 | `TRUST_PROXY` | `1` on Cloud Run | Express `trust proxy` for correct protocol | no |
@@ -459,6 +460,12 @@ Rules:
 
 `GET /api/health` runs `SELECT 1`. It returns `200 { "status": "ok" }`, or `503 { "status": "unavailable" }`
 when the database cannot be reached. Lab 5 uses it as the Cloud Run startup and liveness probe.
+
+`GET /api/ready` (Lab 5) runs the same check and answers `200 { "status": "ready", "db": "connected" }` or
+`503 { "status": "not_ready" }`: the shape the deploy smoke test reads after every release.
+
+The same Express app serves the built React app (`client/dist`) after `/api`, with `index.html` for client-side
+routes (SD-01). On `SIGTERM` the server stops taking requests, finishes open ones and closes the database pool.
 
 ### 9.3 Planned GCP deployment (built in Lab 5)
 
@@ -548,3 +555,5 @@ Design points:
 | v0.4 | 5 Nov 2026 | §6.2 adds `413 PAYLOAD_TOO_LARGE`; §3 zod 4.x (zod 3 has advisory GHSA-mrhx-c7xc-m3w5) and Vitest 4.0.18; §9.1 which variables are required, defaults, and config check before Prisma loads (from I-02) | Team (AI-assisted) |
 | v0.5 | 7 Nov 2026 | Inputs and §7 point at design-direction v0.3 (built app brought to the UI document, PR #24) | Team (AI-assisted) |
 | v0.6 | 7 Nov 2026 | §3 client versions match `client/package.json`: Vite 6 and TypeScript 5.9 (was Vite 8, TS 6) | Team (AI-assisted) |
+| v0.7 | 13 Nov 2026 | Lab 5 (#31): `APP_ORIGIN` may list several origins (§6.1, §9.1); `GET /api/ready` E-12b, static serving of the built client and SIGTERM shutdown (§9.2); `APP_ORIGIN` no longer listed as the cookie `Secure` input (that is `NODE_ENV`) | Team (AI-assisted) |
+| v0.8 | 13 Nov 2026 | Lab 5 (#32): §3 container row is `node:24-alpine` (was `node:22-slim`), matching development and the Starter Kit | Team (AI-assisted) |
