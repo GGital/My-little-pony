@@ -29,3 +29,32 @@ PASS running commit 267f1e52af5adfc081ec20cd957420ef4bb5ab5a
 $ python3 deploy/persistence_check.py $URL 1 "Friday Night Constructed" <release A SHA>   # wrong release on purpose
 RuntimeError: Release check failed: /api/version reports 267f1e52af5adfc081ec20cd957420ef4bb5ab5a, expected 906158e96ebdc6d551b2f9890d97ecfd22314553
 exit 1
+
+== C-05 record: event 7 "L5-8 persistence check" (created on the live URL by Phattaratorn as organizer Quantum Cards) ==
+Note: Deploy demo runs #3 (A, 15:10Z), #4 (B, 15:13Z), #5 (A, 15:23Z) and #6 (B, 15:24Z) were earlier tries of the rollback, before this checked sequence. The C-05 sequence below is: before, restart, rollback (run #7), roll forward.
+
+-- 1. Before (release B), 2026-11-14T15:25:53Z
+PASS event 7 "L5-8 persistence check" is present
+PASS running commit 267f1e52af5adfc081ec20cd957420ef4bb5ab5a
+   Screenshot 01: Edge on /events/7, signed in as Quantum Cards (organizer), 2026-11-14T15:27:12Z
+
+-- 2. After restart (new revision, same image, release B), 2026-11-14T15:27:51Z
+PASS event 7 "L5-8 persistence check" is present
+PASS running commit 267f1e52af5adfc081ec20cd957420ef4bb5ab5a
+   Screenshot 02: Cloud Shell restart output (revision tcg-event-hub-00011-4ml, 100% traffic); screenshot 03: Edge on /events/7 after reload, still signed in, 2026-11-14T15:29:34Z
+   Screenshot 04: Cloud Run revision history, 00011-4ml at 100% (deployer email blurred), 2026-11-14T15:30:33Z
+
+-- 3. After rollback to release A (Deploy demo run #7, image_tag = A), 2026-11-14T15:32:38Z
+PASS event 7 "L5-8 persistence check" is present
+PASS running commit 906158e96ebdc6d551b2f9890d97ecfd22314553
+   Screenshot 05: run #7 page, test skipped, deploy green, commit image tag = A, 2026-11-14T15:33:46Z
+   Screenshot 06: Edge on /events/7 after rollback, still signed in as Quantum Cards (taskbar clock 22:34 Bangkok), 2026-11-14T15:34:14Z
+   Screenshot 07: Edge on /events (bottom), footer Build 906158e (release A), 2026-11-14T15:35:19Z
+   Screenshot 08: Edge on /events (top) under A: no line under Find an Event (release B change gone), event 7 listed, still signed in, 2026-11-14T15:35:53Z
+
+-- 4. After roll forward to release B (Deploy demo run #8, image_tag = B), 2026-11-14T15:37:56Z
+PASS event 7 "L5-8 persistence check" is present
+PASS running commit 267f1e52af5adfc081ec20cd957420ef4bb5ab5a
+   Screenshot 09: run #8 page, test skipped, deploy green, commit image tag = B, 2026-11-14T15:38:13Z
+   Screenshot 10: Edge on /events (top) after roll forward and Ctrl+F5: release B line is back, event 7 listed, still signed in as Quantum Cards (taskbar clock 22:39 Bangkok), 2026-11-14T15:39:32Z
+   Screenshot 11: Cloud Run revision history: 00013-n29 (run #8, B) at 100%, 00012-q5p (run #7, A), 00011-4ml (restart), deployed by tcg-event-hub-deployer, 2026-11-14T15:40:05Z
