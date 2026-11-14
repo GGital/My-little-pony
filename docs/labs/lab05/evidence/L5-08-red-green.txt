@@ -1,0 +1,6 @@
+TEST-L5-09 red run (persistence_check.py does not exist yet), 2026-11-14T14:53:24Z
+$ python3 -m unittest discover -s deploy/tests -p test_persistence.py
+ImportError: Failed to import test module: test_persistence
+FileNotFoundError: [Errno 2] No such file or directory: 'D:\\University works\\MylittlePony\\My-little-pony\\deploy\\persistence_check.py'
+Ran 1 test in 0.000s
+FAILED (errors=1)
