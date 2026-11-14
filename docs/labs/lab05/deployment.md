@@ -106,7 +106,7 @@ The `deploy/` scripts come from the kit with these changes: names `tcg-event-hub
 | Service URLs | `https://tcg-event-hub-932557875237.asia-southeast1.run.app` and `https://tcg-event-hub-kwdr2zue6a-as.a.run.app` (both in `APP_ORIGIN`) |
 | Workload Identity Federation | pool `github-actions`, provider `github-main`; the condition pins this repository, `main`, `deploy.yml` and environment `demo` (#35) |
 | GitHub environment | `demo` (deploys from `main` only), variables `GCP_PROJECT_ID`, `GCP_REGION`, `WIF_PROVIDER`, `WIF_SERVICE_ACCOUNT`; no secrets |
-| Merge gate | ruleset `protect-main` (Active, no bypass) on `main` and `sprint-*-staging`: PR with 1 approval, status check `test-and-docker` up to date, no force push or deletion (#35) |
+| Merge gate | ruleset `protect-main` (Active, no bypass) on the default branch `main`: PR with 1 approval, required status check `test-and-docker`, no force push or deletion (#35). "Up to date before merging" is not switched on. PRs into `sprint-1-staging` run the same check and get a teammate review, but no ruleset enforces it there |
 
 The project number is left out on purpose; it only appears inside the deterministic service URL.
 

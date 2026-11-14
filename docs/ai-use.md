@@ -87,3 +87,4 @@ same way it fills its row in `sts.md` §5 and in [`contributions.md`](contributi
 | v0.17 | 14 Nov 2026 | L5-7: #44 / #45 reviewer; release B row | Team (AI-assisted) |
 | v0.18 | 14 Nov 2026 | Release B reviewer; L5-7 / L5-8 evidence and checks row | Team (AI-assisted) |
 | v0.19 | 14 Nov 2026 | #48 reviewer; L5-9 row | Team (AI-assisted) |
+| v0.20 | 14 Nov 2026 | L5-9 follow-up: read the ruleset from its page and the API and corrected deployment.md; wrote `scripts/lab5-evidence-capture.mjs` and checked its 12 captures (Phattaratorn signed in to GitHub and Google in the Playwright window); the reviewer is filled in from the PR record | Team (AI-assisted) |

@@ -81,3 +81,4 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.17 | 14 Nov 2026 | L5-7: PR #44 and release A #45 deployed by the pipeline (`906158e`); release B built by Phattaratorn (team change: not Praewa as planned) | Team (AI-assisted) |
 | v0.18 | 14 Nov 2026 | L5-7 done (release B #46 / #47, `267f1e5`); L5-8 checks: event 7 survived restart, rollback to A and roll-forward to B | Team (AI-assisted) |
 | v0.19 | 14 Nov 2026 | L5-8 done (#48); L5-9 in progress: deployment.md v1.0, evidence index, C-04 captures; `lab5` label on PRs #39 to #44 | Team (AI-assisted) |
+| v0.20 | 14 Nov 2026 | L5-9: #49 merged (approved by Praewa); follow-up PR with the ruleset correction (`main` only) and the 2x evidence capture of the ruleset and the Episode 7 screenshots | Team (AI-assisted) |
