@@ -1,9 +1,11 @@
 # Lab 5 deployment: TCG Event Hub on Google Cloud
 
-Version v0.5 (L5-2 [#31](https://github.com/GGital/My-little-pony/issues/31), L5-3 [#32](https://github.com/GGital/My-little-pony/issues/32), L5-4 [#33](https://github.com/GGital/My-little-pony/issues/33), L5-7 [#36](https://github.com/GGital/My-little-pony/issues/36), L5-8 [#37](https://github.com/GGital/My-little-pony/issues/37)). Each later Lab 5 Issue fills in its
-own section: Docker (#32), CI (#33), GCP resources (#34), sign-in from GitHub and the merge gate (#35), release
-procedure (#36), persistence and rollback (#37). The rest is finished in #38. Sections marked *planned* describe
-the design and are not built yet.
+Version v1.0 (Lab 5 Issues [#30](https://github.com/GGital/My-little-pony/issues/30) to [#38](https://github.com/GGital/My-little-pony/issues/38)). One section per part of the work: Docker (#32),
+CI (#33), GCP resources (#34), sign-in from GitHub and the merge gate (#35), release procedure (#36), persistence and
+rollback (#37), pause, resume and teardown, and the evidence index (#38).
+
+Live URL: https://tcg-event-hub-932557875237.asia-southeast1.run.app (also `https://tcg-event-hub-kwdr2zue6a-as.a.run.app`). The running commit is in the page
+footer and at `/api/version` (section 5).
 
 ## 1. Stack and changes from the reference kit
 
@@ -26,7 +28,7 @@ Secret Manager and GitHub Actions with Workload Identity Federation. We keep it,
 Every variable is listed in [`server/.env.example`](../../../server/.env.example) with placeholder values only; a
 test (TEST-SR4-01) checks that `.env.example`, SDS §9.1 and `config.ts` name the same nine. The client reads none.
 
-| Variable | Purpose | Secret? | Local (`server/.env`) | CI (#33, `ci-docker.yml`) | Cloud Run (planned, #34) |
+| Variable | Purpose | Secret? | Local (`server/.env`) | CI (#33, `ci-docker.yml`) | Cloud Run (#34) |
 |---|---|---|---|---|---|
 | `NODE_ENV` | `production` turns on `Secure` cookies | no | `development` | `test` (set by Vitest) | `production` (env var) |
 | `PORT` | Port the server listens on | no | `3000` | — | set by Cloud Run (3000) |
@@ -101,7 +103,12 @@ The `deploy/` scripts come from the kit with these changes: names `tcg-event-hub
 | Cloud SQL instance / database / user | `tcg-event-hub-pg` (PostgreSQL 16, `db-f1-micro`) / `tcg_event_hub` / `tcg_event_hub` |
 | Secrets | `tcg-event-hub-database-url`, `tcg-event-hub-seed-password` |
 | Service accounts | `tcg-event-hub-runner` (runtime), `tcg-event-hub-deployer` (GitHub Actions, no key) |
-| GitHub environment | `demo` (deploys from `main` only) |
+| Service URLs | `https://tcg-event-hub-932557875237.asia-southeast1.run.app` and `https://tcg-event-hub-kwdr2zue6a-as.a.run.app` (both in `APP_ORIGIN`) |
+| Workload Identity Federation | pool `github-actions`, provider `github-main`; the condition pins this repository, `main`, `deploy.yml` and environment `demo` (#35) |
+| GitHub environment | `demo` (deploys from `main` only), variables `GCP_PROJECT_ID`, `GCP_REGION`, `WIF_PROVIDER`, `WIF_SERVICE_ACCOUNT`; no secrets |
+| Merge gate | ruleset `protect-main` (Active, no bypass) on `main` and `sprint-*-staging`: PR with 1 approval, status check `test-and-docker` up to date, no force push or deletion (#35) |
+
+The project number is left out on purpose; it only appears inside the deterministic service URL.
 
 ## 5. Release procedure (#36)
 
@@ -151,3 +158,43 @@ Resume first, then re-run the failed run.
 
 The first deployment (#34) was made by hand with `deploy/deploy.sh` (Cloud Build, tag `latest`), so it reports
 `commit: local`; every pipeline release after it reports its SHA.
+
+## 6. Pause, resume and teardown (Episodes 9 and 10)
+
+**Keep the service running until grading ends and through Lab 6 UAT.** Pause only after that. Pausing deletes
+nothing; Cloud Run already scales to zero, so stopping Cloud SQL is what saves money. In Cloud Shell:
+
+```bash
+export PROJECT_ID=cpe334-en007 REGION=asia-southeast1
+# Pause: close public access, then stop the database
+gcloud run services remove-iam-policy-binding tcg-event-hub --member=allUsers --role=roles/run.invoker --region $REGION --project $PROJECT_ID
+gcloud run services update tcg-event-hub --invoker-iam-check --region $REGION --project $PROJECT_ID
+gcloud sql instances patch tcg-event-hub-pg --activation-policy=NEVER --project $PROJECT_ID
+# Resume: start the database, open public access, wait 1-3 minutes, then check /api/ready
+gcloud sql instances patch tcg-event-hub-pg --activation-policy=ALWAYS --project $PROJECT_ID
+gcloud run services add-iam-policy-binding tcg-event-hub --member=allUsers --role=roles/run.invoker --region $REGION --project $PROJECT_ID
+```
+
+While paused, do not merge into `main` (Deploy demo would fail); resume first, then re-run the failed run.
+
+**Teardown** (end of term, after grading only; it deletes the database and cannot be undone): save the evidence
+first, preview with `DRY_RUN=1 ./deploy/teardown.sh`, then run `./deploy/teardown.sh` and type the project ID to
+confirm. It deletes the service, the migration job, Cloud SQL, the Artifact Registry repository, both secrets and the
+runtime service account. Afterwards delete the deployer service account and the WIF pool, and remove the `demo`
+environment (or `deploy.yml`) so pushes to `main` stop trying to deploy.
+
+## 7. Evidence index
+
+One row per check (handout §8). Screenshots are on the Issue comments and in the PDF; secrets and personal details
+are hidden.
+
+| Rubric part | Check | Requirement | Evidence | Result |
+|---|---|---|---|---|
+| 1. CI and quality gate | C-01 | R-05 | [`ci-docker.yml`](https://github.com/GGital/My-little-pony/blob/main/.github/workflows/ci-docker.yml); passing PR [#46](https://github.com/GGital/My-little-pony/pull/46), [run 43588358773](https://github.com/GGital/My-little-pony/actions/runs/43588358773) | `test-and-docker` green: server, client, E2E, image build |
+| 1. CI and quality gate | C-02 | R-06 | Ruleset `protect-main`; PR [#43](https://github.com/GGital/My-little-pony/pull/43) from `test/l5-prove-gate`, [failing run](https://github.com/GGital/My-little-pony/actions/runs/43467550906); screenshots on [#35](https://github.com/GGital/My-little-pony/issues/35) | Required check failed, merging blocked; PR closed unmerged |
+| 2. Docker and configuration | C-03 | R-01, R-02 | [`Dockerfile`](https://github.com/GGital/My-little-pony/blob/main/Dockerfile), [`.dockerignore`](https://github.com/GGital/My-little-pony/blob/main/.dockerignore), [`server/.env.example`](https://github.com/GGital/My-little-pony/blob/main/server/.env.example), section 2; [`L5-03-fresh-clone.txt`](evidence/L5-03-fresh-clone.txt) | Fresh clone with only `.env.example` values (plus `SEED_PASSWORD`) builds, migrates and serves |
+| 3. GCP deployment and persistence | C-04 | R-03 | https://tcg-event-hub-932557875237.asia-southeast1.run.app; Playwright captures of sign-in, registration, My Events, a FULL event and a restricted page (`scripts/c04-live-capture.mjs`) on [#38](https://github.com/GGital/My-little-pony/issues/38) | Domain workflow works on the live URL |
+| 3. GCP deployment and persistence | — | R-03 | GCP service, database, secrets and `/api/ready` screenshots on [#34](https://github.com/GGital/My-little-pony/issues/34) | Cloud Run + Cloud SQL connected |
+| 3. GCP deployment and persistence | C-05 | R-04 | Section 5 persistence table; [`L5-08-red-green.txt`](evidence/L5-08-red-green.txt); screenshots on [#37](https://github.com/GGital/My-little-pony/issues/37) | Event 7 present after restart, rollback to A and roll forward to B |
+| 4. Repeatable release pipeline | C-06 | R-07 to R-10 | [#36](https://github.com/GGital/My-little-pony/issues/36) → [#46](https://github.com/GGital/My-little-pony/pull/46) (Praewa's review) → release [#47](https://github.com/GGital/My-little-pony/pull/47) → [Deploy demo run 43604904531](https://github.com/GGital/My-little-pony/actions/runs/43604904531); screenshots on #36 | Image tag `267f1e5` = merge commit; revision digest matches; `/api/version` reports it |
+| 4. Repeatable release pipeline | — | R-08 | Section 5 "Which commit is running" | Footer, `/api/version`, run summary and revision agree |
