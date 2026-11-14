@@ -1,0 +1,60 @@
+TEST-L5-09 red run (persistence_check.py does not exist yet), 2026-11-14T14:53:24Z
+$ python3 -m unittest discover -s deploy/tests -p test_persistence.py
+ImportError: Failed to import test module: test_persistence
+FileNotFoundError: [Errno 2] No such file or directory: 'D:\\University works\\MylittlePony\\My-little-pony\\deploy\\persistence_check.py'
+Ran 1 test in 0.000s
+FAILED (errors=1)
+
+TEST-L5-09 green run (deploy/persistence_check.py added), 2026-11-14T14:54:23Z
+$ python3 -m unittest discover -s deploy/tests -p 'test_*.py'   # CI now runs every deploy/tests/test_*.py
+test_another_running_release_fails (test_persistence.PersistenceTests.test_another_running_release_fails) ... ok
+test_changed_title_fails (test_persistence.PersistenceTests.test_changed_title_fails) ... ok
+test_missing_record_fails (test_persistence.PersistenceTests.test_missing_record_fails) ... C:\Python314\Lib\tempfile.py:484: ResourceWarning: Implicitly cleaning up <HTTPError 404: 'Not Found'>
+test_record_present_and_expected_release_running (test_persistence.PersistenceTests.test_record_present_and_expected_release_running) ... ok
+test_without_expected_commit_the_running_commit_is_printed (test_persistence.PersistenceTests.test_without_expected_commit_the_running_commit_is_printed) ... ok
+test_an_empty_event_list_still_passes (test_smoke.SmokeTests.test_an_empty_event_list_still_passes) ... ok
+test_another_running_commit_fails (test_smoke.SmokeTests.test_another_running_commit_fails) ... ok
+test_db_not_ready_fails_even_when_http_responds (test_smoke.SmokeTests.test_db_not_ready_fails_even_when_http_responds) ... ok
+test_half_set_credentials_are_refused (test_smoke.SmokeTests.test_half_set_credentials_are_refused) ... ok
+test_public_checks_pass_and_skip_optional_login (test_smoke.SmokeTests.test_public_checks_pass_and_skip_optional_login) ... ok
+test_running_commit_matches_the_released_image (test_smoke.SmokeTests.test_running_commit_matches_the_released_image) ... ok
+test_session_is_signed_out_even_if_me_fails (test_smoke.SmokeTests.test_session_is_signed_out_even_if_me_fails) ... ok
+Ran 12 tests in 0.016s
+OK
+
+Live dry run against a seeded event (not the C-05 record):
+$ python3 deploy/persistence_check.py $URL 1 "Friday Night Constructed" <release B SHA>
+PASS event 1 "Friday Night Constructed" is present
+PASS running commit 267f1e52af5adfc081ec20cd957420ef4bb5ab5a
+$ python3 deploy/persistence_check.py $URL 1 "Friday Night Constructed" <release A SHA>   # wrong release on purpose
+RuntimeError: Release check failed: /api/version reports 267f1e52af5adfc081ec20cd957420ef4bb5ab5a, expected 906158e96ebdc6d551b2f9890d97ecfd22314553
+exit 1
+
+== C-05 record: event 7 "L5-8 persistence check" (created on the live URL by Phattaratorn as organizer Quantum Cards) ==
+Note: Deploy demo runs #3 (A, 15:10Z), #4 (B, 15:13Z), #5 (A, 15:23Z) and #6 (B, 15:24Z) were earlier tries of the rollback, before this checked sequence. The C-05 sequence below is: before, restart, rollback (run #7), roll forward.
+
+-- 1. Before (release B), 2026-11-14T15:25:53Z
+PASS event 7 "L5-8 persistence check" is present
+PASS running commit 267f1e52af5adfc081ec20cd957420ef4bb5ab5a
+   Screenshot 01: Edge on /events/7, signed in as Quantum Cards (organizer), 2026-11-14T15:27:12Z
+
+-- 2. After restart (new revision, same image, release B), 2026-11-14T15:27:51Z
+PASS event 7 "L5-8 persistence check" is present
+PASS running commit 267f1e52af5adfc081ec20cd957420ef4bb5ab5a
+   Screenshot 02: Cloud Shell restart output (revision tcg-event-hub-00011-4ml, 100% traffic); screenshot 03: Edge on /events/7 after reload, still signed in, 2026-11-14T15:29:34Z
+   Screenshot 04: Cloud Run revision history, 00011-4ml at 100% (deployer email blurred), 2026-11-14T15:30:33Z
+
+-- 3. After rollback to release A (Deploy demo run #7, image_tag = A), 2026-11-14T15:32:38Z
+PASS event 7 "L5-8 persistence check" is present
+PASS running commit 906158e96ebdc6d551b2f9890d97ecfd22314553
+   Screenshot 05: run #7 page, test skipped, deploy green, commit image tag = A, 2026-11-14T15:33:46Z
+   Screenshot 06: Edge on /events/7 after rollback, still signed in as Quantum Cards (taskbar clock 22:34 Bangkok), 2026-11-14T15:34:14Z
+   Screenshot 07: Edge on /events (bottom), footer Build 906158e (release A), 2026-11-14T15:35:19Z
+   Screenshot 08: Edge on /events (top) under A: no line under Find an Event (release B change gone), event 7 listed, still signed in, 2026-11-14T15:35:53Z
+
+-- 4. After roll forward to release B (Deploy demo run #8, image_tag = B), 2026-11-14T15:37:56Z
+PASS event 7 "L5-8 persistence check" is present
+PASS running commit 267f1e52af5adfc081ec20cd957420ef4bb5ab5a
+   Screenshot 09: run #8 page, test skipped, deploy green, commit image tag = B, 2026-11-14T15:38:13Z
+   Screenshot 10: Edge on /events (top) after roll forward and Ctrl+F5: release B line is back, event 7 listed, still signed in as Quantum Cards (taskbar clock 22:39 Bangkok), 2026-11-14T15:39:32Z
+   Screenshot 11: Cloud Run revision history: 00013-n29 (run #8, B) at 100%, 00012-q5p (run #7, A), 00011-4ml (restart), deployed by tcg-event-hub-deployer, 2026-11-14T15:40:05Z
