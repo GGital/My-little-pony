@@ -80,7 +80,8 @@ if (mode === 'login') {
   await new Promise((resolve) => context.on('close', resolve))
   console.log('Session saved in', PROFILE)
 } else {
-  const context = await chromium.launchPersistentContext(PROFILE, { ...options, headless: true })
+  // Edge exits (code 21) when a signed-in profile starts headless, so captures run in a window that closes itself.
+  const context = await chromium.launchPersistentContext(PROFILE, { ...options, headless: !!process.env.HEADLESS })
   const page = context.pages()[0] ?? (await context.newPage())
   try {
     for (const shot of SHOTS.filter((s) => only.length === 0 || only.includes(s.id))) {
