@@ -4,3 +4,28 @@ ImportError: Failed to import test module: test_persistence
 FileNotFoundError: [Errno 2] No such file or directory: 'D:\\University works\\MylittlePony\\My-little-pony\\deploy\\persistence_check.py'
 Ran 1 test in 0.000s
 FAILED (errors=1)
+
+TEST-L5-09 green run (deploy/persistence_check.py added), 2026-11-14T14:54:23Z
+$ python3 -m unittest discover -s deploy/tests -p 'test_*.py'   # CI now runs every deploy/tests/test_*.py
+test_another_running_release_fails (test_persistence.PersistenceTests.test_another_running_release_fails) ... ok
+test_changed_title_fails (test_persistence.PersistenceTests.test_changed_title_fails) ... ok
+test_missing_record_fails (test_persistence.PersistenceTests.test_missing_record_fails) ... C:\Python314\Lib\tempfile.py:484: ResourceWarning: Implicitly cleaning up <HTTPError 404: 'Not Found'>
+test_record_present_and_expected_release_running (test_persistence.PersistenceTests.test_record_present_and_expected_release_running) ... ok
+test_without_expected_commit_the_running_commit_is_printed (test_persistence.PersistenceTests.test_without_expected_commit_the_running_commit_is_printed) ... ok
+test_an_empty_event_list_still_passes (test_smoke.SmokeTests.test_an_empty_event_list_still_passes) ... ok
+test_another_running_commit_fails (test_smoke.SmokeTests.test_another_running_commit_fails) ... ok
+test_db_not_ready_fails_even_when_http_responds (test_smoke.SmokeTests.test_db_not_ready_fails_even_when_http_responds) ... ok
+test_half_set_credentials_are_refused (test_smoke.SmokeTests.test_half_set_credentials_are_refused) ... ok
+test_public_checks_pass_and_skip_optional_login (test_smoke.SmokeTests.test_public_checks_pass_and_skip_optional_login) ... ok
+test_running_commit_matches_the_released_image (test_smoke.SmokeTests.test_running_commit_matches_the_released_image) ... ok
+test_session_is_signed_out_even_if_me_fails (test_smoke.SmokeTests.test_session_is_signed_out_even_if_me_fails) ... ok
+Ran 12 tests in 0.016s
+OK
+
+Live dry run against a seeded event (not the C-05 record):
+$ python3 deploy/persistence_check.py $URL 1 "Friday Night Constructed" <release B SHA>
+PASS event 1 "Friday Night Constructed" is present
+PASS running commit 267f1e52af5adfc081ec20cd957420ef4bb5ab5a
+$ python3 deploy/persistence_check.py $URL 1 "Friday Night Constructed" <release A SHA>   # wrong release on purpose
+RuntimeError: Release check failed: /api/version reports 267f1e52af5adfc081ec20cd957420ef4bb5ab5a, expected 906158e96ebdc6d551b2f9890d97ecfd22314553
+exit 1
