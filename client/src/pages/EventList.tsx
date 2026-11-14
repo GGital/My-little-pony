@@ -45,7 +45,11 @@ export const EventList: React.FC = () => {
 
   return (
     <>
-      <PageTop title="Find an Event" tabs={participant ? EVENT_TABS : undefined} />
+      <PageTop
+        title="Find an Event"
+        subtitle="Tournaments, casual nights and release events in Bangkok. All times are Bangkok time."
+        tabs={participant ? EVENT_TABS : undefined}
+      />
       <div className="pbody">
         {/* Shown but inactive until Sprint 2 (FR-13; contracts §9 Behaviour 1). */}
         <div className="search" aria-disabled="true" title="Coming soon">

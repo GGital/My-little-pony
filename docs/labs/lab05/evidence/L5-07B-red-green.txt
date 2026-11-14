@@ -1,0 +1,17 @@
+# L5-7 release B (#36) - red run 2026-11-14T11:00:00Z, branch feature/l5-7-deploy-proof, before the change
+# client: npx vitest run tests/lab5/EventListSubtitle.test.tsx --reporter=verbose
+ × tests/lab5/EventListSubtitle.test.tsx > TEST-L5-08 (E) — the Find an Event page explains what is listed > shows one line under the title about the events and the time zone 113ms
+   → Unable to find an element with the text: Tournaments, casual nights and release events in Bangkok. All times are Bangkok time.. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed (1)
+
+# green run 2026-11-14T11:04:19Z, after the change
+# client: npx vitest run tests/lab5/EventListSubtitle.test.tsx --reporter=verbose
+ ✓ tests/lab5/EventListSubtitle.test.tsx > TEST-L5-08 (E) — the Find an Event page explains what is listed > shows one line under the title about the events and the time zone 122ms
+      Tests  1 passed (1)
+client full suite: Tests 67 passed (67); build OK
+e2e (Playwright, run just before): 40 passed (2.7m), including the three-width check of /events
+browser, server serving client/dist on :3100: /events shows the line under 'Find an Event'; at 375 px scrollWidth 375 = innerWidth
+
+# release A (before this change), live URL https://tcg-event-hub-932557875237.asia-southeast1.run.app
+GET /api/version -> {"commit":"906158e96ebdc6d551b2f9890d97ecfd22314553"} (merge of PR #45, Deploy demo run 43476752828: test + deploy green, smoke PASS health, ready, /, events, version)
