@@ -1,6 +1,6 @@
 # Lab 5 deployment: TCG Event Hub on Google Cloud
 
-Version v0.4 (L5-2 [#31](https://github.com/GGital/My-little-pony/issues/31), L5-3 [#32](https://github.com/GGital/My-little-pony/issues/32), L5-4 [#33](https://github.com/GGital/My-little-pony/issues/33), L5-7 [#36](https://github.com/GGital/My-little-pony/issues/36)). Each later Lab 5 Issue fills in its
+Version v0.5 (L5-2 [#31](https://github.com/GGital/My-little-pony/issues/31), L5-3 [#32](https://github.com/GGital/My-little-pony/issues/32), L5-4 [#33](https://github.com/GGital/My-little-pony/issues/33), L5-7 [#36](https://github.com/GGital/My-little-pony/issues/36), L5-8 [#37](https://github.com/GGital/My-little-pony/issues/37)). Each later Lab 5 Issue fills in its
 own section: Docker (#32), CI (#33), GCP resources (#34), sign-in from GitHub and the merge gate (#35), release
 procedure (#36), persistence and rollback (#37). The rest is finished in #38. Sections marked *planned* describe
 the design and are not built yet.
@@ -130,6 +130,21 @@ Nobody types a deploy command. Every release takes the same path:
 SHA of an earlier release (copy it from that run's summary). Test, build and migration are skipped; the service is
 pointed back at that image, and the smoke test checks `/api/version` reports that SHA. Roll forward the same way
 with the newer SHA. The database is never rolled back, so migrations stay additive.
+
+**Persistence check** (#37, C-05): `python3 deploy/persistence_check.py <URL> <event id> "<title>" [<SHA>]` reads
+only public endpoints and fails unless the event still has that title and, when a SHA is given, `/api/version`
+reports it. Tested on 14 Nov with event 7 "L5-8 persistence check" (created on the live URL by an organizer):
+
+| Step | How | Running release | Event 7 | Still signed in |
+|---|---|---|---|---|
+| Before | — | B `267f1e5` | present | yes |
+| Restart | `gcloud run services update … --update-labels=l5-8-restart=1` (revision `00011-4ml`) | B | present | yes |
+| Rollback | Deploy demo [run #7](https://github.com/GGital/My-little-pony/actions/runs/43610598970), `image_tag` = A; test skipped (revision `00012-q5p`) | A `906158e` | present | yes |
+| Roll forward | Deploy demo [run #8](https://github.com/GGital/My-little-pony/actions/runs/43611074299), `image_tag` = B; test skipped (revision `00013-n29`) | B | present | yes |
+
+Under A the line under Find an Event disappeared and the footer read `Build 906158e`; after the roll forward the line
+came back. A browser tab opened before a release keeps the old page until it is reloaded (Ctrl+F5). Log:
+`docs/labs/lab05/evidence/L5-08-red-green.txt`.
 
 **Do not merge into `main` while the app is paused** (Episode 9): the migration and the smoke test would fail.
 Resume first, then re-run the failed run.
