@@ -32,6 +32,11 @@ const SHOTS = [
       const more = page.getByRole('button', { name: 'Show additional settings' })
       while (await more.count()) await more.first().click()
     } },
+  { id: 'c01', name: 'c01-ci-server-tests', url: `${REPO}/actions/runs/43588358773/job/132427587839#step:10:157`, note: 'C-01 server tests', show: 'text=Test Files' },
+  { id: 'c01e', name: 'c01-ci-e2e', url: `${REPO}/actions/runs/43588358773/job/132427587839#step:12:277`, note: 'C-01 end-to-end tests', show: 'text=40 passed' },
+  { id: 'g01', name: 'g01-cloud-run-service', url: `https://console.cloud.google.com/run/detail/asia-southeast1/tcg-event-hub/metrics?${GCP}`, note: 'Cloud Run service', wait: 9000 },
+  { id: 'g02', name: 'g02-cloud-sql-overview', url: `https://console.cloud.google.com/sql/instances/tcg-event-hub-pg/overview?${GCP}`, note: 'Cloud SQL instance', wait: 9000 },
+  { id: 'g03', name: 'g03-cloud-sql-databases', url: `https://console.cloud.google.com/sql/instances/tcg-event-hub-pg/databases?${GCP}`, note: 'Cloud SQL databases', wait: 9000 },
   { id: 'e01', name: 'e01-A-run-summary', url: `${REPO}/actions/runs/43476752828`, note: 'release A run', show: 'text=Commit image tag' },
   { id: 'e02', name: 'e02-A-smoke', url: `${REPO}/actions/runs/43476752828/job/132064271342#step:9:1`, note: 'release A smoke step', show: 'text=PASS /api/version' },
   { id: 'e03', name: 'e03-B-run-summary', url: `${REPO}/actions/runs/43604904531`, note: 'release B run', show: 'text=Commit image tag' },
