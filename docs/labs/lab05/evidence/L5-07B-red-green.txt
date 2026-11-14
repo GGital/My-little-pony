@@ -1,0 +1,6 @@
+# L5-7 release B (#36) - red run 2026-11-14T11:00:00Z, branch feature/l5-7-deploy-proof, before the change
+# client: npx vitest run tests/lab5/EventListSubtitle.test.tsx --reporter=verbose
+ × tests/lab5/EventListSubtitle.test.tsx > TEST-L5-08 (E) — the Find an Event page explains what is listed > shows one line under the title about the events and the time zone 113ms
+   → Unable to find an element with the text: Tournaments, casual nights and release events in Bangkok. All times are Bangkok time.. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed (1)
