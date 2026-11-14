@@ -51,7 +51,7 @@ Issues are labelled `lab5` (handout R-10). Builders and reviewers are filled in 
 | L5-4 CI on PRs and adapted deploy scripts | [#33](https://github.com/GGital/My-little-pony/issues/33) | `ci/l5-4-pr-checks` · [#41](https://github.com/GGital/My-little-pony/pull/41); release [#42](https://github.com/GGital/My-little-pony/pull/42) | Phattaratorn | Praewa (approved #41 and #42, 13 Nov) | Merged 13 Nov |
 | L5-5 First deployment to GCP | [#34](https://github.com/GGital/My-little-pony/issues/34) | no branch (Cloud Shell) | — | — | Planned |
 | L5-6 WIF and the merge gate | [#35](https://github.com/GGital/My-little-pony/issues/35) | no branch; `test/l5-prove-gate` | — | — | Planned |
-| L5-7 Auto deploy, releases A and B | [#36](https://github.com/GGital/My-little-pony/issues/36) | `ci/l5-7-auto-deploy` · PR pending; `feature/l5-7-deploy-proof` (release B) | Phattaratorn (release A); Praewa (release B) | — | In progress |
+| L5-7 Auto deploy, releases A and B | [#36](https://github.com/GGital/My-little-pony/issues/36) | `ci/l5-7-auto-deploy` · [#44](https://github.com/GGital/My-little-pony/pull/44), release A [#45](https://github.com/GGital/My-little-pony/pull/45) ([Deploy demo](https://github.com/GGital/My-little-pony/actions/runs/43476752828), `906158e`); `feature/l5-7-deploy-proof` · release B PR pending | Phattaratorn (release A and release B) | Praewa (approved #44 and #45, 14 Nov) | Release A deployed 14 Nov; release B in review |
 | L5-8 Persistence, rollback, roll-forward | [#37](https://github.com/GGital/My-little-pony/issues/37) | no branch (Actions, Console) | — | — | Planned |
 | L5-9 deployment.md, evidence index, PDF | [#38](https://github.com/GGital/My-little-pony/issues/38) | `docs/l5-9-deployment-doc` | — | — | Planned |
 
@@ -78,3 +78,4 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.14 | 13 Nov 2026 | L5-2 merged (PR #39, approved by Praewa); L5-3 in progress | Team (AI-assisted) |
 | v0.15 | 13 Nov 2026 | L5-3 merged (PR #40, approved by Praewa); L5-4 in progress | Team (AI-assisted) |
 | v0.16 | 13 Nov 2026 | L5-4 merged (PR #41 and release #42, approved by Praewa); L5-7 in progress | Team (AI-assisted) |
+| v0.17 | 14 Nov 2026 | L5-7: PR #44 and release A #45 deployed by the pipeline (`906158e`); release B built by Phattaratorn (team change: not Praewa as planned) | Team (AI-assisted) |
