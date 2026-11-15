@@ -37,7 +37,7 @@ const SHOTS = [
   { id: 'g01', name: 'g01-cloud-run-service', url: `https://console.cloud.google.com/run/detail/asia-southeast1/tcg-event-hub/metrics?${GCP}`, note: 'Cloud Run service', wait: 9000 },
   { id: 'g02', name: 'g02-cloud-sql-overview', url: `https://console.cloud.google.com/sql/instances/tcg-event-hub-pg/overview?${GCP}`, note: 'Cloud SQL instance', wait: 9000 },
   { id: 'g03', name: 'g03-cloud-sql-databases', url: `https://console.cloud.google.com/sql/instances/tcg-event-hub-pg/databases?${GCP}`, note: 'Cloud SQL databases', wait: 9000 },
-  { id: 'k00', name: 'k00-project-board', url: 'https://github.com/users/GGital/projects/2?filterQuery=label%3Alab5', note: 'Ep 0 project board, label lab5', wait: 6000, vw: 2300 },
+  { id: 'k00', name: 'k00-project-board', url: 'https://github.com/users/GGital/projects/2?filterQuery=label%3Alab5', note: 'Ep 0 project board, label lab5', wait: 6000, vw: 2000, vh: 1500 },
   { id: 'k02', name: 'k02-pr39-six-points', url: `${REPO}/pull/39`, note: 'Ep 2 PR #39', full: true },
   { id: 'k03', name: 'k03-pr40-docker', url: `${REPO}/pull/40`, note: 'Ep 3 PR #40', full: true },
   { id: 'k04a', name: 'k04a-pr41-ci', url: `${REPO}/pull/41`, note: 'Ep 4 PR #41', full: true },
@@ -109,7 +109,8 @@ if (mode === 'login') {
   const page = context.pages()[0] ?? (await context.newPage())
   try {
     for (const shot of SHOTS.filter((s) => only.length === 0 || only.includes(s.id))) {
-      await page.setViewportSize({ width: shot.vw ?? 1440, height: 900 })
+      // vw/vh: a bigger window for pages with their own scroll areas (the board's columns), so nothing is cut off
+      await page.setViewportSize({ width: shot.vw ?? 1440, height: shot.vh ?? 900 })
       await page.goto(shot.url, { waitUntil: 'domcontentloaded' })
       await page.waitForTimeout(shot.wait ?? 3000)
       if (/accounts\.google\.com|github\.com\/login/.test(page.url())) {
