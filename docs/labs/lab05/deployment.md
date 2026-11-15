@@ -1,6 +1,6 @@
 # Lab 5 deployment: TCG Event Hub on Google Cloud
 
-Version v1.0 (Lab 5 Issues [#30](https://github.com/GGital/My-little-pony/issues/30) to [#38](https://github.com/GGital/My-little-pony/issues/38)). One section per part of the work: Docker (#32),
+Version v1.1 (Lab 5 Issues [#30](https://github.com/GGital/My-little-pony/issues/30) to [#38](https://github.com/GGital/My-little-pony/issues/38)). One section per part of the work: Docker (#32),
 CI (#33), GCP resources (#34), sign-in from GitHub and the merge gate (#35), release procedure (#36), persistence and
 rollback (#37), pause, resume and teardown, and the evidence index (#38).
 
@@ -106,7 +106,7 @@ The `deploy/` scripts come from the kit with these changes: names `tcg-event-hub
 | Service URLs | `https://tcg-event-hub-932557875237.asia-southeast1.run.app` and `https://tcg-event-hub-kwdr2zue6a-as.a.run.app` (both in `APP_ORIGIN`) |
 | Workload Identity Federation | pool `github-actions`, provider `github-main`; the condition pins this repository, `main`, `deploy.yml` and environment `demo` (#35) |
 | GitHub environment | `demo` (deploys from `main` only), variables `GCP_PROJECT_ID`, `GCP_REGION`, `WIF_PROVIDER`, `WIF_SERVICE_ACCOUNT`; no secrets |
-| Merge gate | ruleset `protect-main` (Active, no bypass) on the default branch `main`: PR with 1 approval, required status check `test-and-docker`, no force push or deletion (#35). "Up to date before merging" is not switched on. PRs into `sprint-1-staging` run the same check and get a teammate review, but no ruleset enforces it there |
+| Merge gate | ruleset `protect-main` (Active, no bypass) on the default branch `main`: PR with 1 approval, required status check `test-and-docker`, no force push or deletion (#35). "Require branches to be up to date before merging" is on (switched on 15 Nov 2026). PRs into `sprint-1-staging` run the same check and get a teammate review, but no ruleset enforces it there |
 
 The project number is left out on purpose; it only appears inside the deterministic service URL.
 
