@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { RequireRole, SessionEndedRedirect } from './RouteGuards';
+import { useAuth } from '../auth/AuthContext';
 import { NotAvailablePage } from './pages/NotAvailablePage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { SignInPage } from './pages/SignInPage';
@@ -12,9 +13,11 @@ import { Dashboard as OrganizerDashboard } from '../pages/organizer/Dashboard';
 import { Registrations } from '../pages/organizer/Registrations';
 
 export const AppRoutes: React.FC = () => {
+  // #58: when another tab switched the account, remount the page so its data is loaded for the new account.
+  const { accountChanges } = useAuth();
   return (
     <>
-      <Routes>
+      <Routes key={accountChanges}>
         <Route path="/" element={<Navigate to="/events" replace />} />
         <Route path="/events" element={<EventList />} />
         <Route path="/events/:id" element={<EventDetail />} />
