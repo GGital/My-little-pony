@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { ApiError } from '../../api/errors';
 import type { ApiErrorDetail, UserRole } from '../../api/types';
 import { useAuth } from '../../auth/AuthContext';
+import type { SignInState } from '../RouteGuards';
 import { FormFieldError, fieldErrorProps } from '../../components/FormFieldError';
 import { Icon } from '../../components/Icon';
 import { Notice } from '../../components/Notice';
@@ -24,6 +25,8 @@ export const SignInPage: React.FC = () => {
   const { signIn } = useAuth();
   const navigate = useNavigate();
   const [params] = useSearchParams();
+  // Set by SessionEndedRedirect after a protected call answered 401 (design-direction §4.2, #62).
+  const sessionEnded = (useLocation().state as SignInState | null)?.sessionEnded === true;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
@@ -62,6 +65,7 @@ export const SignInPage: React.FC = () => {
             {returning ? "Sign in to continue. You'll come back to the page you were on." : 'Sign in to register for events or manage your own.'}
           </p>
         </div>
+        {sessionEnded && !alert && <Notice tone="info">Your session has ended — please sign in again</Notice>}
         {alert && <Notice tone="error">{alert}</Notice>}
         <form onSubmit={onSubmit} noValidate className="form-section">
           <div>
