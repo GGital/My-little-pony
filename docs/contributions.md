@@ -62,7 +62,10 @@ UAT findings from Team 1 KitLoop are Issues #56–#64; the triage is Part 4 of t
 | Item | Issue | Branch · PR | Built by | Reviewed by | Status |
 |---|---|---|---|---|---|
 | L6 triage of received findings | [#56](https://github.com/GGital/My-little-pony/issues/56)–[#64](https://github.com/GGital/My-little-pony/issues/64) | no branch (UAT pack Part 4, Issue comments) | Phattaratorn (severity decisions; drafted with Claude Code) | Praewa (to confirm) | Severities decided 20 Nov |
-| L6-62 Session ended: message and redirect to sign-in | [#62](https://github.com/GGital/My-little-pony/issues/62) | `fix/l6-62-session-ended` · PR to open | Phattaratorn | (from the PR record) | Red `7f44943`, green `ce3bd7d`; PR pending |
+| L6-62 Session ended: message and redirect to sign-in | [#62](https://github.com/GGital/My-little-pony/issues/62) | `fix/l6-62-session-ended` · [#66](https://github.com/GGital/My-little-pony/pull/66) | Phattaratorn | Praewa (approved #66, 20 Nov) | Merged 20 Nov (`fd112ee`); red `7f44943`, green `ce3bd7d` |
+| L6-63 U+0000 refused with a field-level 400 | [#63](https://github.com/GGital/My-little-pony/issues/63) | `fix/l6-63-nul-character` · [#68](https://github.com/GGital/My-little-pony/pull/68) | Phattaratorn | Praewa (approved #68, 20 Nov) | Merged 20 Nov (`a68ed9a`); red `2de61d4`, green `b81fb83` |
+| L6 CI runner pinned to ubuntu-24.04 (Playwright could not install Chromium on 26.04) | — | `ci/l6-e2e-runner` · [#67](https://github.com/GGital/My-little-pony/pull/67) | Phattaratorn | Praewa (approved #67, 20 Nov) | Merged 20 Nov (`7fe21b7`) |
+| L6-56 Title overflow: wrap 100-character title and prevent seat info clipping | [#56](https://github.com/GGital/My-little-pony/issues/56) | `fix/issue-56-title-overflow` · [#65](https://github.com/GGital/My-little-pony/pull/65) | Praewa | Phattaratorn (review requested) | Red `1310749`, green `7ffc09e`; in review |
 
 ## 5. Keeping this table current
 
@@ -94,3 +97,4 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.21 | 14 Nov 2026 | L5-1, L5-5, L5-6 rows: built by Praewa, checked by Phattaratorn (team record, 14 Nov); L5-9: #49, #50, release #51 (`38e4cb9`) | Team (AI-assisted) |
 | v0.22 | 15 Nov 2026 | L5-9: #52, release #53 (`1f3dcfc`); merge-gate row in deployment.md v1.1 (up to date before merging is on) | Team (AI-assisted) |
 | v0.23 | 20 Nov 2026 | §4 Lab 6 table: triage of #56–#64; L6-62 in progress | Team (AI-assisted) |
+| v0.24 | 20 Nov 2026 | §4 Lab 6 table: L6-56 (#56) in review (#65) | Praewa (MeldyRose) |
