@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { Navigate, useLocation, useSearchParams } from 'react-router-dom';
 import { ApiError } from '../../api/errors';
 import type { ApiErrorDetail, UserRole } from '../../api/types';
 import { useAuth } from '../../auth/AuthContext';
@@ -27,8 +27,7 @@ const HOME: Record<UserRole, string> = { PARTICIPANT: '/events', ORGANIZER: '/or
 
 /** `/login` (contracts §4 UI, design-direction §4.2). */
 export const SignInPage: React.FC = () => {
-  const { signIn } = useAuth();
-  const navigate = useNavigate();
+  const { signIn, status, user } = useAuth();
   const [params] = useSearchParams();
   // Set by SessionEndedRedirect after a protected call answered 401 (design-direction §4.2, #62).
   const sessionEnded = (useLocation().state as SignInState | null)?.sessionEnded === true;
@@ -45,8 +44,8 @@ export const SignInPage: React.FC = () => {
     setAlert(null);
     setDetails(undefined);
     try {
-      const user = await signIn(email, password);
-      navigate(safeReturnTo(params.get('returnTo')) ?? HOME[user.role], { replace: true });
+      // Success makes the user signed in; the redirect below then leaves this page.
+      await signIn(email, password);
     } catch (err) {
       setBusy(false);
       if (err instanceof ApiError && err.status === 400) {
@@ -60,6 +59,12 @@ export const SignInPage: React.FC = () => {
   };
 
   const returning = safeReturnTo(params.get('returnTo'));
+
+  // design-direction §4.3 (#61): a signed-in user does not get the form. Go to the safe returnTo (FR-26), else the
+  // role home. This also covers the moment right after a successful sign-in on this page.
+  if (status === 'signedIn' && user) {
+    return <Navigate to={returning ?? HOME[user.role]} replace />;
+  }
 
   return (
     <div className="pbody pbody--narrow">
