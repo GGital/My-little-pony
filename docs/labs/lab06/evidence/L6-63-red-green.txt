@@ -1,0 +1,42 @@
+Lab 6 · UAT finding #63 (KitLoop Finding 8) · TEST-L6-63 · server/tests/lab6/nul-character.api.test.ts
+Requirement: NFR-15 (invalid values refused with 400 and field details) and NFR-09 (field-level messages).
+Automated API integration tests (Vitest + supertest, real PostgreSQL test database tcg_event_hub_test).
+Key assertions: description "UAT"+U+0000+"TEST" -> 400 VALIDATION_FAILED, details [{field: description, message: "Remove the unsupported
+invisible character (U+0000)."}], table counts unchanged; U+0000 in seven other text fields -> one detail each; Thai text and
+line breaks still -> 201 and stored as sent.
+
+=== RED ===
+TEST-L6-63 red run at commit 2de61d4 (test only, no fix), 2026-11-20T15:14:16Z
+$ cd server && npx vitest run tests/lab6/nul-character.api.test.ts --reporter=verbose   # test database tcg_event_hub_test
+ × description "UAT" + U+0000 + "TEST" → 400 VALIDATION_FAILED naming description, 0 rows stored 56ms
+ × U+0000 in required and other optional fields → one detail per field, 0 rows stored 23ms
+ ✓ control: Thai text and line breaks in the description still publish → 201, stored as sent 30ms
+
+Failure (both failing cases):
+AssertionError: expected 500 to be 400 // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+
+=== GREEN ===
+TEST-L6-63 green run at commit b81fb83, 2026-11-20T15:16:17Z
+$ cd server && npx vitest run tests/lab6/nul-character.api.test.ts --reporter=verbose
+ ✓ description "UAT" + U+0000 + "TEST" → 400 VALIDATION_FAILED naming description, 0 rows stored 52ms
+ ✓ U+0000 in required and other optional fields → one detail per field, 0 rows stored 20ms
+ ✓ control: Thai text and line breaks in the description still publish → 201, stored as sent 32ms
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Duration  2.51s (transform 357ms, setup 0ms, import 1.18s, tests 994ms, environment 0ms)
+Regression at commit b81fb83
+$ cd server && npm test   # test database tcg_event_hub_test
+ Test Files  28 passed (28)
+      Tests  295 passed (295)
+   Duration  67.38s (transform 977ms, setup 0ms, import 18.00s, tests 39.26s, environment 4ms)
+$ cd server && npm run typecheck
+exit 0, no errors
+$ cd client && npm test
+ Test Files  17 passed (17)
+      Tests  67 passed (67)
+
+The organizer form already shows server field details under the matching field (TEST-C-05, client/tests/sprint-1/CreateEvent.test.tsx,
+"displays validation errors from server 400 details under matching fields"); the description field renders <FormFieldError field="description">.

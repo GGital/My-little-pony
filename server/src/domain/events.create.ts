@@ -17,11 +17,16 @@ export class EventTimeError extends Error {
 const ISO_WITH_OFFSET_REGEX =
   /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?(?:Z|[+-]\d{2}:\d{2})$/
 
+/** #63 (NFR-15): PostgreSQL text cannot store U+0000, so refuse it here as a field error instead of a 500. */
+const NUL_MESSAGE = 'Remove the unsupported invisible character (U+0000).'
+const hasNoNul = (val: string | null) => val === null || !val.includes('\u0000')
+
 function requiredTrimmedString(min: number, max: number, message: string) {
   return z
     .string({ message })
     .transform((val) => val.trim())
     .refine((val) => val.length >= min && val.length <= max, { message })
+    .refine(hasNoNul, { message: NUL_MESSAGE })
 }
 
 function optionalTrimmedString(max: number, message: string) {
@@ -35,6 +40,7 @@ function optionalTrimmedString(max: number, message: string) {
       return trimmed === '' ? null : trimmed
     })
     .refine((val) => val === null || val.length <= max, { message })
+    .refine(hasNoNul, { message: NUL_MESSAGE })
 }
 
 function isoDateTimeWithOffset(message: string) {
