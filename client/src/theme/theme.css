@@ -318,6 +318,7 @@ p {
 .ptop h1 {
   font-size: 32px;
   letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
 }
 .ptop__row {
   display: flex;
@@ -325,6 +326,9 @@ p {
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
+}
+.ptop__row > div:first-child {
+  min-width: 0;
 }
 .ptop .host {
   margin-top: 6px;
@@ -431,7 +435,7 @@ p {
 /* ---------- Event card ---------- */
 .event-card {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 20px;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -468,6 +472,9 @@ a.event-card:focus-visible {
   display: block;
   font: 700 24px/1.15 var(--font-heading);
 }
+.event-card > div:not(.date-badge):not(.event-card__aside) {
+  min-width: 0;
+}
 .event-card__when {
   font: 700 13px var(--font-body);
   letter-spacing: 0.06em;
@@ -477,6 +484,7 @@ a.event-card:focus-visible {
 .event-card__title {
   font-size: 19px;
   margin: 2px 0;
+  overflow-wrap: anywhere;
 }
 .event-card__title a {
   color: inherit;
@@ -655,9 +663,11 @@ a.event-card:focus-visible {
 }
 .dhead__title {
   grid-column: 1 / -1;
+  min-width: 0;
 }
 .dhead h1 {
   font-size: 28px;
+  overflow-wrap: anywhere;
 }
 .dhead__action {
   display: flex;
@@ -800,6 +810,7 @@ a.event-card:focus-visible {
 .seat-card__lead {
   margin-bottom: 16px;
   max-width: min(42ch, calc(100% - 56px));
+  overflow-wrap: anywhere;
 }
 .ticket-facts {
   display: grid;
@@ -1168,7 +1179,7 @@ textarea.form-control {
     margin-left: 4px;
   }
   .event-card {
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto minmax(0, 1fr);
     gap: 14px 16px;
     padding: 18px;
   }
