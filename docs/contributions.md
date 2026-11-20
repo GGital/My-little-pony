@@ -69,6 +69,8 @@ UAT findings from Team 1 KitLoop are Issues #56–#64; the triage is Part 4 of t
 | L6-60 Malformed returnTo refused after sign-in | [#60](https://github.com/GGital/My-little-pony/issues/60) | `fix/l6-60-safe-return-to` · [#70](https://github.com/GGital/My-little-pony/pull/70) | Phattaratorn | Praewa (approved #70, 20 Nov) | Merged 20 Nov (`528fa0c`); red `1a61929`, green `f15d9d6` |
 | L6-57 Impossible calendar dates refused | [#57](https://github.com/GGital/My-little-pony/issues/57) | `fix/l6-57-calendar-date` · [#71](https://github.com/GGital/My-little-pony/pull/71) | Phattaratorn | Praewa (approved #71, 20 Nov) | Merged 20 Nov (`d4d251e`); red `b35fe87`, green `b28cc55` |
 | L6-61 Signed-in user on /login goes on | [#61](https://github.com/GGital/My-little-pony/issues/61) | `fix/l6-61-login-when-signed-in` · PR to open | Phattaratorn | (from the PR record) | Red `a317329`, green `4dd625b`; PR pending |
+| L6-56 Title overflow: wrap 100-character title and prevent seat info clipping | [#56](https://github.com/GGital/My-little-pony/issues/56) | `fix/issue-56-title-overflow` · [#65](https://github.com/GGital/My-little-pony/pull/65) | Praewa | Phattaratorn (review requested) | Red `1310749`, green `7ffc09e`; in review |
+| L6-58 A tab follows a session change made in another tab (Major) | [#58](https://github.com/GGital/My-little-pony/issues/58) | `fix/l6-58-tab-account-sync` · PR to open | Phattaratorn | (from the PR record) | Red `35fac94`, green `40fd67f`; PR pending |
 
 ## 5. Keeping this table current
 
