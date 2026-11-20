@@ -1,0 +1,56 @@
+Lab 6 · UAT finding #61 (KitLoop Finding 6) · TEST-L6-61 · client/tests/lab6/SignedInLogin.test.tsx
+Requirement: design-direction §4.3 route table (/login: signed-in participant -> /events, organizer -> /organizer), FR-26, AC-C-03.
+Automated component tests (Vitest + Testing Library).
+Key assertions: signed in, /login renders no sign-in form and lands on /events (Boss), /organizer (Quantum Cards), the safe returnTo
+/me/registrations, or /events for an unsafe returnTo (//evil.example); signed out, /login still shows the form.
+
+=== RED ===
+TEST-L6-61 red run at commit a317329 (tests only, no fix), 2026-11-20T18:05:59Z
+$ cd client && npx vitest run tests/lab6/SignedInLogin.test.tsx --reporter=verbose
+ × a participant (Boss) on /login → /events, no sign-in form 37ms
+ × an organizer (Quantum Cards) on /login → /organizer, no sign-in form 5ms
+ × Boss with a safe returnTo → /me/registrations, no sign-in form 4ms
+ × Boss with an unsafe returnTo (//evil.example) → /events, no sign-in form 4ms
+ ✓ control: signed out, /login still shows the sign-in form 55ms
+
+Failures (all four):
+TestingLibraryElementError: Unable to find an element by: [data-testid="where"]
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 1 passed (5)
+
+=== GREEN ===
+TEST-L6-61 green run at commit 4dd625b, 2026-11-20T18:08:34Z
+$ cd client && npx vitest run tests/lab6/SignedInLogin.test.tsx tests/sprint-1/SignInPage.test.tsx --reporter=verbose
+ ✓ a participant (Boss) on /login → /events, no sign-in form 31ms
+ ✓ an organizer (Quantum Cards) on /login → /organizer, no sign-in form 4ms
+ ✓ Boss with a safe returnTo → /me/registrations, no sign-in form 3ms
+ ✓ Boss with an unsafe returnTo (//evil.example) → /events, no sign-in form 3ms
+ ✓ control: signed out, /login still shows the sign-in form 55ms
+ ✓ posts E-01 with the typed email and password, then follows a safe returnTo 125ms
+ ✓ a participant with no returnTo lands on the role home 27ms
+ ✓ an organizer with no returnTo lands on the role home 30ms
+ ✓ an absolute returnTo lands on the role home 31ms
+ ✓ a protocol-relative returnTo lands on the role home 29ms
+ ✓ a backslash returnTo lands on the role home 14ms
+ ✓ a 401 shows the alert, keeps the email, clears the password and focuses it 31ms
+ ✓ the SIGN IN button is disabled with aria-busy while the request is in flight 29ms
+ Test Files  2 passed (2)
+      Tests  13 passed (13)
+   Duration  2.06s (transform 260ms, setup 458ms, import 694ms, tests 417ms, environment 1.80s)
+Regression at commit 4dd625b
+$ cd client && npm test
+ Test Files  21 passed (21)
+      Tests  89 passed (89)
+$ cd client && npm run lint
+exit 0, no errors
+$ npx playwright test   # root, test database, same code before the commit
+PASS (40) FAIL (0)
+
+=== Manual check (local Docker build of 4dd625b's tree, http://localhost:8090, seeded data) ===
+2026-11-21 Asia/Bangkok, Claude built-in browser (Chromium), manual, KitLoop's steps from #61.
+1. Signed in as Boss, opened /login: landed on /events, no sign-in form, header "Boss PLAYER".
+2. Opened /login?returnTo=%2Fme%2Fregistrations as Boss: landed on /me/registrations ("My Events"), no form
+   (EV-L6-61-01, L6-61-local-login-redirect.jpg).
+3. Signed out, signed in as Quantum Cards (landed on /organizer), opened /login: landed on /organizer, no form.
+Before the fix all three showed the full sign-in form under the signed-in header (KitLoop EV-PHU-01-01 … 03).
