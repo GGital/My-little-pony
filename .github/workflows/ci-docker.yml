@@ -3,7 +3,7 @@ name: CI & Docker Build
 on:
   workflow_call:
   pull_request:
-    branches: [main, 'sprint-*-staging']
+    branches: [main, "sprint-*-staging"]
   workflow_dispatch:
 
 # Read-only: this workflow cannot push, change settings or reach Google Cloud.

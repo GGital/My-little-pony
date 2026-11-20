@@ -11,6 +11,8 @@ export interface AuthContextValue {
   signIn: (email: string, password: string) => Promise<AuthUser>;
   /** E-02. Always ends signed out, even if the session had already expired. */
   signOut: () => Promise<void>;
+  /** How many times a protected call answered 401 (Feature-C Behaviour 4); `SessionEndedRedirect` reacts to each. */
+  sessionEnds: number;
 }
 
 export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -34,6 +36,7 @@ export interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children, initialStatus, initialUser = null }) => {
   const [status, setStatus] = useState<AuthStatus>(initialStatus ?? 'loading');
   const [user, setUser] = useState<AuthUser | null>(initialUser);
+  const [sessionEnds, setSessionEnds] = useState(0);
 
   const becomeSignedOut = useCallback(() => {
     setStatus('signedOut');
@@ -59,7 +62,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, initialSta
   }, [initialStatus, becomeSignedIn, becomeSignedOut]);
 
   useEffect(() => {
-    setSessionExpiredHandler(becomeSignedOut);
+    setSessionExpiredHandler(() => {
+      becomeSignedOut();
+      setSessionEnds((n) => n + 1);
+    });
     return () => setSessionExpiredHandler(null);
   }, [becomeSignedOut]);
 
@@ -81,6 +87,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, initialSta
     becomeSignedOut();
   }, [becomeSignedOut]);
 
-  const value = useMemo(() => ({ status, user, signIn, signOut }), [status, user, signIn, signOut]);
+  const value = useMemo(
+    () => ({ status, user, signIn, signOut, sessionEnds }),
+    [status, user, signIn, signOut, sessionEnds]
+  );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

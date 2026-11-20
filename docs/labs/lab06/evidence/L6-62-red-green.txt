@@ -1,0 +1,62 @@
+Lab 6 · UAT finding #62 (KitLoop Finding 7) · TEST-L6-62 · client/tests/lab6/SessionEnded.test.tsx
+Requirement: Feature-C Behaviour 4 (any 401 from a protected call clears the user and redirects to sign-in with returnTo)
+and design-direction §4.2 (show "Your session has ended — please sign in again"). Automated component tests (Vitest + Testing Library).
+Key assertions: location becomes /login?returnTo=%2Fevents%2F26 after REGISTER answers 401; the session-ended text is on the page;
+the same for /me/registrations; no message on a plain /login visit or after an optional who-am-I 401.
+
+=== RED ===
+TEST-L6-62 red run at commit 7f44943 (tests only, no fix), 2026-11-20T15:01:08Z
+$ cd client && npx vitest run tests/lab6/SessionEnded.test.tsx --reporter=verbose
+ × REGISTER answered with 401 on /events/26: shows the session-ended message on /login?returnTo=%2Fevents%2F26 1139ms
+ × a protected page whose data call answers 401 (/me/registrations) also shows the session-ended message 1028ms
+ ✓ an ordinary visit to /login (no ended session) does not show the session-ended message 14ms
+ ✓ a 401 from an optional call (who-am-I on load) is a normal signed-out answer: no redirect and no message 48ms
+
+First failure:
+Expected element to have text content:
+  /login?returnTo=%2Fevents%2F26
+Received:
+  /events/26
+
+Second failure:
+TestingLibraryElementError: Unable to find an element with the text: Your session has ended — please sign in again.
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+
+=== GREEN ===
+TEST-L6-62 green run at commit ce3bd7d, 2026-11-20T15:08:52Z
+$ cd client && npx vitest run tests/lab6/SessionEnded.test.tsx --reporter=verbose
+
+
+ ✓ REGISTER answered with 401 on /events/26: shows the session-ended message on /login?returnTo=%2Fevents%2F26 356ms
+ ✓ a protected page whose data call answers 401 (/me/registrations) also shows the session-ended message 49ms
+ ✓ an ordinary visit to /login (no ended session) does not show the session-ended message 12ms
+ ✓ a 401 from an optional call (who-am-I on load) is a normal signed-out answer: no redirect and no message 53ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Duration  4.77s (transform 658ms, setup 628ms, import 1.12s, tests 474ms, environment 2.07s)
+
+
+Regression: whole client suite at commit ce3bd7d
+$ cd client && npm test
+ Test Files  18 passed (18)
+      Tests  71 passed (71)
+   Duration  13.10s (transform 5.56s, setup 22.00s, import 24.30s, tests 12.19s, environment 69.72s)
+
+$ cd client && npm run lint   # tsc --noEmit, includes tests/
+TypeScript: No errors found
+exit 0, no errors
+
+=== Manual check (local Docker build of ce3bd7d's tree, http://localhost:8090, seeded data) ===
+2026-11-20 ~22:05 Asia/Bangkok, Claude built-in browser (Chromium), manual.
+1. Tab A: signed in as Nok, opened /events/5 (Dragon Draft Night, 0 / 16) - button REGISTER.
+2. Tab B (same browser): Nok's menu > Sign out - "You are signed out."; GET /api/auth/me now 401.
+3. Tab A, without reloading: REGISTER.
+   Expected: no registration; "Your session has ended — please sign in again"; /login?returnTo=%2Fevents%2F5.
+   Actual:   URL /login?returnTo=%2Fevents%2F5, header shows Sign in, the info notice shows the message
+             (EV-L6-62-01, L6-62-local-session-ended.jpg); GET /api/events/5 still registeredCount 0, seatsRemaining 16.
+4. Signed in again as Nok on that page - back on /events/5 with REGISTER (returnTo honoured).
+Console: only the two expected 401 responses (the rejected REGISTER and the /api/auth/me check).
+Server code is unchanged by this fix; the server and E2E suites run in CI on the pull request.
