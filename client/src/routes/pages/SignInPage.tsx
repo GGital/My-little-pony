@@ -9,13 +9,18 @@ import { Icon } from '../../components/Icon';
 import { Notice } from '../../components/Notice';
 import { SubmitButton } from '../../components/SubmitButton';
 
+const SAME_SITE = 'http://app.invalid';
+
 /**
- * An internal path to go back to after sign-in, or null. Only "/x…" counts: "//host" and "/\host" are
- * read by browsers as another site, and anything with a scheme is external (AC-C-03).
+ * An internal path to go back to after sign-in, or null (AC-C-03). The value is judged the way the browser will
+ * read it: URL parsing drops tabs and line breaks and treats "\" as "/", so "/<TAB>/host", "//host" and "/\host"
+ * all point at another site (#60). Only a path that stays on this site is returned, in its parsed form.
  */
 export function safeReturnTo(value: string | null): string | null {
-  if (!value || !value.startsWith('/') || value.startsWith('//') || value.startsWith('/\\')) return null;
-  return value;
+  if (!value || !value.startsWith('/')) return null;
+  const url = new URL(value, SAME_SITE);
+  if (url.origin !== SAME_SITE) return null;
+  return url.pathname + url.search + url.hash;
 }
 
 const HOME: Record<UserRole, string> = { PARTICIPANT: '/events', ORGANIZER: '/organizer' };
