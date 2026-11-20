@@ -1,0 +1,68 @@
+Lab 6 · UAT finding #60 (KitLoop Finding 5) · TEST-L6-60 · client/tests/lab6/SafeReturnTo.test.tsx
+Requirement: AC-C-03 (a returnTo that is not an internal path goes to /events instead) and FR-26.
+Automated unit tests of safeReturnTo (U) and a component test of the sign-in page (C), Vitest + Testing Library.
+Key assertions: "/<TAB>/example.com", "/<LF>/example.com", "/<CR>/example.com", "/<TAB>\example.com" -> null; four ordinary paths
+kept as given; signing in as Nok on /login?returnTo=%2F%09%2Fexample.com lands on /events with no "Something went wrong".
+
+=== RED ===
+TEST-L6-60 red run at commit 1a61929 (tests only, no fix), 2026-11-20T16:13:42Z
+$ cd client && npx vitest run tests/lab6/SafeReturnTo.test.tsx --reporter=verbose
+ × a tab after the first slash → null 5ms
+ × a line feed after the first slash → null 1ms
+ × a carriage return after the first slash → null 1ms
+ × a tab before a backslash after the first slash → null 0ms
+ ✓ an ordinary internal path is kept: /events/12 0ms
+ ✓ an ordinary internal path is kept: /me/registrations 0ms
+ ✓ an ordinary internal path is kept: /events?when=week 0ms
+ ✓ an ordinary internal path is kept: /organizer/events/3/registrations 0ms
+ × Nok signs in on /login?returnTo=%2F%09%2Fexample.com → /events, no "Something went wrong" 47ms
+
+Failures:
+AssertionError: expected '/\t/example.com' to be null
+AssertionError: expected '/\n/example.com' to be null
+AssertionError: expected '/\r/example.com' to be null
+AssertionError: expected '/\t\example.com' to be null
+TestingLibraryElementError: Unable to find an element with the text: Sign in to register for events or manage your own.
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 4 passed (9)
+
+=== GREEN ===
+TEST-L6-60 green run at commit f15d9d6, 2026-11-20T16:16:45Z
+$ cd client && npx vitest run tests/lab6/SafeReturnTo.test.tsx tests/sprint-1/SignInPage.test.tsx --reporter=verbose
+ ✓ a tab after the first slash → null 1ms
+ ✓ a line feed after the first slash → null 0ms
+ ✓ a carriage return after the first slash → null 0ms
+ ✓ a tab before a backslash after the first slash → null 0ms
+ ✓ an ordinary internal path is kept: /events/12 0ms
+ ✓ an ordinary internal path is kept: /me/registrations 0ms
+ ✓ an ordinary internal path is kept: /events?when=week 0ms
+ ✓ an ordinary internal path is kept: /organizer/events/3/registrations 0ms
+ ✓ Nok signs in on /login?returnTo=%2F%09%2Fexample.com → /events, no "Something went wrong" 154ms
+ ✓ tests/sprint-1/SignInPage.test.tsx > Sign-in page (contracts §4 UI) > posts E-01 with the typed email and password, then follows a safe returnTo 144ms
+ ✓ tests/sprint-1/SignInPage.test.tsx > Sign-in page (contracts §4 UI) > a participant with no returnTo lands on the role home 26ms
+ ✓ tests/sprint-1/SignInPage.test.tsx > Sign-in page (contracts §4 UI) > an organizer with no returnTo lands on the role home 34ms
+ ✓ tests/sprint-1/SignInPage.test.tsx > Sign-in page (contracts §4 UI) > an absolute returnTo lands on the role home 31ms
+ ✓ tests/sprint-1/SignInPage.test.tsx > Sign-in page (contracts §4 UI) > a protocol-relative returnTo lands on the role home 30ms
+ ✓ tests/sprint-1/SignInPage.test.tsx > Sign-in page (contracts §4 UI) > a backslash returnTo lands on the role home 31ms
+ ✓ tests/sprint-1/SignInPage.test.tsx > Sign-in page (contracts §4 UI) > a 401 shows the alert, keeps the email, clears the password and focuses it 47ms
+ ✓ tests/sprint-1/SignInPage.test.tsx > Sign-in page (contracts §4 UI) > the SIGN IN button is disabled with aria-busy while the request is in flight 30ms
+ Test Files  2 passed (2)
+      Tests  17 passed (17)
+   Duration  2.75s (transform 338ms, setup 614ms, import 938ms, tests 535ms, environment 2.50s)
+Regression at commit f15d9d6
+$ cd client && npm test
+ Test Files  19 passed (19)
+      Tests  80 passed (80)
+$ cd client && npm run lint
+exit 0, no errors
+$ npx playwright test   # root, test database, same code before the commit
+PASS (40) FAIL (0)
+
+=== Manual check (local Docker build of f15d9d6's tree, http://localhost:8090, seeded data) ===
+2026-11-20 ~23:55 Asia/Bangkok, Claude built-in browser (Chromium), manual.
+1. Opened KitLoop's link /login?returnTo=%2F%09%2Fexample.com signed out. The subtitle reads "Sign in to register for
+   events or manage your own." (the crafted value is not treated as a page to come back to).
+2. Signed in as Nok. Expected: /events, no error. Actual: http://localhost:8090/events, "Find an Event", header
+   "Nok PLAYER", no error notice (EV-L6-60-01, L6-60-local-returnto.jpg). Before the fix the same steps left Nok on the
+   sign-in page with "Something went wrong. Please try again." (KitLoop EV-RETURN-01).
