@@ -12,7 +12,7 @@ tasks they assisted. Both students are responsible for, and must be able to expl
 |---|---|---|
 | Claude Code (Anthropic), cloud session, Claude Opus | Phattaratorn (GGital) | Drafted the baseline documents and I-01 / I-02 on a cloud machine with PostgreSQL 16; its commits have the author **Claude** |
 | Claude Code (Anthropic), desktop app on the team's own machine, Claude Opus (and a Claude Sonnet sub-agent that graded the PDF draft) | Phattaratorn (GGital) | PR reviews tested against the local PostgreSQL 17 database; I-04 and later implementation; release evidence and the PDF; its commits carry `Co-Authored-By: Claude` |
-| Google Antigravity (Google DeepMind), desktop app, Gemini 2.5 Pro | Praewa (MeldyRose) | Client shell (I-03), Event discovery list and detail (I-05), review fixes and merge resolution |
+| Google Antigravity (Google DeepMind), desktop app, Gemini 2.5 Pro & Gemini 3.8 Flash | Praewa (MeldyRose) | Client shell (I-03), Event discovery list and detail (I-05), review fixes and merge resolution, Lab 6 UAT F01 layout overflow fix (#56) |
 
 ## 2. Tasks assisted
 

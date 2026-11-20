@@ -65,6 +65,7 @@ UAT findings from Team 1 KitLoop are Issues #56–#64; the triage is Part 4 of t
 | L6-62 Session ended: message and redirect to sign-in | [#62](https://github.com/GGital/My-little-pony/issues/62) | `fix/l6-62-session-ended` · [#66](https://github.com/GGital/My-little-pony/pull/66) | Phattaratorn | Praewa (approved #66, 20 Nov) | Merged 20 Nov (`fd112ee`); red `7f44943`, green `ce3bd7d` |
 | L6-63 U+0000 refused with a field-level 400 | [#63](https://github.com/GGital/My-little-pony/issues/63) | `fix/l6-63-nul-character` · [#68](https://github.com/GGital/My-little-pony/pull/68) | Phattaratorn | Praewa (approved #68, 20 Nov) | Merged 20 Nov (`a68ed9a`); red `2de61d4`, green `b81fb83` |
 | L6 CI runner pinned to ubuntu-24.04 (Playwright could not install Chromium on 26.04) | — | `ci/l6-e2e-runner` · [#67](https://github.com/GGital/My-little-pony/pull/67) | Phattaratorn | Praewa (approved #67, 20 Nov) | Merged 20 Nov (`7fe21b7`) |
+| L6-56 Title overflow: wrap 100-character title and prevent seat info clipping | [#56](https://github.com/GGital/My-little-pony/issues/56) | `fix/issue-56-title-overflow` · [#65](https://github.com/GGital/My-little-pony/pull/65) | Praewa | Phattaratorn (review requested) | Red `1310749`, green `7ffc09e`; in review |
 | L6-58 A tab follows a session change made in another tab (Major) | [#58](https://github.com/GGital/My-little-pony/issues/58) | `fix/l6-58-tab-account-sync` · PR to open | Phattaratorn | (from the PR record) | Red `35fac94`, green `40fd67f`; PR pending |
 
 ## 5. Keeping this table current
