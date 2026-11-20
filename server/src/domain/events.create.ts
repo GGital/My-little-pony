@@ -43,11 +43,23 @@ function optionalTrimmedString(max: number, message: string) {
     .refine(hasNoNul, { message: NUL_MESSAGE })
 }
 
+/**
+ * #57: Date.parse rolls an impossible day over (2027-02-29 becomes 1 March), so also check that the written
+ * year-month-day exists on the calendar. The day is checked as written, before the offset is applied.
+ */
+function isRealCalendarDay(val: string): boolean {
+  const year = Number(val.slice(0, 4))
+  const month = Number(val.slice(5, 7))
+  const day = Number(val.slice(8, 10))
+  const date = new Date(Date.UTC(year, month - 1, day))
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day
+}
+
 function isoDateTimeWithOffset(message: string) {
   return z
     .string({ message })
     .refine(
-      (val) => ISO_WITH_OFFSET_REGEX.test(val) && !Number.isNaN(Date.parse(val)),
+      (val) => ISO_WITH_OFFSET_REGEX.test(val) && !Number.isNaN(Date.parse(val)) && isRealCalendarDay(val),
       { message },
     )
 }
