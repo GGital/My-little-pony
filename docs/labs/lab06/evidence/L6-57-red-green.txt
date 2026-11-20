@@ -1,0 +1,47 @@
+Lab 6 · UAT finding #57 (KitLoop Finding 2) · TEST-L6-57 · server/tests/lab6/calendar-date.api.test.ts
+Requirement: contract §7 (startAt / endAt: valid ISO 8601 with offset), NFR-15 (invalid values -> 400 with field details), AC-D-03.
+Automated API integration tests (Vitest + supertest, real PostgreSQL test database tcg_event_hub_test, clock fixed at 2026-11-20T10:00Z).
+Key assertions: 2027-02-29, 2027-02-30, 2027-04-31, 2027-06-31 -> 400 VALIDATION_FAILED with details
+[{startAt: "Enter a start date and time."}, {endAt: "Enter an end date and time."}] and table counts unchanged; an impossible end
+alone names only endAt; 2028-02-29 (leap year) -> 201 stored as 2028-02-29T12:00:00.000Z.
+
+=== RED ===
+TEST-L6-57 red run at commit b35fe87 (test only, no fix), 2026-11-20T16:56:51Z
+$ cd server && npx vitest run tests/lab6/calendar-date.api.test.ts --reporter=verbose   # test database tcg_event_hub_test
+ × 29 February in a non-leap year (the UAT case) → 400 VALIDATION_FAILED naming startAt and endAt, 0 rows stored 95ms
+ × 30 February → 400 VALIDATION_FAILED naming startAt and endAt, 0 rows stored 55ms
+ × 31 April → 400 VALIDATION_FAILED naming startAt and endAt, 0 rows stored 29ms
+ × 31 June → 400 VALIDATION_FAILED naming startAt and endAt, 0 rows stored 42ms
+ × a valid start with an impossible end → 400 naming only endAt 20ms
+ ✓ control: 29 February in a leap year (2028) is a real date → 201, stored on that day 26ms
+
+Failures (all five):
+AssertionError: expected 201 to be 400 // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 1 passed (6)
+
+=== GREEN ===
+TEST-L6-57 green run at commit b28cc55, 2026-11-20T17:01:37Z
+$ cd server && npx vitest run tests/lab6/calendar-date.api.test.ts --reporter=verbose
+ ✓ 29 February in a non-leap year (the UAT case) → 400 VALIDATION_FAILED naming startAt and endAt, 0 rows stored 61ms
+ ✓ 30 February → 400 VALIDATION_FAILED naming startAt and endAt, 0 rows stored 20ms
+ ✓ 31 April → 400 VALIDATION_FAILED naming startAt and endAt, 0 rows stored 21ms
+ ✓ 31 June → 400 VALIDATION_FAILED naming startAt and endAt, 0 rows stored 19ms
+ ✓ a valid start with an impossible end → 400 naming only endAt 11ms
+ ✓ control: 29 February in a leap year (2028) is a real date → 201, stored on that day 30ms
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Duration  2.60s (transform 364ms, setup 0ms, import 1.21s, tests 1.03s, environment 0ms)
+Regression at commit b28cc55
+$ cd server && npm test   # test database tcg_event_hub_test
+ Test Files  29 passed (29)
+      Tests  301 passed (301)
+   Duration  69.96s (transform 1.07s, setup 0ms, import 18.73s, tests 40.86s, environment 4ms)
+$ cd server && npm run typecheck
+exit 0, no errors
+$ cd client && npm test
+ Test Files  18 passed (18)
+      Tests  71 passed (71)
+$ npx playwright test   # root, test database, same code before the commit
+PASS (40) FAIL (0)
