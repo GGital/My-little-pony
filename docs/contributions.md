@@ -65,7 +65,10 @@ UAT findings from Team 1 KitLoop are Issues #56–#64; the triage is Part 4 of t
 | L6-62 Session ended: message and redirect to sign-in | [#62](https://github.com/GGital/My-little-pony/issues/62) | `fix/l6-62-session-ended` · [#66](https://github.com/GGital/My-little-pony/pull/66) | Phattaratorn | Praewa (approved #66, 20 Nov) | Merged 20 Nov (`fd112ee`); red `7f44943`, green `ce3bd7d` |
 | L6-63 U+0000 refused with a field-level 400 | [#63](https://github.com/GGital/My-little-pony/issues/63) | `fix/l6-63-nul-character` · [#68](https://github.com/GGital/My-little-pony/pull/68) | Phattaratorn | Praewa (approved #68, 20 Nov) | Merged 20 Nov (`a68ed9a`); red `2de61d4`, green `b81fb83` |
 | L6 CI runner pinned to ubuntu-24.04 (Playwright could not install Chromium on 26.04) | — | `ci/l6-e2e-runner` · [#67](https://github.com/GGital/My-little-pony/pull/67) | Phattaratorn | Praewa (approved #67, 20 Nov) | Merged 20 Nov (`7fe21b7`) |
-| L6-58 A tab follows a session change made in another tab (Major) | [#58](https://github.com/GGital/My-little-pony/issues/58) | `fix/l6-58-tab-account-sync` · PR to open | Phattaratorn | (from the PR record) | Red `35fac94`, green `40fd67f`; PR pending |
+| L6-58 A tab follows a session change made in another tab (Major) | [#58](https://github.com/GGital/My-little-pony/issues/58) | `fix/l6-58-tab-account-sync` · [#69](https://github.com/GGital/My-little-pony/pull/69) | Phattaratorn | Praewa (approved #69, 20 Nov) | Merged 20 Nov (`ba15990`); red `35fac94`, green `40fd67f` |
+| L6-60 Malformed returnTo refused after sign-in | [#60](https://github.com/GGital/My-little-pony/issues/60) | `fix/l6-60-safe-return-to` · [#70](https://github.com/GGital/My-little-pony/pull/70) | Phattaratorn | Praewa (approved #70, 20 Nov) | Merged 20 Nov (`528fa0c`); red `1a61929`, green `f15d9d6` |
+| L6-57 Impossible calendar dates refused | [#57](https://github.com/GGital/My-little-pony/issues/57) | `fix/l6-57-calendar-date` · [#71](https://github.com/GGital/My-little-pony/pull/71) | Phattaratorn | Praewa (approved #71, 20 Nov) | Merged 20 Nov (`d4d251e`); red `b35fe87`, green `b28cc55` |
+| L6-61 Signed-in user on /login goes on | [#61](https://github.com/GGital/My-little-pony/issues/61) | `fix/l6-61-login-when-signed-in` · PR to open | Phattaratorn | (from the PR record) | Red `a317329`, green `4dd625b`; PR pending |
 
 ## 5. Keeping this table current
 
@@ -98,3 +101,4 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.22 | 15 Nov 2026 | L5-9: #52, release #53 (`1f3dcfc`); merge-gate row in deployment.md v1.1 (up to date before merging is on) | Team (AI-assisted) |
 | v0.23 | 20 Nov 2026 | §4 Lab 6 table: triage of #56–#64; L6-62 in progress | Team (AI-assisted) |
 | v0.24 | 20 Nov 2026 | §4 Lab 6: #62 merged (#66), #63 merged (#68), CI runner pin (#67), L6-58 in progress | Team (AI-assisted) |
+| v0.25 | 21 Nov 2026 | §4 Lab 6: #58 merged (#69), #60 merged (#70), #57 merged (#71); L6-61 in progress | Team (AI-assisted) |
