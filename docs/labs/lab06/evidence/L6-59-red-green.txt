@@ -1,0 +1,49 @@
+Lab 6 · UAT finding #59 (KitLoop Finding 4) · TEST-L6-59 · e2e/sprint-1/contact-overflow.spec.ts
+Requirement: AC-F-02 (event detail), NFR-08 / AC-SR5-01 (390, 768, 1440 px, no sideways scroll). Automated Playwright test (Chromium,
+real layout, test database): creates the UAT event (contact = "qa-" + 105 x "a" + "@example.com", 120 characters) as Quantum Cards
+and, signed in as the owner, checks at each width: no page scroll; the contact text does not overflow its row; the Contact box,
+the Seats card and the View registrations link end inside .app-panel.
+
+=== RED ===
+TEST-L6-59 red run at commit 46af54f (spec only, CSS from sprint-1-staging c5e88ea), 2026-11-20T18:17:11Z
+$ npx playwright test e2e/sprint-1/contact-overflow.spec.ts --reporter=list   # test database
+  x  1 [chromium] › e2e\sprint-1\contact-overflow.spec.ts:38:9 › /events/:id at 390px as the owner: contact wraps, Seats and Your event stay inside the panel (1.1s)
+  x  2 [chromium] › e2e\sprint-1\contact-overflow.spec.ts:38:9 › /events/:id at 768px as the owner: contact wraps, Seats and Your event stay inside the panel (1.3s)
+  x  3 [chromium] › e2e\sprint-1\contact-overflow.spec.ts:38:9 › /events/:id at 1440px as the owner: contact wraps, Seats and Your event stay inside the panel (973ms)
+    Error: Contact box inside .app-panel at 390px
+    Expected: <= 375
+    Received:    1135.75
+    Error: Contact box inside .app-panel at 768px
+    Expected: <= 753
+    Received:    1183.75
+    Error: Seats card inside .app-panel at 1440px
+    Expected: <= 1305
+    Received:    1551.234375
+  3 failed
+
+=== GREEN ===
+TEST-L6-59 green run at commit 5302003, 2026-11-20T18:21:10Z
+$ npx playwright test e2e/sprint-1/contact-overflow.spec.ts e2e/sprint-1/title-overflow.spec.ts --reporter=list
+  ok 1 [chromium] › e2e\sprint-1\contact-overflow.spec.ts:38:9 › /events/:id at 390px as the owner: contact wraps, Seats and Your event stay inside the panel (882ms)
+  ok 2 [chromium] › e2e\sprint-1\contact-overflow.spec.ts:38:9 › /events/:id at 768px as the owner: contact wraps, Seats and Your event stay inside the panel (924ms)
+  ok 3 [chromium] › e2e\sprint-1\contact-overflow.spec.ts:38:9 › /events/:id at 1440px as the owner: contact wraps, Seats and Your event stay inside the panel (919ms)
+  ok 4 [chromium] › e2e\sprint-1\title-overflow.spec.ts:38:9 › /events at 390px: no horizontal scroll and card and seat info stay within panel (620ms)
+  ok 5 [chromium] › e2e\sprint-1\title-overflow.spec.ts:70:9 › /events/:id at 390px: no horizontal scroll and title wraps within container (505ms)
+  ok 6 [chromium] › e2e\sprint-1\title-overflow.spec.ts:38:9 › /events at 768px: no horizontal scroll and card and seat info stay within panel (537ms)
+  ok 7 [chromium] › e2e\sprint-1\title-overflow.spec.ts:70:9 › /events/:id at 768px: no horizontal scroll and title wraps within container (476ms)
+  ok 8 [chromium] › e2e\sprint-1\title-overflow.spec.ts:38:9 › /events at 1440px: no horizontal scroll and card and seat info stay within panel (556ms)
+  ok 9 [chromium] › e2e\sprint-1\title-overflow.spec.ts:70:9 › /events/:id at 1440px: no horizontal scroll and title wraps within container (481ms)
+  9 passed (31.7s)
+Regression at commit 5302003
+$ npx playwright test   # whole suite, run on the same code before the commit
+PASS (49) FAIL (0)
+$ cd client && npm test
+ Test Files  21 passed (21)
+      Tests  86 passed (86)
+$ cd client && npm run build
+built OK
+
+=== Screenshot ===
+EV-L6-59-01, L6-59-contact-1440.png: the UAT event at 1440 px as the owner after the fix (Playwright Chromium, test database,
+commit 5302003's tree). The contact wraps inside the Contact box; Seats and Your event (View registrations) are fully visible.
+Before the fix the Seats card ended at 1551 px against the panel's 1305 px (RED above; KitLoop EV-CONTACT-01).
