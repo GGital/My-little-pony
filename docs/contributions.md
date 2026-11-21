@@ -69,7 +69,8 @@ UAT findings from Team 1 KitLoop are Issues #56–#64; the triage is Part 4 of t
 | L6-58 A tab follows a session change made in another tab (Major) | [#58](https://github.com/GGital/My-little-pony/issues/58) | `fix/l6-58-tab-account-sync` · [#69](https://github.com/GGital/My-little-pony/pull/69) | Phattaratorn | Praewa (approved #69, 20 Nov) | Merged 20 Nov (`ba15990`); red `35fac94`, green `40fd67f` |
 | L6-60 Malformed returnTo refused after sign-in | [#60](https://github.com/GGital/My-little-pony/issues/60) | `fix/l6-60-safe-return-to` · [#70](https://github.com/GGital/My-little-pony/pull/70) | Phattaratorn | Praewa (approved #70, 20 Nov) | Merged 20 Nov (`528fa0c`); red `1a61929`, green `f15d9d6` |
 | L6-57 Impossible calendar dates refused | [#57](https://github.com/GGital/My-little-pony/issues/57) | `fix/l6-57-calendar-date` · [#71](https://github.com/GGital/My-little-pony/pull/71) | Phattaratorn | Praewa (approved #71, 20 Nov) | Merged 20 Nov (`d4d251e`); red `b35fe87`, green `b28cc55` |
-| L6-61 Signed-in user on /login goes on | [#61](https://github.com/GGital/My-little-pony/issues/61) | `fix/l6-61-login-when-signed-in` · [#72](https://github.com/GGital/My-little-pony/pull/72) | Phattaratorn | (from the PR record) | Red `a317329`, green `4dd625b`; in review |
+| L6-61 Signed-in user on /login goes on | [#61](https://github.com/GGital/My-little-pony/issues/61) | `fix/l6-61-login-when-signed-in` · [#72](https://github.com/GGital/My-little-pony/pull/72) | Phattaratorn | Praewa (approved #72, 20 Nov) | Merged 20 Nov (`6f7c5ba`); red `a317329`, green `4dd625b` |
+| L6-59 Long contact stays inside the event page | [#59](https://github.com/GGital/My-little-pony/issues/59) | `fix/l6-59-contact-overflow` · [#73](https://github.com/GGital/My-little-pony/pull/73) | Phattaratorn | Praewa (approved #73, 20 Nov) | Merged 20 Nov (`62615bb`); red `46af54f`, green `5302003` |
 
 ## 5. Keeping this table current
 
@@ -103,3 +104,4 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.23 | 20 Nov 2026 | §4 Lab 6 table: triage of #56–#64; L6-62 in progress | Team (AI-assisted) |
 | v0.24 | 20 Nov 2026 | §4 Lab 6: #62 merged (#66), #63 merged (#68), CI runner pin (#67), L6-58 in progress | Team (AI-assisted) |
 | v0.25 | 21 Nov 2026 | §4 Lab 6: #58 merged (#69), #60 merged (#70), #57 merged (#71), #56 merged (#65, approved by Phattaratorn); L6-61 in review (#72) | Team (AI-assisted) |
+| v0.26 | 21 Nov 2026 | §4 Lab 6: #61 merged (#72), #59 merged (#73); all eight accepted defects on `sprint-1-staging`, release to `main` and KitLoop retest pending | Team (AI-assisted) |
