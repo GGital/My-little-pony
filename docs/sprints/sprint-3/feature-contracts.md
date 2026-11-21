@@ -1,10 +1,10 @@
 # Sprint 3 Feature Engineering Contracts
 
 Project: **TCG Event Hub** · Sprint 3 (23 Nov – 13 Dec 2026) · Document version: v0.2 — **draft for team review** (changes in §15)
-Inputs: [`../../srs.md`](../../srs.md) v0.7 · [`../../features.md`](../../features.md) v0.5 ·
-[`../../traceability.md`](../../traceability.md) v0.6 · [`../../system-sds.md`](../../system-sds.md) v0.11 ·
-[`../plan.md`](../plan.md) v0.3 §4 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.4 ·
-Sprint 2 contracts: [`../sprint-2/feature-contracts.md`](../sprint-2/feature-contracts.md) v0.2 ·
+Inputs: [`../../srs.md`](../../srs.md) v0.7 · [`../../features.md`](../../features.md) v0.6 ·
+[`../../traceability.md`](../../traceability.md) v0.7 · [`../../system-sds.md`](../../system-sds.md) v0.12 ·
+[`../plan.md`](../plan.md) v0.3 §4 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.5 ·
+Sprint 2 contracts: [`../sprint-2/feature-contracts.md`](../sprint-2/feature-contracts.md) v0.4 ·
 Tests: [`sts.md`](sts.md) · Issues and Definition of Done: [`README.md`](README.md)
 
 This document has one engineering contract per Sprint 3 feature (P, Q, R, S, T, V, and the tournament features W

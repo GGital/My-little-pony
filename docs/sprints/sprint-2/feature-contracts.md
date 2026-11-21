@@ -1,6 +1,6 @@
 # Sprint 2 Feature Engineering Contracts
 
-Project: **TCG Event Hub** · Sprint 2 (9–29 Nov 2026) · Document version: v0.3 — **draft for team review** (changes in §12)
+Project: **TCG Event Hub** · Sprint 2 (9–29 Nov 2026) · Document version: v0.4 — **draft for team review** (changes in §12)
 Inputs: [`../../srs.md`](../../srs.md) v0.6 · [`../../features.md`](../../features.md) v0.4 ·
 [`../../traceability.md`](../../traceability.md) · [`../../system-sds.md`](../../system-sds.md) ·
 [`../plan.md`](../plan.md) §3 · [`../../ui/design-direction.md`](../../ui/design-direction.md) ·
@@ -107,6 +107,9 @@ demonstrations have a draft, a cancelled event and a deadline that has passed. "
 **Games (Feature-U):**
 - **Store games:** Quantum Cards runs Pokémon TCG, Magic, One Piece, Yu-Gi-Oh! and Digimon; Dragon's Den runs Magic,
   Yu-Gi-Oh! and Lorcana.
+- **Store contact (Feature-U, D-37):** Quantum Cards: phone `02 555 0101`, email `hello@quantumcards.example`,
+  website `https://quantumcards.example`, LINE `@quantumcards`. Dragon's Den: phone `02 555 0202`, email
+  `play@dragonsden.example`, no website, no LINE. All values are synthetic.
 - **Event games:** EV-1, EV-2 and EV-5 are `MAGIC`; EV-3 and EV-8 are `YUGIOH`; EV-4 is `LORCANA`; EV-6 and EV-9 are
   `POKEMON`; EV-7 is `ONE_PIECE`.
 
@@ -143,6 +146,7 @@ TEST-SR2-04 (every catalogue code) gains the two new codes. SDS §6.2 gets a ver
 | D-23 | If a new start time is earlier than the stored deadline, the edit is rejected, not adjusted automatically | The organizer sees what will change; nothing changes silently |
 | D-24 | Scope change CH-11 is split. Feature-U (game per event, store games) is built in **Sprint 2**. Feature-V (store logo and event banner upload to GCS) is built in **Sprint 3** (decided 21 Nov 2026) | The game field is one column and one filter. Uploads need a bucket, an image library and new deploy settings, which would put the required Sprint 2 features at risk |
 | D-25 | `game` is optional in the API and defaults to `OTHER`; the UI requires it. The server does not tie an event's game to the store's game list | Sprint 1 request bodies and tests stay valid; the store list only orders the choices in the form |
+| D-37 | The store profile holds the store's **public contact details** (phone, email, website, LINE). Every event shows them in its host section. The event's own `contact` field (Sprint 1, FR-06) stays as an optional "Contact for this event" shown above them. The store email is a separate public field, never the organizer's sign-in email (D-14 is unchanged) | Organizers stop retyping contact details on every event, and players always find a way to reach the store |
 
 ### 0.7 Contract template
 
@@ -548,7 +552,7 @@ show a **Past** or **Cancelled** chip.
 | Sprint 1 item | Sprint 2 change | How it is re-tested |
 |---|---|---|
 | Feature-B, TEST-B-03 | The permission matrix gains E-13 … E-17 (SDS §7.1 rows) | TEST-B-03 gains rows; every cell is checked |
-| Feature-D, E-06 | Optional `saveAsDraft` and `registrationDeadline`; creation writes an `EventChange` | TEST-D-01 … 05 unchanged and still green; TEST-K-01, TEST-M-01 |
+| Feature-D, E-06 | Optional `saveAsDraft` and `registrationDeadline`; creation writes an `EventChange`; the `contact` field's hint now points at the store contact (D-37), with no rule change | TEST-D-01 … 05 unchanged and still green; TEST-K-01, TEST-M-01, TEST-U-04 |
 | Feature-E, E-07 | Shows drafts and cancelled events with their chips; Edit and Publish buttons | TEST-E-01 gains a draft and a cancelled row |
 | Feature-F, E-04 / E-05 | Query, paging and `meta` (J); drafts are 404 (K); the new `CLOSED` rule (M); cancel fields (O) | TEST-F-01 … 05 unchanged and still green with no query; TEST-J-*, K-02, M-03, O-02 |
 | Feature-G, E-09 | Draft → 404; deadline → closed; cancelled → closed | TEST-G-01 … 06 still green; TEST-K-02, M-03, O-02 |
@@ -578,8 +582,8 @@ and recorded in both STS version tables.
 | Feature-N | AC-N-01 … 06 | 6 |
 | Feature-O | AC-O-01 … 06 | 6 |
 | Feature-J | AC-J-01 … 06 | 6 |
-| Feature-U *(CH-11, §11.1)* | AC-U-01 … 03 | 3 |
-| **Total** | | **40** |
+| Feature-U *(CH-11, §11.1)* | AC-U-01 … 05 | 5 |
+| **Total** | | **42** |
 
 Requirements established in Sprint 2 ([`../plan.md`](../plan.md) §5): FR-08, FR-09, FR-10, FR-13, FR-14, FR-19,
 FR-20, FR-28 · BR-08, BR-09, BR-11, BR-12, BR-15 (13). CH-11 adds FR-29 and the games part of FR-30 (15 in total).
@@ -616,12 +620,13 @@ Branding" (event detail, Find an Event, store profile and banner upload, phone).
 
 | ID | Feature | Requirements | Depends on | Sprint (D-24) |
 |---|---|---|---|---|
-| **Feature-U** | Game per Event and Store Games | FR-29, FR-30 (games part) | D, J, L, SR-01 | **2**: Issue S2-09 |
+| **Feature-U** | Game per Event and Store Profile (games, contact) | FR-29, FR-30 (games, contact) | D, J, L, SR-01 | **2**: Issue S2-09 |
 | **Feature-V** | Store Logo and Event Banner | FR-30 (logo), FR-31, NFR-17 | U, SR-04 | **3** |
 
-### 11.1 Feature-U — Game per Event and Store Games
+### 11.1 Feature-U — Game per Event and Store Profile (games, contact)
 
-**Links:** FR-29, FR-30 (games); NFR-02 · Re-verifies: FR-13 (Feature-J) · Issue S2-09
+**Links:** FR-29, FR-30 (games, contact); NFR-02, NFR-15 · Re-verifies: FR-06, FR-13 (Feature-D, J) · Issue S2-09 ·
+Decision D-37 (contact added in v0.4)
 
 **Behaviour**
 1. `Event.game` (enum `POKEMON | MAGIC | ONE_PIECE | YUGIOH | DIGIMON | LORCANA | OTHER`) is set on create (E-06)
@@ -632,33 +637,59 @@ Branding" (event detail, Find an Event, store profile and banner upload, phone).
    games" group after them. The server does **not** reject a game that is missing from the profile.
 3. `EventSummary` gains `game` and `store: { displayName, logoUrl }`. `EventDetail` gains `store.games`.
 4. E-04 gains `game` (one enum value), combined with the other filters by AND (Feature-J).
-5. UI (as in the prototype):
+5. **Store contact (D-37).** The store profile also holds four optional, public contact fields: `contactPhone`,
+   `contactEmail`, `contactWebsite` and `contactLine`, set through the same E-23. `EventDetail.store` gains
+   `contact: { phone, email, website, line }`, with `null` for each empty field. The detail page's host section
+   shows them as follows:
+   - the phone as a `tel:` link;
+   - the email as a `mailto:` link;
+   - the website as a link that shows only its host name (`quantumcards.example`), opens in a new tab with
+     `rel="noopener noreferrer nofollow"`;
+   - the LINE ID as plain text.
+
+   When the event's own `contact` field is set, it is shown first as **Contact for this event**. The create
+   form's hint for that field reads "Leave empty to use your store's contact details." If the event and the
+   store have no contact details at all, the section is not shown.
+6. UI (as in the prototype):
    - **Game** dropdown in the search bar, and a **neutral** game chip (white with a card icon) on event cards
      and the detail page. Teal stays reserved for seats and "registered". A list filtered to one game hides the
      chip and names the game in the list heading;
    - a required **Game** radio group on the create and edit forms;
-   - `/organizer/store` with "Games played here" toggle chips (`aria-pressed`) and **SAVE PROFILE**, linked from
-     the organizer menu;
-   - a **Hosted by** card on the detail page that lists the store's games.
+   - `/organizer/store` with "Games played here" toggle chips (`aria-pressed`), a **Contact** card (Phone, Email,
+     Website, LINE ID, each with a visible label and an example hint) and **SAVE PROFILE**, linked from the
+     organizer menu;
+   - a host section on the detail page with the store's games and its contact details.
    The logo and banner parts of the prototype wait for Feature-V. Until then, the initials and the playmat pattern
    are shown.
 
 **Permissions:** E-23 is for organizers only, and an organizer can change only their own profile (the identity
 comes from the session, BR-17). Participant 403, visitor 401, foreign Origin 403. `GET /api/organizer/store`
-returns the caller's own `{ displayName, games }`.
+returns the caller's own `{ displayName, games, contact }`. The contact details are public on events (D-37).
+
+**Contact validation** (E-23; every field optional; `""` or `null` clears it; values are trimmed; all failing fields
+are reported together):
+
+| Field | Rule | Error message |
+|---|---|---|
+| `contactPhone` | 9–20 characters of digits, spaces, `+`, `-`, `(`, `)`; at least 9 digits | "Enter a phone number, for example 02 555 0101." |
+| `contactEmail` | a valid email address, at most 254 characters; stored lower-case | "Enter an email address, for example hello@store.example." |
+| `contactWebsite` | an absolute URL starting with `https://` or `http://`, at most 200 characters | "Enter a web address starting with https://." (so `javascript:`, `data:` and `ftp:` are rejected) |
+| `contactLine` | an optional leading `@`, then 1–39 of `A–Z a–z 0–9 . _ -` | "Enter a LINE ID, for example @quantumcards." |
 
 **API**
 
 | # | Request | Success | Failures |
 |---|---|---|---|
-| E-23 | `GET /api/organizer/store` · `PATCH /api/organizer/store` body `{ "games": Game[] }` (unique values, at most 7) | `200 { displayName, games }` | 400 · 401 · 403 · 415 |
-| E-04, E-05, E-06, E-07, E-13 | *(changed)* `game` in bodies and shapes; `game` filter on E-04; `store` on summaries | — | — |
+| E-23 | `GET /api/organizer/store` · `PATCH /api/organizer/store` body `{ "games"?: Game[], "contactPhone"?, "contactEmail"?, "contactWebsite"?, "contactLine"? }` (at least one key; games unique, at most 7) | `200 { displayName, games, contact }` | 400 · 401 · 403 · 415 |
+| E-04, E-05, E-06, E-07, E-13 | *(changed)* `game` in bodies and shapes; `game` filter on E-04; `store` on summaries; `store.contact` on E-05 | — | — |
 
 | AC | Given | When | Then |
 |---|---|---|---|
 | **AC-U-01** | Quantum Cards signed in | E-06 with `game: "POKEMON"`; E-06 with no `game`; E-06 with `game: "CHESS"`; E-13 `game: "MAGIC"`; UI: create an event without choosing a game | `201` with `game POKEMON`; `201` with `OTHER`; `400` on `game`; `200` and a `details` change row naming `game`; the form shows "Choose a game." and sends nothing |
 | **AC-U-02** | events with different games | E-04 `game=POKEMON`, with `q`, and `game=chess`; UI: choose Pokémon TCG in the search bar | only Pokémon events; the AND of both filters; `400` on `game`; the URL holds `game=POKEMON`, a "Game: Pokémon TCG" chip is shown, and every card shows the Pokémon TCG chip |
 | **AC-U-03** | Quantum Cards | E-23 `{ games: ["POKEMON","MAGIC"] }`, then `{ games: [] }`, `{ games: ["POKEMON","POKEMON"] }`, `{ games: ["X"] }`; E-23 by Mint and by a visitor | `200` and E-05 of a Quantum Cards event shows both games; `200` with none; `400` (duplicate); `400`; `403`; `401` |
+| **AC-U-04** | Quantum Cards owns event A (its own `contact` empty) and event B (`contact` "Ask for Ken at the counter") | E-23 with phone `02 555 0101`, email ` Hello@QuantumCards.example `, website `https://quantumcards.example/events`, LINE `@quantumcards`; E-05 A and B as a visitor; then E-23 `{ contactLine: "" }`; UI: open A and B | `200`; the email is stored trimmed and lower-case; E-05 A and B carry the same `store.contact`; after clearing, `line` is `null`; A's page shows the phone as a `tel:` link, the email as a `mailto:` link and the website as "quantumcards.example"; B's page shows "Contact for this event: Ask for Ken at the counter" above them; the organizer's sign-in email appears in neither response |
+| **AC-U-05** | Quantum Cards | E-23 with phone `abc`, email `hello@`, website `javascript:alert(1)`, website `ftp://store.example`, a 201-character website, LINE `my line id`, and `{}`; UI: the website link and a contact containing `<b>bold</b>` | `400` listing **every** failing field with the table's messages, and nothing stored; `{}` is `400` "Change at least one field."; the link has `target="_blank"` and `rel="noopener noreferrer nofollow"`; `<b>bold</b>` is shown as text (NFR-15) |
 
 ### 11.2 Feature-V — Store Logo and Event Banner (moved to Sprint 3)
 
@@ -689,3 +720,4 @@ columns, and the Sprint 2 UI shows store initials and the playmat pattern wherev
 | v0.1 | 21 Nov 2026 | First draft: SR-08, Feature-K, L, M, N, O, J; shared shape changes, viewer action and openness rule, seed EV-7 … EV-9, error codes, decisions D-16 … D-23 proposed, 37 ACs, re-verification table, JRN-03 and JRN-04; AC-SR1-02 revised to 9 seeded events. §11: proposed scope change CH-11 (game per event, store logo, event banner with GCS upload), Feature-U and Feature-V with 9 proposed ACs, not yet approved | Team (AI-assisted) |
 | v0.2 | 21 Nov 2026 | D-24: Feature-U moves into Sprint 2 (Issue S2-09; UI, permissions and E-23 added; AC-U-01 and AC-U-02 gain UI checks; §10 total 37 → 40); Feature-V is allocated to Sprint 3. D-25 game default. Seed games in §0.4 | Team (AI-assisted) |
 | v0.3 | 21 Nov 2026 | §11.2 Feature-V moved to the Sprint 3 contracts (§6 there, with AC-V-07 added); endpoint numbers E-23 (store profile), E-24 (logo), E-25 (banner) match SDS v0.10; inputs SRS v0.6 and features v0.4; §0.6 decisions recorded in SRS §10.1 | Team (AI-assisted) |
+| v0.4 | 21 Nov 2026 | D-37: store contact details (phone, email, website, LINE) on the Feature-U store profile, shown on every event, with the event's own `contact` kept as "Contact for this event"; validation table; AC-U-04, AC-U-05; seed contacts; §10 total 40 → 42 | Team (AI-assisted) |

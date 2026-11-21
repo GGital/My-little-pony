@@ -1,6 +1,6 @@
 # Requirements-to-Features Traceability
 
-Project: **TCG Event Hub** · Document version: v0.6 — draft for team review in PR #76 (Sprint 2 and 3 contracts, CH-11, CH-12); v0.1 approved in PR #1; CH-10 in PR 2; Sprint 1 results in I-12
+Project: **TCG Event Hub** · Document version: v0.7 — draft for team review in PR #76 (Sprint 2 and 3 contracts, CH-11, CH-12); v0.1 approved in PR #1; CH-10 in PR 2; Sprint 1 results in I-12
 Inputs: [`docs/srs.md`](srs.md) v0.7 · [`docs/features.md`](features.md) v0.5 · Diagrams: [`docs/diagrams/`](diagrams/README.md)
 
 This is step 3 of the course design process. Every requirement is followed through four links, so anyone can
@@ -76,7 +76,7 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | FR-27 | Header shows name, role, sign-out | Feature-C | Sprint 1 | AC-C-04 · E → **Pass**: TEST-C-04 | 2, 3 |
 | FR-28 | Who and when for every state change | SR-08 (Feature-L, N, O, P) | Sprint 2 | AC-SR8-01 … 04, AC-L-01, AC-N-01, AC-O-01 (Sprint 2); AC-P-01, AC-P-03 (Sprint 3) · I → **Planned**: TEST-SR8-01 … 04 (Sprint 2 STS), TEST-P-01, TEST-P-03 (Sprint 3 STS) | 3 (check-in) |
 | FR-29 | Game of each event; filter by game (CH-11) | Feature-U | Sprint 2 | AC-U-01, AC-U-02 · U, I, C, E → **Planned**: TEST-U-01, TEST-U-02 (Sprint 2 STS) | 3 |
-| FR-30 | Store profile: games (Sprint 2), logo (Sprint 3) (CH-11) | Feature-U, Feature-V | Sprint 2 | AC-U-03 · I, C → **Planned**: TEST-U-03 (Sprint 2 STS); logo AC-V-01 → TEST-V-01 (Sprint 3 STS) | 3 |
+| FR-30 | Store profile: games and contact (Sprint 2), logo (Sprint 3) (CH-11) | Feature-U, Feature-V | Sprint 2 | AC-U-03, AC-U-04, AC-U-05 · U, I, C → **Planned**: TEST-U-03, TEST-U-04, TEST-U-05 (Sprint 2 STS); logo AC-V-01 → TEST-V-01 (Sprint 3 STS) | 3 |
 | FR-31 | Event banner, playmat fallback (CH-11) | Feature-V | Sprint 3 | AC-V-02 … 07 · U, I, C, E, M → **Planned**: TEST-V-02 … 07 (Sprint 3 STS) | — |
 | FR-32 | Start a tournament from checked-in players (CH-12) | Feature-W | Sprint 3 | AC-W-01, AC-W-02 · I, C → **Planned**: TEST-W-01, TEST-W-02 (Sprint 3 STS) | — |
 | FR-33 | Swiss pairing each round, no rematch, byes (CH-12) | Feature-W | Sprint 3 | AC-W-03, AC-W-04, AC-W-06 · U (property), I → **Planned**: TEST-W-03, TEST-W-04, TEST-W-06 (Sprint 3 STS) | — |
@@ -241,7 +241,7 @@ has at least one rejection criterion, so NFR-14's "negative test for every BR" h
 | Check | Result |
 |---|---|
 | Every FR, BR and NFR in SRS v0.7 appears in the matrix | 79 / 79 — no gaps |
-| Every Sprint 2 requirement has at least one planned AC | 15 / 15 (40 ACs in the Sprint 2 contracts) |
+| Every Sprint 2 requirement has at least one planned AC | 15 / 15 (42 ACs in the Sprint 2 contracts) |
 | Every Sprint 3 requirement has at least one planned AC | 24 / 24 (53 ACs in the Sprint 3 contracts) |
 | Requirements implemented but not yet verified | Sprint 2 and Sprint 3 rows: all **Planned** on 21 Nov 2026 |
 | Every Sprint 1 requirement has at least one planned AC | 40 / 40 |
@@ -269,7 +269,7 @@ made. Each still needs the teammate's approval in the spec Pull Request.
 | CH-08 | NFR-02 check order 401 → 403 → 404 → 409/422; NFR-04 8 h is absolute; NFR-13 health check | Makes the expected status code unambiguous and prepares Lab 5 | Feature-A, B, SR-02, SR-04 |
 | CH-09 | A-06 seed has ≥ 2 organizers and ≥ 3 participants; C-06 supported browsers; Q-08, Q-09 overlap questions resolved; X-08 reference fixed | Ownership tests need two users of each role; scope questions answered before building | SR-01 |
 | CH-10 | NFR-03 hashing changed from bcrypt to scrypt (D-15) | Chosen while writing the SDS: reuses reviewed TokTickIT code and avoids a native dependency in Docker | Feature-A, AC-A-05 |
-| CH-11 | Store identity and game: FR-29 … FR-31, NFR-17, X-01 and X-08 revised, X-14 added (SRS v0.6, 21 Nov 2026). Split by D-24: game in Sprint 2, images in Sprint 3 | Players need to know which card game an event is for, and stores asked to be recognisable in the list | Feature-U, Feature-V (new); Feature-D, J, L (re-verified) |
+| CH-11 | Store identity and game: FR-29 … FR-31 (FR-30 includes the store's public contact details, D-37), NFR-17, X-01 and X-08 revised, X-14 added (SRS v0.6, 21 Nov 2026). Split by D-24: game in Sprint 2, images in Sprint 3 | Players need to know which card game an event is for, and stores asked to be recognisable in the list | Feature-U, Feature-V (new); Feature-D, J, L (re-verified) |
 | CH-12 | Swiss tournaments: FR-32 … FR-37, BR-21 … BR-24, NFR-18, X-05 narrowed, BR-16 exception D-32 (SRS v0.7, 21 Nov 2026), Sprint 3 (D-36) | Stores run tournaments and need pairings, results and a winner; the brief's "organizer management" covers it once check-in exists | Feature-W, Feature-X (new); Feature-P, S (re-verified) |
 
 No requirement was withdrawn and no ID was renumbered. CH-11 is a scope addition: it needs the teammate's approval
@@ -295,3 +295,4 @@ in the Sprint 2 contracts PR (S2-00), and the course's approved-scope rule for D
 | v0.4 | 7 Nov 2026 | §4.1 coverage checked against SRS v0.5 (64 / 64, same IDs as v0.4); input features v0.3; v0.3 date corrected (7 Nov) | Team (AI-assisted) |
 | v0.5 | 21 Nov 2026 | Inputs SRS v0.6 and features v0.4. Sprint 2 and 3 rows carry AC and planned test IDs from the Sprint 2 (v0.3) and Sprint 3 (v0.1) contracts, status **Planned**; FR-29 … FR-31 and NFR-17 rows (CH-11); P-06, P-07; allocation 68 (Sprint 2: 15, Sprint 3: 13); BR-14, BR-17, NFR-05 re-verification rows; §4.1 checks for Sprint 2 and 3; CH-11 | Team (AI-assisted) |
 | v0.6 | 21 Nov 2026 | CH-12: FR-32 … FR-37, BR-21 … BR-24, NFR-18 rows with AC and planned test IDs (Sprint 3 contracts v0.2), status **Planned**; P-08; allocation 79 (Sprint 3: 24); BR-16 re-verification with the D-32 exception; CH-12 | Team (AI-assisted) |
+| v0.7 | 21 Nov 2026 | FR-30 row gains store contact (AC-U-04, AC-U-05); Sprint 2 has 42 ACs | Team (AI-assisted) |

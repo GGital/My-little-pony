@@ -1,6 +1,6 @@
 # System-Level Software Design Specification (SDS)
 
-Project: **TCG Event Hub** · Document version: v0.11 — draft for team review in PR #76 (v0.2 reviewed in PR 2; changes in §14)
+Project: **TCG Event Hub** · Document version: v0.12 — draft for team review in PR #76 (v0.2 reviewed in PR 2; changes in §14)
 Inputs: [`srs.md`](srs.md) v0.7 · [`features.md`](features.md) v0.5 · [`traceability.md`](traceability.md) v0.6 ·
 [`ui/design-direction.md`](ui/design-direction.md) v0.4 · [`diagrams/`](diagrams/README.md)
 
@@ -146,6 +146,7 @@ All ids are auto-increment integers. Authorization never depends on ids being ha
 | `role` | enum `PARTICIPANT` \| `ORGANIZER` | not null (D-05) |
 | `createdAt` | timestamptz | default now |
 | `games` | enum `Game`[] | organizers only; unique values; default empty (FR-30, Sprint 2) |
+| `contactPhone`, `contactEmail`, `contactWebsite`, `contactLine` | varchar(20), varchar(254), varchar(200), varchar(40), all null | organizers only; public store contact (FR-30, D-37, Sprint 2); `contactWebsite` must start with `http://` or `https://`; never the sign-in `email` |
 | `logoKey` | varchar(80) null | storage key of the re-encoded logo (FR-30, Sprint 3); never a client-chosen name |
 
 `Game` enum *(Sprint 2, CH-11)*: `POKEMON` \| `MAGIC` \| `ONE_PIECE` \| `YUGIOH` \| `DIGIMON` \| `LORCANA` \| `OTHER`. Shown by name only (X-14).
@@ -422,7 +423,7 @@ path, method, guard and owner feature.
 | E-20 | `GET /api/organizer/events/:id/attendance` | organizer + owner | Q | 3 |
 | E-21 | `GET /api/organizer/summary?from&to` | organizer | R | 3 |
 | E-22 | `GET /api/me/history` | participant | S | 3 |
-| E-23 | `GET`, `PATCH /api/organizer/store` | organizer (own profile) | U | 2 |
+| E-23 | `GET`, `PATCH /api/organizer/store` (games and contact details) | organizer (own profile) | U | 2 |
 | E-24 | `PUT`, `DELETE /api/organizer/store/logo` | organizer (own profile) | V | 3 |
 | E-25 | `PUT`, `DELETE /api/organizer/events/:id/banner` | organizer + owner | V | 3 |
 | E-26 | `POST /api/organizer/events/:id/tournament/start` | organizer + owner | W | 3 |
@@ -479,7 +480,7 @@ never the enforcement.
 | Who registered | ✗ | own registration only | display name, time, status | ✗ |
 | Participant email | ✗ | own (in `/auth/me`) | ✗ (D-14) | ✗ |
 | Event change history, cancel reason by whom | ✗ (reason text shown publicly on a cancelled event) | ✗ | ✓ | ✗ |
-| Store games, logo and event banner (public URLs) | ✓ | ✓ | ✓ | ✓ |
+| Store games, store contact details (D-37), logo and event banner (public URLs) | ✓ | ✓ | ✓ | ✓ |
 | Check-in time and who checked in | ✗ | own status only | ✓ | ✗ |
 | Tournament pairings, results, standings | ✗ | own table, own opponent's display name, own record and placing (D-32) | ✓ all | ✗ |
 | `passwordHash`, session ids, `LoginAttempt` rows | never returned to anyone | | | |
@@ -651,3 +652,4 @@ Design points:
 | v0.9 | 13 Nov 2026 | Lab 5 (#36): `GIT_SHA` (§9.1), `GET /api/version` E-12c and the build footer (§9.2), so the running commit can be read from the live URL (R-08) | Team (AI-assisted) |
 | v0.10 | 21 Nov 2026 | Sprint 2 and 3 contracts and CH-11: `Game` enum, `User.games`, `User.logoKey`, `Event.game`, `Event.bannerKey` (§4.1); Sprint 2 and 3 SQL constraints and the one-lock rule §4.3a; `/organizer/store` route; PUT and media DELETE, raw image bodies (§6.1); codes `ALREADY_PUBLISHED`, `NOT_PUBLISHED`, `REGISTRATION_NOT_ACTIVE`, `NOT_CHECKED_IN`, `IMAGE_UNREADABLE`, `IMAGE_TOO_SMALL` (§6.2); E-23 … E-25 and the E-04 query (§6.3); matrix and visibility rows (§7); `MEDIA_*` variables and the bucket (§9); SD-11 … SD-13 | Team (AI-assisted) |
 | v0.11 | 21 Nov 2026 | CH-12 tournaments: Event tournament fields, `TournamentEntry`, `TournamentRound`, `Match` and their constraints; tournament writes join the one-lock rule; routes; PUT for results; 9 tournament error codes; E-26 … E-32; matrix and visibility rows (D-32); SD-14 pairing design with the Dirac bound | Team (AI-assisted) |
+| v0.12 | 21 Nov 2026 | D-37: store contact columns on User (§4.1), E-23 carries them, public in §7.2 | Team (AI-assisted) |

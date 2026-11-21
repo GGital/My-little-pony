@@ -1,7 +1,7 @@
 # Complete Feature Inventory
 
 Project: **TCG Event Hub** — Event Registration and Attendance System
-Document version: v0.5 — draft for team review in PR #76 (CH-11, CH-12); v0.2 approved in PR #1 (4 Nov 2026)
+Document version: v0.6 — draft for team review in PR #76 (CH-11 incl. store contact, CH-12); v0.2 approved in PR #1 (4 Nov 2026)
 Source of requirements: [`docs/srs.md`](srs.md) v0.7 · Next document: `docs/traceability.md`
 
 This is step 2 of the course design process. The whole product is split into **features**: pieces small enough to
@@ -46,7 +46,7 @@ How the pieces connect:
 | **Feature-R** | Organizer Attendance Summary | Summary across the organizer's events in a chosen date range: number of events, registrations, check-ins, average fill rate and attendance rate, within the performance target. | 3 |
 | **Feature-S** | Participant Event History | The participant's past events with final status: attended, no-show, cancelled or event cancelled. | 3 |
 | **Feature-T** | Sign-in Throttling | Temporary lock-out (429 for 10 minutes) after 5 failed sign-ins for one email within 10 minutes, with a generic message that reveals nothing about the account. | 3 |
-| **Feature-U** | Game per Event and Store Games *(CH-11)* | The game of each event (fixed list, shown by name only), the organizer's store profile listing the games the store runs, and a filter by game in event search. | 2 |
+| **Feature-U** | Game per Event and Store Profile *(CH-11)* | The game of each event (fixed list, shown by name only), the organizer's store profile with the games the store runs and its public contact details (phone, email, website, LINE), shown on every event of the store, and a filter by game in event search. | 2 |
 | **Feature-V** | Store Logo and Event Banner *(CH-11)* | Upload, replace and remove a store logo and a per-event banner (PNG, JPEG or WebP, re-encoded on the server, stored in a GCS bucket), with initials and a playmat pattern as fallbacks. | 3 |
 | **Feature-W** | Swiss Pairings and Rounds *(CH-12)* | Start the tournament of a `TOURNAMENT` event from its checked-in players, choose the number of rounds, pair round 1 from a stored random seed and each later round by the Swiss method with no rematches and at most one bye per player, and drop players between rounds. | 3 |
 | **Feature-X** | Match Results, Standings and Winner *(CH-12)* | Record and correct match results for the current round, standings with OMW% / GW% / OGW% tiebreakers, finishing the tournament with the winner and final placings, and each player's own view of their table, opponent, record and placing. | 3 |
@@ -90,7 +90,7 @@ How the pieces connect:
 | Feature-R | FR-24 | BR-20 | NFR-12 | Feature-Q |
 | Feature-S | FR-25 | BR-20 | NFR-02 | Feature-H, Feature-P |
 | Feature-T | FR-02 (generic message kept) | — | NFR-16 | Feature-A, SR-03 |
-| Feature-U | FR-29, FR-30 (games) | BR-14, BR-17 | NFR-02, NFR-15 | Feature-D, Feature-J, Feature-L, SR-01 |
+| Feature-U | FR-29, FR-30 (games, contact) | BR-14, BR-17 | NFR-02, NFR-15 | Feature-D, Feature-J, Feature-L, SR-01 |
 | Feature-V | FR-30 (logo), FR-31 | BR-14, BR-17 | NFR-17, NFR-13 | Feature-U, SR-04 |
 | Feature-W | FR-32, FR-33, FR-37 | BR-21, BR-22, BR-14 | NFR-18, NFR-05 | Feature-P, SR-08 |
 | Feature-X | FR-34, FR-35, FR-36 | BR-23, BR-24, BR-16 (D-32 exception) | NFR-02 | Feature-W, Feature-S |
@@ -155,3 +155,4 @@ Both students review each other's Pull Requests, so each student reads and appro
 | v0.3 | 7 Nov 2026 | Source and §4 coverage check point at SRS v0.5 (D-15 changed NFR-03 wording only; all 64 IDs still covered) | Team (AI-assisted) |
 | v0.4 | 21 Nov 2026 | CH-11: Feature-U (Sprint 2) and Feature-V (Sprint 3) added with their requirements and dependencies; SR-04 also carries NFR-17's bucket settings; §4 coverage against SRS v0.6 (31 FR, 20 BR, 17 NFR = 68 IDs) | Team (AI-assisted) |
 | v0.5 | 21 Nov 2026 | CH-12: Feature-W (Swiss pairings and rounds) and Feature-X (results, standings, winner), Sprint 3; coverage against SRS v0.7 (37 FR, 24 BR, 18 NFR = 79 IDs) | Team (AI-assisted) |
+| v0.6 | 21 Nov 2026 | Feature-U scope gains the store's public contact details (FR-30, D-37) | Team (AI-assisted) |

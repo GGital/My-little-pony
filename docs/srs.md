@@ -4,7 +4,7 @@ Project: **TCG Event Hub** — Event Registration and Attendance System
 Course: CPE 334, Semester 1/2026 — Theme 3 (Event Registration and Attendance System)
 Team: Phattaratorn Mahatkeerati (67070503433, [@GGital](https://github.com/GGital)) ·
 Praewa Thuwatharanimitkul (67070503432, [@MeldyRose](https://github.com/MeldyRose))
-Document version: v0.7 — draft for team review in PR #76 (CH-11 store identity, CH-12 tournaments, D-16 … D-36); v0.5 approved in PR #2
+Document version: v0.7 — draft for team review in PR #76 (CH-11 store identity incl. contact, CH-12 tournaments, D-16 … D-37); v0.5 approved in PR #2
 Companion documents: [`docs/features.md`](features.md), [`docs/traceability.md`](traceability.md),
 [`docs/diagrams/`](diagrams/README.md), [`docs/ui/design-direction.md`](ui/design-direction.md), [`docs/system-sds.md`](system-sds.md), [`docs/sprints/plan.md`](sprints/plan.md),
 [`docs/sprints/sprint-1/`](sprints/sprint-1/README.md), [`docs/sprints/sprint-2/`](sprints/sprint-2/README.md),
@@ -110,7 +110,8 @@ role/permission matrix, and every "No" is enforced by the backend (BR-17), not o
 | Check-in and attendance report (Sprint 3) | No | No | Own events only (BR-18) |
 | Run a tournament: pairings, results, standings (Sprint 3) | No | No | Own events only (BR-14) |
 | See own tournament pairing, record and placing (Sprint 3) | No | Own only; sees the display name of their own current opponent (D-32) | No |
-| Store profile: games played (Sprint 2), logo (Sprint 3) | No | No | Own profile only (BR-17) |
+| Store profile: games played and contact details (Sprint 2), logo (Sprint 3) | No | No | Own profile only (BR-17) |
+| See a store's contact details on its events | Yes | Yes | Yes |
 | Event banner (Sprint 3) | No | No | Own events only (BR-14) |
 
 ---
@@ -172,7 +173,7 @@ role/permission matrix, and every "No" is enforced by the backend (BR-17), not o
 | **Registration deadline** | The last moment registration is accepted. Defaults to the event start time (Sprint 2) |
 | **Check-in window** | From 60 minutes before the start until the end of the event (Sprint 3) |
 | **Game** | The trading card game an event is for: `POKEMON`, `MAGIC`, `ONE_PIECE`, `YUGIOH`, `DIGIMON`, `LORCANA` or `OTHER`, shown by name only (CH-11) |
-| **Store profile** | Fields of an organizer account that describe their store: the games it runs (Sprint 2) and its logo (Sprint 3). The store name is the organizer's display name |
+| **Store profile** | Fields of an organizer account that describe their store: the games it runs and its public contact details (Sprint 2), and its logo (Sprint 3). The store name is the organizer's display name |
 | **Banner** | An optional wide (3 : 1) image an organizer adds to one event (Sprint 3) |
 | **Tournament** | The Swiss rounds of one `TOURNAMENT` event. Status `NOT_STARTED` → `RUNNING` → `FINISHED` (CH-12) |
 | **Entry** | One checked-in player taking part in a tournament; fixed when round 1 is paired |
@@ -274,9 +275,11 @@ behaviour but is never the only enforcement point.
 
 - **FR-29** *(Sprint 2)* The system shall record the **game** each event is for, chosen by the organizer from a fixed
   list (see §4, *Game*). Players can filter the event list by game.
-- **FR-30** *(Sprint 2: games · Sprint 3: logo)* The system shall let an organizer keep a **store profile** on their
-  own account: the games the store runs, and an optional store logo. The games and logo are shown on the store's
-  events and, for the logo, in search results.
+- **FR-30** *(Sprint 2: games and contact · Sprint 3: logo)* The system shall let an organizer keep a **store
+  profile** on their own account: the games the store runs, the store's public **contact details** (phone, email,
+  website, LINE ID; all optional), and an optional store logo. The games and contact details are shown on every
+  event of the store, alongside the event's own optional contact note (FR-06); the logo also appears in search
+  results.
 - **FR-31** *(Sprint 3)* The system shall let the owning organizer add, replace or remove an optional **banner
   image** on an event. Without a banner, the event page shows a neutral playmat pattern with no game or publisher
   name.
@@ -483,6 +486,7 @@ Later sprints rerun earlier checks as regression tests.
 | D-34 | Standard Swiss scoring and tiebreakers (3/1/0 points, OMW%, GW%, OGW% with a 1/3 floor), the same for every game | One rule set is testable; stores already know it | 21 Nov 2026 | Proposed (CH-12) |
 | D-35 | Round 1 is random from a seed stored with the round, so a test or a dispute can reproduce it | Fair and reproducible | 21 Nov 2026 | Proposed (CH-12) |
 | D-36 | CH-12 is built in **Sprint 3** (Feature-W pairings, Feature-X results and standings) after Feature-P check-in | It needs check-in; Sprint 2 is full | 21 Nov 2026 | Decided by team |
+| D-37 | The store profile holds the store's public contact details (phone, email, website, LINE ID), shown on every event; the event's own `contact` field stays as an optional "Contact for this event". The store email is a separate public field, never the sign-in email (D-14 unchanged); website links must be `http(s)://` | Organizers stop retyping contacts; players can always reach the store; no unsafe links (NFR-15) | 21 Nov 2026 | Requested by team (Sprint 2, Feature-U) |
 
 ### 10.2 Open questions
 
@@ -510,4 +514,4 @@ Later sprints rerun earlier checks as regression tests.
 | v0.4 | 4 Nov 2026 | Review pass: BR-04 rewritten (cancelled events visible, drafts owner-only) to remove a conflict with FR-14 and FR-17; added FR-28 record keeping, NFR-15 input hygiene, NFR-16 sign-in throttling, "Upcoming" definition, problem → requirement links, C-06, D-14, Q-08, Q-09; clarified FR-12, FR-13, FR-17, BR-08, BR-09, BR-12, BR-15, BR-16, NFR-02, NFR-04, NFR-13, A-06; fixed X-08 reference | Team (AI-assisted) |
 | v0.5 | 4 Nov 2026 | NFR-03 hashing changed from bcrypt to scrypt (D-15), decided while writing the System-Level SDS | Team (AI-assisted) |
 | v0.6 | 21 Nov 2026 | Scope change **CH-11** (store identity and game): P-06, P-07, S-10, S-11, FR-29 … FR-31 (§5.7), NFR-17, vocabulary for game, store profile and banner, access rows; X-01 and X-08 revised and X-14 added so the store profile does not contradict the exclusions. Decisions D-16 … D-30 from the Sprint 2 and Sprint 3 contracts. No existing requirement changes meaning | Team (AI-assisted) |
-| v0.7 | 21 Nov 2026 | Scope change **CH-12** (Swiss tournaments): P-08, S-12, X-05 narrowed, vocabulary, access rows, FR-32 … FR-37 (§5.8), BR-21 … BR-24 (§6.5), NFR-18, BR-16 exception for the player's own opponent (D-32), D-31 … D-36 | Team (AI-assisted) |
+| v0.7 | 21 Nov 2026 | CH-11 extended: FR-30 now includes the store's public contact details (Sprint 2), vocabulary and access rows, D-37. Scope change **CH-12** (Swiss tournaments): P-08, S-12, X-05 narrowed, vocabulary, access rows, FR-32 … FR-37 (§5.8), BR-21 … BR-24 (§6.5), NFR-18, BR-16 exception for the player's own opponent (D-32), D-31 … D-36 | Team (AI-assisted) |

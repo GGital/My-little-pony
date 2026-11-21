@@ -1,6 +1,6 @@
 # UI Design Direction — "Arcane Ink" theme
 
-Project: TCG Event Hub · Version v0.4 (21 Nov 2026), draft for team review · v0.1 approved in PR #1; v0.2 in PR 2; v0.3 in PR #24
+Project: TCG Event Hub · Version v0.5 (21 Nov 2026), draft for team review · v0.1 approved in PR #1; v0.2 in PR 2; v0.3 in PR #24
 Related: `docs/srs.md` §1.2 (reference UX), §2.1 (access summary), D-12, D-13. A visual mock-up is in
 [`mockup.html`](mockup.html) (open it in a browser), with rendered images in [`mockup/`](mockup/).
 
@@ -225,7 +225,7 @@ Prototype: the "TCG Event Hub — Store Branding" design canvas, revised after a
 | **Event banner** (Sprint 3) | Decorative (`aria-hidden`). Desktop shows it 240 px high (cover crop of the 3 : 1 upload); phones show the full 3 : 1. No text belongs in a banner: the title is set below it. Without a banner: a neutral playmat with dashed card zones, no game or publisher name |
 | **Store logo** (Sprint 3) | Decorative; 80 px (64 px on phones) overlapping the bottom-left of the banner with a 4 px white ring; 32 px next to the venue in lists. Without a logo: initials on `--primary-tint` |
 | **Action card** | The Seats card and the main button are **one card** on the detail page, overlapping the banner edge on desktop, so the "seat secured" flip (§7) happens in the first screen. On phones it sits right after the facts, as in §5.2 |
-| **Host section** | A heading with the store name and one sentence listing its other games, then "More events at {store}". No label above the heading (§8) |
+| **Host section** | A heading with the store name and one sentence listing its other games; then the store's contact details as a short list with drawn icons (phone `tel:`, email `mailto:`, website showing only the host name, LINE ID as text), preceded by "Contact for this event" when the event has its own note; then "More events at {store}". No label above the heading (§8) |
 | **Uploads** (Sprint 3) | Empty (drop zone), uploading (progress bar + Cancel), error (`role="alert"`, names the file and the fix), uploaded (preview with cropped strips shaded and the logo corner outlined). Large photos are resized in the browser before upload, so "too large" is not a user-facing error |
 | **Destructive actions** | Removing a logo, cancelling a registration or an event asks first, inline, and says what changes ("Your 6 upcoming events will show QC instead") |
 | **Store profile** | `/organizer/store`: store name read-only (it is the display name), logo, "Games played here" toggle chips (`aria-pressed`), SAVE PROFILE with a status message |
@@ -297,3 +297,4 @@ through in the browser.
 | v0.3 | 7 Nov 2026 | Built app brought to this document (Impeccable `audit` + `polish`, PR #24): tint and line tokens (§2), header links wrap on phones (§3), check icon instead of the ✓ glyph (§4.4, §7), §5.3 lists, states, notices and forms, icon component (§8), audit results (§9) |
 | v0.2 | 4 Nov 2026 | Impeccable `delight` pass: "seat secured" moment (§7), voice (§6), icon and browser rules (§8), fonts changed to Chakra Petch + IBM Plex Sans Thai, `--accent-ink` for teal text and badges, store name moved below the title, phone order of the Seats card, design checks (§9) |
 | v0.4 | 21 Nov 2026 | Impeccable critique of the Sprint 2/3 prototype: teal reserved for seats (§2), `--control-line` token, solid focus ring (§2), §5.4 patterns for game chip, banner, logo, action card, host section, uploads, destructive confirmations, store profile and game radios |
+| v0.5 | 21 Nov 2026 | Host section shows the store's contact details (D-37) |

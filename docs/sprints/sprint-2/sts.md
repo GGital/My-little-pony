@@ -1,7 +1,7 @@
 # Sprint 2 Software Test Specification (STS)
 
-Project: **TCG Event Hub** · Sprint 2 · Document version: v0.2 — **draft for team review** (changes in §8)
-Contracts: [`feature-contracts.md`](feature-contracts.md) v0.2 · Issues and Definition of Done: [`README.md`](README.md) ·
+Project: **TCG Event Hub** · Sprint 2 · Document version: v0.3 — **draft for team review** (changes in §8)
+Contracts: [`feature-contracts.md`](feature-contracts.md) v0.4 · Issues and Definition of Done: [`README.md`](README.md) ·
 Sprint 1 STS: [`../sprint-1/sts.md`](../sprint-1/sts.md) v1.13
 
 This document turns every Sprint 2 acceptance criterion into planned tests, **before** the code exists. It uses the
@@ -147,6 +147,8 @@ output**, with the commit id in §6.
 | TEST-U-01 | U, I, C | AC-U-01, FR-29 | O1 signed in; upcoming event X (O1) | E-06 `game: "POKEMON"`; no `game`; `game: "CHESS"`; E-13 X `game: "MAGIC"`. (C) the create form submitted with no game chosen | `201 POKEMON`; `201 OTHER`; `400` on `game`, 0 rows; `200` + 1 `details` change row whose `newValue` includes `game`. (C) "Choose a game." under the group; no request sent | `server/tests/sprint-2/games.api.test.ts`, `client/tests/sprint-2/CreateEvent.game.test.tsx` | Pending |
 | TEST-U-02 | I, C, E2E | AC-U-02, FR-29, FR-13 | events with POKEMON, MAGIC, OTHER games | E-04 `game=POKEMON`; `game=POKEMON&q=quantum`; `game=chess`. (C) choose Pokémon TCG and press Search. (E2E, JRN-04) filter by Pokémon TCG on the seed | the exact Pokémon ids; the AND set; `400` on `game`. (C) URL `game=POKEMON`, the chip "Game: Pokémon TCG". (E2E) EV-6 is shown and EV-1 is not | `server/tests/sprint-2/search.api.test.ts`, `client/tests/sprint-2/EventSearch.test.tsx`, `e2e/sprint-2/search.spec.ts` | Pending |
 | TEST-U-03 | I, C | AC-U-03, FR-30, BR-17, NFR-02 | O1 owns event X | E-23 PATCH `{games:["POKEMON","MAGIC"]}`; then E-05 X as a visitor; PATCH `{games:[]}`; `["POKEMON","POKEMON"]`; `["X"]`; `{games:[], userId: 2}`; PATCH by P, by a visitor, with a foreign Origin. (C) the store page toggles chips and saves | `200`, E-05 `store.games` = both; `200 []`; `400` ×3; `403`, `401`, `403`; O2's profile is unchanged. (C) `aria-pressed` flips; the PATCH body holds the chosen games | `server/tests/sprint-2/games.api.test.ts`, `client/tests/sprint-2/StoreProfile.test.tsx` | Pending |
+| TEST-U-04 | I, C | AC-U-04, FR-30, D-37, D-14 | O1 owns A (no event contact) and B (event contact set) | E-23 with the four contact fields; E-05 A and B as a visitor; E-23 `{contactLine:""}`; stringify the E-05 bodies. (C) the detail page for A and B | `200`; email trimmed and lower-cased; same `store.contact` on A and B; `line null` after clearing; no body contains O1's sign-in email. (C) `tel:` and `mailto:` hrefs; website text = host name; B shows "Contact for this event" first | `server/tests/sprint-2/games.api.test.ts`, `client/tests/sprint-2/EventDetail.contact.test.tsx` | Pending |
+| TEST-U-05 | U, I, C | AC-U-05, NFR-15 | O1 | (U) `storeContactSchema` on each bad value; (I) E-23 with all bad values together, and `{}`. (C) the website link and a contact with `<b>bold</b>` | (U) each rejected with the table message. (I) one `400` naming every failing field, 0 rows changed; `{}` → `400`. (C) `target="_blank"`, `rel="noopener noreferrer nofollow"`; markup shown as text | `server/tests/sprint-2/unit/store-contact.unit.test.ts`, `server/tests/sprint-2/games.api.test.ts`, `client/tests/sprint-2/EventDetail.contact.test.tsx` | Pending |
 
 ### 2.9 Regression additions to Sprint 1 tests and journeys
 
@@ -162,7 +164,7 @@ output**, with the commit id in §6.
 | JRN-04 | E2E | J, FR-26 | contracts §9 | `e2e/sprint-2/journey.spec.ts` | Pending |
 | JRN-01, JRN-02 | E2E | Sprint 1 | unchanged; must stay green (Deliverable 2 Part A continuity) | `e2e/sprint-1/journey.spec.ts` | Pending |
 
-**Totals:** 40 planned test rows that carry an AC number (37 + TEST-U-01 … 03), plus 6 regression rows and 2 new
+**Totals:** 42 planned test rows that carry an AC number (37 + TEST-U-01 … 05), plus 6 regression rows and 2 new
 journeys. TEST-B-03 and TEST-SR2-03 also gain E-23. The Sprint 1
 suite (55 rows, JRN-01 and JRN-02) runs unchanged.
 
@@ -189,8 +191,10 @@ suite (55 rows, JRN-01 and JRN-02) runs unchanged.
 | | | | | AC-U-01 | TEST-U-01 |
 | | | | | AC-U-02 | TEST-U-02, JRN-04 |
 | | | | | AC-U-03 | TEST-U-03, TEST-B-03 |
+| | | | | AC-U-04 | TEST-U-04 |
+| | | | | AC-U-05 | TEST-U-05 |
 
-40 / 40 Sprint 2 ACs have at least one automated test. No authorization AC is proven by a UI test alone.
+42 / 42 Sprint 2 ACs have at least one automated test. No authorization AC is proven by a UI test alone.
 
 ## 4. Business rules with rejection (negative) tests
 
@@ -223,7 +227,7 @@ Fill this table from the real runs (README §3). The commit ids are the evidence
 | S2-05 Feature-O cancel event | TEST-O-01 … 06, TEST-B-03 (E-15 rows) | | | | |
 | S2-06 Feature-M deadline | TEST-M-01 … 04 | | | | |
 | S2-07 Feature-N cancel / re-register | TEST-N-01 … 06, TEST-B-03 (E-16 rows) | | | | |
-| S2-09 Feature-U game and store games | TEST-U-01 … 03, TEST-B-03 (E-23 rows) | | | | |
+| S2-09 Feature-U game and store profile | TEST-U-01 … 05, TEST-B-03 (E-23 rows) | | | | |
 | S2-08 Integration and release `v0.2.0` | JRN-03, JRN-04, TEST-SR5-02, TEST-E-01 (rows), TEST-SR2-03 (rows) | | | | |
 
 For the Deliverable 2 PDF excerpts, keep red and green output for **TEST-L-03** or **TEST-N-03** (domain rule) and
@@ -254,3 +258,4 @@ checked.
 |---|---|---|---|
 | v0.1 | 21 Nov 2026 | First draft: strategy additions, concurrency plan, 37 AC tests, 6 regression rows, JRN-03 and JRN-04, AC map, BR rejection map, empty TDD and results tables | Team (AI-assisted) |
 | v0.2 | 21 Nov 2026 | Contracts v0.2 (D-24): §2.8 Feature-U, TEST-U-01 … 03; regression table becomes §2.9; AC map and TDD row S2-09; 40 AC tests | Team (AI-assisted) |
+| v0.3 | 21 Nov 2026 | Contracts v0.4 (D-37): TEST-U-04 (store contact on events, no sign-in email leak) and TEST-U-05 (contact validation and safe links); 42 AC tests | Team (AI-assisted) |
