@@ -55,7 +55,24 @@ Issues are labelled `lab5` (handout R-10). Builders and reviewers are filled in 
 | L5-8 Persistence, rollback, roll-forward | [#37](https://github.com/GGital/My-little-pony/issues/37) | `feature/l5-8-persistence` (TEST-L5-09 and the evidence) · [#48](https://github.com/GGital/My-little-pony/pull/48) | Phattaratorn (created event 7, ran the restart, rollback [run #7](https://github.com/GGital/My-little-pony/actions/runs/43610598970) and roll-forward [run #8](https://github.com/GGital/My-little-pony/actions/runs/43611074299)) | Praewa (approved #48, 14 Nov) | Done 14 Nov |
 | L5-9 deployment.md, evidence index, PDF | [#38](https://github.com/GGital/My-little-pony/issues/38) | `docs/l5-9-deployment-doc` · [#49](https://github.com/GGital/My-little-pony/pull/49), [#50](https://github.com/GGital/My-little-pony/pull/50); `docs/l5-9-contributions` (this table); release [#51](https://github.com/GGital/My-little-pony/pull/51) ([Deploy demo](https://github.com/GGital/My-little-pony/actions/runs/43615810627), `38e4cb9`); [#52](https://github.com/GGital/My-little-pony/pull/52), release [#53](https://github.com/GGital/My-little-pony/pull/53) (`1f3dcfc`); `docs/l5-9-merge-gate` (merge-gate row: up to date is on) | Phattaratorn (C-04 capture, 2x evidence, labels, the PDF) | Praewa (approved #49 to #53, 14 Nov) | Docs done 15 Nov; PDF rebuilt in the Lab 4 layout (due on LEB2 15 Nov 23:59) |
 
-## 4. Keeping this table current
+## 4. Lab 6: independent UAT and defect management
+
+UAT findings from Team 1 KitLoop are Issues #56–#64; the triage is Part 4 of the UAT pack. Builders and reviewers are filled in from the PR record.
+
+| Item | Issue | Branch · PR | Built by | Reviewed by | Status |
+|---|---|---|---|---|---|
+| L6 triage of received findings | [#56](https://github.com/GGital/My-little-pony/issues/56)–[#64](https://github.com/GGital/My-little-pony/issues/64) | no branch (UAT pack Part 4, Issue comments) | Phattaratorn (severity decisions; drafted with Claude Code) | Praewa (to confirm) | Severities decided 20 Nov |
+| L6-62 Session ended: message and redirect to sign-in | [#62](https://github.com/GGital/My-little-pony/issues/62) | `fix/l6-62-session-ended` · [#66](https://github.com/GGital/My-little-pony/pull/66) | Phattaratorn | Praewa (approved #66, 20 Nov) | Merged 20 Nov (`fd112ee`); red `7f44943`, green `ce3bd7d` |
+| L6-63 U+0000 refused with a field-level 400 | [#63](https://github.com/GGital/My-little-pony/issues/63) | `fix/l6-63-nul-character` · [#68](https://github.com/GGital/My-little-pony/pull/68) | Phattaratorn | Praewa (approved #68, 20 Nov) | Merged 20 Nov (`a68ed9a`); red `2de61d4`, green `b81fb83` |
+| L6 CI runner pinned to ubuntu-24.04 (Playwright could not install Chromium on 26.04) | — | `ci/l6-e2e-runner` · [#67](https://github.com/GGital/My-little-pony/pull/67) | Phattaratorn | Praewa (approved #67, 20 Nov) | Merged 20 Nov (`7fe21b7`) |
+| L6-56 Title overflow: wrap 100-character title and prevent seat info clipping | [#56](https://github.com/GGital/My-little-pony/issues/56) | `fix/issue-56-title-overflow` · [#65](https://github.com/GGital/My-little-pony/pull/65) | Praewa | Phattaratorn (approved #65, 20 Nov) | Merged 20 Nov (`c5e88ea`); red `1310749`, green `7ffc09e` |
+| L6-58 A tab follows a session change made in another tab (Major) | [#58](https://github.com/GGital/My-little-pony/issues/58) | `fix/l6-58-tab-account-sync` · [#69](https://github.com/GGital/My-little-pony/pull/69) | Phattaratorn | Praewa (approved #69, 20 Nov) | Merged 20 Nov (`ba15990`); red `35fac94`, green `40fd67f` |
+| L6-60 Malformed returnTo refused after sign-in | [#60](https://github.com/GGital/My-little-pony/issues/60) | `fix/l6-60-safe-return-to` · [#70](https://github.com/GGital/My-little-pony/pull/70) | Phattaratorn | Praewa (approved #70, 20 Nov) | Merged 20 Nov (`528fa0c`); red `1a61929`, green `f15d9d6` |
+| L6-57 Impossible calendar dates refused | [#57](https://github.com/GGital/My-little-pony/issues/57) | `fix/l6-57-calendar-date` · [#71](https://github.com/GGital/My-little-pony/pull/71) | Phattaratorn | Praewa (approved #71, 20 Nov) | Merged 20 Nov (`d4d251e`); red `b35fe87`, green `b28cc55` |
+| L6-61 Signed-in user on /login goes on | [#61](https://github.com/GGital/My-little-pony/issues/61) | `fix/l6-61-login-when-signed-in` · [#72](https://github.com/GGital/My-little-pony/pull/72) | Phattaratorn | Praewa (approved #72, 20 Nov) | Merged 20 Nov (`6f7c5ba`); red `a317329`, green `4dd625b` |
+| L6-59 Long contact stays inside the event page | [#59](https://github.com/GGital/My-little-pony/issues/59) | `fix/l6-59-contact-overflow` · [#73](https://github.com/GGital/My-little-pony/pull/73) | Phattaratorn | Praewa (approved #73, 20 Nov) | Merged 20 Nov (`62615bb`); red `46af54f`, green `5302003` |
+
+## 5. Keeping this table current
 
 Every Issue PR updates its own row (branch, PR, built by, reviewed by, status) and the summary in §2, in the same PR
 as the work. Pair work names both students. Reviewers are filled in from the PR's review record, not in advance.
@@ -84,3 +101,7 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.20 | 14 Nov 2026 | L5-9: #49 merged (approved by Praewa); follow-up PR with the ruleset correction (`main` only) and the 2x evidence capture of the ruleset and the Episode 7 screenshots | Team (AI-assisted) |
 | v0.21 | 14 Nov 2026 | L5-1, L5-5, L5-6 rows: built by Praewa, checked by Phattaratorn (team record, 14 Nov); L5-9: #49, #50, release #51 (`38e4cb9`) | Team (AI-assisted) |
 | v0.22 | 15 Nov 2026 | L5-9: #52, release #53 (`1f3dcfc`); merge-gate row in deployment.md v1.1 (up to date before merging is on) | Team (AI-assisted) |
+| v0.23 | 20 Nov 2026 | §4 Lab 6 table: triage of #56–#64; L6-62 in progress | Team (AI-assisted) |
+| v0.24 | 20 Nov 2026 | §4 Lab 6: #62 merged (#66), #63 merged (#68), CI runner pin (#67), L6-58 in progress | Team (AI-assisted) |
+| v0.25 | 21 Nov 2026 | §4 Lab 6: #58 merged (#69), #60 merged (#70), #57 merged (#71), #56 merged (#65, approved by Phattaratorn); L6-61 in review (#72) | Team (AI-assisted) |
+| v0.26 | 21 Nov 2026 | §4 Lab 6: #61 merged (#72), #59 merged (#73); all eight accepted defects on `sprint-1-staging`, release to `main` and KitLoop retest pending | Team (AI-assisted) |

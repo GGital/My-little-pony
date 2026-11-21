@@ -1,29 +1,36 @@
 import React, { useRef, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Navigate, useLocation, useSearchParams } from 'react-router-dom';
 import { ApiError } from '../../api/errors';
 import type { ApiErrorDetail, UserRole } from '../../api/types';
 import { useAuth } from '../../auth/AuthContext';
+import type { SignInState } from '../RouteGuards';
 import { FormFieldError, fieldErrorProps } from '../../components/FormFieldError';
 import { Icon } from '../../components/Icon';
 import { Notice } from '../../components/Notice';
 import { SubmitButton } from '../../components/SubmitButton';
 
+const SAME_SITE = 'http://app.invalid';
+
 /**
- * An internal path to go back to after sign-in, or null. Only "/x…" counts: "//host" and "/\host" are
- * read by browsers as another site, and anything with a scheme is external (AC-C-03).
+ * An internal path to go back to after sign-in, or null (AC-C-03). The value is judged the way the browser will
+ * read it: URL parsing drops tabs and line breaks and treats "\" as "/", so "/<TAB>/host", "//host" and "/\host"
+ * all point at another site (#60). Only a path that stays on this site is returned, in its parsed form.
  */
 export function safeReturnTo(value: string | null): string | null {
-  if (!value || !value.startsWith('/') || value.startsWith('//') || value.startsWith('/\\')) return null;
-  return value;
+  if (!value || !value.startsWith('/')) return null;
+  const url = new URL(value, SAME_SITE);
+  if (url.origin !== SAME_SITE) return null;
+  return url.pathname + url.search + url.hash;
 }
 
 const HOME: Record<UserRole, string> = { PARTICIPANT: '/events', ORGANIZER: '/organizer' };
 
 /** `/login` (contracts §4 UI, design-direction §4.2). */
 export const SignInPage: React.FC = () => {
-  const { signIn } = useAuth();
-  const navigate = useNavigate();
+  const { signIn, status, user } = useAuth();
   const [params] = useSearchParams();
+  // Set by SessionEndedRedirect after a protected call answered 401 (design-direction §4.2, #62).
+  const sessionEnded = (useLocation().state as SignInState | null)?.sessionEnded === true;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
@@ -37,8 +44,8 @@ export const SignInPage: React.FC = () => {
     setAlert(null);
     setDetails(undefined);
     try {
-      const user = await signIn(email, password);
-      navigate(safeReturnTo(params.get('returnTo')) ?? HOME[user.role], { replace: true });
+      // Success makes the user signed in; the redirect below then leaves this page.
+      await signIn(email, password);
     } catch (err) {
       setBusy(false);
       if (err instanceof ApiError && err.status === 400) {
@@ -53,6 +60,12 @@ export const SignInPage: React.FC = () => {
 
   const returning = safeReturnTo(params.get('returnTo'));
 
+  // design-direction §4.3 (#61): a signed-in user does not get the form. Go to the safe returnTo (FR-26), else the
+  // role home. This also covers the moment right after a successful sign-in on this page.
+  if (status === 'signedIn' && user) {
+    return <Navigate to={returning ?? HOME[user.role]} replace />;
+  }
+
   return (
     <div className="pbody pbody--narrow">
       <div className="auth">
@@ -62,6 +75,7 @@ export const SignInPage: React.FC = () => {
             {returning ? "Sign in to continue. You'll come back to the page you were on." : 'Sign in to register for events or manage your own.'}
           </p>
         </div>
+        {sessionEnded && !alert && <Notice tone="info">Your session has ended — please sign in again</Notice>}
         {alert && <Notice tone="error">{alert}</Notice>}
         <form onSubmit={onSubmit} noValidate className="form-section">
           <div>

@@ -1,0 +1,56 @@
+Lab 6 · UAT finding #58 (KitLoop Finding 3, Major) · TEST-L6-58 · client/tests/lab6/TabAccountSync.test.tsx
+Requirement: FR-27 (the header shows the signed-in user) and Feature-C Behaviour 1 (AuthProvider keeps { status, user } from E-03).
+Automated component tests (Vitest + Testing Library); the other tab is simulated by a window focus event or a BroadcastChannel
+message, with /api/auth/me answering as another account (Boss), 401, or the same account (Nok).
+Key assertions: header changes from Nok to Boss and GET /api/events/21 is called again; 401 -> /login?returnTo=%2Fevents%2F21 with
+the session-ended message; same account -> one /api/auth/me call, no reload, header still Nok.
+
+=== RED ===
+TEST-L6-58 red run at commit 35fac94 (tests only, no fix), 2026-11-20T16:03:00Z
+$ cd client && npx vitest run tests/lab6/TabAccountSync.test.tsx --reporter=verbose
+ × another tab signed in as Boss: when this tab is shown again the header says Boss and the event reloads for Boss 1171ms
+ × a sign-in or sign-out broadcast from another tab triggers the same check without waiting for focus 1051ms
+ × another tab signed out: the check answers 401, so this tab shows the session-ended sign-in (#62 path) 1060ms
+ × same account on the check: nothing reloads and the header still says Nok 1055ms
+
+Failures:
+TestingLibraryElementError: Unable to find an element with the text: Boss
+TestingLibraryElementError: Unable to find an element with the text: Boss
+Error: expect(element).toHaveTextContent()
+AssertionError: expected +0 to be 1 // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  4 failed (4)
+
+=== GREEN ===
+TEST-L6-58 green run at commit 40fd67f, 2026-11-20T16:07:06Z
+$ cd client && npx vitest run tests/lab6/TabAccountSync.test.tsx --reporter=verbose
+ ✓ another tab signed in as Boss: when this tab is shown again the header says Boss and the event reloads for Boss 185ms
+ ✓ a sign-in or sign-out broadcast from another tab triggers the same check without waiting for focus 40ms
+ ✓ another tab signed out: the check answers 401, so this tab shows the session-ended sign-in (#62 path) 66ms
+ ✓ same account on the check: nothing reloads and the header still says Nok 51ms
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Duration  2.79s (transform 525ms, setup 238ms, import 864ms, tests 344ms, environment 997ms)
+Regression at commit 40fd67f
+$ cd client && npm test
+ Test Files  19 passed (19)
+      Tests  75 passed (75)
+$ cd client && npm run lint
+TypeScript: No errors found
+$ npx playwright test   # root, test database, run on the same code before the commit
+PASS (40) FAIL (0)
+
+=== Manual check (local Docker build of 40fd67f's tree, http://localhost:8090, seeded data) ===
+2026-11-20 ~23:40 Asia/Bangkok, Claude built-in browser (Chromium), two tabs of one browser, manual.
+1. Tab A: signed in as Nok, /events/5 (Dragon Draft Night) - header "Nok PLAYER", button REGISTER.
+2. Tab B: Nok's menu > Sign out. Tab A (in the background, not reloaded) went to /login?returnTo=%2Fevents%2F5 with
+   "Your session has ended — please sign in again" and the header "Sign in" (broadcast, then #62's path).
+3. Tab B: signed in as Boss. Tab A's header became "Boss PLAYER" without a reload; it stayed on the sign-in form
+   because /login does not yet send signed-in users on (#61, separate finding).
+4. Tab A: /events/5 as Boss (1 load of /api/events/5). Tab B: opened /login and signed in as Nok over Boss's session.
+   Tab A, untouched: header became "Nok PLAYER" and /api/events/5 was loaded a second time.
+5. Tab A: REGISTER - "You're in.", 1 / 16. /api/auth/me answers Nok and /api/me/registrations lists event 5 for Nok:
+   the account shown is the account used (EV-L6-58-01, L6-58-local-tab-switch.jpg).
+Known limit: a click in the moment before the re-check answers still runs as the session's account; the server
+always acts for the real session.

@@ -1,0 +1,121 @@
+Lab 6 · UAT finding #56 (KitLoop Finding 1) · TEST-L6-56 · e2e/sprint-1/title-overflow.spec.ts & client/tests/lab6/TitleOverflow.test.tsx
+Requirement: AC-F-01 (event list card), AC-F-02 (event detail header), NFR-08 (responsive layout at 390, 768, 1440 px), AC-SR5-01 (no sideways scroll).
+Real layout tests (Playwright Chromium) and component smoke tests (Vitest + Testing Library).
+Key assertions: on /events, the 100-character unbroken title card shrinks within the panel, .event-card__aside stays inside .app-panel,
+and scrollWidth <= innerWidth; on /events/:id, .dhead h1 wraps (scrollWidth <= clientWidth), and scrollWidth <= innerWidth.
+
+=== RED ===
+TEST-L6-56 red run at commit 1310749 (tests only, unpatched CSS from sprint-1-staging)
+$ npx playwright test e2e/sprint-1/title-overflow.spec.ts --project=chromium --reporter=list
+Running 6 tests using 1 worker
+
+  1 × [chromium] › e2e/sprint-1/title-overflow.spec.ts:38:9 › /events at 390px: no horizontal scroll and card and seat info stay within panel (5.1s)
+  2 × [chromium] › e2e/sprint-1/title-overflow.spec.ts:70:9 › /events/:id at 390px: no horizontal scroll and title wraps within container (1.9s)
+  3 × [chromium] › e2e/sprint-1/title-overflow.spec.ts:38:9 › /events at 768px: no horizontal scroll and card and seat info stay within panel (1.8s)
+  4 × [chromium] › e2e/sprint-1/title-overflow.spec.ts:70:9 › /events/:id at 768px: no horizontal scroll and title wraps within container (1.8s)
+  5 × [chromium] › e2e/sprint-1/title-overflow.spec.ts:38:9 › /events at 1440px: no horizontal scroll and card and seat info stay within panel (1.8s)
+  6 × [chromium] › e2e/sprint-1/title-overflow.spec.ts:70:9 › /events/:id at 1440px: no horizontal scroll and title wraps within container (1.7s)
+
+Failures:
+
+  1) [chromium] › e2e/sprint-1/title-overflow.spec.ts:38:9 › TEST-L6-56 (E2E) — 100-character title layout and seat info visibility (AC-F-01, AC-F-02, NFR-08) › /events at 390px: no horizontal scroll and card and seat info stay within panel
+     Error: .event-card fits within .app-panel right edge at 390px
+     Expected: <= 375
+     Received: 1163.48
+        at e2e/sprint-1/title-overflow.spec.ts:66:14
+
+  2) [chromium] › e2e/sprint-1/title-overflow.spec.ts:70:9 › TEST-L6-56 (E2E) — 100-character title layout and seat info visibility (AC-F-01, AC-F-02, NFR-08) › /events/:id at 390px: no horizontal scroll and title wraps within container
+     Error: .dhead h1 scrollWidth fits clientWidth at 390px
+     Expected: <= 318
+     Received: 1501
+        at e2e/sprint-1/title-overflow.spec.ts:88:14
+
+  3) [chromium] › e2e/sprint-1/title-overflow.spec.ts:38:9 › TEST-L6-56 (E2E) — 100-character title layout and seat info visibility (AC-F-01, AC-F-02, NFR-08) › /events at 768px: no horizontal scroll and card and seat info stay within panel
+     Error: .event-card fits within .app-panel right edge at 768px
+     Expected: <= 753
+     Received: 1320.48
+        at e2e/sprint-1/title-overflow.spec.ts:66:14
+
+  4) [chromium] › e2e/sprint-1/title-overflow.spec.ts:70:9 › TEST-L6-56 (E2E) — 100-character title layout and seat info visibility (AC-F-01, AC-F-02, NFR-08) › /events/:id at 768px: no horizontal scroll and title wraps within container
+     Error: .dhead h1 scrollWidth fits clientWidth at 768px
+     Expected: <= 640
+     Received: 1501
+        at e2e/sprint-1/title-overflow.spec.ts:88:14
+
+  5) [chromium] › e2e/sprint-1/title-overflow.spec.ts:38:9 › TEST-L6-56 (E2E) — 100-character title layout and seat info visibility (AC-F-01, AC-F-02, NFR-08) › /events at 1440px: no horizontal scroll and card and seat info stay within panel
+     Error: .event-card fits within .app-panel right edge at 1440px
+     Expected: <= 1305
+     Received: 1440
+        at e2e/sprint-1/title-overflow.spec.ts:66:14
+
+  6) [chromium] › e2e/sprint-1/title-overflow.spec.ts:70:9 › TEST-L6-56 (E2E) — 100-character title layout and seat info visibility (AC-F-01, AC-F-02, NFR-08) › /events/:id at 1440px: no horizontal scroll and title wraps within container
+     Error: .dhead h1 scrollWidth fits clientWidth at 1440px
+     Expected: <= 1072
+     Received: 1501
+        at e2e/sprint-1/title-overflow.spec.ts:88:14
+
+  6 failed
+    [chromium] › e2e/sprint-1/title-overflow.spec.ts:38:9 › /events at 390px
+    [chromium] › e2e/sprint-1/title-overflow.spec.ts:70:9 › /events/:id at 390px
+    [chromium] › e2e/sprint-1/title-overflow.spec.ts:38:9 › /events at 768px
+    [chromium] › e2e/sprint-1/title-overflow.spec.ts:70:9 › /events/:id at 768px
+    [chromium] › e2e/sprint-1/title-overflow.spec.ts:38:9 › /events at 1440px
+    [chromium] › e2e/sprint-1/title-overflow.spec.ts:70:9 › /events/:id at 1440px
+
+Component smoke tests (unpatched CSS):
+$ cd client && npx vitest run tests/lab6/TitleOverflow.test.tsx --reporter=verbose
+ ✓ renders EventCard with 100-character unbroken title and accessible seat info 531ms
+ ✓ renders EventDetail with 100-character unbroken title and action button 212ms
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+
+=== GREEN ===
+TEST-L6-56 green run at commit 7ffc09e (with theme.css layout & overflow-wrap fix)
+$ npx playwright test e2e/sprint-1/title-overflow.spec.ts --project=chromium --reporter=list
+Running 6 tests using 1 worker
+
+  ✓ 1 [chromium] › e2e/sprint-1/title-overflow.spec.ts:38:9 › /events at 390px: no horizontal scroll and card and seat info stay within panel (5.3s)
+  ✓ 2 [chromium] › e2e/sprint-1/title-overflow.spec.ts:70:9 › /events/:id at 390px: no horizontal scroll and title wraps within container (1.9s)
+  ✓ 3 [chromium] › e2e/sprint-1/title-overflow.spec.ts:38:9 › /events at 768px: no horizontal scroll and card and seat info stay within panel (1.8s)
+  ✓ 4 [chromium] › e2e/sprint-1/title-overflow.spec.ts:70:9 › /events/:id at 768px: no horizontal scroll and title wraps within container (1.8s)
+  ✓ 5 [chromium] › e2e/sprint-1/title-overflow.spec.ts:38:9 › /events at 1440px: no horizontal scroll and card and seat info stay within panel (1.7s)
+  ✓ 6 [chromium] › e2e/sprint-1/title-overflow.spec.ts:70:9 › /events/:id at 1440px: no horizontal scroll and title wraps within container (1.8s)
+
+  6 passed (14.3s)
+
+Component smoke tests:
+$ cd client && npx vitest run tests/lab6/TitleOverflow.test.tsx --reporter=verbose
+ ✓ renders EventCard with 100-character unbroken title and accessible seat info 531ms
+ ✓ renders EventDetail with 100-character unbroken title and action button 212ms
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+
+Regression: whole client suite
+$ cd client && npm test
+ Test Files  19 passed (19)
+      Tests  73 passed (73)
+   Duration  26.75s (transform 10.39s, setup 45.21s, import 57.60s, tests 14.02s, environment 199.54s)
+
+$ cd client && npm run lint   # tsc --noEmit, includes tests/
+TypeScript: No errors found
+exit 0, no errors
+
+$ cd client && npm run build
+vite v6.4.5 building for production...
+✓ 73 modules transformed.
+dist/index.html   0.47 kB │ gzip: 0.31 kB
+dist/assets/index-DhVX2qbG.css 267.62 kB │ gzip: 45.76 kB
+dist/assets/index-CB-XT32l.js  298.53 kB │ gzip: 93.95 kB
+✓ built in 1.54s
+
+=== Layout measurement check (Chromium, event created with UAT title and capacity 256) ===
+Measurements from the #65 review and Playwright suite on the real PostgreSQL test database.
+
+| Page | Width | Page scrolls sideways? | Card / title inside panel? | Seat column / action inside container? |
+|---|---|---|---|---|
+| `/events` | 1440 | no (scrollWidth 1440 <= 1440) | yes (cardRight 1304 <= panelRight 1304) | yes (asideRight 1278 <= panelRight 1304) |
+| `/events` | 768 | no (scrollWidth 768 <= 768) | yes (cardRight 752 <= panelRight 752) | yes (asideRight 720 <= panelRight 752) |
+| `/events` | 390 | no (scrollWidth 390 <= 390) | yes (cardRight 374 <= panelRight 374) | yes (asideRight 374 <= panelRight 374) |
+| `/events/:id` | 1440 | no (scrollWidth 1440 <= 1440) | yes (h1ScrollWidth 1072 <= h1ClientWidth 1072, 3 lines) | yes (action button inside header) |
+| `/events/:id` | 768 | no (scrollWidth 768 <= 768) | yes (h1ScrollWidth 640 <= h1ClientWidth 640, 5 lines) | yes (action button full width) |
+| `/events/:id` | 390 | no (scrollWidth 390 <= 390) | yes (h1ScrollWidth 318 <= h1ClientWidth 318, 6 lines) | yes (action button full width) |
