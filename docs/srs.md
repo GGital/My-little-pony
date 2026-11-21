@@ -4,10 +4,11 @@ Project: **TCG Event Hub** — Event Registration and Attendance System
 Course: CPE 334, Semester 1/2026 — Theme 3 (Event Registration and Attendance System)
 Team: Phattaratorn Mahatkeerati (67070503433, [@GGital](https://github.com/GGital)) ·
 Praewa Thuwatharanimitkul (67070503432, [@MeldyRose](https://github.com/MeldyRose))
-Document version: v0.5 — v0.4 approved in PR #1; the v0.5 change (D-15) approved in PR #2
+Document version: v0.6 — draft for team review (CH-11 and the Sprint 2 decisions D-16 … D-25); v0.5 approved in PR #2
 Companion documents: [`docs/features.md`](features.md), [`docs/traceability.md`](traceability.md),
 [`docs/diagrams/`](diagrams/README.md), [`docs/ui/design-direction.md`](ui/design-direction.md), [`docs/system-sds.md`](system-sds.md), [`docs/sprints/plan.md`](sprints/plan.md),
-[`docs/sprints/sprint-1/`](sprints/sprint-1/README.md)
+[`docs/sprints/sprint-1/`](sprints/sprint-1/README.md), [`docs/sprints/sprint-2/`](sprints/sprint-2/README.md),
+[`docs/sprints/sprint-3/`](sprints/sprint-3/README.md)
 
 This SRS describes the **whole product** across all three sprints. Every requirement has a stable identifier
 (`FR-nn`, `BR-nn`, `NFR-nn`) that never changes meaning once the document is approved. Requirements are never
@@ -40,6 +41,8 @@ Today a typical store takes sign-ups through chat messages and a paper list. The
 | P-03 | Players do not know whether seats are left until they ask | Lost players and repeated questions to staff | FR-11, FR-12, FR-13 |
 | P-04 | Check-in at the door is a paper tick list | No reliable record of who actually came; no-shows cannot be measured | FR-21, FR-22, BR-18–BR-20 |
 | P-05 | Organizers cannot see attendance across events | They cannot plan table counts or prize support | FR-23, FR-24 |
+| P-06 | A store runs several card games, and an event title does not always say which one | Players open the wrong events, or arrive with the wrong deck | FR-29, FR-30 (CH-11) |
+| P-07 | Every event looks the same in the list, so players cannot spot their usual store | Regulars miss their store's events | FR-30, FR-31 (CH-11) |
 
 ### 1.2 UX reference
 
@@ -104,6 +107,8 @@ role/permission matrix, and every "No" is enforced by the backend (BR-17), not o
 | Registration list of an event (display names only) | No | No | Own events only (BR-14, BR-16) |
 | See a draft event (Sprint 2) | No | No | Own drafts only (BR-04) |
 | Check-in and attendance report (Sprint 3) | No | No | Own events only (BR-18) |
+| Store profile: games played (Sprint 2), logo (Sprint 3) | No | No | Own profile only (BR-17) |
+| Event banner (Sprint 3) | No | No | Own events only (BR-14) |
 
 ---
 
@@ -122,19 +127,22 @@ role/permission matrix, and every "No" is enforced by the backend (BR-17), not o
 | S-07 | Check-in at the venue; attendance status; no-show recording | 3 |
 | S-08 | Attendance reporting per event and an organizer summary across their events | 3 |
 | S-09 | Participant event history (attended / no-show / cancelled) | 3 |
+| S-10 | The game of each event, a store's list of games, and a filter by game (CH-11) | 2 |
+| S-11 | Store logo and event banner images (CH-11) | 3 |
 
 ### 3.2 Explicit exclusions
 
 | # | Excluded from the whole product |
 |---|---|
-| X-01 | Self sign-up, password reset, email verification, profile editing, account administration screens |
+| X-01 | Self sign-up, password reset, email verification, account administration screens, and profile editing (the display name, email and password cannot be edited). *Revised in v0.6 (CH-11):* an organizer may set their store's games and logo |
 | X-02 | Real payment. The entry fee is a **display label** only (for example "฿150, pay at store"); nothing is charged |
 | X-03 | Email, SMS, LINE, push or any external notification |
 | X-04 | Waitlists and automatic promotion from a waitlist (decision D-07) |
 | X-05 | Tournament software: pairings, rounds, match results, standings, prizes, deck lists |
 | X-06 | Maps, geolocation and distance search (the list filters by city text instead) |
 | X-07 | Recurring-event series. Each weekly event is created as a separate event |
-| X-08 | Multiple roles per account, co-organizers, store/organisation accounts, and an all-events administrator |
+| X-08 | Multiple roles per account, co-organizers, store/organisation accounts shared by several users, and an all-events administrator. The "store profile" of CH-11 is a set of fields on the one organizer account, not a separate store account (A-03) |
+| X-14 | Publisher game logos, card art or official branding. A game is shown by name only (D-02, CH-11) |
 | X-09 | Team events (one registration = one player) and guest/plus-one seats |
 | X-10 | QR-code scanning hardware or a mobile app; check-in is done in the web UI (QR codes are a possible later extension, not a requirement) |
 | X-11 | Hard deletion of events or registrations. Records are cancelled, never deleted, so history and reports stay correct |
@@ -159,6 +167,9 @@ role/permission matrix, and every "No" is enforced by the backend (BR-17), not o
 | **Registration status** | `REGISTERED` → `CANCELLED` (by participant, Sprint 2) or `EVENT_CANCELLED` (by organizer, Sprint 2) or `CHECKED_IN` (Sprint 3). `NO_SHOW` is reported for a `REGISTERED` record whose event has ended (Sprint 3) |
 | **Registration deadline** | The last moment registration is accepted. Defaults to the event start time (Sprint 2) |
 | **Check-in window** | From 60 minutes before the start until the end of the event (Sprint 3) |
+| **Game** | The trading card game an event is for: `POKEMON`, `MAGIC`, `ONE_PIECE`, `YUGIOH`, `DIGIMON`, `LORCANA` or `OTHER`, shown by name only (CH-11) |
+| **Store profile** | Fields of an organizer account that describe their store: the games it runs (Sprint 2) and its logo (Sprint 3). The store name is the organizer's display name |
+| **Banner** | An optional wide (3 : 1) image an organizer adds to one event (Sprint 3) |
 
 ---
 
@@ -250,6 +261,17 @@ behaviour but is never the only enforcement point.
   deadline changed, check-in and check-in undone. Owners can see this information on the records they manage;
   records are never deleted (X-11). *(Sprint 2 for cancellations and changes, Sprint 3 for check-in.)*
 
+### 5.7 Store identity and game — added by CH-11 (v0.6)
+
+- **FR-29** *(Sprint 2)* The system shall record the **game** each event is for, chosen by the organizer from a fixed
+  list (see §4, *Game*). Players can filter the event list by game.
+- **FR-30** *(Sprint 2: games · Sprint 3: logo)* The system shall let an organizer keep a **store profile** on their
+  own account: the games the store runs, and an optional store logo. The games and logo are shown on the store's
+  events and, for the logo, in search results.
+- **FR-31** *(Sprint 3)* The system shall let the owning organizer add, replace or remove an optional **banner
+  image** on an event. Without a banner, the event page shows a neutral playmat pattern with no game or publisher
+  name.
+
 ---
 
 ## 6. Business rules (BR)
@@ -339,6 +361,7 @@ Later sprints rerun earlier checks as regression tests.
 | **NFR-13** | Deployability and configuration | All configuration (database URL, session secret, port, client origin) comes from environment variables with a committed `.env.example`; no real secret is committed; `GET /api/health` returns 200 only when the database is reachable; the app builds into a Docker image and stores data on durable storage | Repository secret scan + review checklist (Sprint 1); Docker build and GCP deploy (Lab 5) | 1 / Lab 5 |
 | **NFR-15** | Security — input and request hygiene | Every request body and query is validated on the server against a schema (wrong types, out-of-range values and unknown fields → 400 with field details); state-changing operations use only POST/PATCH/DELETE; user-written text (titles, descriptions) is always displayed as plain text, never run as HTML | API tests with malformed and extra fields; API test that a GET cannot change data; UI test that a description containing `<script>` is shown literally | 1 |
 | **NFR-16** | Security — sign-in throttling | After **5 failed sign-ins for one email within 10 minutes**, further attempts for that email get **429** for 10 minutes, with the same generic message style as FR-02 | API test: 5 failures → 6th attempt 429 → succeeds after the window (fixed clock) | 3 |
+| **NFR-17** | Security — image uploads (CH-11) | Only PNG, JPEG or WebP, checked from the file bytes; logo ≤ 2 MB and banner ≤ 5 MB, enforced before the whole body is read; at most 25 megapixels decoded; every image re-encoded on the server so metadata (EXIF, GPS) is removed; stored under a random name; served with `X-Content-Type-Options: nosniff`; SVG never accepted | API tests with oversized, renamed, non-image, SVG, too-small and pixel-bomb files; a test that EXIF is gone after upload; a header check on the deployed URL | 3 |
 | **NFR-14** | Maintainability — test coverage of rules | Every acceptance criterion of a sprint is linked to at least one automated test (or a justified manual check), and every BR has at least one negative test | Traceability review at each sprint release | 1, 2, 3 |
 
 ---
@@ -392,6 +415,21 @@ Later sprints rerun earlier checks as regression tests.
 | D-13 | Keep the reference's **layout** (tabs, search bar, event cards with chips, two-column detail page) but give the product its **own visual theme**, defined in `docs/ui/design-direction.md` | Familiar flow for TCG players without copying another product's brand | 4 Nov 2026 | Decided by team |
 | D-14 | Organizers see participants' display names only, not emails; contacting players is outside the product (X-03) | Data minimisation: a display name is enough to check a player in | 4 Nov 2026 | Decided by team |
 | D-15 | Password hashing uses **scrypt** from Node's built-in crypto, reusing the team's TokTickIT implementation, instead of bcrypt | No native dependency to build in Docker; parameters already reviewed in TokTickIT Lab 3; memory-hard like bcrypt or better | 4 Nov 2026 | Decided by team (SDS SD-03) |
+| D-16 | A draft cannot be cancelled; it stays a draft until it is published (records are never deleted, X-11) | A cancelled event is public (BR-04), so cancelling a draft would publish it | 21 Nov 2026 | Proposed (Sprint 2 contracts) |
+| D-17 | Registration closes **at** the deadline: `now ≥ deadline` is closed | Same boundary as "started" (D-10), so there is one rule to test | 21 Nov 2026 | Proposed (Sprint 2 contracts) |
+| D-18 | A draft is saved with `saveAsDraft: true` on create; the client can never send `status` | The server keeps full control of status (BR-17) | 21 Nov 2026 | Proposed (Sprint 2 contracts) |
+| D-19 | After the start, only description, play structure note, contact and entry-fee label can be edited; title, type, format and venue are frozen too | Literal reading of BR-15 ("only … may be edited") | 21 Nov 2026 | Proposed (Sprint 2 contracts) |
+| D-20 | The change history stores the **names** of edited detail fields, not their old and new text | Keeps the history short; long descriptions are not copied | 21 Nov 2026 | Proposed (Sprint 2 contracts) |
+| D-21 | Publishing a draft checks BR-02 and BR-08 again | A draft can go stale while it waits | 21 Nov 2026 | Proposed (Sprint 2 contracts) |
+| D-22 | The search date range uses Bangkok calendar days and includes both ends | Players think in local dates (NFR-11) | 21 Nov 2026 | Proposed (Sprint 2 contracts) |
+| D-23 | A new start time earlier than the stored deadline is rejected, not adjusted | Nothing changes without the organizer seeing it | 21 Nov 2026 | Proposed (Sprint 2 contracts) |
+| D-24 | CH-11 is split: the game (FR-29, FR-30 games) is built in Sprint 2; the logo and banner uploads (FR-30 logo, FR-31, NFR-17) in Sprint 3 | Uploads need a bucket, an image library and deploy changes that would risk the required Sprint 2 features | 21 Nov 2026 | Decided by team |
+| D-25 | `game` is optional in the API and defaults to `OTHER`; the UI requires it. The server does not tie an event's game to the store's game list | Sprint 1 bodies and tests stay valid; the store list only orders the choices in the form | 21 Nov 2026 | Proposed (Sprint 2 contracts) |
+| D-26 | Check-in, undo and the attendance numbers use the server clock; the check-in window is `[start − 60 min, end)`; a no-show is counted only after `end` | Same boundary style as D-10 and D-17 | 21 Nov 2026 | Proposed (Sprint 3 contracts) |
+| D-27 | Throttling counts failed sign-ins per lower-cased email, including unknown emails, and a successful sign-in does not reset the count | An attacker cannot learn which emails exist, nor reset the counter with a second account | 21 Nov 2026 | Proposed (Sprint 3 contracts) |
+| D-28 | Reports and history count a re-registered participant once per event, by their latest registration | A player who cancelled and came back attended once | 21 Nov 2026 | Proposed (Sprint 3 contracts) |
+| D-29 | Sign-in attempts made while an email is locked get 429 and are not recorded, so the lock is exactly 10 minutes | Hammering must not extend the lock indefinitely | 21 Nov 2026 | Proposed (Sprint 3 contracts) |
+| D-30 | The organizer summary requires `from` and `to`, at most 366 days apart; the page defaults to the last 30 days | A bounded range keeps NFR-12 measurable | 21 Nov 2026 | Proposed (Sprint 3 contracts) |
 
 ### 10.2 Open questions
 
@@ -418,3 +456,4 @@ Later sprints rerun earlier checks as regression tests.
 | v0.3 | 4 Nov 2026 | Event-card and header patterns from the reference (§1.2); access summary (§2.1); FR-26 sign-in-then-return, FR-27 header account menu; D-13 own visual theme | Team (AI-assisted) |
 | v0.4 | 4 Nov 2026 | Review pass: BR-04 rewritten (cancelled events visible, drafts owner-only) to remove a conflict with FR-14 and FR-17; added FR-28 record keeping, NFR-15 input hygiene, NFR-16 sign-in throttling, "Upcoming" definition, problem → requirement links, C-06, D-14, Q-08, Q-09; clarified FR-12, FR-13, FR-17, BR-08, BR-09, BR-12, BR-15, BR-16, NFR-02, NFR-04, NFR-13, A-06; fixed X-08 reference | Team (AI-assisted) |
 | v0.5 | 4 Nov 2026 | NFR-03 hashing changed from bcrypt to scrypt (D-15), decided while writing the System-Level SDS | Team (AI-assisted) |
+| v0.6 | 21 Nov 2026 | Scope change **CH-11** (store identity and game): P-06, P-07, S-10, S-11, FR-29 … FR-31 (§5.7), NFR-17, vocabulary for game, store profile and banner, access rows; X-01 and X-08 revised and X-14 added so the store profile does not contradict the exclusions. Decisions D-16 … D-30 from the Sprint 2 and Sprint 3 contracts. No existing requirement changes meaning | Team (AI-assisted) |

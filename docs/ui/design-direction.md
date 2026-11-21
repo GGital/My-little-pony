@@ -1,6 +1,6 @@
 # UI Design Direction — "Arcane Ink" theme
 
-Project: TCG Event Hub · Version v0.3 (7 Nov 2026) · v0.1 approved in PR #1; v0.2 in PR 2; v0.3 in PR #24
+Project: TCG Event Hub · Version v0.4 (21 Nov 2026), draft for team review · v0.1 approved in PR #1; v0.2 in PR 2; v0.3 in PR #24
 Related: `docs/srs.md` §1.2 (reference UX), §2.1 (access summary), D-12, D-13. A visual mock-up is in
 [`mockup.html`](mockup.html) (open it in a browser), with rendered images in [`mockup/`](mockup/).
 
@@ -38,14 +38,15 @@ Bootstrap variables). Contrast pairs were chosen to meet 4.5:1 for text (NFR-10)
 | `--text-muted` | `#5F5878` | Secondary lines (venue, format) |
 | `--primary` | `#6C4CE0` | Primary buttons, active tab underline, date badge |
 | `--primary-hover` | `#5838C9` | Hover/pressed primary |
-| `--accent` | `#0E8F80` | Seat bar fill, borders and icons on teal surfaces. **Not for small text or as a background behind white text** (4.0:1) |
+| `--accent` | `#0E8F80` | **Teal is reserved for seats and "registered"** (v0.4): nothing else, not game chips, uses it. Seat bar fill, borders and icons on teal surfaces. **Not for small text or as a background behind white text** (4.0:1) |
 | `--accent-ink` | `#0B6B60` | Teal text, the *Registered* button, and role-badge backgrounds behind white text (≈ 6:1) |
 | `--accent-tint` | `#E6F6F3` | Seats chip and the top of the "You're in" card |
 | `--warning` | `#B45309` | "Few seats left" (≤ 20 % of capacity) |
 | `--danger` | `#C8303F` | Errors, *Full*, destructive actions |
-| `--border` | `#E3DFF0` | Card and input borders |
+| `--border` | `#E3DFF0` | Card borders and dividers (decoration only) |
+| `--control-line` | `#8F87AD` | Borders of interactive controls: inputs, toggle chips, radio pills, filter chips, the search pill. ≥ 3:1 on white (WCAG 1.4.11). Added in v0.4; `--border` was 1.3:1 and made controls look like text |
 | Tints and lines | `--primary-tint #EFEBFC` · `--primary-line #C9BEF5` · `--accent-line #B9E5DE` · `--warning-tint #FEF3E2` / `--warning-line #F6D7A8` / `--warning-ink #93400A` · `--danger-tint #FCE8EA` / `--danger-line #F3BCC2` / `--danger-ink #8E1F2B` | Chip, notice and hover backgrounds and borders (values from the mock-up). Text on a tint uses its `-ink` colour (≥ 6:1) |
-| `--focus` | `0 0 0 3px rgba(108,76,224,.45)` | Visible keyboard focus ring on every control |
+| `--focus` | `outline: 2px solid #6C4CE0; outline-offset: 2px` (on the dark header `#C9BEF5`) | Visible keyboard focus ring on every control. v0.4: the old translucent ring was about 2:1 on white and 1.6:1 on the header, below the 3:1 needed |
 | Radius | `16px` panels · `12px` cards · `999px` chips and pill buttons | |
 | Type scale | Chakra Petch 700 — 32 / 24 / 18 px headings · IBM Plex Sans Thai 400/600 — 16 / 14 / 12 px, line height 1.55 | Upper-case labels use IBM Plex Sans Thai 600, 12 px, letter-spacing .08em. Counts use tabular (fixed-width) digits so "3 / 24" does not jump when it changes |
 | Motion | `--ease-out: cubic-bezier(0.16, 1, 0.3, 1)`; 100–150 ms feedback, 150–300 ms state changes, 620 ms for the one authored moment (§7) | Every animation has a `prefers-reduced-motion` alternative |
@@ -213,6 +214,23 @@ refreshes the seat count.
 
 ---
 
+### 5.4 Sprint 2 and Sprint 3 screens (v0.4)
+
+Prototype: the "TCG Event Hub — Store Branding" design canvas, revised after an Impeccable critique on 21 Nov 2026
+(design review 26/40 before the fixes, detector 0 findings before and after).
+
+| Pattern | Rule |
+|---|---|
+| **Game chip** | White chip with the drawn "cards" icon and `--control-line` border, game name as text only (X-14). Shown after the title, never above it. A list filtered to one game hides the chip and names the game in the list heading |
+| **Event banner** (Sprint 3) | Decorative (`aria-hidden`). Desktop shows it 240 px high (cover crop of the 3 : 1 upload); phones show the full 3 : 1. No text belongs in a banner: the title is set below it. Without a banner: a neutral playmat with dashed card zones, no game or publisher name |
+| **Store logo** (Sprint 3) | Decorative; 80 px (64 px on phones) overlapping the bottom-left of the banner with a 4 px white ring; 32 px next to the venue in lists. Without a logo: initials on `--primary-tint` |
+| **Action card** | The Seats card and the main button are **one card** on the detail page, overlapping the banner edge on desktop, so the "seat secured" flip (§7) happens in the first screen. On phones it sits right after the facts, as in §5.2 |
+| **Host section** | A heading with the store name and one sentence listing its other games, then "More events at {store}". No label above the heading (§8) |
+| **Uploads** (Sprint 3) | Empty (drop zone), uploading (progress bar + Cancel), error (`role="alert"`, names the file and the fix), uploaded (preview with cropped strips shaded and the logo corner outlined). Large photos are resized in the browser before upload, so "too large" is not a user-facing error |
+| **Destructive actions** | Removing a logo, cancelling a registration or an event asks first, inline, and says what changes ("Your 6 upcoming events will show QC instead") |
+| **Store profile** | `/organizer/store`: store name read-only (it is the display name), logo, "Games played here" toggle chips (`aria-pressed`), SAVE PROFILE with a status message |
+| **Game choice in forms** | Native radio inputs styled as pills inside a fieldset; the store's games first, then "Other game…" |
+
 ## 6. Voice
 
 TCG Event Hub talks like a **friendly store host**: clear first, warm second, with a little card-table flavour only
@@ -278,3 +296,4 @@ through in the browser.
 | v0.1 | 4 Nov 2026 | First version: theme tokens, layout, auth/authorization UI rules, Sprint 1 screens |
 | v0.3 | 7 Nov 2026 | Built app brought to this document (Impeccable `audit` + `polish`, PR #24): tint and line tokens (§2), header links wrap on phones (§3), check icon instead of the ✓ glyph (§4.4, §7), §5.3 lists, states, notices and forms, icon component (§8), audit results (§9) |
 | v0.2 | 4 Nov 2026 | Impeccable `delight` pass: "seat secured" moment (§7), voice (§6), icon and browser rules (§8), fonts changed to Chakra Petch + IBM Plex Sans Thai, `--accent-ink` for teal text and badges, store name moved below the title, phone order of the Seats card, design checks (§9) |
+| v0.4 | 21 Nov 2026 | Impeccable critique of the Sprint 2/3 prototype: teal reserved for seats (§2), `--control-line` token, solid focus ring (§2), §5.4 patterns for game chip, banner, logo, action card, host section, uploads, destructive confirmations, store profile and game radios |

@@ -1,12 +1,12 @@
 # Complete Feature Inventory
 
 Project: **TCG Event Hub** — Event Registration and Attendance System
-Document version: v0.3 — v0.2 approved in PR #1 (4 Nov 2026)
-Source of requirements: [`docs/srs.md`](srs.md) v0.5 · Next document: `docs/traceability.md`
+Document version: v0.4 — draft for team review (CH-11); v0.2 approved in PR #1 (4 Nov 2026)
+Source of requirements: [`docs/srs.md`](srs.md) v0.6 · Next document: `docs/traceability.md`
 
 This is step 2 of the course design process. The whole product is split into **features**: pieces small enough to
 specify, build, test and review on their own, yet large enough to give a user something they can see. Each feature
-has a stable ID (`Feature-A` … `Feature-T`) that never changes meaning. A withdrawn feature keeps its ID and is
+has a stable ID (`Feature-A` … `Feature-V`) that never changes meaning. A withdrawn feature keeps its ID and is
 marked *Withdrawn*.
 
 Some requirements belong to **no single screen**, such as the database, the error format, or deployment. They are
@@ -46,6 +46,8 @@ How the pieces connect:
 | **Feature-R** | Organizer Attendance Summary | Summary across the organizer's events in a chosen date range: number of events, registrations, check-ins, average fill rate and attendance rate, within the performance target. | 3 |
 | **Feature-S** | Participant Event History | The participant's past events with final status: attended, no-show, cancelled or event cancelled. | 3 |
 | **Feature-T** | Sign-in Throttling | Temporary lock-out (429 for 10 minutes) after 5 failed sign-ins for one email within 10 minutes, with a generic message that reveals nothing about the account. | 3 |
+| **Feature-U** | Game per Event and Store Games *(CH-11)* | The game of each event (fixed list, shown by name only), the organizer's store profile listing the games the store runs, and a filter by game in event search. | 2 |
+| **Feature-V** | Store Logo and Event Banner *(CH-11)* | Upload, replace and remove a store logo and a per-event banner (PNG, JPEG or WebP, re-encoded on the server, stored in a GCS bucket), with initials and a playmat pattern as fallbacks. | 3 |
 
 ## 2. System responsibilities (cross-cutting)
 
@@ -86,10 +88,12 @@ How the pieces connect:
 | Feature-R | FR-24 | BR-20 | NFR-12 | Feature-Q |
 | Feature-S | FR-25 | BR-20 | NFR-02 | Feature-H, Feature-P |
 | Feature-T | FR-02 (generic message kept) | — | NFR-16 | Feature-A, SR-03 |
+| Feature-U | FR-29, FR-30 (games) | BR-14, BR-17 | NFR-02, NFR-15 | Feature-D, Feature-J, Feature-L, SR-01 |
+| Feature-V | FR-30 (logo), FR-31 | BR-14, BR-17 | NFR-17, NFR-13 | Feature-U, SR-04 |
 | SR-01 | — | BR-05, BR-06 (database constraints) | NFR-06 | — |
 | SR-02 | FR-16 (error reasons) | — | NFR-02 (check order), NFR-07, NFR-15 | — |
 | SR-03 | — | BR-02, BR-08, BR-18 (time boundaries) | NFR-11 | — |
-| SR-04 | — | — | NFR-13 | SR-01 |
+| SR-04 | — | — | NFR-13, NFR-17 (bucket and deploy settings, Sprint 3) | SR-01 |
 | SR-05 | — | — | NFR-08, NFR-10 | Feature-C |
 | SR-06 | — | — | NFR-12 | Feature-J, Feature-R |
 | SR-07 | — | — | NFR-14 | — |
@@ -97,13 +101,13 @@ How the pieces connect:
 
 ## 4. Coverage check
 
-Every SRS requirement must belong to at least one feature or responsibility. Checked against SRS v0.5 (a script compares every ID in the SRS with section 3):
+Every SRS requirement must belong to at least one feature or responsibility. Checked against SRS v0.6 (a script compares every ID in the SRS with section 3):
 
 | Group | IDs in the SRS | Covered | Not covered |
 |---|---|---|---|
-| Functional requirements | FR-01 … FR-28 | 28 / 28 | none |
+| Functional requirements | FR-01 … FR-31 | 31 / 31 | none |
 | Business rules | BR-01 … BR-20 | 20 / 20 | none |
-| Non-functional requirements | NFR-01 … NFR-16 | 16 / 16 | none |
+| Non-functional requirements | NFR-01 … NFR-17 | 17 / 17 | none |
 
 Requirements shared by several features, such as BR-04, BR-16 and NFR-02, are **established** by the first feature
 listed in the sprint plan and **re-tested** by each later feature that relies on them. The traceability matrix
@@ -145,3 +149,4 @@ Both students review each other's Pull Requests, so each student reads and appro
 | v0.1 | 4 Nov 2026 | First complete inventory: Feature-A … Feature-S, SR-01 … SR-07, coverage check, Sprint 1 bundle and dependency graph | Team (AI-assisted) |
 | v0.2 | 4 Nov 2026 | Follows SRS v0.4: added Feature-T (NFR-16) and SR-08 (FR-28); SR-02 now owns NFR-15 and the check order; FR-28 linked to Feature-L, N, O, P; scope wording for F, I, J | Team (AI-assisted) |
 | v0.3 | 7 Nov 2026 | Source and §4 coverage check point at SRS v0.5 (D-15 changed NFR-03 wording only; all 64 IDs still covered) | Team (AI-assisted) |
+| v0.4 | 21 Nov 2026 | CH-11: Feature-U (Sprint 2) and Feature-V (Sprint 3) added with their requirements and dependencies; SR-04 also carries NFR-17's bucket settings; §4 coverage against SRS v0.6 (31 FR, 20 BR, 17 NFR = 68 IDs) | Team (AI-assisted) |
