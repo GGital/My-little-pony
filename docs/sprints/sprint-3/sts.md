@@ -1,7 +1,7 @@
 # Sprint 3 Software Test Specification (STS)
 
-Project: **TCG Event Hub** · Sprint 3 · Document version: v0.1 — **draft for team review** (changes in §8)
-Contracts: [`feature-contracts.md`](feature-contracts.md) v0.1 · Issues and Definition of Done: [`README.md`](README.md) ·
+Project: **TCG Event Hub** · Sprint 3 · Document version: v0.2 — **draft for team review** (changes in §8)
+Contracts: [`feature-contracts.md`](feature-contracts.md) v0.2 · Issues and Definition of Done: [`README.md`](README.md) ·
 Earlier STS: [`../sprint-1/sts.md`](../sprint-1/sts.md), [`../sprint-2/sts.md`](../sprint-2/sts.md)
 
 This document turns every Sprint 3 acceptance criterion into planned tests, **before** the code exists, with the
@@ -52,6 +52,27 @@ These are the same as Sprint 1 STS §1.2, under `server/tests/sprint-3/`, `clien
   cancellation).
 - Images are generated in the test (`sharp({ create: … })`), so no binary fixtures are committed. The EXIF test
   writes GPS metadata with `sharp().withMetadata()`.
+- **Tournament standings fixture (TEST-X-03, BR-24).** 5 players, registered in the order A, B, C, D, E; D drops
+  after round 2. Results are games won A–B–drawn:
+
+  | Round | Matches |
+  |---|---|
+  | 1 | A–B 2–0 · C–D 1–1–1 (draw) · E bye |
+  | 2 | A–E 2–1 · C–B 2–0 · D bye |
+  | 3 | A–C 0–2 · E–B 2–1 (D dropped) |
+
+  Expected standings, computed by hand with exact fractions (byes left out of opponents; 1/3 floor):
+
+  | Rank | Player | Points | W–L–D | OMW% | GW% | OGW% | Why this rank |
+  |---|---|---|---|---|---|---|---|
+  | 1 | C | 7 | 2–0–1 | 55.5556 | 76.1905 | 52.3810 | most points |
+  | 2 | A | 6 | 2–1–0 | 59.2593 | 57.1429 | 57.3413 | ties E on points, wins on OMW% |
+  | 3 | E | 6 | 2–1–0 | 50.0000 | 62.5000 | 45.2381 | E's opponent B is floored to 33.33% |
+  | 4 | D (dropped) | 4 | 1–0–1 | 77.7778 | 66.6667 | 76.1905 | a dropped player keeps their place |
+  | 5 | B | 0 | 0–3–0 | 70.3704 | 33.3333 | 65.2778 | GW% floored from 3/21 to 1/3 |
+
+  The fixture is computed by a short script in the test (exact fractions) and also written out here, so a reviewer
+  can check it by hand.
 
 ### 1.4 Concurrency simulation
 
@@ -59,8 +80,10 @@ These are the same as Sprint 1 STS §1.2, under `server/tests/sprint-3/`, `clien
 |---|---|---|---|
 | TEST-P-06a | Mint `REGISTERED`, window open | 2 × E-18 for Mint | one `200`, one `409 ALREADY_CHECKED_IN`; one change row |
 | TEST-P-06b | Mint `REGISTERED`, window open, before the deadline | E-18 (owner) + E-16 (Mint) | final status is exactly one of `CHECKED_IN` or `CANCELLED`; never both timestamps; the loser got the matching 409 |
+| TEST-W-06 | a running tournament, round 1 complete | 2 × E-27 | exactly one round 2; one `201`, one `409`; every entry paired once |
 
-**Mutation check at review:** remove `FOR UPDATE` from E-18. Round (b) must fail at least once. Record this in §5.
+**Mutation check at review:** remove `FOR UPDATE` from E-18 and from E-27. Round (b) of TEST-P-06 and TEST-W-06 must
+fail at least once. Record this in §5.
 
 ### 1.5 Definition of a passing Sprint 3 suite
 
@@ -68,7 +91,7 @@ The suite passes when:
 - every §2 row is green on the `v1.0.0` commit, with M rows carrying their evidence files;
 - every Sprint 3 AC appears in §3, and §4 has a rejection test for each Sprint 3 BR;
 - the Sprint 1 and Sprint 2 suites are fully green;
-- JRN-01 … JRN-07 pass;
+- JRN-01 … JRN-08 pass;
 - §6 records the commit, the commands, the counts and any exceptions.
 
 ---
@@ -141,7 +164,31 @@ output**, with the commit id in §6.
 | TEST-V-06 | M | AC-V-06, NFR-13, NFR-17 | the deployed candidate | upload a banner; `curl -I` its URL; deploy a new revision; `curl -I` again; list the bucket | `200`, `image/webp`, `nosniff`, twice; the object listed | `docs/sprints/sprint-3/evidence/V-06-<commit>.txt` | Pending |
 | TEST-V-07 | C, E2E | AC-V-07, NFR-09, NFR-10 | the store profile and banner box | (C) resize path with a 7 MB canvas image; a GIF; the remove-logo confirmation. (E2E) three widths | "Resized from …"; the alert names the file with focus on the input; Keep it changes nothing; the strips are shaded; no page scroll | `client/tests/sprint-3/StoreMedia.test.tsx`, `e2e/sprint-3/branding.spec.ts` | Pending |
 
-### 2.7 SR-05, SR-06, SR-07, regression and journeys
+### 2.7 Feature-W — Swiss pairings and rounds
+
+| Test ID | Level | AC / Req | Precondition / input | Action | Expected result | File | Result |
+|---|---|---|---|---|---|---|---|
+| TEST-W-01 | I, C | AC-W-01, FR-32, BR-21, D-31, D-35 | O2's `TOURNAMENT` in progress; 5 `CHECKED_IN`, 2 `REGISTERED` | E-26 `{}`; read entries, round, matches; call `pairRound` again with the stored seed. (C) the start screen and the round-1 table | `201`; 5 entries = the checked-in ids; rounds 3; 3 matches incl. one bye stored 2–0–0; each entry once; same pairings from the seed; 1 change row. (C) caption, table numbers, Bye | `server/tests/sprint-3/tournament.api.test.ts`, `client/tests/sprint-3/Tournament.test.tsx` | Pending |
+| TEST-W-02 | U, I | AC-W-02, BR-21 | the six events in the AC | (U) `decideStart` per case and `maxRounds(4) = 2`; (I) E-26 on each, `rounds` 0 / 3 / 2 | the five 409 codes; `422` ×2 and `201`; table counts unchanged after each rejection | `server/tests/sprint-3/unit/tournament-rules.unit.test.ts`, `server/tests/sprint-3/tournament.api.test.ts` | Pending |
+| TEST-W-03 | U | AC-W-03, BR-22, SD-14 | fixed seed 20261121 | 1,000 generated tournaments (2–64 entries, random results, random drops, every allowed round count) | no rematch; ≤ 1 bye per entry; each active entry once per round; pairs respect score groups with float-downs | `server/tests/sprint-3/unit/pairing.property.unit.test.ts` | Pending |
+| TEST-W-04 | I | AC-W-04, FR-33, FR-37 | running 6-player tournament | E-27 with a missing result; complete; E-27; E-29; E-27 after the final round | `409 ROUND_NOT_COMPLETE`; `201` round 2 by points, no rematch; drop `200`, absent from round 3, present in standings; `409 NO_ROUNDS_LEFT` | `server/tests/sprint-3/tournament.api.test.ts` | Pending |
+| TEST-W-05 | I | AC-W-05, BR-14, NFR-02 | O2's tournament | E-26, E-27, E-29, E-31 by O1, Mint, visitor, foreign Origin | `404` (byte-identical), `403`, `401`, `403`; nothing changes | `server/tests/sprint-3/tournament.api.test.ts` | Pending |
+| TEST-W-06 | I | AC-W-06, NFR-05 | §1.4 | §1.4, 20 rounds | §1.4 invariant | `server/tests/sprint-3/tournament.concurrency.api.test.ts` | Pending |
+| TEST-W-07 | U | AC-W-07, NFR-18 | 256 entries, 8 rounds of history, seed fixed | time `pairRound` for round 9, 20 runs | median and max < 1 s; valid pairing | `server/tests/sprint-3/unit/pairing.bench.unit.test.ts` | Pending |
+
+### 2.8 Feature-X — results, standings and winner
+
+| Test ID | Level | AC / Req | Precondition / input | Action | Expected result | File | Result |
+|---|---|---|---|---|---|---|---|
+| TEST-X-01 | U, I | AC-X-01, FR-34, BR-23 | round 1 running | (U) `validateResult` and `matchPoints`; (I) the AC bodies on E-28, and on the bye | `200` ×3 with 3/0, 0/3, 1/1 points; `400` ×4 naming the field; bye `409 ROUND_LOCKED`; `reportedById` = owner | `server/tests/sprint-3/unit/tournament-rules.unit.test.ts`, `server/tests/sprint-3/results.api.test.ts` | Pending |
+| TEST-X-02 | I | AC-X-02, BR-23 | round 2 paired | E-28 on a round-1 match; twice on a round-2 match | `409 ROUND_LOCKED`, unchanged; `200` ×2, the last value stored | `server/tests/sprint-3/results.api.test.ts` | Pending |
+| TEST-X-03 | U, I | AC-X-03, BR-24, D-34 | the §1.3 fixture | (U) `standings(matches)` with exact fractions; (I) the fixture entered through E-26 … E-29 with fixed pairings, then E-31 | the §1.3 table to 4 decimal places: order C, A, E, D, B | `server/tests/sprint-3/unit/standings.unit.test.ts`, `server/tests/sprint-3/results.api.test.ts` | Pending |
+| TEST-X-04 | I, C | AC-X-04, FR-35, FR-36 | final round complete | E-30; E-28, E-27, E-29, E-26; E-31; E-22 as Ploy. (C) the finished page | `200 FINISHED`, `winner` = rank 1; `409` ×4; standings unchanged; Ploy's history `placing`. (C) "Winner: …" | `server/tests/sprint-3/results.api.test.ts`, `client/tests/sprint-3/Tournament.test.tsx` | Pending |
+| TEST-X-05 | I, C | AC-X-05, FR-36, BR-16, D-32 | Mint v Ploy, table 2, round 2 | E-32 on Mint's registration id as Mint, then the same id as Ploy, as O1 and as a visitor; stringify Mint's body. (C) the player view | Mint: table 2, opponent "Ploy", own record, points, rank; Ploy `404`; `403`; `401`; no other name, no `standings`, no email. (C) "Round 2 · Table 2 · You play Ploy" | `server/tests/sprint-3/results.api.test.ts`, `client/tests/sprint-3/MyTournament.test.tsx` | Pending |
+| TEST-X-06 | I | AC-X-06, BR-14 | finished / unfinished tournaments | E-30 by O1, participant, visitor; before the final round | `404`, `403`, `401`; `409 ROUND_NOT_COMPLETE` | `server/tests/sprint-3/results.api.test.ts` | Pending |
+| TEST-X-07 | C, E2E | AC-X-07, NFR-08, NFR-10 | the seed, EV-11 | (E2E, JRN-08) quick buttons, finish, axe, three widths, print view | busy state and live region; Winner shown; 0 serious issues; captions; no page scroll; print columns | `e2e/sprint-3/tournament.spec.ts` | Pending |
+
+### 2.9 SR-05, SR-06, SR-07, regression and journeys
 
 | Test ID | Level | AC / Req | Precondition / input | Action | Expected result | File | Result |
 |---|---|---|---|---|---|---|---|
@@ -151,14 +198,15 @@ output**, with the commit id in §6.
 | TEST-SR6-01 | M | AC-SR6-01, NFR-12 | the perf database, production build | `node scripts/perf.mjs events report` | p95 < 500 ms for E-04 ×2 and E-20 | `docs/sprints/sprint-3/evidence/perf-<commit>.txt` | Pending |
 | TEST-SR6-02 | M | AC-SR6-02, NFR-12 | the same | `node scripts/perf.mjs summary`; `EXPLAIN ANALYZE` | p95 < 500 ms; plans recorded | `docs/sprints/sprint-3/evidence/perf-<commit>.txt` | Pending |
 | TEST-SR7-02 | M | AC-SR7-02, NFR-14 | the `v1.0.0` candidate | `npm run sts:check -- sprint-1/2/3`; traceability review | all ACs with results; every BR with a rejection; every matrix row with a test and a result | this file §6 | Pending |
-| TEST-B-03 (rows added) | I | AC-B-03, NFR-02 | — | rows for E-18 … E-22, E-24, E-25 | matrix statuses | `server/tests/sprint-1/authorization.api.test.ts` | Pending |
-| TEST-SR1-02 (revised) | I | AC-SR1-02 | — | the seed twice | 10 events with EV-10 as in contracts §0.3; second run adds 0 | `server/tests/sprint-1/seed.api.test.ts` | Pending |
+| TEST-B-03 (rows added) | I | AC-B-03, NFR-02 | — | rows for E-18 … E-22, E-24 … E-32 | matrix statuses | `server/tests/sprint-1/authorization.api.test.ts` | Pending |
+| TEST-SR1-02 (revised) | I | AC-SR1-02 | — | the seed twice | 11 events with EV-10 and EV-11 as in contracts §0.3; second run adds 0 | `server/tests/sprint-1/seed.api.test.ts` | Pending |
 | TEST-SR2-03, 04 (rows added) | I, U | AC-SR2-03, NFR-07 | — | new routes and codes | GET on POST/PUT/DELETE paths → 404; codes map to their status | `server/tests/sprint-1/validation.api.test.ts`, `server/tests/sprint-1/unit/errors.unit.test.ts` | Pending |
-| JRN-05 | E2E | P, Q, S | contracts §11 | | | `e2e/sprint-3/journey.spec.ts` | Pending |
-| JRN-06 | E2E | T | contracts §11 | | | `e2e/sprint-3/journey.spec.ts` | Pending |
-| JRN-07 | E2E | V, U | contracts §11 | | | `e2e/sprint-3/branding.spec.ts` | Pending |
+| JRN-05 | E2E | P, Q, S | contracts §13 | | | `e2e/sprint-3/journey.spec.ts` | Pending |
+| JRN-06 | E2E | T | contracts §13 | | | `e2e/sprint-3/journey.spec.ts` | Pending |
+| JRN-07 | E2E | V, U | contracts §13 | | | `e2e/sprint-3/branding.spec.ts` | Pending |
+| JRN-08 | E2E | W, X, S | contracts §13 | | | `e2e/sprint-3/tournament.spec.ts` | Pending |
 
-**Totals:** 39 planned test rows that carry an AC number, 3 regression rows and 3 new journeys. The Sprint 1 and
+**Totals:** 53 planned test rows that carry an AC number, 3 regression rows and 4 new journeys. The Sprint 1 and
 Sprint 2 suites run unchanged.
 
 ---
@@ -182,8 +230,15 @@ Sprint 2 suites run unchanged.
 | | | AC-T-03 | TEST-T-03 | AC-SR7-02 | TEST-SR7-02 |
 | | | AC-T-04 | TEST-T-04 | | |
 | | | AC-T-05 | TEST-T-05 | | |
+| AC-W-01 | TEST-W-01, JRN-08 | AC-X-01 | TEST-X-01, JRN-08 | | |
+| AC-W-02 | TEST-W-02 | AC-X-02 | TEST-X-02 | | |
+| AC-W-03 | TEST-W-03 | AC-X-03 | TEST-X-03 | | |
+| AC-W-04 | TEST-W-04, JRN-08 | AC-X-04 | TEST-X-04, JRN-08 | | |
+| AC-W-05 | TEST-W-05, TEST-B-03 | AC-X-05 | TEST-X-05, TEST-B-03 | | |
+| AC-W-06 | TEST-W-06 | AC-X-06 | TEST-X-06, TEST-B-03 | | |
+| AC-W-07 | TEST-W-07 | AC-X-07 | TEST-X-07 | | |
 
-39 / 39 Sprint 3 ACs have at least one test. No authorization AC is proven by a UI test alone. M rows count only
+53 / 53 Sprint 3 ACs have at least one test. No authorization AC is proven by a UI test alone. M rows count only
 with their evidence file.
 
 ## 4. Business rules with rejection (negative) tests
@@ -196,8 +251,12 @@ with their evidence file.
 | BR-14 (re-verified) | TEST-Q-04, TEST-R-02, TEST-V-04 | Another organizer's report, summary rows and banner |
 | BR-16 (re-verified) | TEST-S-04 | Another participant's history |
 | BR-17 (re-verified) | TEST-V-04 | Uploading a logo for another account |
+| BR-21 | TEST-W-02 | Starting a non-tournament, a cancelled, a not-started, a one-player or an already started event; rounds over the cap |
+| BR-22 | TEST-W-03, TEST-W-04, TEST-W-06 | Any rematch or second bye; pairing before the round is complete; a second round from a double click |
+| BR-23 | TEST-X-01, TEST-X-02, TEST-X-04 | Out-of-range results; changing a bye or a closed round; any change after finishing |
+| BR-24 | TEST-X-03 | A wrong tiebreak order (A must rank above E on OMW%) |
 
-3 / 3 Sprint 3 BRs have a rejection test.
+7 / 7 Sprint 3 BRs have a rejection test.
 
 ---
 
@@ -216,7 +275,9 @@ are the Sprint 3 TDD evidence in the 29 Nov PDF.
 | S3-06 Feature-V media | TEST-V-01 … 07 | | | | |
 | S3-07 SR-05 accessibility | TEST-SR5-02 … 04 | | | | |
 | S3-08 SR-06 performance | TEST-SR6-01, 02 | | | | |
-| S3-09 Release `v1.0.0` | JRN-05 … 07, TEST-SR7-02, regression rows | | | | |
+| S3-10 Feature-W pairings | TEST-W-01 … 07 (engine tests W-03, W-07 first) | | | | |
+| S3-11 Feature-X results and standings | TEST-X-01 … 07 | | | | |
+| S3-09 Release `v1.0.0` | JRN-05 … 08, TEST-SR7-02, regression rows | | | | |
 
 ## 6. Results (filled at release)
 
@@ -224,7 +285,7 @@ are the Sprint 3 TDD evidence in the 29 Nov PDF.
 |---|---|
 | Release commit / tag | `v1.0.0` — Pending |
 | Server / client / E2E counts (passed / failed / skipped) | Pending |
-| Concurrency: TEST-P-06, 20 rounds | Pending |
+| Concurrency: TEST-P-06 and TEST-W-06, 20 rounds | Pending |
 | Sprint 1 and 2 regression | Pending |
 | Accessibility scan (serious / critical / moderate) | Pending |
 | Load run p95 per endpoint | Pending |
@@ -250,3 +311,4 @@ node scripts/perf.mjs events report summary
 | Version | Date | Change | Author |
 |---|---|---|---|
 | v0.1 | 21 Nov 2026 | First draft: strategy additions (independent counts, boundaries, M evidence), tools, concurrency plan, 39 AC tests, 3 regression rows, JRN-05 … 07, AC map, BR rejection map, empty TDD and results tables | Team (AI-assisted) |
+| v0.2 | 21 Nov 2026 | CH-12: §1.3 hand-computed standings fixture, TEST-W-06 race, §2.7 Feature-W and §2.8 Feature-X (14 tests incl. the 1,000-tournament property test and the 256-entry benchmark), JRN-08, AC map, BR-21 … BR-24 rejections, TDD rows S3-10, S3-11; 53 AC tests | Team (AI-assisted) |

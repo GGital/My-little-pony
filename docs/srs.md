@@ -4,7 +4,7 @@ Project: **TCG Event Hub** — Event Registration and Attendance System
 Course: CPE 334, Semester 1/2026 — Theme 3 (Event Registration and Attendance System)
 Team: Phattaratorn Mahatkeerati (67070503433, [@GGital](https://github.com/GGital)) ·
 Praewa Thuwatharanimitkul (67070503432, [@MeldyRose](https://github.com/MeldyRose))
-Document version: v0.6 — draft for team review (CH-11 and the Sprint 2 decisions D-16 … D-25); v0.5 approved in PR #2
+Document version: v0.7 — draft for team review in PR #76 (CH-11 store identity, CH-12 tournaments, D-16 … D-36); v0.5 approved in PR #2
 Companion documents: [`docs/features.md`](features.md), [`docs/traceability.md`](traceability.md),
 [`docs/diagrams/`](diagrams/README.md), [`docs/ui/design-direction.md`](ui/design-direction.md), [`docs/system-sds.md`](system-sds.md), [`docs/sprints/plan.md`](sprints/plan.md),
 [`docs/sprints/sprint-1/`](sprints/sprint-1/README.md), [`docs/sprints/sprint-2/`](sprints/sprint-2/README.md),
@@ -43,6 +43,7 @@ Today a typical store takes sign-ups through chat messages and a paper list. The
 | P-05 | Organizers cannot see attendance across events | They cannot plan table counts or prize support | FR-23, FR-24 |
 | P-06 | A store runs several card games, and an event title does not always say which one | Players open the wrong events, or arrive with the wrong deck | FR-29, FR-30 (CH-11) |
 | P-07 | Every event looks the same in the list, so players cannot spot their usual store | Regulars miss their store's events | FR-30, FR-31 (CH-11) |
+| P-08 | Tournament rounds are paired by hand on paper and results are added up on a calculator | Rematches, wrong standings and disputes about who won | FR-32 … FR-37, BR-21 … BR-24 (CH-12) |
 
 ### 1.2 UX reference
 
@@ -107,6 +108,8 @@ role/permission matrix, and every "No" is enforced by the backend (BR-17), not o
 | Registration list of an event (display names only) | No | No | Own events only (BR-14, BR-16) |
 | See a draft event (Sprint 2) | No | No | Own drafts only (BR-04) |
 | Check-in and attendance report (Sprint 3) | No | No | Own events only (BR-18) |
+| Run a tournament: pairings, results, standings (Sprint 3) | No | No | Own events only (BR-14) |
+| See own tournament pairing, record and placing (Sprint 3) | No | Own only; sees the display name of their own current opponent (D-32) | No |
 | Store profile: games played (Sprint 2), logo (Sprint 3) | No | No | Own profile only (BR-17) |
 | Event banner (Sprint 3) | No | No | Own events only (BR-14) |
 
@@ -129,6 +132,7 @@ role/permission matrix, and every "No" is enforced by the backend (BR-17), not o
 | S-09 | Participant event history (attended / no-show / cancelled) | 3 |
 | S-10 | The game of each event, a store's list of games, and a filter by game (CH-11) | 2 |
 | S-11 | Store logo and event banner images (CH-11) | 3 |
+| S-12 | Swiss tournament support for `TOURNAMENT` events: pairings, byes, drops, match results, standings with tiebreakers and the winner (CH-12) | 3 |
 
 ### 3.2 Explicit exclusions
 
@@ -138,7 +142,7 @@ role/permission matrix, and every "No" is enforced by the backend (BR-17), not o
 | X-02 | Real payment. The entry fee is a **display label** only (for example "฿150, pay at store"); nothing is charged |
 | X-03 | Email, SMS, LINE, push or any external notification |
 | X-04 | Waitlists and automatic promotion from a waitlist (decision D-07) |
-| X-05 | Tournament software: pairings, rounds, match results, standings, prizes, deck lists |
+| X-05 | Tournament software beyond Swiss rounds: single-elimination top cuts, prizes, deck lists, judge calls, round timers, and players reporting their own results. *Revised in v0.7 (CH-12):* Swiss pairings, match results, standings and the winner are now in scope (FR-32 … FR-37) |
 | X-06 | Maps, geolocation and distance search (the list filters by city text instead) |
 | X-07 | Recurring-event series. Each weekly event is created as a separate event |
 | X-08 | Multiple roles per account, co-organizers, store/organisation accounts shared by several users, and an all-events administrator. The "store profile" of CH-11 is a set of fields on the one organizer account, not a separate store account (A-03) |
@@ -170,6 +174,11 @@ role/permission matrix, and every "No" is enforced by the backend (BR-17), not o
 | **Game** | The trading card game an event is for: `POKEMON`, `MAGIC`, `ONE_PIECE`, `YUGIOH`, `DIGIMON`, `LORCANA` or `OTHER`, shown by name only (CH-11) |
 | **Store profile** | Fields of an organizer account that describe their store: the games it runs (Sprint 2) and its logo (Sprint 3). The store name is the organizer's display name |
 | **Banner** | An optional wide (3 : 1) image an organizer adds to one event (Sprint 3) |
+| **Tournament** | The Swiss rounds of one `TOURNAMENT` event. Status `NOT_STARTED` → `RUNNING` → `FINISHED` (CH-12) |
+| **Entry** | One checked-in player taking part in a tournament; fixed when round 1 is paired |
+| **Round · match · table** | A round pairs every active entry into matches; each match has a table number. A **bye** is a match with no opponent |
+| **Match points** | Win 3, draw 1, loss 0; a bye counts as a 2–0 win |
+| **Standings** | Entries ordered by match points, then OMW%, GW%, OGW% (BR-24) |
 
 ---
 
@@ -272,6 +281,21 @@ behaviour but is never the only enforcement point.
   image** on an event. Without a banner, the event page shows a neutral playmat pattern with no game or publisher
   name.
 
+### 5.8 Tournaments — added by CH-12 (v0.7), Sprint 3
+
+- **FR-32** The system shall let the owning organizer **start** the tournament of a `TOURNAMENT` event: every
+  checked-in player becomes an entry, the number of rounds is set (default ⌈log₂ entries⌉), and round 1 is paired.
+- **FR-33** The system shall **pair each round** by the Swiss method (BR-22): players with the same or nearest match
+  points meet, nobody meets the same opponent twice, and one bye is given when the number of active entries is odd.
+- **FR-34** The system shall let the owning organizer **record and correct match results** (games won by each player
+  and drawn games) for the current round.
+- **FR-35** The system shall compute **standings** with tiebreakers (BR-24) and, when the owner finishes the
+  tournament after its last round, record the **winner** (rank 1) and every final placing.
+- **FR-36** The system shall show a participant their **own** tournament view: the current table and opponent, their
+  own record (wins–losses–draws, points) and their final placing, also in their event history (FR-25).
+- **FR-37** The system shall let the owning organizer **drop** an entry before the next round is paired; a dropped
+  entry keeps its results and its place in the standings but is not paired again.
+
 ---
 
 ## 6. Business rules (BR)
@@ -323,7 +347,8 @@ database where a constraint can express it.
 - **BR-15** *(Sprint 2)* Once an event has started, its start time, end time, capacity and deadline can no longer be
   changed; only its description, play structure note, contact and entry-fee label may be edited.
 - **BR-16** *(Sprint 1)* A participant can see **only their own** registrations. Other participants' names and
-  registrations are never shown to participants or visitors; the public sees only registered/capacity and seats
+  registrations are never shown to participants or visitors (one exception from Sprint 3: a tournament player sees
+  their own current opponent's display name, D-32); the public sees only registered/capacity and seats
   remaining. The owning organizer sees each participant's **display name**, never their email (D-14).
 - **BR-17** *(Sprint 1)* The identity used for every protected operation comes from the authenticated session.
   The backend never trusts a user id or role sent by the client.
@@ -336,6 +361,27 @@ database where a constraint can express it.
   during the check-in window.
 - **BR-20** After an event ends, every registration still `REGISTERED` is reported as a **no-show**. Attendance
   rate = checked-in ÷ (checked-in + no-show). An event with no such registrations shows "—", not 0% or an error.
+
+### 6.5 Tournament rules — added by CH-12 (v0.7), Sprint 3
+
+- **BR-21** **Starting a tournament.** Only a `PUBLISHED` event of type `TOURNAMENT` that is in progress
+  (`startAt ≤ now < endAt`, so it can no longer be cancelled, BR-12) can start, once, and only with **at least 2**
+  checked-in players. Later rounds, results and finishing may run past `endAt`. The entries are exactly the players
+  checked in at that moment; a player checked in later does not join (D-31). Rounds: from 1 to ⌈m ÷ 2⌉, where m is
+  the number of entries rounded up to even (this bound guarantees a pairing without rematches, SDS SD-14).
+- **BR-22** **Swiss pairing.** Round 1 pairs entries in a random order from a stored seed. Every later round orders
+  active entries by standings and pairs from the top, each with the highest-placed entry it has not met; when a
+  score group cannot be paired, the lowest entry of that group moves down to the next group. **No two entries meet
+  twice.** With an odd number of active entries, the lowest-placed entry that has not had a bye gets the bye. A round
+  can be paired only when every match of the previous round has a result.
+- **BR-23** **Results.** A result is games won by each player and drawn games, each a whole number 0–3 with a total
+  of 1–5. The player with more game wins wins the match; equal game wins is a drawn match. Match points: win 3,
+  draw 1, loss 0; a bye is a 2–0 win. A round's results can be corrected only until the next round is paired; after
+  the tournament is finished, nothing can change. Only the owning organizer records results (D-33).
+- **BR-24** **Standings and winner.** Order: match points; then opponents' match-win percentage (OMW%); then game-win
+  percentage (GW%); then opponents' game-win percentage (OGW%); then earliest registration. Each percentage counts
+  at least 1/3 per opponent, and byes are left out of opponents' percentages. Dropped entries stay in the standings.
+  The winner is rank 1 when the owner finishes the tournament after the last round.
 
 ---
 
@@ -362,6 +408,7 @@ Later sprints rerun earlier checks as regression tests.
 | **NFR-15** | Security — input and request hygiene | Every request body and query is validated on the server against a schema (wrong types, out-of-range values and unknown fields → 400 with field details); state-changing operations use only POST/PATCH/DELETE; user-written text (titles, descriptions) is always displayed as plain text, never run as HTML | API tests with malformed and extra fields; API test that a GET cannot change data; UI test that a description containing `<script>` is shown literally | 1 |
 | **NFR-16** | Security — sign-in throttling | After **5 failed sign-ins for one email within 10 minutes**, further attempts for that email get **429** for 10 minutes, with the same generic message style as FR-02 | API test: 5 failures → 6th attempt 429 → succeeds after the window (fixed clock) | 3 |
 | **NFR-17** | Security — image uploads (CH-11) | Only PNG, JPEG or WebP, checked from the file bytes; logo ≤ 2 MB and banner ≤ 5 MB, enforced before the whole body is read; at most 25 megapixels decoded; every image re-encoded on the server so metadata (EXIF, GPS) is removed; stored under a random name; served with `X-Content-Type-Options: nosniff`; SVG never accepted | API tests with oversized, renamed, non-image, SVG, too-small and pixel-bomb files; a test that EXIF is gone after upload; a header check on the deployed URL | 3 |
+| **NFR-18** | Performance — pairing (CH-12) | Pairing one round for **256** entries after 8 rounds of history takes **< 1 s** on a developer laptop, and 1,000 generated tournaments contain no rematch and no second bye | Unit benchmark and property-style test with a fixed random seed | 3 |
 | **NFR-14** | Maintainability — test coverage of rules | Every acceptance criterion of a sprint is linked to at least one automated test (or a justified manual check), and every BR has at least one negative test | Traceability review at each sprint release | 1, 2, 3 |
 
 ---
@@ -430,6 +477,12 @@ Later sprints rerun earlier checks as regression tests.
 | D-28 | Reports and history count a re-registered participant once per event, by their latest registration | A player who cancelled and came back attended once | 21 Nov 2026 | Proposed (Sprint 3 contracts) |
 | D-29 | Sign-in attempts made while an email is locked get 429 and are not recorded, so the lock is exactly 10 minutes | Hammering must not extend the lock indefinitely | 21 Nov 2026 | Proposed (Sprint 3 contracts) |
 | D-30 | The organizer summary requires `from` and `to`, at most 366 days apart; the page defaults to the last 30 days | A bounded range keeps NFR-12 measurable | 21 Nov 2026 | Proposed (Sprint 3 contracts) |
+| D-31 | Tournament entries are fixed when round 1 is paired; later check-ins are not added | Adding players mid-event breaks Swiss maths and is rare at our stores | 21 Nov 2026 | Proposed (CH-12) |
+| D-32 | A participant may see the **display name of their own current opponent** and their table. This is the only exception to BR-16; standings and other players' results stay owner-only, and the public sees no names (the team chose owner and player only, 21 Nov 2026) | Players must know whom to play; posting full pairings publicly would expose every name | 21 Nov 2026 | Decided by team (privacy); exception proposed (CH-12) |
+| D-33 | Only the owning organizer records and corrects results; players do not self-report (X-05) | Matches the trust model of check-in (A-05) and avoids disputes in the product | 21 Nov 2026 | Proposed (CH-12) |
+| D-34 | Standard Swiss scoring and tiebreakers (3/1/0 points, OMW%, GW%, OGW% with a 1/3 floor), the same for every game | One rule set is testable; stores already know it | 21 Nov 2026 | Proposed (CH-12) |
+| D-35 | Round 1 is random from a seed stored with the round, so a test or a dispute can reproduce it | Fair and reproducible | 21 Nov 2026 | Proposed (CH-12) |
+| D-36 | CH-12 is built in **Sprint 3** (Feature-W pairings, Feature-X results and standings) after Feature-P check-in | It needs check-in; Sprint 2 is full | 21 Nov 2026 | Decided by team |
 
 ### 10.2 Open questions
 
@@ -457,3 +510,4 @@ Later sprints rerun earlier checks as regression tests.
 | v0.4 | 4 Nov 2026 | Review pass: BR-04 rewritten (cancelled events visible, drafts owner-only) to remove a conflict with FR-14 and FR-17; added FR-28 record keeping, NFR-15 input hygiene, NFR-16 sign-in throttling, "Upcoming" definition, problem → requirement links, C-06, D-14, Q-08, Q-09; clarified FR-12, FR-13, FR-17, BR-08, BR-09, BR-12, BR-15, BR-16, NFR-02, NFR-04, NFR-13, A-06; fixed X-08 reference | Team (AI-assisted) |
 | v0.5 | 4 Nov 2026 | NFR-03 hashing changed from bcrypt to scrypt (D-15), decided while writing the System-Level SDS | Team (AI-assisted) |
 | v0.6 | 21 Nov 2026 | Scope change **CH-11** (store identity and game): P-06, P-07, S-10, S-11, FR-29 … FR-31 (§5.7), NFR-17, vocabulary for game, store profile and banner, access rows; X-01 and X-08 revised and X-14 added so the store profile does not contradict the exclusions. Decisions D-16 … D-30 from the Sprint 2 and Sprint 3 contracts. No existing requirement changes meaning | Team (AI-assisted) |
+| v0.7 | 21 Nov 2026 | Scope change **CH-12** (Swiss tournaments): P-08, S-12, X-05 narrowed, vocabulary, access rows, FR-32 … FR-37 (§5.8), BR-21 … BR-24 (§6.5), NFR-18, BR-16 exception for the player's own opponent (D-32), D-31 … D-36 | Team (AI-assisted) |

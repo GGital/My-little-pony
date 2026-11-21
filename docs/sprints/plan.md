@@ -1,13 +1,13 @@
 # Three-Sprint Plan
 
-Project: **TCG Event Hub** · Document version: v0.2 — draft for team review (v0.1 reviewed in PR 2; changes in §6)
+Project: **TCG Event Hub** · Document version: v0.3 — draft for team review in PR #76 (v0.1 reviewed in PR 2; changes in §6)
 Inputs: [`../features.md`](../features.md) v0.2 · [`../traceability.md`](../traceability.md) v0.2 ·
 [`../system-sds.md`](../system-sds.md) v0.2 · Course schedule: group work specification §4, §7, §10
 
 This is step 5 of the course design process. It decides **which features are built in which sprint**, in what
 order, and what "done" looks like at the end of each sprint. Together the three sprints cover the whole baseline:
-all 22 features (Feature-A … Feature-V, with U and V added by CH-11 in v0.2), all 8 system responsibilities
-(SR-01 … SR-08) and all 68 requirements.
+all 24 features (Feature-A … Feature-X; U and V added by CH-11 in v0.2, W and X by CH-12 in v0.3), all 8 system
+responsibilities (SR-01 … SR-08) and all 79 requirements.
 
 ![Three-sprint plan: Sprint 1 to 8 Nov, Sprint 2 and Labs 5–7 to 29 Nov, Sprint 3 to 13 Dec](../diagrams/gantt-sprints.png)
 
@@ -200,6 +200,8 @@ is hardened (accessibility, performance, sign-in abuse) and released.
 | SR-05 | Responsive layout and accessibility (full) | C | NFR-08 (all screens), NFR-10 |
 | SR-06 | Performance | J, R | NFR-12 |
 | Feature-V | Store Logo and Event Banner *(CH-11, v0.2)* | U, SR-04 | FR-30 (logo), FR-31, NFR-17 |
+| Feature-W | Swiss Pairings and Rounds *(CH-12, v0.3)* | P, SR-08 | FR-32, FR-33, FR-37, BR-21, BR-22, NFR-18 |
+| Feature-X | Match Results, Standings and Winner *(CH-12, v0.3)* | W, S | FR-34, FR-35, FR-36, BR-23, BR-24 |
 
 **Order:** P first (everything else reads its data), then Q → R; S and T in parallel; SR-05 and SR-06 last, on
 stable screens.
@@ -218,15 +220,22 @@ stable screens.
 |---|---|---|---|
 | 26–27 Nov | S3-01 Feature-P | S3-05 Feature-T | In the Deliverable 2 candidate |
 | 30 Nov | S3-02 Feature-Q | S3-06 Feature-V (bucket, upload API) | Last full day before exams |
-| 1–11 Dec | S3-03 Feature-R (small Issues) | S3-04 Feature-S; S3-06 Feature-V UI | **Exam period** |
+| 1–5 Dec | S3-10 Feature-W pairing engine (pure function + property test, NFR-18) | S3-04 Feature-S | **Exam period**; S3-03 Feature-R moves to 1 Dec (Student 1) |
+| 6–10 Dec | S3-10 Feature-W endpoints and pairing screen | S3-11 Feature-X results, standings, player view; S3-06 Feature-V UI | **Exam period**: highest-risk week, see the risk note |
 | 9–11 Dec | S3-07 SR-05 accessibility scan and fixes | S3-08 SR-06 load run | |
 | 12–13 Dec | S3-09 regression, UAT re-tests, release `v1.0.0` | Demo video, final report | Final delivery 13 Dec |
 
 **Completion outcome (13 Dec, Final delivery):**
-- [ ] All features A … V and SR-01 … SR-08 done; all ACs passing; regression green in CI.
+- [ ] All features A … X and SR-01 … SR-08 done; all ACs passing; regression green in CI.
 - [ ] Accessibility scan has 0 serious or critical issues on the main screens (NFR-10); the load run meets NFR-12.
 - [ ] `v1.0.0` deployed; final traceability shows every requirement → test → result.
 - [ ] Demo video (≤ 10 minutes, both students), final PDF and release summary.
+
+**Tournament risk (v0.3, CH-12):** Feature-W and Feature-X are the largest Sprint 3 items and land in the exam
+weeks. Response: the pairing engine is a pure function built and property-tested first (S3-10), so the riskiest
+logic needs no UI or database; Feature-X reads only what W writes; if 8 Dec arrives with W unfinished, the team
+decides then whether to ship W + X with fewer screens (owner-only) or to move CH-12 out with an approved scope
+revision, and records the decision in SRS §10.1.
 
 **Main risk:** the exam period removes most of 1–11 Dec. Response: Sprint 3 features are mostly read-only reports
 (Q, R, S) that don't change existing data, contracts are written before the exams, and the riskiest Sprint 3 work
@@ -240,8 +249,8 @@ stable screens.
 |---|---|---|---|---|---|---|
 | 1 | A, B, C, D, E, F, G, H, I | SR-01, SR-02, SR-03, SR-04*, SR-05*, SR-07 | 15 | 12 | 13 | 40 |
 | 2 | J, K, L, M, N, O, U | SR-08 (SR-04 completed in Lab 5) | 10 | 5 | 0 | 15 |
-| 3 | P, Q, R, S, T, V | SR-06 (SR-05 completed) | 6 | 3 | 4 | 13 |
-| **All** | **22 / 22** | **8 / 8** | **31** | **20** | **17** | **68** |
+| 3 | P, Q, R, S, T, V, W, X | SR-06 (SR-05 completed) | 12 | 7 | 5 | 24 |
+| **All** | **24 / 24** | **8 / 8** | **37** | **24** | **18** | **79** |
 
 \* Established at Sprint 1 level; completed later, as shown.
 
@@ -254,3 +263,4 @@ established in exactly one sprint and re-verified in later ones.
 |---|---|---|---|
 | v0.1 | 4 Nov 2026 | First plan: goals, features, dependencies, outcomes per sprint; Sprint 1 scope explained against the Theme 3 example; Gantt diagram D9 | Team (AI-assisted) |
 | v0.2 | 21 Nov 2026 | CH-11: Feature-U in Sprint 2, Feature-V in Sprint 3 (D-24); revised schedules for Sprints 2 and 3 added below the original tables (Sprint 2 code starts 21 Nov after Labs 5–6; P and T move into the Deliverable 2 week); coverage 68 requirements. FR-30 is established in Sprint 2 (games) and completed in Sprint 3 (logo) | Team (AI-assisted) |
+| v0.3 | 21 Nov 2026 | CH-12: Feature-W and Feature-X in Sprint 3 (D-36); exam-week schedule rows; tournament risk note with a fallback decision date (8 Dec); coverage 79 requirements (Sprint 3: 24) | Team (AI-assisted) |

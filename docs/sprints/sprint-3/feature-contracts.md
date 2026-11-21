@@ -1,13 +1,14 @@
 # Sprint 3 Feature Engineering Contracts
 
-Project: **TCG Event Hub** · Sprint 3 (23 Nov – 13 Dec 2026) · Document version: v0.1 — **draft for team review** (changes in §13)
-Inputs: [`../../srs.md`](../../srs.md) v0.6 · [`../../features.md`](../../features.md) v0.4 ·
-[`../../traceability.md`](../../traceability.md) v0.4 · [`../../system-sds.md`](../../system-sds.md) v0.10 ·
-[`../plan.md`](../plan.md) v0.2 §4 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.4 ·
+Project: **TCG Event Hub** · Sprint 3 (23 Nov – 13 Dec 2026) · Document version: v0.2 — **draft for team review** (changes in §15)
+Inputs: [`../../srs.md`](../../srs.md) v0.7 · [`../../features.md`](../../features.md) v0.5 ·
+[`../../traceability.md`](../../traceability.md) v0.6 · [`../../system-sds.md`](../../system-sds.md) v0.11 ·
+[`../plan.md`](../plan.md) v0.3 §4 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.4 ·
 Sprint 2 contracts: [`../sprint-2/feature-contracts.md`](../sprint-2/feature-contracts.md) v0.2 ·
 Tests: [`sts.md`](sts.md) · Issues and Definition of Done: [`README.md`](README.md)
 
-This document has one engineering contract per Sprint 3 feature (P, Q, R, S, T, V) and per responsibility
+This document has one engineering contract per Sprint 3 feature (P, Q, R, S, T, V, and the tournament features W
+and X added by CH-12) and per responsibility
 completed in Sprint 3 (SR-05, SR-06, SR-07 at release). As in Sprints 1 and 2, they are written and reviewed
 **before** implementation. The goal ([`../plan.md`](../plan.md) §4) is that organizers check players in at the door
 and see real attendance, players see their history, store branding is complete, and the product is hardened for
@@ -71,9 +72,10 @@ numbers on a fresh seed. "S" is the seed run time.
 | Key | Event | Details |
 |---|---|---|
 | EV-10 | Last Week's League Night, Quantum Cards, `MAGIC` | started S − 7 days, 4 h long, capacity 8. Ploy `CHECKED_IN` (by Quantum Cards), Boss `REGISTERED` (a no-show), Mint `CANCELLED` |
+| EV-11 | Swiss Demo Cup, Dragon's Den, `TOURNAMENT`, `YUGIOH` | started S − 30 min, 5 h long, capacity 8; Mint, Ploy, Boss and Nok `CHECKED_IN` (tournament `NOT_STARTED`, so the demo starts it live: 4 players, 2 rounds) |
 
 EV-4 ("Live Now Casual", started S − 1 h, Mint registered) is in its check-in window right after seeding. It is
-the live check-in demonstration. After the seed: 6 users, **10** events. AC-SR1-02 is revised again (§13).
+the live check-in demonstration. After the seed: 6 users, **11** events. AC-SR1-02 is revised again (§13).
 
 ### 0.4 New error codes (SDS §6.2 v0.10)
 
@@ -85,6 +87,11 @@ the live check-in demonstration. After the seed: 6 users, **10** events. AC-SR1-
 | 409 `NOT_CHECKED_IN` **new** | E-19 | "{name} isn't checked in, so there's nothing to undo." |
 | 429 `TOO_MANY_ATTEMPTS` *(SDS v0.1)* | E-01 | "Too many sign-in attempts. Try again in 10 minutes." |
 | 400 `IMAGE_UNREADABLE` · 422 `IMAGE_TOO_SMALL` **new** | E-24, E-25 | "We couldn't read this image." · "Use an image at least {w} × {h} pixels." |
+| 409 `NOT_A_TOURNAMENT` **new** | E-26 … E-31 | "This event isn't a tournament." |
+| 409 `EVENT_NOT_IN_PROGRESS` **new** | E-26 | "A tournament can start once the event has started." |
+| 409 `TOURNAMENT_STARTED`, `TOURNAMENT_NOT_RUNNING` **new** | E-26 … E-30 | "The tournament has already started." · "The tournament isn't running." |
+| 409 `NOT_ENOUGH_PLAYERS` **new** | E-26, E-27 | "At least 2 checked-in players are needed." |
+| 409 `ROUND_NOT_COMPLETE`, `NO_ROUNDS_LEFT`, `ROUND_LOCKED`, `ALREADY_DROPPED` **new** | E-27 … E-30 | "Enter every result of round {n} first." · "All {n} rounds are paired. Finish the tournament." · "Round {n} is closed: the next round has been paired." · "{name} has already dropped." |
 
 ### 0.5 Decisions proposed with these contracts (to be recorded in SRS §10.1)
 
@@ -96,6 +103,7 @@ including unknown emails; a success does not reset the count) are in SRS v0.6. T
 | D-28 | E-20, E-21 and E-22 count a re-registered participant once per event: the **latest** registration (by `createdAt`) decides that participant's status for the event | A player who cancelled and came back attended once, not "cancelled + attended" |
 | D-29 | Attempts made while an email is locked are answered 429 and **not** recorded, so hammering does not extend the lock | The lock is exactly 10 minutes from the 5th failure, as NFR-16 says |
 | D-30 | The organizer summary needs both `from` and `to`, at most 366 days apart; the page defaults to the last 30 days | A bounded range keeps NFR-12 measurable |
+| D-31 … D-36 | Tournament decisions (CH-12): fixed entries at round 1, the own-opponent exception to BR-16, owner-only results, standard Swiss scoring and tiebreakers, a stored round-1 seed, Sprint 3 allocation | See SRS v0.7 §10.1 |
 
 ### 0.6 Contract template
 
@@ -420,7 +428,155 @@ Moved here from Sprint 2 contracts §11.2 (D-24)
 
 ---
 
-## 7. SR-05 — Responsive Layout and Accessibility (full)
+## 7. Feature-W — Swiss Pairings and Rounds (CH-12)
+
+**Links:** FR-32, FR-33, FR-37; BR-21, BR-22, BR-14; NFR-18, NFR-05 · Depends on: Feature-P, SR-08 · Issue S3-10 ·
+Decisions D-31, D-35, D-36 · Design SDS SD-14
+
+**Behaviour**
+1. On a `TOURNAMENT` event, the owner's dashboard row and Door check-in page get **Tournament**, which opens
+   `/organizer/events/:id/tournament`. Before the start, the page shows the checked-in players, the number of
+   rounds (default ⌈log₂ n⌉, editable from 1 to the BR-21 maximum) and **START TOURNAMENT**.
+2. `POST /api/organizer/events/:id/tournament/start` (E-26), body `{ "rounds"?: int }`, locks the event row and
+   checks BR-21. In one transaction it then:
+   - creates one `TournamentEntry` per `CHECKED_IN` registration;
+   - sets `tournamentStatus RUNNING` and `tournamentRounds`;
+   - pairs round 1 with `pairRound` from a new random seed, stored on the round (D-35);
+   - stores a bye as a 2–0 win;
+   - writes an `EventChange` (`field status`, `NOT_STARTED → RUNNING`).
+3. The page then shows **Round 1** as a table list: table number, player A, player B (or **Bye**), and a result
+   control (Feature-X). A "Print pairings" view shows the same list in large type for the store wall.
+4. When every match of the current round has a result, **PAIR ROUND 2** is enabled. It calls
+   `POST /api/organizer/events/:id/tournament/rounds` (E-27), which locks the row, checks
+   `ROUND_NOT_COMPLETE` and `NO_ROUNDS_LEFT`, and pairs the next round by the Swiss rules (BR-22) from the current
+   standings (Feature-X).
+5. **Drop** on a player row calls `POST /api/organizer/tournament-entries/:id/drop` (E-29). The entry is not
+   paired again. Its results and place in the standings stay (FR-37). A drop is allowed only between rounds: the
+   entry's match in the current round must have a result.
+6. `pairRound(entries, history, seed)` is a pure function in `server/src/domain/tournament/pairing.ts` (SD-14):
+   - **Round 1:** a seeded shuffle.
+   - **Later rounds:** order by standings, then pair from the top, each entry with the highest-placed entry it has
+     not met. When a score group can't be paired, its lowest entry floats down to the next group. A backtracking
+     search guarantees no rematch.
+   - **Bye:** with an odd count, the bye goes to the lowest entry without one.
+
+**Order of checks (E-26, E-27, E-29):** 401 → 403 → 403 (Origin) → 400 (path, body) → 404 (missing or not owner)
+→ lock → 409 `ALREADY_CANCELLED` → 409 `NOT_A_TOURNAMENT` → E-26: 409 `TOURNAMENT_STARTED`, 409
+`EVENT_NOT_IN_PROGRESS`, 409 `NOT_ENOUGH_PLAYERS`, 422 `rounds` out of range · E-27: 409 `TOURNAMENT_NOT_RUNNING`,
+409 `ROUND_NOT_COMPLETE`, 409 `NO_ROUNDS_LEFT`, 409 `NOT_ENOUGH_PLAYERS` (fewer than 2 active entries) · E-29: 409
+`TOURNAMENT_NOT_RUNNING`, 409 `ALREADY_DROPPED`, 409 `ROUND_NOT_COMPLETE` (the entry's current match has no result)
+→ 200/201.
+
+**Permissions:** owner only; other organizer 404, participant 403, visitor 401.
+
+**UI:** pairings are a real table (`<caption>Round 2 pairings</caption>`); the table number is the first column,
+with large tabular digits. Buttons are 44 px. START and PAIR show a busy state; extra presses are ignored (the lock
+makes them safe anyway). After pairing, the live region announces "Round 2 paired: 8 tables, 1 bye".
+
+**API**
+
+| # | Request | Success | Failures |
+|---|---|---|---|
+| E-26 | `POST …/events/:id/tournament/start` `{ rounds? }` | `201 TournamentView` | 400 · 401 · 403 · 404 · 409 (five codes) · 415 · 422 |
+| E-27 | `POST …/events/:id/tournament/rounds` `{}` | `201 TournamentView` | 400 · 401 · 403 · 404 · 409 (five codes) |
+| E-29 | `POST /api/organizer/tournament-entries/:id/drop` `{}` | `200 TournamentView` | 400 · 401 · 403 · 404 · 409 (three codes) |
+| E-31 | `GET …/events/:id/tournament` | `200 TournamentView` (status, rounds, current round, matches, standings) | 400 · 401 · 403 · 404 · 409 `NOT_A_TOURNAMENT` |
+
+**Data:** the Event tournament fields, `TournamentEntry`, `TournamentRound` and `Match` (SDS §4.1, §4.3), in
+migration `0007_tournaments`.
+
+| AC | Given | When | Then |
+|---|---|---|---|
+| **AC-W-01** | Dragon's Den owns a `TOURNAMENT` event in progress with 5 `CHECKED_IN` and 2 `REGISTERED` players; clock fixed | E-26 `{}` | `201`; 5 entries, exactly the checked-in ones; `tournamentRounds 3` (⌈log₂ 5⌉); round 1 has 3 matches, one of them a bye stored 2–0–0; every entry appears once; the stored seed reproduces the same pairings when `pairRound` is called again; one `EventChange` NOT_STARTED → RUNNING |
+| **AC-W-02** | events: `CASUAL`; cancelled; tournament before `startAt`; tournament with 1 checked-in player; tournament already `RUNNING`; a 4-player tournament | E-26 on each; on the 4-player one `rounds` 0, 3, 2 | `409 NOT_A_TOURNAMENT`, `409 ALREADY_CANCELLED`, `409 EVENT_NOT_IN_PROGRESS`, `409 NOT_ENOUGH_PLAYERS`, `409 TOURNAMENT_STARTED`; `422` for 0 and 3 (max is 4 ÷ 2 = 2), `201` for 2; nothing is created on any rejection |
+| **AC-W-03** | `pairRound` with fixed seeds | (U) 1,000 generated tournaments, 2–64 entries, random results, every allowed round count, random drops | no rematch in any tournament; no entry has two byes; every active entry is paired exactly once per round; in every round each match joins entries whose point totals differ by at most the float-down needed (checked against the score groups) |
+| **AC-W-04** | a running 6-player tournament, round 1 with one result missing; then complete | E-27; enter the last result; E-27; E-29 on an entry; E-27 after the final round | `409 ROUND_NOT_COMPLETE`; then `201` with round 2 paired by points and no rematch; the drop gives `200` and the entry is absent from round 3's pairings but present in the standings; `409 NO_ROUNDS_LEFT` |
+| **AC-W-05** | Dragon's Den's tournament | E-26, E-27, E-29, E-31 by Quantum Cards, by Mint, by a visitor, with a foreign Origin (POST) | `404` (byte-identical to a missing id), `403`, `401`, `403`; nothing changes |
+| **AC-W-06** | round 1 complete; 20 rounds | two E-27 calls at the same time | one `201`, one `409 ROUND_NOT_COMPLETE` or `NO_ROUNDS_LEFT`; exactly one round 2 exists; entries paired once |
+| **AC-W-07** | 256 entries with 8 rounds of generated history (NFR-18) | (U) `pairRound` for round 9 with the rounds cap lifted for the benchmark only, timed 20 times | median and maximum < 1 s; result valid (no rematch, one bye at most) |
+
+**Planned tests:** TEST-W-01 … 07 (U, I, C, E2E).
+
+---
+
+## 8. Feature-X — Match Results, Standings and Winner (CH-12)
+
+**Links:** FR-34, FR-35, FR-36; BR-23, BR-24, BR-16 (D-32 exception), BR-20 · Depends on: Feature-W, Feature-S ·
+Issue S3-11 · Decisions D-32, D-33, D-34
+
+**Behaviour**
+1. **Entering a result.** On the tournament page, each match row has a result control: three steppers (games won
+   by A, by B, and drawn, 0–3) and the quick buttons **2–0**, **2–1**, **1–2**, **0–2**, **1–1**.
+   `PUT /api/organizer/matches/:id/result` (E-28), body `{ "aWins", "bWins", "draws" }`:
+   - locks the event row;
+   - checks BR-23;
+   - saves the result with `reportedAt` and `reportedById`;
+   - answers with the updated `TournamentView`.
+
+   A result in the **current** round can be changed as often as needed. Once the next round is paired, that
+   round's results answer `409 ROUND_LOCKED`.
+2. **Standings** are computed when read (SD-13) with BR-24:
+   - match points, OMW%, GW% and OGW% (each with a 1/3 floor, byes left out of opponents' figures), then the
+     earliest registration;
+   - the owner sees the whole table: rank, player, points, W–L–D, OMW%, GW%, OGW%, and Dropped.
+3. **Finishing.** After the final round is complete, **FINISH TOURNAMENT** calls
+   `POST /api/organizer/events/:id/tournament/finish` (E-30). It sets `FINISHED` and `tournamentFinishedAt`, and
+   writes an `EventChange` RUNNING → FINISHED. The page then shows "Winner: {name}" and the final standings. Nothing
+   can change after this.
+4. **The player's view** (D-32), `/me/registrations/:id/tournament` (E-32), linked from My Events and the event
+   detail while the player has an entry:
+   - **Running:** "Round 2 · Table 4 · You play **Ploy**", the player's own record "1–0–0 · 3 points", and their
+     current rank as "3rd of 8".
+   - **Finished:** "Final placing: 2nd of 8".
+
+   The player never sees other matches, other players' records or the full standings. The History row of a
+   finished tournament (Feature-S) shows "2nd of 8".
+
+**Rules, validation, boundaries** (E-28)
+
+| Check | Result |
+|---|---|
+| `aWins`, `bWins`, `draws` missing, not whole numbers, or outside 0–3 | `400` on the field |
+| total outside 1–5 | `400` on `draws`: "Enter between 1 and 5 games." |
+| the match is a bye | `409 ROUND_LOCKED` (a bye's result is fixed) |
+| match in an earlier round than the current one, or tournament `FINISHED` | `409 ROUND_LOCKED` / `409 TOURNAMENT_NOT_RUNNING` |
+| E-30 with a missing result in the final round, or before the final round | `409 ROUND_NOT_COMPLETE` |
+
+- Points: win 3, draw 1, loss 0. A bye counts as a 2–0 win, and is left out of the opponents' figures of the player
+  who had it.
+- Percentages are shown to one decimal place, and compared unrounded.
+
+**Permissions:**
+- E-28 and E-30: owner of the event; other organizer 404, participant 403, visitor 401.
+- E-32: the participant who owns the registration; another participant 404, organizer 403, visitor 401. A
+  registration without an entry: `404 NOT_FOUND`.
+
+**API**
+
+| # | Request | Success | Failures |
+|---|---|---|---|
+| E-28 | `PUT /api/organizer/matches/:id/result` `{ aWins, bWins, draws }` | `200 TournamentView` | 400 · 401 · 403 · 404 · 409 `ROUND_LOCKED` / `TOURNAMENT_NOT_RUNNING` · 415 |
+| E-30 | `POST …/events/:id/tournament/finish` `{}` | `200 TournamentView` (`status FINISHED`, `winner`) | 400 · 401 · 403 · 404 · 409 `TOURNAMENT_NOT_RUNNING` / `ROUND_NOT_COMPLETE` |
+| E-32 | `GET /api/me/registrations/:id/tournament` | `200 { status, round, table, opponent: { displayName } \| null, record, points, rank, of, finalPlacing }` | 400 · 401 · 403 · 404 |
+| E-22 | *(changed)* history items gain `placing: { rank, of } \| null` for finished tournaments | — | — |
+
+**Data:** no new tables beyond Feature-W. The result constraints are `match_result_range` and `match_bye_result`.
+
+| AC | Given | When | Then |
+|---|---|---|---|
+| **AC-X-01** | round 1 of a running tournament | E-28 with 2–1–0, 0–2–0, 1–1–1; then `{3,3,0}`, `{0,0,0}`, `{2,-1,0}`, `{1.5,0,0}`, and on the bye | `200` each, and points 3/0, 0/3, 1/1 in the standings; the four bad bodies `400` naming the field; the bye `409 ROUND_LOCKED`; the stored row has `reportedById` = the owner |
+| **AC-X-02** | round 1 complete, then round 2 paired | E-28 changing a round-1 result; E-28 changing a round-2 result twice | `409 ROUND_LOCKED`, round 1 unchanged; `200` twice, and the last value wins |
+| **AC-X-03** | a hand-computed fixture: 6 players, 3 rounds, one bye, one draw, one drop | E-31 standings | rank, points, OMW%, GW% and OGW% equal the worked values in STS §1.3 to 4 decimal places, including a tie broken by OMW% and a player whose opponents are under the 1/3 floor |
+| **AC-X-04** | final round complete | E-30; then E-28, E-27, E-29, E-26; E-31; Ploy's History (E-22) | `200 FINISHED` with `winner` = rank 1; the four writes `409 TOURNAMENT_NOT_RUNNING` / `TOURNAMENT_STARTED`; standings unchanged; History shows Ploy's `placing` |
+| **AC-X-05** | Mint plays Ploy at table 2 in round 2 | E-32 for Mint's registration as Mint; as Ploy (her registration id); as Quantum Cards; as a visitor; stringify Mint's body | Mint sees table 2, opponent "Ploy", her own record, points and rank; Ploy gets `404`; organizer `403`; visitor `401`; Mint's body has no other player's name, no `standings` and no email |
+| **AC-X-06** | the finished tournament | E-30 by another organizer, a participant, a visitor; E-30 before the final round | `404`, `403`, `401`; `409 ROUND_NOT_COMPLETE` |
+| **AC-X-07** | the tournament page and the player view in the browser | enter results with the quick buttons; finish; axe scan; 390 / 768 / 1440 px; print view | results save with the busy state and live-region text; "Winner: …" shows; 0 serious axe issues; tables keep their captions; no page-level horizontal scroll; the print view shows table, player A, player B |
+
+**Planned tests:** TEST-X-01 … 07 (U, I, C, E2E).
+
+---
+
+## 9. SR-05 — Responsive Layout and Accessibility (full)
 
 **Links:** NFR-08 (all screens), NFR-10 · Depends on: Feature-C · Issue S3-07
 
@@ -451,7 +607,7 @@ Moved here from Sprint 2 contracts §11.2 (D-24)
 
 ---
 
-## 8. SR-06 — Performance
+## 10. SR-06 — Performance
 
 **Links:** NFR-12 · Depends on: Feature-J, Feature-R · Issue S3-08
 
@@ -470,7 +626,7 @@ Moved here from Sprint 2 contracts §11.2 (D-24)
 
 ---
 
-## 9. SR-07 — Verification and Traceability at the final release
+## 11. SR-07 — Verification and Traceability at the final release
 
 | AC | Given | When | Then |
 |---|---|---|---|
@@ -480,29 +636,32 @@ Moved here from Sprint 2 contracts §11.2 (D-24)
 
 ---
 
-## 10. Changes to earlier features (re-verification)
+## 12. Changes to earlier features (re-verification)
 
 | Earlier item | Sprint 3 change | How it is re-tested |
 |---|---|---|
-| Feature-B, TEST-B-03 | Matrix rows for E-18 … E-22, E-24, E-25 | Rows added |
+| Feature-B, TEST-B-03 | Matrix rows for E-18 … E-22, E-24 … E-32 | Rows added |
 | Feature-I, E-08 | Page becomes Door check-in; response gains `checkIn`, `counts`, check-in fields | TEST-I-01 … 03 still green; TEST-P-01 |
 | Feature-H, My Events | Ended and cancelled registrations also appear in History (they are not removed from My Events) | TEST-H-01, 02 still green; TEST-S-03 |
 | Feature-A, E-01 | Throttling | TEST-A-01 … 06 still green (none fails 5 times in 10 min); TEST-T-* |
 | Feature-N, E-16 | Races with E-18 | TEST-P-06 |
-| SR-01, AC-SR1-02 | Seed has 10 events (EV-10) | TEST-SR1-02 revised in S3-01 |
+| SR-01, AC-SR1-02 | Seed has 11 events (EV-10, EV-11) | TEST-SR1-02 revised in S3-01 (EV-10) and S3-10 (EV-11) |
+| Feature-S, E-22 | History items gain the tournament `placing` | TEST-X-04 |
+| Feature-P | Check-ins become tournament entries; check-in stays possible after the start, but a late player is not entered (D-31) | TEST-W-01 |
 | SR-02, TEST-SR2-03 / 04 | Route table and new codes | Rows added |
 | SR-08 | Check-in and undo are recorded | TEST-P-01, P-03 |
 
-## 11. Journeys (E2E, on the release candidate)
+## 13. Journeys (E2E, on the release candidate)
 
 | ID | Journey | Covers |
 |---|---|---|
 | JRN-05 | Quantum Cards opens Door check-in for EV-4, finds Mint, checks her in, undoes it, checks her in again; the clock moves past the end; the attendance report shows her as checked in; Mint's History shows **Attended** | P, Q, S, SR-08 |
 | JRN-06 | A visitor fails sign-in 5 times, sees the 10-minute message, and signs in after the window (fixed clock in the test build) | T |
 | JRN-07 | Quantum Cards uploads a logo and a banner; a visitor sees both on the event and the logo in search | V, U |
+| JRN-08 | Dragon's Den starts EV-11 (4 players, 2 rounds), enters round 1 results, pairs round 2 (no rematch), enters results, finishes; Mint sees her table and opponent during round 2 and her final placing in History | W, X, S |
 | JRN-01 … 04 | The Sprint 1 and 2 journeys, unchanged | Regression |
 
-## 12. AC summary
+## 14. AC summary
 
 | Item | ACs | Count |
 |---|---|---|
@@ -515,14 +674,17 @@ Moved here from Sprint 2 contracts §11.2 (D-24)
 | SR-05 | AC-SR5-02 … 04 | 3 |
 | SR-06 | AC-SR6-01, 02 | 2 |
 | SR-07 | AC-SR7-02 | 1 |
-| **Total** | | **39** |
+| Feature-W *(CH-12)* | AC-W-01 … 07 | 7 |
+| Feature-X *(CH-12)* | AC-X-01 … 07 | 7 |
+| **Total** | | **53** |
 
-Requirements established in Sprint 3 ([`../plan.md`](../plan.md) §5): FR-21, FR-22, FR-23, FR-24, FR-25, FR-31 ·
-BR-18, BR-19, BR-20 · NFR-10, NFR-12, NFR-16, NFR-17 (13). FR-30 (logo part) and NFR-08 (all screens) are completed
+Requirements established in Sprint 3 ([`../plan.md`](../plan.md) §5): FR-21, FR-22, FR-23, FR-24, FR-25, FR-31,
+FR-32 … FR-37 · BR-18 … BR-24 · NFR-10, NFR-12, NFR-16, NFR-17, NFR-18 (24). FR-30 (logo part) and NFR-08 (all screens) are completed
 here. Each one is linked to at least one AC above.
 
-## 13. Version history
+## 15. Version history
 
 | Version | Date | Change | Author |
 |---|---|---|---|
 | v0.1 | 21 Nov 2026 | First draft: time words, shapes, seed EV-10 (AC-SR1-02 revised to 10 events), new codes, D-28 … D-30 proposed; Feature-P, Q, R, S, T, V (moved from Sprint 2 §11.2 with AC-V-07 added), SR-05, SR-06, SR-07; 39 ACs; re-verification table; JRN-05 … 07 | Team (AI-assisted) |
+| v0.2 | 21 Nov 2026 | CH-12: §7 Feature-W (Swiss pairings and rounds) and §8 Feature-X (results, standings, winner, player view), 14 ACs; seed EV-11 (AC-SR1-02: 11 events); tournament error codes; D-31 … D-36; re-verification rows; JRN-08; later sections renumbered §9 … §15; 53 ACs | Team (AI-assisted) |

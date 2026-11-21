@@ -1,15 +1,16 @@
 # Sprint 3: engineering contracts, tests and Definition of Done
 
-Project: **TCG Event Hub** · Sprint 3 (23 Nov – 13 Dec 2026) · Version v0.1 — **draft for team review** (changes in §6)
+Project: **TCG Event Hub** · Sprint 3 (23 Nov – 13 Dec 2026) · Version v0.2 — **draft for team review** (changes in §6)
 
 | Document | What it is |
 |---|---|
-| [`feature-contracts.md`](feature-contracts.md) | One contract each for Feature-P, Q, R, S, T, V and SR-05, SR-06, SR-07: design, UI/API/data, 39 acceptance criteria |
+| [`feature-contracts.md`](feature-contracts.md) | One contract each for Feature-P, Q, R, S, T, V, W, X and SR-05, SR-06, SR-07: design, UI/API/data, 53 acceptance criteria |
 | [`sts.md`](sts.md) | Software Test Specification: planned tests, AC → test map, BR rejection map, TDD record, results |
 | This file | Sprint goal, Issue plan, remaining-work table, Definition of Done |
 
 **Sprint goal** ([`../plan.md`](../plan.md) §4): organizers check players in at the door and see real attendance;
-players see their history; stores show their logo and banners; the product is hardened for accessibility,
+players see their history; stores show their logo and banners; tournament events run Swiss rounds with results,
+standings and a winner (CH-12); the product is hardened for accessibility,
 performance and sign-in abuse, and released as `v1.0.0` by 13 Dec.
 
 ---
@@ -33,14 +34,17 @@ work, S3-01 and S3-05 start as soon as the Sprint 2 release `v0.2.0` is on `main
 | S3-05 | Feature-T: sign-in throttling | §5 | TEST-T-01 … 05 | `v0.2.0` | 2 | Fri 27 Nov |
 | S3-02 | Feature-Q: attendance report | §2 | TEST-Q-01 … 05 | S3-01 | 1 | Mon 30 Nov |
 | S3-06 | Feature-V: store logo and event banner (bucket, API, UI) | §6 | TEST-V-01 … 07 | S2-09 | 2 | 30 Nov (API) · 8 Dec (UI) |
-| S3-03 | Feature-R: organizer summary | §3 | TEST-R-01 … 05 | S3-02 | 1 | Fri 4 Dec |
+| S3-03 | Feature-R: organizer summary | §3 | TEST-R-01 … 05 | S3-02 | 1 | Tue 1 Dec |
 | S3-04 | Feature-S: participant history | §4 | TEST-S-01 … 05 | S3-01 | 2 | Fri 4 Dec |
-| S3-07 | SR-05: accessibility scan, keyboard walk-through, fixes | §7 | TEST-SR5-02 … 04 | all screens | 1 | Thu 10 Dec |
-| S3-08 | SR-06: performance seed and load run | §8 | TEST-SR6-01, 02 | S3-03 | 2 | Thu 10 Dec |
-| S3-09 | Integration, UAT re-tests, release `v1.0.0`, video | §9 … §11 | JRN-05 … 07, TEST-SR7-02, regression | all | both | Sun 13 Dec |
+| S3-10 | Feature-W: Swiss pairing engine, start, rounds, drops | §7 | TEST-W-01 … 07 | S3-01 | 1 | 5 Dec (engine) · 10 Dec |
+| S3-11 | Feature-X: results, standings, finish, player view | §8 | TEST-X-01 … 07 | S3-10, S3-04 | 2 | Thu 10 Dec |
+| S3-07 | SR-05: accessibility scan, keyboard walk-through, fixes | §9 | TEST-SR5-02 … 04 | all screens | 1 | Thu 10 Dec |
+| S3-08 | SR-06: performance seed and load run | §10 | TEST-SR6-01, 02 | S3-03 | 2 | Thu 10 Dec |
+| S3-09 | Integration, UAT re-tests, release `v1.0.0`, video | §11 … §13 | JRN-05 … 08, TEST-SR7-02, regression | all | both | Sun 13 Dec |
 
 The exam period runs 1–11 Dec. Issues in that window are small and independent, and none of them changes the
-seat or registration rules.
+seat or registration rules. The tournament Issues (S3-10, S3-11) are the exception in size: the plan's tournament
+risk note sets 8 Dec as the date to decide on a smaller fallback if S3-10 is late.
 
 ## 3. Remaining work at the Deliverable 2 checkpoint (29 Nov)
 
@@ -57,6 +61,8 @@ filled from real runs on the submitted candidate. Until then it shows "Planned".
 | Feature-S (AC-S-01 … 05) | Planned | All ACs | Student 2, 4 Dec |
 | SR-05 (AC-SR5-02 … 04) | Planned | Scan, fixes, keyboard record | Student 1, 10 Dec |
 | SR-06 (AC-SR6-01, 02) | Planned | Perf seed, load run, indexes if needed | Student 2, 10 Dec |
+| Feature-W (AC-W-01 … 07) | Planned | Pairing engine and property test first (NFR-18), then endpoints and the pairings screen | Student 1, 5 Dec (engine), 10 Dec |
+| Feature-X (AC-X-01 … 07) | Planned | Results, standings with the worked fixture, finish, player view, History placing | Student 2, 10 Dec |
 | UAT re-tests and final video | Planned | Re-run the Lab 6 cases on `v1.0.0`; record a demo of at most 10 minutes | Both, 12–13 Dec |
 
 ## 4. Test-driven workflow
@@ -74,7 +80,7 @@ Issue. Sprint 3 adds:
 |---|---|
 | DoD-2 | TEST-P-06 passes 20 rounds, and the `FOR UPDATE` mutation check is recorded |
 | DoD-4 | Sprint 1, 2 **and** 3 suites green on the merge commit |
-| DoD-6 | New endpoints E-18 … E-22, E-24, E-25 are rows of TEST-B-03 |
+| DoD-6 | New endpoints E-18 … E-22, E-24 … E-32 are rows of TEST-B-03 |
 | DoD-7 | No bucket key or service-account JSON in Git: the service account is attached to Cloud Run (SDS §9.3) |
 | DoD-11 | **New:** every M row has its evidence file, named with the commit, in `docs/sprints/sprint-3/evidence/` |
 | DoD-10 | **Final release:** release PR `sprint-3-staging` → `main` reviewed and merged; tag **`v1.0.0`**; deployed; `/api/version` equals the tag commit; smoke test of check-in and of persistence after a restart; demo video; final traceability with every requirement → test → result |
@@ -84,3 +90,4 @@ Issue. Sprint 3 adds:
 | Version | Date | Change | Author |
 |---|---|---|---|
 | v0.1 | 21 Nov 2026 | First Sprint 3 package: contracts v0.1, STS v0.1, Issue plan S3-00 … S3-09, remaining-work table for Deliverable 2, DoD additions | Team (AI-assisted) |
+| v0.2 | 21 Nov 2026 | CH-12: S3-10 Feature-W and S3-11 Feature-X with targets; remaining-work rows; S3-03 moved to 1 Dec; DoD-6 endpoints; contract section numbers follow contracts v0.2 | Team (AI-assisted) |

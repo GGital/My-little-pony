@@ -1,7 +1,7 @@
 # Requirements-to-Features Traceability
 
-Project: **TCG Event Hub** · Document version: v0.5 — draft for team review (Sprint 2 and 3 contracts, CH-11); v0.1 approved in PR #1; CH-10 in PR 2; Sprint 1 results in I-12
-Inputs: [`docs/srs.md`](srs.md) v0.6 · [`docs/features.md`](features.md) v0.4 · Diagrams: [`docs/diagrams/`](diagrams/README.md)
+Project: **TCG Event Hub** · Document version: v0.6 — draft for team review in PR #76 (Sprint 2 and 3 contracts, CH-11, CH-12); v0.1 approved in PR #1; CH-10 in PR 2; Sprint 1 results in I-12
+Inputs: [`docs/srs.md`](srs.md) v0.7 · [`docs/features.md`](features.md) v0.5 · Diagrams: [`docs/diagrams/`](diagrams/README.md)
 
 This is step 3 of the course design process. Every requirement is followed through four links, so anyone can
 answer "where is this built, when, and how do we know it works?":
@@ -37,6 +37,7 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | P-05 No attendance view across events | FR-23, FR-24 | Feature-Q, Feature-R | 3 |
 | P-06 Event game unclear (CH-11) | FR-29, FR-30 | Feature-U | 2 |
 | P-07 Stores look alike in the list (CH-11) | FR-30, FR-31 | Feature-U, Feature-V | 2, 3 |
+| P-08 Rounds paired and added up by hand (CH-12) | FR-32 … FR-37, BR-21 … BR-24 | Feature-W, Feature-X | 3 |
 
 ---
 
@@ -77,6 +78,12 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | FR-29 | Game of each event; filter by game (CH-11) | Feature-U | Sprint 2 | AC-U-01, AC-U-02 · U, I, C, E → **Planned**: TEST-U-01, TEST-U-02 (Sprint 2 STS) | 3 |
 | FR-30 | Store profile: games (Sprint 2), logo (Sprint 3) (CH-11) | Feature-U, Feature-V | Sprint 2 | AC-U-03 · I, C → **Planned**: TEST-U-03 (Sprint 2 STS); logo AC-V-01 → TEST-V-01 (Sprint 3 STS) | 3 |
 | FR-31 | Event banner, playmat fallback (CH-11) | Feature-V | Sprint 3 | AC-V-02 … 07 · U, I, C, E, M → **Planned**: TEST-V-02 … 07 (Sprint 3 STS) | — |
+| FR-32 | Start a tournament from checked-in players (CH-12) | Feature-W | Sprint 3 | AC-W-01, AC-W-02 · I, C → **Planned**: TEST-W-01, TEST-W-02 (Sprint 3 STS) | — |
+| FR-33 | Swiss pairing each round, no rematch, byes (CH-12) | Feature-W | Sprint 3 | AC-W-03, AC-W-04, AC-W-06 · U (property), I → **Planned**: TEST-W-03, TEST-W-04, TEST-W-06 (Sprint 3 STS) | — |
+| FR-34 | Record and correct match results (CH-12) | Feature-X | Sprint 3 | AC-X-01, AC-X-02 · U, I → **Planned**: TEST-X-01, TEST-X-02 (Sprint 3 STS) | — |
+| FR-35 | Standings with tiebreakers; finish; winner (CH-12) | Feature-X | Sprint 3 | AC-X-03, AC-X-04, AC-X-06 · U, I, C → **Planned**: TEST-X-03, TEST-X-04, TEST-X-06 (Sprint 3 STS) | — |
+| FR-36 | Player sees own table, opponent, record, placing (CH-12) | Feature-X, Feature-S | Sprint 3 | AC-X-05, AC-X-04 · I, C → **Planned**: TEST-X-05, TEST-X-04 (Sprint 3 STS) | — |
+| FR-37 | Drop a player between rounds (CH-12) | Feature-W | Sprint 3 | AC-W-04 · I → **Planned**: TEST-W-04 (Sprint 3 STS) | — |
 
 ### 2.2 Business rules
 
@@ -102,6 +109,10 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | BR-18 | Check-in: registered, owner, window | Feature-P, SR-03 | Sprint 3 | AC-P-02, AC-P-04, AC-P-05 · U, I → **Planned**: TEST-P-02, TEST-P-04, TEST-P-05 (Sprint 3 STS) | — |
 | BR-19 | Check in once; undo in window | Feature-P | Sprint 3 | AC-P-03, AC-P-04, AC-P-06 · I → **Planned**: TEST-P-03, TEST-P-04, TEST-P-06 (Sprint 3 STS) | — |
 | BR-20 | No-show and attendance-rate rule | Feature-Q, R, S | Sprint 3 | AC-Q-01 … 03, AC-R-01, AC-S-01 … 03 · U, I → **Planned**: TEST-Q-01 … 03, TEST-R-01, TEST-S-01 … 03 (Sprint 3 STS) | — |
+| BR-21 | Tournament start: TOURNAMENT, in progress, ≥ 2 checked in, once; rounds cap | Feature-W | Sprint 3 | AC-W-01, AC-W-02 · U, I → **Planned**: TEST-W-01, TEST-W-02 (Sprint 3 STS) | — |
+| BR-22 | Swiss pairing: no rematch, one bye at most, round must be complete | Feature-W | Sprint 3 | AC-W-03, AC-W-04, AC-W-06, AC-W-07 · U, I → **Planned**: TEST-W-03, TEST-W-04, TEST-W-06, TEST-W-07 (Sprint 3 STS) | — |
+| BR-23 | Results 0–3 each, total 1–5; 3/1/0 points; lock after next round or finish | Feature-X | Sprint 3 | AC-X-01, AC-X-02, AC-X-04 · U, I → **Planned**: TEST-X-01, TEST-X-02, TEST-X-04 (Sprint 3 STS) | — |
+| BR-24 | Standings order: points, OMW%, GW%, OGW% (1/3 floor), registration | Feature-X | Sprint 3 | AC-X-03 · U, I → **Planned**: TEST-X-03 (Sprint 3 STS) | — |
 
 ### 2.3 Non-functional requirements
 
@@ -124,6 +135,7 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | NFR-15 | Schema validation, no state change by GET, text shown as text | SR-02, Feature-C | Sprint 1 | AC-SR2-02, AC-SR2-03, AC-C-06 · I, E → **Pass**: TEST-SR2-02, TEST-SR2-03, TEST-SR2-05, TEST-C-06 | 2, 3 |
 | NFR-16 | 5 failed sign-ins in 10 min → 429 | Feature-T | Sprint 3 | AC-T-01 … 05 · U, I, C → **Planned**: TEST-T-01 … 05 (Sprint 3 STS) | — |
 | NFR-17 | Safe image uploads (CH-11) | Feature-V, SR-04 | Sprint 3 | AC-V-01, AC-V-03, AC-V-06 · U, I, M → **Planned**: TEST-V-01, TEST-V-03, TEST-V-06 (Sprint 3 STS) | — |
+| NFR-18 | Pairing 256 entries < 1 s; no rematch in 1,000 tournaments (CH-12) | Feature-W | Sprint 3 | AC-W-03, AC-W-07 · U (property, benchmark) → **Planned**: TEST-W-03, TEST-W-07 (Sprint 3 STS) | — |
 
 ### 2.4 Allocation summary
 
@@ -131,8 +143,8 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 |---|---|---|---|---|
 | Sprint 1 | 15 | 12 | 13 | 40 |
 | Sprint 2 | 10 | 5 | 0 | 15 |
-| Sprint 3 | 6 | 3 | 4 | 13 |
-| **All** | **31** | **20** | **17** | **68** |
+| Sprint 3 | 12 | 7 | 5 | 24 |
+| **All** | **37** | **24** | **18** | **79** |
 
 ### 2.5 Shared requirements: who establishes, who re-verifies
 
@@ -157,6 +169,7 @@ own acceptance criteria.
 | NFR-12 | SR-06 (3) | Feature-J (2), Feature-R (3) | Filtered list and summary meet the 500 ms target |
 | BR-14 | Feature-B, E, I (1) | Feature-K, L, O (2); Feature-P, Q, R, V (3) | Every new owner-only endpoint answers 404 to another organizer (TEST-B-03 rows) |
 | BR-17 | Feature-B (1) | Feature-U (2); Feature-V (3) | Store profile and uploads use the session identity only |
+| BR-16 | Feature-B, F, H, I (1) | Feature-X (3), with the D-32 exception | A player sees only their own opponent's display name; no standings, no other names (TEST-X-05) |
 | NFR-05 | Feature-G (1) | Feature-L, N, O (2); Feature-P (3) | Every write that takes the event lock has a 20-round race test (SDS §4.3a) | AC-SR6-01, AC-SR6-02 · M (autocannon, recorded) → **Planned**: TEST-SR6-01, TEST-SR6-02 (Sprint 3 STS) 
 
 ---
@@ -227,9 +240,9 @@ has at least one rejection criterion, so NFR-14's "negative test for every BR" h
 
 | Check | Result |
 |---|---|
-| Every FR, BR and NFR in SRS v0.6 appears in the matrix | 68 / 68 — no gaps |
+| Every FR, BR and NFR in SRS v0.7 appears in the matrix | 79 / 79 — no gaps |
 | Every Sprint 2 requirement has at least one planned AC | 15 / 15 (40 ACs in the Sprint 2 contracts) |
-| Every Sprint 3 requirement has at least one planned AC | 13 / 13 (39 ACs in the Sprint 3 contracts) |
+| Every Sprint 3 requirement has at least one planned AC | 24 / 24 (53 ACs in the Sprint 3 contracts) |
 | Requirements implemented but not yet verified | Sprint 2 and Sprint 3 rows: all **Planned** on 21 Nov 2026 |
 | Every Sprint 1 requirement has at least one planned AC | 40 / 40 |
 | Every planned AC traces back to a requirement | 47 / 47 |
@@ -257,6 +270,7 @@ made. Each still needs the teammate's approval in the spec Pull Request.
 | CH-09 | A-06 seed has ≥ 2 organizers and ≥ 3 participants; C-06 supported browsers; Q-08, Q-09 overlap questions resolved; X-08 reference fixed | Ownership tests need two users of each role; scope questions answered before building | SR-01 |
 | CH-10 | NFR-03 hashing changed from bcrypt to scrypt (D-15) | Chosen while writing the SDS: reuses reviewed TokTickIT code and avoids a native dependency in Docker | Feature-A, AC-A-05 |
 | CH-11 | Store identity and game: FR-29 … FR-31, NFR-17, X-01 and X-08 revised, X-14 added (SRS v0.6, 21 Nov 2026). Split by D-24: game in Sprint 2, images in Sprint 3 | Players need to know which card game an event is for, and stores asked to be recognisable in the list | Feature-U, Feature-V (new); Feature-D, J, L (re-verified) |
+| CH-12 | Swiss tournaments: FR-32 … FR-37, BR-21 … BR-24, NFR-18, X-05 narrowed, BR-16 exception D-32 (SRS v0.7, 21 Nov 2026), Sprint 3 (D-36) | Stores run tournaments and need pairings, results and a winner; the brief's "organizer management" covers it once check-in exists | Feature-W, Feature-X (new); Feature-P, S (re-verified) |
 
 No requirement was withdrawn and no ID was renumbered. CH-11 is a scope addition: it needs the teammate's approval
 in the Sprint 2 contracts PR (S2-00), and the course's approved-scope rule for Deliverable 2.
@@ -280,3 +294,4 @@ in the Sprint 2 contracts PR (S2-00), and the course's approved-scope rule for D
 | v0.3 | 7 Nov 2026 | Sprint 1 results: every Sprint 1 row names its tests and their result (I-12, STS §6) | Team (AI-assisted) |
 | v0.4 | 7 Nov 2026 | §4.1 coverage checked against SRS v0.5 (64 / 64, same IDs as v0.4); input features v0.3; v0.3 date corrected (7 Nov) | Team (AI-assisted) |
 | v0.5 | 21 Nov 2026 | Inputs SRS v0.6 and features v0.4. Sprint 2 and 3 rows carry AC and planned test IDs from the Sprint 2 (v0.3) and Sprint 3 (v0.1) contracts, status **Planned**; FR-29 … FR-31 and NFR-17 rows (CH-11); P-06, P-07; allocation 68 (Sprint 2: 15, Sprint 3: 13); BR-14, BR-17, NFR-05 re-verification rows; §4.1 checks for Sprint 2 and 3; CH-11 | Team (AI-assisted) |
+| v0.6 | 21 Nov 2026 | CH-12: FR-32 … FR-37, BR-21 … BR-24, NFR-18 rows with AC and planned test IDs (Sprint 3 contracts v0.2), status **Planned**; P-08; allocation 79 (Sprint 3: 24); BR-16 re-verification with the D-32 exception; CH-12 | Team (AI-assisted) |
