@@ -1,12 +1,12 @@
 # Complete Feature Inventory
 
 Project: **TCG Event Hub** — Event Registration and Attendance System
-Document version: v0.3 — v0.2 approved in PR #1 (4 Nov 2026)
-Source of requirements: [`docs/srs.md`](srs.md) v0.5 · Next document: `docs/traceability.md`
+Document version: v0.7 — draft for team review in PR #76 (CH-11 incl. store contact, CH-12, D-38 theme); v0.2 approved in PR #1 (4 Nov 2026)
+Source of requirements: [`docs/srs.md`](srs.md) v0.7 · Next document: `docs/traceability.md`
 
 This is step 2 of the course design process. The whole product is split into **features**: pieces small enough to
 specify, build, test and review on their own, yet large enough to give a user something they can see. Each feature
-has a stable ID (`Feature-A` … `Feature-T`) that never changes meaning. A withdrawn feature keeps its ID and is
+has a stable ID (`Feature-A` … `Feature-X`) that never changes meaning. A withdrawn feature keeps its ID and is
 marked *Withdrawn*.
 
 Some requirements belong to **no single screen**, such as the database, the error format, or deployment. They are
@@ -28,7 +28,7 @@ How the pieces connect:
 |---|---|---|---|
 | **Feature-A** | User Authentication and Session | Sign-in with email and password for seeded accounts, one generic error for bad credentials, password hashing, server-side session cookie with 8-hour expiry, current-user retrieval, and sign-out that invalidates the session. | 1 |
 | **Feature-B** | Role and Ownership Access Control | Backend enforcement of the two roles (Participant, Organizer) and of record ownership: role guards (403), ownership checks that hide other users' records (404), and identity taken only from the session, never from the client. | 1 |
-| **Feature-C** | Application Shell and Role Navigation | Header with account menu (display name, role badge, sign-out), navigation per role, protected routes, sign-in-then-return to the original page, "Not available" and "Not found" pages, and the shared loading, empty, error and form-validation states in the Arcane Ink theme. | 1 |
+| **Feature-C** | Application Shell and Role Navigation | Header with account menu (display name, role badge, sign-out), navigation per role, protected routes, sign-in-then-return to the original page, "Not available" and "Not found" pages, and the shared loading, empty, error and form-validation states in the product theme (Arcane Ink in Sprint 1; Deep Lagoon with Inter and Manrope from Sprint 2, D-38). | 1 (theme revised in 2) |
 | **Feature-D** | Event Creation and Publication | Organizer form to create and publish an event (title, type, format, venue, address, city, start/end, capacity, fee label, structure note, contact, description), server validation of every field, and recording of the organizer as owner. | 1 |
 | **Feature-E** | Organizer Event Dashboard | The organizer's list of their own events with status, capacity, active registrations and seats remaining, and links to each event's registrations. | 1 |
 | **Feature-F** | Event Discovery List and Detail | Public list of upcoming published events as cards (date badge, time, title, type · format, venue, fee chip, seats chip) ordered by start time, and the detail page with all public fields and a server-decided action button state; unknown or hidden events answer "not found". | 1 |
@@ -46,6 +46,10 @@ How the pieces connect:
 | **Feature-R** | Organizer Attendance Summary | Summary across the organizer's events in a chosen date range: number of events, registrations, check-ins, average fill rate and attendance rate, within the performance target. | 3 |
 | **Feature-S** | Participant Event History | The participant's past events with final status: attended, no-show, cancelled or event cancelled. | 3 |
 | **Feature-T** | Sign-in Throttling | Temporary lock-out (429 for 10 minutes) after 5 failed sign-ins for one email within 10 minutes, with a generic message that reveals nothing about the account. | 3 |
+| **Feature-U** | Game per Event and Store Profile *(CH-11)* | The game of each event (fixed list, shown by name only), the organizer's store profile with the games the store runs and its public contact details (phone, email, website, LINE), shown on every event of the store, and a filter by game in event search. | 2 |
+| **Feature-V** | Store Logo and Event Banner *(CH-11)* | Upload, replace and remove a store logo and a per-event banner (PNG, JPEG or WebP, re-encoded on the server, stored in a GCS bucket), with initials and a playmat pattern as fallbacks. | 3 |
+| **Feature-W** | Swiss Pairings and Rounds *(CH-12)* | Start the tournament of a `TOURNAMENT` event from its checked-in players, choose the number of rounds, pair round 1 from a stored random seed and each later round by the Swiss method with no rematches and at most one bye per player, and drop players between rounds. | 3 |
+| **Feature-X** | Match Results, Standings and Winner *(CH-12)* | Record and correct match results for the current round, standings with OMW% / GW% / OGW% tiebreakers, finishing the tournament with the winner and final placings, and each player's own view of their table, opponent, record and placing. | 3 |
 
 ## 2. System responsibilities (cross-cutting)
 
@@ -86,10 +90,14 @@ How the pieces connect:
 | Feature-R | FR-24 | BR-20 | NFR-12 | Feature-Q |
 | Feature-S | FR-25 | BR-20 | NFR-02 | Feature-H, Feature-P |
 | Feature-T | FR-02 (generic message kept) | — | NFR-16 | Feature-A, SR-03 |
+| Feature-U | FR-29, FR-30 (games, contact) | BR-14, BR-17 | NFR-02, NFR-15 | Feature-D, Feature-J, Feature-L, SR-01 |
+| Feature-V | FR-30 (logo), FR-31 | BR-14, BR-17 | NFR-17, NFR-13 | Feature-U, SR-04 |
+| Feature-W | FR-32, FR-33, FR-37 | BR-21, BR-22, BR-14 | NFR-18, NFR-05 | Feature-P, SR-08 |
+| Feature-X | FR-34, FR-35, FR-36 | BR-23, BR-24, BR-16 (D-32 exception) | NFR-02 | Feature-W, Feature-S |
 | SR-01 | — | BR-05, BR-06 (database constraints) | NFR-06 | — |
 | SR-02 | FR-16 (error reasons) | — | NFR-02 (check order), NFR-07, NFR-15 | — |
 | SR-03 | — | BR-02, BR-08, BR-18 (time boundaries) | NFR-11 | — |
-| SR-04 | — | — | NFR-13 | SR-01 |
+| SR-04 | — | — | NFR-13, NFR-17 (bucket and deploy settings, Sprint 3) | SR-01 |
 | SR-05 | — | — | NFR-08, NFR-10 | Feature-C |
 | SR-06 | — | — | NFR-12 | Feature-J, Feature-R |
 | SR-07 | — | — | NFR-14 | — |
@@ -97,13 +105,13 @@ How the pieces connect:
 
 ## 4. Coverage check
 
-Every SRS requirement must belong to at least one feature or responsibility. Checked against SRS v0.5 (a script compares every ID in the SRS with section 3):
+Every SRS requirement must belong to at least one feature or responsibility. Checked against SRS v0.7 (a script compares every ID in the SRS with section 3):
 
 | Group | IDs in the SRS | Covered | Not covered |
 |---|---|---|---|
-| Functional requirements | FR-01 … FR-28 | 28 / 28 | none |
-| Business rules | BR-01 … BR-20 | 20 / 20 | none |
-| Non-functional requirements | NFR-01 … NFR-16 | 16 / 16 | none |
+| Functional requirements | FR-01 … FR-37 | 37 / 37 | none |
+| Business rules | BR-01 … BR-24 | 24 / 24 | none |
+| Non-functional requirements | NFR-01 … NFR-18 | 18 / 18 | none |
 
 Requirements shared by several features, such as BR-04, BR-16 and NFR-02, are **established** by the first feature
 listed in the sprint plan and **re-tested** by each later feature that relies on them. The traceability matrix
@@ -145,3 +153,7 @@ Both students review each other's Pull Requests, so each student reads and appro
 | v0.1 | 4 Nov 2026 | First complete inventory: Feature-A … Feature-S, SR-01 … SR-07, coverage check, Sprint 1 bundle and dependency graph | Team (AI-assisted) |
 | v0.2 | 4 Nov 2026 | Follows SRS v0.4: added Feature-T (NFR-16) and SR-08 (FR-28); SR-02 now owns NFR-15 and the check order; FR-28 linked to Feature-L, N, O, P; scope wording for F, I, J | Team (AI-assisted) |
 | v0.3 | 7 Nov 2026 | Source and §4 coverage check point at SRS v0.5 (D-15 changed NFR-03 wording only; all 64 IDs still covered) | Team (AI-assisted) |
+| v0.4 | 21 Nov 2026 | CH-11: Feature-U (Sprint 2) and Feature-V (Sprint 3) added with their requirements and dependencies; SR-04 also carries NFR-17's bucket settings; §4 coverage against SRS v0.6 (31 FR, 20 BR, 17 NFR = 68 IDs) | Team (AI-assisted) |
+| v0.5 | 21 Nov 2026 | CH-12: Feature-W (Swiss pairings and rounds) and Feature-X (results, standings, winner), Sprint 3; coverage against SRS v0.7 (37 FR, 24 BR, 18 NFR = 79 IDs) | Team (AI-assisted) |
+| v0.6 | 21 Nov 2026 | Feature-U scope gains the store's public contact details (FR-30, D-37) | Team (AI-assisted) |
+| v0.7 | 21 Nov 2026 | Feature-C: theme revised in Sprint 2 (D-38, Deep Lagoon, Inter, Manrope) | Team (AI-assisted) |
