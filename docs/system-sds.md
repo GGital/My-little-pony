@@ -1,6 +1,6 @@
 # System-Level Software Design Specification (SDS)
 
-Project: **TCG Event Hub** · Document version: v0.13 — draft for team review in PR #76 (v0.2 reviewed in PR 2; changes in §14)
+Project: **TCG Event Hub** · Document version: v0.14 — draft for team review in PR #76 (v0.2 reviewed in PR 2; changes in §14)
 Inputs: [`srs.md`](srs.md) v0.7 · [`features.md`](features.md) v0.5 · [`traceability.md`](traceability.md) v0.6 ·
 [`ui/design-direction.md`](ui/design-direction.md) v0.6 · [`diagrams/`](diagrams/README.md)
 
@@ -523,9 +523,6 @@ The full flow is in diagram D2 ([`diagrams/seq-auth.png`](diagrams/seq-auth.png)
 | `LOG_LEVEL` | `info` | server | no |
 | `GIT_SHA` | `local`; the full commit SHA in a pipeline image | `GET /api/version`, page footer (Lab 5 R-08) | no |
 | `TRUST_PROXY` | `1` on Cloud Run | Express `trust proxy` for correct protocol | no |
-| `MEDIA_DRIVER` | `local`; `gcs` on Cloud Run (Sprint 3) | `MediaStore` | no |
-| `MEDIA_BUCKET` | empty locally; the bucket name on Cloud Run | `MediaStore` (gcs) | no |
-| `MEDIA_BASE_URL` | `http://localhost:3000/media`; `https://storage.googleapis.com/<bucket>` | `logoUrl`, `bannerUrl` | no |
 
 Rules:
 - `config.ts` reads and validates every server variable at start-up with zod, and **refuses to start** with a
@@ -571,6 +568,18 @@ routes (SD-01). On `SIGTERM` the server stops taking requests, finishes open one
 | Media (Sprint 3) | One GCS bucket, uniform access, objects publicly readable; the Cloud Run service account has `roles/storage.objectAdmin` on that bucket only | No key file; uploads survive redeploys (AC-V-06) |
 | Logs | JSON lines to stdout → Cloud Logging; never passwords, tokens or cookies | NFR-03 |
 | Pipeline | GitHub Actions: on PR run lint, type-check, unit, integration (Postgres service container) and build; on merge to `main`, build the image and deploy after manual approval | Spec §5.3: failed checks block the release path |
+
+### 9.4 Planned variables (Sprint 3, Feature-V, Issue S3-06)
+
+These variables are not in the code yet, so they are kept out of §9.1: TEST-SR4-01 checks that §9.1,
+`.env.example` and `config.ts` name the same variables. The S3-06 PR moves these rows into §9.1 when it adds
+them to `.env.example` and `config.ts`.
+
+| Variable | Example (`.env.example`) | Used by | Secret? |
+|---|---|---|---|
+| `MEDIA_DRIVER` | `local`; `gcs` on Cloud Run (Sprint 3) | `MediaStore` | no |
+| `MEDIA_BUCKET` | empty locally; the bucket name on Cloud Run | `MediaStore` (gcs) | no |
+| `MEDIA_BASE_URL` | `http://localhost:3000/media`; `https://storage.googleapis.com/<bucket>` | `logoUrl`, `bannerUrl` | no |
 
 ---
 
@@ -654,3 +663,4 @@ Design points:
 | v0.11 | 21 Nov 2026 | CH-12 tournaments: Event tournament fields, `TournamentEntry`, `TournamentRound`, `Match` and their constraints; tournament writes join the one-lock rule; routes; PUT for results; 9 tournament error codes; E-26 … E-32; matrix and visibility rows (D-32); SD-14 pairing design with the Dirac bound | Team (AI-assisted) |
 | v0.12 | 21 Nov 2026 | D-37: store contact columns on User (§4.1), E-23 carries them, public in §7.2 | Team (AI-assisted) |
 | v0.13 | 21 Nov 2026 | D-38: §3 UI base, §5 and SD-06 describe the Deep Lagoon theme, Inter, Manrope and the Thai fallback (design-direction v0.6) | Team (AI-assisted) |
+| v0.14 | 21 Nov 2026 | `MEDIA_*` rows move from §9.1 to a new §9.4 (planned, S3-06), because TEST-SR4-01 requires §9.1 to match `.env.example` and `config.ts` | Team (AI-assisted) |

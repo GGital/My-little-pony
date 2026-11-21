@@ -2,7 +2,7 @@
 
 Project: **TCG Event Hub** · Sprint 3 (23 Nov – 13 Dec 2026) · Document version: v0.2 — **draft for team review** (changes in §15)
 Inputs: [`../../srs.md`](../../srs.md) v0.7 · [`../../features.md`](../../features.md) v0.7 ·
-[`../../traceability.md`](../../traceability.md) v0.8 · [`../../system-sds.md`](../../system-sds.md) v0.13 ·
+[`../../traceability.md`](../../traceability.md) v0.8 · [`../../system-sds.md`](../../system-sds.md) v0.14 ·
 [`../plan.md`](../plan.md) v0.3 §4 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.6 ·
 Sprint 2 contracts: [`../sprint-2/feature-contracts.md`](../sprint-2/feature-contracts.md) v0.5 ·
 Tests: [`sts.md`](sts.md) · Issues and Definition of Done: [`README.md`](README.md)
@@ -411,7 +411,7 @@ Moved here from Sprint 2 contracts §11.2 (D-24)
 
 **Data:**
 - `User.logoKey` and `Event.bannerKey`, both `varchar(80) null` (SDS §4.1), in migration `0006_media`.
-- Environment variables: `MEDIA_DRIVER`, `MEDIA_BUCKET`, `MEDIA_BASE_URL` (SDS §9.1).
+- Environment variables: `MEDIA_DRIVER`, `MEDIA_BUCKET`, `MEDIA_BASE_URL` (SDS §9.4 until S3-06 adds them to the code, then §9.1).
 - A GCS bucket with public-read objects. The service account gets `roles/storage.objectAdmin` on that bucket only.
 
 | AC | Given | When | Then |
