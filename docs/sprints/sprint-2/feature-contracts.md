@@ -1,6 +1,6 @@
 # Sprint 2 Feature Engineering Contracts
 
-Project: **TCG Event Hub** · Sprint 2 (9–29 Nov 2026) · Document version: v0.4 — **draft for team review** (changes in §12)
+Project: **TCG Event Hub** · Sprint 2 (9–29 Nov 2026) · Document version: v0.5 — **draft for team review** (changes in §13)
 Inputs: [`../../srs.md`](../../srs.md) v0.6 · [`../../features.md`](../../features.md) v0.4 ·
 [`../../traceability.md`](../../traceability.md) · [`../../system-sds.md`](../../system-sds.md) ·
 [`../plan.md`](../plan.md) §3 · [`../../ui/design-direction.md`](../../ui/design-direction.md) ·
@@ -147,6 +147,7 @@ TEST-SR2-04 (every catalogue code) gains the two new codes. SDS §6.2 gets a ver
 | D-24 | Scope change CH-11 is split. Feature-U (game per event, store games) is built in **Sprint 2**. Feature-V (store logo and event banner upload to GCS) is built in **Sprint 3** (decided 21 Nov 2026) | The game field is one column and one filter. Uploads need a bucket, an image library and new deploy settings, which would put the required Sprint 2 features at risk |
 | D-25 | `game` is optional in the API and defaults to `OTHER`; the UI requires it. The server does not tie an event's game to the store's game list | Sprint 1 request bodies and tests stay valid; the store list only orders the choices in the form |
 | D-37 | The store profile holds the store's **public contact details** (phone, email, website, LINE). Every event shows them in its host section. The event's own `contact` field (Sprint 1, FR-06) stays as an optional "Contact for this event" shown above them. The store email is a separate public field, never the organizer's sign-in email (D-14 is unchanged) | Organizers stop retyping contact details on every event, and players always find a way to reach the store |
+| D-38 | Sprint 2 re-themes the client: **Deep Lagoon** colours, **Inter** for text, **Manrope** for figures, IBM Plex Sans Thai kept for Thai (design-direction v0.6). Token names stay; seats move to green | The team chose the palette and fonts from the trials on 21 Nov 2026; keeping token names limits the change to one file and the font imports |
 
 ### 0.7 Contract template
 
@@ -559,6 +560,7 @@ show a **Past** or **Cancelled** chip.
 | Feature-H / I, E-08, E-10, E-11 | `cancelledAt`, `canCancel` | TEST-H-*, I-* still green; TEST-N-01, M-04 |
 | SR-01, AC-SR1-02 | The seed has 9 events (§0.4) | TEST-SR1-02 is updated in S2-01, and the change is recorded in Sprint 1 STS §8 |
 | SR-02, TEST-SR2-03 / 04 | Route table + new codes | rows added |
+| Feature-C, AC-C-01 … 06; SR-05, AC-SR5-01 | Theme values and fonts change (D-38, §12) | TEST-C-01 … 06 and TEST-SR5-01 still green; TEST-C-07, C-08 |
 
 Nothing in Sprint 1 is weakened. A Sprint 1 test that has to change is changed in its own commit, with the reason,
 and recorded in both STS version tables.
@@ -583,7 +585,8 @@ and recorded in both STS version tables.
 | Feature-O | AC-O-01 … 06 | 6 |
 | Feature-J | AC-J-01 … 06 | 6 |
 | Feature-U *(CH-11, §11.1)* | AC-U-01 … 05 | 5 |
-| **Total** | | **42** |
+| Feature-C theme *(D-38, §12)* | AC-C-07, AC-C-08 | 2 |
+| **Total** | | **44** |
 
 Requirements established in Sprint 2 ([`../plan.md`](../plan.md) §5): FR-08, FR-09, FR-10, FR-13, FR-14, FR-19,
 FR-20, FR-28 · BR-08, BR-09, BR-11, BR-12, BR-15 (13). CH-11 adds FR-29 and the games part of FR-30 (15 in total).
@@ -713,7 +716,38 @@ columns, and the Sprint 2 UI shows store initials and the playmat pattern wherev
 | Seed | the games in §0.4 |
 | Sprint 3 contracts | Feature-V's ACs, then TEST-V-* |
 
-## 12. Version history
+## 12. Feature-C — Deep Lagoon theme and type (D-38)
+
+**Links:** NFR-08, NFR-10 (contrast part), FR-05, FR-27 · Re-verifies: AC-C-01 … 06, AC-SR5-01 · Depends on: Feature-C
+(Sprint 1) · Issue S2-10 · Design: [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.6 §2 ·
+Prototype: the "Palette trials" and "Font trials" pages of the store-branding canvas
+
+**Behaviour**
+1. `client/src/theme/theme.css` takes the Deep Lagoon values of design-direction v0.6 §2. **Token names do not
+   change**, so components keep working; only the values, the link colour (`--primary-hover`) and the font stacks
+   change. A new token, `--font-figures`, is added.
+2. `client/src/main.tsx` imports `@fontsource/inter` 400/600/700 and `@fontsource/manrope` 600/700/800 instead of
+   `@fontsource/chakra-petch`. `@fontsource/ibm-plex-sans-thai` stays (400/600/700) for Thai letters. Fonts stay
+   self-hosted: no request goes to an outside font server.
+3. Elements whose main content is a figure use `--font-figures` with tabular digits: seat counts, the date badge,
+   times in the facts row, fee chips and paging text. Sprint 3 adds the report, summary and standings numbers.
+4. Seats and "registered" move from teal to green (`--accent #1F6F43`), because teal becomes the brand colour. The
+   rule "one colour is reserved for seats" stays.
+5. Screens, layout, copy and behaviour do not change.
+
+**Rules:** every text colour pair in design-direction §2 must be ≥ 4.5:1 and every control border ≥ 3:1. A pair
+that fails blocks the merge. Nothing in Sprint 1's AC-C-01 … 06 or AC-SR5-01 may regress.
+
+**Permissions · API · Data:** *No change in these layers.*
+
+| AC | Given | When | Then |
+|---|---|---|---|
+| **AC-C-07** | the built client | `theme.css` is read; the app is opened on `/events`, an event detail and My Events; the network log is read | every `:root` token equals the design-direction v0.6 §2 value; the computed `font-family` of body text starts with "Inter"; a seat count and the date badge compute to "Manrope" with `tabular-nums`; the Thai event title uses IBM Plex Sans Thai (`document.fonts` reports it loaded); no stylesheet or font is requested from `fonts.googleapis.com`; `@fontsource/chakra-petch` is no longer a dependency |
+| **AC-C-08** | the token table and the running app with the seed | a contrast script checks every listed pair; an axe scan with the `color-contrast` rule runs on Find an Event, event detail (open and registered), sign-in, My Events, the dashboard, create and edit event, and the store profile; the Sprint 1 three-width check (TEST-SR5-01) runs again | every text pair ≥ 4.5:1 and every control border ≥ 3:1; **0** `color-contrast` violations; 21 / 21 Sprint 1 width checks still pass; the PLAYER badge, seat chip and REGISTERED button are green, and the primary button and date badge are teal |
+
+**Planned tests:** TEST-C-07, TEST-C-08 (U, E2E).
+
+## 13. Version history
 
 | Version | Date | Change | Author |
 |---|---|---|---|
@@ -721,3 +755,4 @@ columns, and the Sprint 2 UI shows store initials and the playmat pattern wherev
 | v0.2 | 21 Nov 2026 | D-24: Feature-U moves into Sprint 2 (Issue S2-09; UI, permissions and E-23 added; AC-U-01 and AC-U-02 gain UI checks; §10 total 37 → 40); Feature-V is allocated to Sprint 3. D-25 game default. Seed games in §0.4 | Team (AI-assisted) |
 | v0.3 | 21 Nov 2026 | §11.2 Feature-V moved to the Sprint 3 contracts (§6 there, with AC-V-07 added); endpoint numbers E-23 (store profile), E-24 (logo), E-25 (banner) match SDS v0.10; inputs SRS v0.6 and features v0.4; §0.6 decisions recorded in SRS §10.1 | Team (AI-assisted) |
 | v0.4 | 21 Nov 2026 | D-37: store contact details (phone, email, website, LINE) on the Feature-U store profile, shown on every event, with the event's own `contact` kept as "Contact for this event"; validation table; AC-U-04, AC-U-05; seed contacts; §10 total 40 → 42 | Team (AI-assisted) |
+| v0.5 | 21 Nov 2026 | D-38: §12 Feature-C Deep Lagoon theme and type (Inter text, Manrope figures, Thai fallback), AC-C-07 and AC-C-08; re-verification row; version history becomes §13; 44 ACs | Team (AI-assisted) |

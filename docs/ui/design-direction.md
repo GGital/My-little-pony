@@ -1,6 +1,6 @@
-# UI Design Direction — "Arcane Ink" theme
+# UI Design Direction — "Deep Lagoon" theme (Sprint 2; "Arcane Ink" until v0.5)
 
-Project: TCG Event Hub · Version v0.5 (21 Nov 2026), draft for team review · v0.1 approved in PR #1; v0.2 in PR 2; v0.3 in PR #24
+Project: TCG Event Hub · Version v0.6 (21 Nov 2026), draft for team review in PR #76 · v0.1 approved in PR #1; v0.2 in PR 2; v0.3 in PR #24
 Related: `docs/srs.md` §1.2 (reference UX), §2.1 (access summary), D-12, D-13. A visual mock-up is in
 [`mockup.html`](mockup.html) (open it in a browser), with rendered images in [`mockup/`](mockup/).
 
@@ -17,8 +17,8 @@ The reference event locator has a layout TCG players already know. We keep that 
 | Kept (layout and behaviour) | Changed (our own identity) |
 |---|---|
 | Page title, then two tabs: *Find an Event* / *My Events* | Name and logo: **TCG Event Hub**, not the reference brand |
-| One rounded search bar: Where · Event type · Format · search button | Colours: deep ink-violet page, violet actions, teal "seats" signals instead of navy and orange |
-| Event card: date badge, weekday · time, title, type · format, venue line, fee chip, players chip | Typeface: **Chakra Petch** for headings and **IBM Plex Sans Thai** for text. Both include Thai letters, so organizers' Thai titles and venues render in the same type |
+| One rounded search bar: Where · Event type · Format · search button | Colours (v0.6, D-38): **Deep Lagoon**, a deep-sea navy header, lagoon-teal actions, ice-blue tints on a light grey page, and a separate green for seats, instead of navy and orange. Arcane Ink (violet) was used in Sprint 1 |
+| Event card: date badge, weekday · time, title, type · format, venue line, fee chip, players chip | Typefaces (v0.6, D-38): **Inter** for headings and text, **Manrope** for figures (seat counts, date badges, times, prices, report numbers), and **IBM Plex Sans Thai** for Thai letters, which neither Inter nor Manrope has. Sprint 1 used Chakra Petch for headings |
 | Detail page: header row (date, time, players) with one wide action button; two columns below | The right-hand panel is **Seats**, not a public list of player names (D-12, BR-16) |
 | Account name in the top-right header with a drop-down | Our header carries the **role badge** and *Sign out* (FR-27) |
 
@@ -26,29 +26,48 @@ The reference event locator has a layout TCG players already know. We keep that 
 
 ## 2. Theme tokens
 
-Every colour, size and radius used by the client comes from these tokens (CSS variables on `:root`, mapped onto
-Bootstrap variables). Contrast pairs were chosen to meet 4.5:1 for text (NFR-10).
+Every colour, size and radius used by the client comes from these tokens (CSS variables on `:root` in
+`client/src/theme/theme.css`, mapped onto Bootstrap variables). **v0.6 (D-38) replaces the Arcane Ink values with the
+Deep Lagoon palette** (Color Hunt `071B2B · 167D8D · B9E4E8 · EEEEEE`, chosen by the team on 21 Nov 2026 from five
+trials). Token names stay the same, so components do not change; only values and the font stack do. Every text pair
+below was measured: text ≥ 4.5:1 and control borders ≥ 3:1 (NFR-10, WCAG 1.4.3 and 1.4.11).
 
-| Token | Value | Used for |
+| Token | Value | Used for | Measured |
+|---|---|---|---|
+| `--ink-900` | `#071B2B` | Header bar and page backdrop (soft gradient to `--ink-800 #0E2F45`) | white text 17.49:1 |
+| `--ink-text` | `#B9E4E8` | Secondary text and links on the dark header | on `#071B2B` 12.76:1 |
+| `--surface` | `#FFFFFF` | Cards and panels | — |
+| `--surface-muted` | `#EEEEEE` | Page body inside the main panel, input backgrounds | — |
+| `--text` | `#071B2B` | Body text | on white 17.49:1, on `#EEEEEE` 15.07:1 |
+| `--text-muted` | `#3C5260` | Secondary lines (venue, format, hints) | on white 8.18:1, on `#EEEEEE` 7.05:1 |
+| `--primary` | `#167D8D` | Primary buttons, date badge, active tab underline, the logo mark | white text on it 4.83:1. **Never used for text on the grey page** (4.16:1) |
+| `--primary-hover` | `#0F5F6B` | Hover/pressed primary; also **links and teal text** (`--bs-link-color`) | white on it 7.32:1; as text on white 7.32:1, on `#EEEEEE` 6.31:1 |
+| `--primary-tint` / `--primary-line` | `#B9E4E8` / `#8CCBD2` | Tint chips (event type, fee), the initials tile, hover backgrounds / their borders | `#0F5F6B` on the tint 5.34:1 |
+| `--accent` / `--accent-ink` | `#1F6F43` / `#1F6F43` | **Green is reserved for seats and "registered"** (v0.6: teal is now the brand colour, so seats moved to green): seat bar fill, seat chip text, the *Registered* button, the PLAYER badge | on white 6.15:1; white on it 6.15:1 |
+| `--accent-tint` / `--accent-line` | `#E4F3EA` / `#B5DCC3` | Seat chip and the top of the "You're in." card | `#1F6F43` on the tint 5.36:1 |
+| `--warning`, `--warning-ink`, `--warning-tint`, `--warning-line` | `#B45309`, `#93400A`, `#FEF3E2`, `#F6D7A8` | "Few seats left" (≤ 20 % of capacity). Unchanged | ink on tint 6.42:1 |
+| `--danger`, `--danger-ink`, `--danger-tint`, `--danger-line` | `#C8303F`, `#8E1F2B`, `#FCE8EA`, `#F3BCC2` | Errors, *Full*, destructive actions. Unchanged | on white 5.32:1; ink on tint 7.51:1 |
+| `--border` | `#DCDCDC` | Card borders and dividers (decoration only) | 1.37:1, decoration only |
+| `--control-line` | `#167D8D` | Borders of interactive controls: inputs, toggle chips, radio pills, filter chips, the search pill | on white 4.83:1, on `#EEEEEE` 4.16:1 (≥ 3:1) |
+| `--focus` | `outline: 2px solid #167D8D; outline-offset: 2px` (on the dark header `#B9E4E8`) | Visible keyboard focus ring on every control | ≥ 3:1 on every surface |
+| `--shadow-card` | `0 8px 20px rgba(7, 27, 43, .10)` | Card elevation (neutral ink, never a coloured glow) | — |
+| Scrollbar | `#167D8D` on `--ink-900` | Browser scrollbar | — |
+| Radius | `16px` panels · `12px` cards · `999px` chips and pill buttons | Unchanged | — |
+
+**Typography (v0.6, D-38).** Fonts are self-hosted with Fontsource (no request to an outside font server):
+`@fontsource/inter` 400, 600, 700 and `@fontsource/manrope` 600, 700, 800 replace `@fontsource/chakra-petch`;
+`@fontsource/ibm-plex-sans-thai` 400, 600, 700 stays for Thai.
+
+| Token | Stack | Used for |
 |---|---|---|
-| `--ink-900` | `#16112B` | Header bar, page backdrop (with a soft gradient to `#2A1F55`) |
-| `--surface` | `#FFFFFF` | Cards and panels |
-| `--surface-muted` | `#F5F3FB` | Page body inside the main panel, input backgrounds |
-| `--text` | `#1F1A33` | Body text on light surfaces |
-| `--text-muted` | `#5F5878` | Secondary lines (venue, format) |
-| `--primary` | `#6C4CE0` | Primary buttons, active tab underline, date badge |
-| `--primary-hover` | `#5838C9` | Hover/pressed primary |
-| `--accent` | `#0E8F80` | **Teal is reserved for seats and "registered"** (v0.4): nothing else, not game chips, uses it. Seat bar fill, borders and icons on teal surfaces. **Not for small text or as a background behind white text** (4.0:1) |
-| `--accent-ink` | `#0B6B60` | Teal text, the *Registered* button, and role-badge backgrounds behind white text (≈ 6:1) |
-| `--accent-tint` | `#E6F6F3` | Seats chip and the top of the "You're in" card |
-| `--warning` | `#B45309` | "Few seats left" (≤ 20 % of capacity) |
-| `--danger` | `#C8303F` | Errors, *Full*, destructive actions |
-| `--border` | `#E3DFF0` | Card borders and dividers (decoration only) |
-| `--control-line` | `#8F87AD` | Borders of interactive controls: inputs, toggle chips, radio pills, filter chips, the search pill. ≥ 3:1 on white (WCAG 1.4.11). Added in v0.4; `--border` was 1.3:1 and made controls look like text |
-| Tints and lines | `--primary-tint #EFEBFC` · `--primary-line #C9BEF5` · `--accent-line #B9E5DE` · `--warning-tint #FEF3E2` / `--warning-line #F6D7A8` / `--warning-ink #93400A` · `--danger-tint #FCE8EA` / `--danger-line #F3BCC2` / `--danger-ink #8E1F2B` | Chip, notice and hover backgrounds and borders (values from the mock-up). Text on a tint uses its `-ink` colour (≥ 6:1) |
-| `--focus` | `outline: 2px solid #6C4CE0; outline-offset: 2px` (on the dark header `#C9BEF5`) | Visible keyboard focus ring on every control. v0.4: the old translucent ring was about 2:1 on white and 1.6:1 on the header, below the 3:1 needed |
-| Radius | `16px` panels · `12px` cards · `999px` chips and pill buttons | |
-| Type scale | Chakra Petch 700 — 32 / 24 / 18 px headings · IBM Plex Sans Thai 400/600 — 16 / 14 / 12 px, line height 1.55 | Upper-case labels use IBM Plex Sans Thai 600, 12 px, letter-spacing .08em. Counts use tabular (fixed-width) digits so "3 / 24" does not jump when it changes |
+| `--font-body` | `'Inter', 'IBM Plex Sans Thai', system-ui, sans-serif` | All text: body 16 / 14 / 12 px at 400 and 600, line height 1.55; upper-case labels 12 px 600 with letter-spacing .08em |
+| `--font-heading` | same as `--font-body`, weight 700 | Headings 32 / 24 / 18 px; letter-spacing −0.01em at 32 px; line height 1.3 (1.35 when the title has Thai letters) |
+| `--font-figures` **new** | `'Manrope', 'Inter', 'IBM Plex Sans Thai', sans-serif`, `font-variant-numeric: tabular-nums` | Text whose main content is a figure: seat counts ("3 / 24"), the date badge, times in the facts row, fee chips, attendance and summary numbers, standings points and percentages, paging ("21–40 of 45"). Weights 700 (800 for the date-badge day). Numbers inside a sentence stay in Inter |
+
+The browser picks the font per letter. Thai letters in a title or venue always come from IBM Plex Sans Thai, and
+Latin letters and digits come from Inter or Manrope. So a mixed title such as "Release Weekend Sealed ·
+เปิดกล่องสุดสัปดาห์" renders in both, at matched sizes.
+
 | Motion | `--ease-out: cubic-bezier(0.16, 1, 0.3, 1)`; 100–150 ms feedback, 150–300 ms state changes, 620 ms for the one authored moment (§7) | Every animation has a `prefers-reduced-motion` alternative |
 
 ---
@@ -167,7 +186,7 @@ refreshes the seat count.
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
-- Date badge uses `--primary`; the seats chip is teal, amber when ≤ 20 % left, red **FULL** at 0. The players icon
+- Date badge uses `--primary` with `--font-figures`; the seats chip is green (`--accent`, v0.6), amber when ≤ 20 % left, red **FULL** at 0. The players icon
   (⚇ in the sketch) is the drawn "users" icon from the icon set (§8).
 - The whole card is one link to the detail page (keyboard reachable, visible focus ring).
 
@@ -270,7 +289,7 @@ Rendered states: `mockup/detail-1440.png` (before) and `mockup/detail-registered
   not as a caption above it.
 - **Icons sit beside headings, not in tiles above them** (for example the lock on the "Not available" page).
 - Browser surfaces follow the theme: text selection `rgba(108,76,224,.24)`, caret and checkbox/radio colour
-  `--primary`, link underline offset 3 px, scrollbar `#4A3A8C` on `--ink-900`.
+  `--primary`, link underline offset 3 px, scrollbar `#167D8D` on `--ink-900` (v0.6).
 
 ## 9. Design checks
 
@@ -298,3 +317,4 @@ through in the browser.
 | v0.2 | 4 Nov 2026 | Impeccable `delight` pass: "seat secured" moment (§7), voice (§6), icon and browser rules (§8), fonts changed to Chakra Petch + IBM Plex Sans Thai, `--accent-ink` for teal text and badges, store name moved below the title, phone order of the Seats card, design checks (§9) |
 | v0.4 | 21 Nov 2026 | Impeccable critique of the Sprint 2/3 prototype: teal reserved for seats (§2), `--control-line` token, solid focus ring (§2), §5.4 patterns for game chip, banner, logo, action card, host section, uploads, destructive confirmations, store profile and game radios |
 | v0.5 | 21 Nov 2026 | Host section shows the store's contact details (D-37) |
+| v0.6 | 21 Nov 2026 | D-38: Deep Lagoon palette (all tokens re-measured; seats move from teal to green because teal becomes the brand colour; links use `--primary-hover`), Inter for text, Manrope for figures (`--font-figures`), IBM Plex Sans Thai kept for Thai; Fontsource packages; title renamed |

@@ -1,10 +1,10 @@
 # Sprint 2: engineering contracts, tests and Definition of Done
 
-Project: **TCG Event Hub** · Sprint 2 (9–29 Nov 2026) · Version v0.3 — **draft for team review** (changes in §6)
+Project: **TCG Event Hub** · Sprint 2 (9–29 Nov 2026) · Version v0.4 — **draft for team review** (changes in §6)
 
 | Document | What it is |
 |---|---|
-| [`feature-contracts.md`](feature-contracts.md) | One contract each for SR-08, Feature-K, L, M, N, O, J and U: design, UI/API/data, 42 acceptance criteria (Feature-U added by CH-11, store contact by D-37) |
+| [`feature-contracts.md`](feature-contracts.md) | One contract each for SR-08, Feature-K, L, M, N, O, J and U: design, UI/API/data, 44 acceptance criteria (Feature-U added by CH-11, store contact by D-37, theme by D-38) |
 | [`sts.md`](sts.md) | Software Test Specification: planned tests, AC → test map, BR rejection map, TDD record, results |
 | This file | Sprint goal, Issue plan, UX enhancements in scope, Definition of Done |
 
@@ -36,6 +36,7 @@ The contracts PR (`docs/s2-contracts`) is merged into `sprint-2-staging` **befor
 | S2-06 | Feature-M: registration deadline | §4 | TEST-M-01 … 04 | S2-04 | 1 | Wed 25 Nov |
 | S2-07 | Feature-N: cancel a registration and register again | §5 | TEST-N-01 … 06 | S2-01, S2-06 | 2 | Wed 25 Nov |
 | S2-09 | Feature-U: game per event, store profile (games, contact), game filter (CH-11, D-37) | §11.1 | TEST-U-01 … 05 | S2-01, S2-03, S2-04 | 2 | Wed 25 Nov |
+| S2-10 | Deep Lagoon theme and type: tokens, Inter + Manrope, Thai fallback (D-38) | §12 | TEST-C-07, C-08 | S2-00 | 2 | Mon 23 Nov |
 | S2-08 | Integration, journeys, regression, release `v0.2.0` | §8, §9 | JRN-03, JRN-04, TEST-SR5-02 and the regression rows | all | both | Thu 26 Nov |
 
 S2-01's migration adds the `game` enum column and `User.games` too, so S2-09 needs no schema change of its own.
@@ -85,6 +86,7 @@ extras.
 | UX-16 | **Game** dropdown in the search bar; a teal game chip on cards and the detail page | U · AC-U-02 |
 | UX-17 | Store profile page with "Games played here" toggle chips; a host section on the event page | U · AC-U-03 |
 | UX-19 | Store contact card on the profile; tap-to-call, tap-to-email and a short website link on every event, with "Contact for this event" when the event has its own | U · AC-U-04 |
+| UX-20 | Deep Lagoon theme: navy header, teal actions, green seats; Inter text and Manrope figures with tabular digits | C · AC-C-07, C-08 |
 | UX-18 | Store logo overlapping the event banner, the upload box with four states, and a logo-safe area in the preview | **Sprint 3**, Feature-V |
 
 **Proposed, not yet in a contract.** These need team approval and an AC before they are built. Otherwise they
@@ -116,3 +118,4 @@ Sprint 1 README §4 (DoD-1 … DoD-10) applies to every Sprint 2 Issue. The Spri
 | v0.1 | 21 Nov 2026 | First Sprint 2 package: contracts v0.1, STS v0.1, Issue plan S2-00 … S2-08, UX-01 … UX-15 in scope, UX-P1 … P5 proposed, DoD changes | Team (AI-assisted) |
 | v0.2 | 21 Nov 2026 | CH-11 split (D-24): Issue S2-09 Feature-U; UX-16, UX-17 in Sprint 2, UX-18 in Sprint 3 (Feature-V); 40 ACs | Team (AI-assisted) |
 | v0.3 | 21 Nov 2026 | D-37: store contact in S2-09 (TEST-U-04, U-05), UX-19; 42 ACs | Team (AI-assisted) |
+| v0.4 | 21 Nov 2026 | D-38: Issue S2-10 (theme first, on 23 Nov, so later UI Issues are built on the new tokens), UX-20; 44 ACs | Team (AI-assisted) |

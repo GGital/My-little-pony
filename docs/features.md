@@ -1,7 +1,7 @@
 # Complete Feature Inventory
 
 Project: **TCG Event Hub** — Event Registration and Attendance System
-Document version: v0.6 — draft for team review in PR #76 (CH-11 incl. store contact, CH-12); v0.2 approved in PR #1 (4 Nov 2026)
+Document version: v0.7 — draft for team review in PR #76 (CH-11 incl. store contact, CH-12, D-38 theme); v0.2 approved in PR #1 (4 Nov 2026)
 Source of requirements: [`docs/srs.md`](srs.md) v0.7 · Next document: `docs/traceability.md`
 
 This is step 2 of the course design process. The whole product is split into **features**: pieces small enough to
@@ -28,7 +28,7 @@ How the pieces connect:
 |---|---|---|---|
 | **Feature-A** | User Authentication and Session | Sign-in with email and password for seeded accounts, one generic error for bad credentials, password hashing, server-side session cookie with 8-hour expiry, current-user retrieval, and sign-out that invalidates the session. | 1 |
 | **Feature-B** | Role and Ownership Access Control | Backend enforcement of the two roles (Participant, Organizer) and of record ownership: role guards (403), ownership checks that hide other users' records (404), and identity taken only from the session, never from the client. | 1 |
-| **Feature-C** | Application Shell and Role Navigation | Header with account menu (display name, role badge, sign-out), navigation per role, protected routes, sign-in-then-return to the original page, "Not available" and "Not found" pages, and the shared loading, empty, error and form-validation states in the Arcane Ink theme. | 1 |
+| **Feature-C** | Application Shell and Role Navigation | Header with account menu (display name, role badge, sign-out), navigation per role, protected routes, sign-in-then-return to the original page, "Not available" and "Not found" pages, and the shared loading, empty, error and form-validation states in the product theme (Arcane Ink in Sprint 1; Deep Lagoon with Inter and Manrope from Sprint 2, D-38). | 1 (theme revised in 2) |
 | **Feature-D** | Event Creation and Publication | Organizer form to create and publish an event (title, type, format, venue, address, city, start/end, capacity, fee label, structure note, contact, description), server validation of every field, and recording of the organizer as owner. | 1 |
 | **Feature-E** | Organizer Event Dashboard | The organizer's list of their own events with status, capacity, active registrations and seats remaining, and links to each event's registrations. | 1 |
 | **Feature-F** | Event Discovery List and Detail | Public list of upcoming published events as cards (date badge, time, title, type · format, venue, fee chip, seats chip) ordered by start time, and the detail page with all public fields and a server-decided action button state; unknown or hidden events answer "not found". | 1 |
@@ -156,3 +156,4 @@ Both students review each other's Pull Requests, so each student reads and appro
 | v0.4 | 21 Nov 2026 | CH-11: Feature-U (Sprint 2) and Feature-V (Sprint 3) added with their requirements and dependencies; SR-04 also carries NFR-17's bucket settings; §4 coverage against SRS v0.6 (31 FR, 20 BR, 17 NFR = 68 IDs) | Team (AI-assisted) |
 | v0.5 | 21 Nov 2026 | CH-12: Feature-W (Swiss pairings and rounds) and Feature-X (results, standings, winner), Sprint 3; coverage against SRS v0.7 (37 FR, 24 BR, 18 NFR = 79 IDs) | Team (AI-assisted) |
 | v0.6 | 21 Nov 2026 | Feature-U scope gains the store's public contact details (FR-30, D-37) | Team (AI-assisted) |
+| v0.7 | 21 Nov 2026 | Feature-C: theme revised in Sprint 2 (D-38, Deep Lagoon, Inter, Manrope) | Team (AI-assisted) |

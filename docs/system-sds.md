@@ -1,8 +1,8 @@
 # System-Level Software Design Specification (SDS)
 
-Project: **TCG Event Hub** · Document version: v0.12 — draft for team review in PR #76 (v0.2 reviewed in PR 2; changes in §14)
+Project: **TCG Event Hub** · Document version: v0.13 — draft for team review in PR #76 (v0.2 reviewed in PR 2; changes in §14)
 Inputs: [`srs.md`](srs.md) v0.7 · [`features.md`](features.md) v0.5 · [`traceability.md`](traceability.md) v0.6 ·
-[`ui/design-direction.md`](ui/design-direction.md) v0.4 · [`diagrams/`](diagrams/README.md)
+[`ui/design-direction.md`](ui/design-direction.md) v0.6 · [`diagrams/`](diagrams/README.md)
 
 This is step 4 of the course design process. It fixes the decisions that **every** feature shares: the stack, how
 the parts talk, the data model, the UI and API conventions, who may do what, how sign-in works, and how the app is
@@ -98,7 +98,7 @@ Two notes on the order:
 | Layer | Choice | Version line | Why | Decision |
 |---|---|---|---|---|
 | Client | React + TypeScript + Vite | React 19, Vite 6, TS 5.9 | Same as TokTickIT; fast dev server and build | SD-02 |
-| UI base | Bootstrap 5 re-themed with Arcane Ink tokens, IBM Plex Sans Thai + Chakra Petch, drawn SVG icon set | Bootstrap 5.3 | Grid, forms and focus basics for free; our tokens give the look | SD-06 |
+| UI base | Bootstrap 5 re-themed with design tokens: Deep Lagoon from Sprint 2 (Arcane Ink in Sprint 1); Inter text, Manrope figures, IBM Plex Sans Thai for Thai, self-hosted with Fontsource; drawn SVG icon set | Bootstrap 5.3 | Grid, forms and focus basics for free; our tokens give the look | SD-06 |
 | Routing | React Router | 7 | As in TokTickIT | — |
 | Server | Node.js + Express + TypeScript (`tsx`) | Node 22, Express 5 | Same as TokTickIT; Express 5 forwards async errors | SD-02 |
 | Validation | zod | 4.x (4.6.7) | One schema per endpoint: typed input, `.strict()` unknown-field rejection, field details for 400 | SD-05 |
@@ -309,7 +309,7 @@ gives the ordering we need (SD-08).
 
 ## 5. UI conventions
 
-The full visual system is in [`ui/design-direction.md`](ui/design-direction.md) v0.3 (Arcane Ink theme, voice,
+The full visual system is in [`ui/design-direction.md`](ui/design-direction.md) v0.6 (Deep Lagoon theme from Sprint 2, voice,
 the "seat secured" moment, icon and browser rules). This section fixes the structure.
 
 ### 5.1 Screens and navigation
@@ -605,7 +605,7 @@ Design points:
 | SD-03 | scrypt via `node:crypto`, reusing TokTickIT code | bcrypt | No native dependency; reviewed parameters | NFR-03, D-15 |
 | SD-04 | Rules that can be constraints are constraints, added by raw SQL in migrations | Application checks only | Defence even against bugs or future code paths | BR-01, BR-02, BR-06 |
 | SD-05 | zod `.strict()` schema per endpoint, shared types | Hand-written checks | Unknown-field rejection and field details for free | NFR-15, NFR-07 |
-| SD-06 | Bootstrap 5 re-themed with Arcane Ink tokens; Chakra Petch + IBM Plex Sans Thai; drawn SVG icons | Plain CSS; another UI kit | Fast, accessible basics; Thai-capable fonts | NFR-08–NFR-10 |
+| SD-06 | Bootstrap 5 re-themed with our tokens; from Sprint 2 (D-38) Deep Lagoon colours, Inter for text, Manrope for figures (`--font-figures`), IBM Plex Sans Thai as the Thai fallback, all self-hosted with Fontsource; drawn SVG icons. Sprint 1 used Arcane Ink and Chakra Petch | Plain CSS; another UI kit; Google Fonts links | Fast, accessible basics; Thai letters always covered; no outside font requests | NFR-08–NFR-10 |
 | SD-07 | Server-side sessions in PostgreSQL; only the SHA-256 of the token is stored | JWT in local storage; raw token in the database | Real sign-out (NFR-04); a database leak does not leak live sessions | NFR-04, D-11 |
 | SD-08 | Row lock `SELECT … FOR UPDATE` on the event + partial unique index | SERIALIZABLE transactions with retry; a counter column | Exact and simple; per-event queueing only | BR-05–BR-07, NFR-05 |
 | SD-09 | Integration tests on a real PostgreSQL test database, truncated per file | Mocked Prisma; SQLite | Course requires real persistence evidence; same SQL features as production | NFR-14 |
@@ -653,3 +653,4 @@ Design points:
 | v0.10 | 21 Nov 2026 | Sprint 2 and 3 contracts and CH-11: `Game` enum, `User.games`, `User.logoKey`, `Event.game`, `Event.bannerKey` (§4.1); Sprint 2 and 3 SQL constraints and the one-lock rule §4.3a; `/organizer/store` route; PUT and media DELETE, raw image bodies (§6.1); codes `ALREADY_PUBLISHED`, `NOT_PUBLISHED`, `REGISTRATION_NOT_ACTIVE`, `NOT_CHECKED_IN`, `IMAGE_UNREADABLE`, `IMAGE_TOO_SMALL` (§6.2); E-23 … E-25 and the E-04 query (§6.3); matrix and visibility rows (§7); `MEDIA_*` variables and the bucket (§9); SD-11 … SD-13 | Team (AI-assisted) |
 | v0.11 | 21 Nov 2026 | CH-12 tournaments: Event tournament fields, `TournamentEntry`, `TournamentRound`, `Match` and their constraints; tournament writes join the one-lock rule; routes; PUT for results; 9 tournament error codes; E-26 … E-32; matrix and visibility rows (D-32); SD-14 pairing design with the Dirac bound | Team (AI-assisted) |
 | v0.12 | 21 Nov 2026 | D-37: store contact columns on User (§4.1), E-23 carries them, public in §7.2 | Team (AI-assisted) |
+| v0.13 | 21 Nov 2026 | D-38: §3 UI base, §5 and SD-06 describe the Deep Lagoon theme, Inter, Manrope and the Thai fallback (design-direction v0.6) | Team (AI-assisted) |

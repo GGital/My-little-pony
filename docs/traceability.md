@@ -1,6 +1,6 @@
 # Requirements-to-Features Traceability
 
-Project: **TCG Event Hub** · Document version: v0.7 — draft for team review in PR #76 (Sprint 2 and 3 contracts, CH-11, CH-12); v0.1 approved in PR #1; CH-10 in PR 2; Sprint 1 results in I-12
+Project: **TCG Event Hub** · Document version: v0.8 — draft for team review in PR #76 (Sprint 2 and 3 contracts, CH-11, CH-12); v0.1 approved in PR #1; CH-10 in PR 2; Sprint 1 results in I-12
 Inputs: [`docs/srs.md`](srs.md) v0.7 · [`docs/features.md`](features.md) v0.5 · Diagrams: [`docs/diagrams/`](diagrams/README.md)
 
 This is step 3 of the course design process. Every requirement is followed through four links, so anyone can
@@ -125,9 +125,9 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | NFR-05 | 20 simultaneous requests → exactly 1 wins | Feature-G | Sprint 1 | AC-G-06 · I → **Pass**: TEST-G-06, JRN-02 | 2 (with cancel) |
 | NFR-06 | Data survives restart; migrations only; seed reproducible | SR-01 | Sprint 1 | AC-SR1-01, AC-SR1-02 · I, M → **Pass**: TEST-SR1-01, TEST-SR1-02 | 2, 3, Lab 5 |
 | NFR-07 | One safe error shape | SR-02 | Sprint 1 | AC-SR2-01 · I → **Pass**: TEST-SR2-01, TEST-SR2-04 | 2, 3 |
-| NFR-08 | No horizontal scroll at 390 / 768 / 1440 px | SR-05, Feature-C | Sprint 1 (Sprint 1 screens) | AC-SR5-01 · E → **Pass**: TEST-SR5-01 | 2 (TEST-SR5-02, Sprint 2 STS §2.9), 3 (all screens: AC-SR5-03 → TEST-SR5-03) |
+| NFR-08 | No horizontal scroll at 390 / 768 / 1440 px | SR-05, Feature-C | Sprint 1 (Sprint 1 screens) | AC-SR5-01 · E → **Pass**: TEST-SR5-01 | 2 (TEST-SR5-02 and the theme check TEST-C-08, Sprint 2 STS §2.9–2.10), 3 (all screens: AC-SR5-03 → TEST-SR5-03) |
 | NFR-09 | Loading, empty, error, field-validation states | Feature-C | Sprint 1 | AC-C-05 · E → **Pass**: TEST-C-05 | 2, 3 |
-| NFR-10 | Keyboard, labels, contrast, 0 serious axe issues | SR-05 | Sprint 3 | AC-SR5-02, AC-SR5-04, AC-Q-05, AC-R-05 · E (axe), M (keyboard) → **Planned**: TEST-SR5-02, TEST-SR5-04, TEST-Q-05, TEST-R-05 (Sprint 3 STS) | — |
+| NFR-10 | Keyboard, labels, contrast, 0 serious axe issues | SR-05 | Sprint 3 | AC-SR5-02, AC-SR5-04, AC-Q-05, AC-R-05 · E (axe), M (keyboard) → **Planned**: TEST-SR5-02, TEST-SR5-04, TEST-Q-05, TEST-R-05 (Sprint 3 STS) | 2 (theme contrast: AC-C-08 → **Planned**: TEST-C-08, Sprint 2 STS) |
 | NFR-11 | UTC storage, Bangkok display, server clock | SR-03 | Sprint 1 | AC-SR3-01 · U → **Pass**: TEST-SR3-01, TEST-SR3-02 | 2, 3 |
 | NFR-12 | < 500 ms p95 with 500 events / 5,000 registrations | SR-06 | Sprint 3 | AC-SR6-01, AC-SR6-02 · M (autocannon, recorded) → **Planned**: TEST-SR6-01, TEST-SR6-02 (Sprint 3 STS) | — |
 | NFR-13 | Environment config, no secrets, health check, Docker-ready | SR-04 | Sprint 1 (design) | AC-SR4-01 · I, M → **Pass**: TEST-SR4-01 | Lab 5 (Docker, CI/CD, GCP) |
@@ -241,7 +241,7 @@ has at least one rejection criterion, so NFR-14's "negative test for every BR" h
 | Check | Result |
 |---|---|
 | Every FR, BR and NFR in SRS v0.7 appears in the matrix | 79 / 79 — no gaps |
-| Every Sprint 2 requirement has at least one planned AC | 15 / 15 (42 ACs in the Sprint 2 contracts) |
+| Every Sprint 2 requirement has at least one planned AC | 15 / 15 (44 ACs in the Sprint 2 contracts) |
 | Every Sprint 3 requirement has at least one planned AC | 24 / 24 (53 ACs in the Sprint 3 contracts) |
 | Requirements implemented but not yet verified | Sprint 2 and Sprint 3 rows: all **Planned** on 21 Nov 2026 |
 | Every Sprint 1 requirement has at least one planned AC | 40 / 40 |
@@ -296,3 +296,4 @@ in the Sprint 2 contracts PR (S2-00), and the course's approved-scope rule for D
 | v0.5 | 21 Nov 2026 | Inputs SRS v0.6 and features v0.4. Sprint 2 and 3 rows carry AC and planned test IDs from the Sprint 2 (v0.3) and Sprint 3 (v0.1) contracts, status **Planned**; FR-29 … FR-31 and NFR-17 rows (CH-11); P-06, P-07; allocation 68 (Sprint 2: 15, Sprint 3: 13); BR-14, BR-17, NFR-05 re-verification rows; §4.1 checks for Sprint 2 and 3; CH-11 | Team (AI-assisted) |
 | v0.6 | 21 Nov 2026 | CH-12: FR-32 … FR-37, BR-21 … BR-24, NFR-18 rows with AC and planned test IDs (Sprint 3 contracts v0.2), status **Planned**; P-08; allocation 79 (Sprint 3: 24); BR-16 re-verification with the D-32 exception; CH-12 | Team (AI-assisted) |
 | v0.7 | 21 Nov 2026 | FR-30 row gains store contact (AC-U-04, AC-U-05); Sprint 2 has 42 ACs | Team (AI-assisted) |
+| v0.8 | 21 Nov 2026 | D-38 theme: NFR-10 re-verified in Sprint 2 by AC-C-08; NFR-08 points at TEST-C-08; Sprint 2 has 44 ACs | Team (AI-assisted) |

@@ -1,10 +1,10 @@
 # Sprint 3 Feature Engineering Contracts
 
 Project: **TCG Event Hub** · Sprint 3 (23 Nov – 13 Dec 2026) · Document version: v0.2 — **draft for team review** (changes in §15)
-Inputs: [`../../srs.md`](../../srs.md) v0.7 · [`../../features.md`](../../features.md) v0.6 ·
-[`../../traceability.md`](../../traceability.md) v0.7 · [`../../system-sds.md`](../../system-sds.md) v0.12 ·
-[`../plan.md`](../plan.md) v0.3 §4 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.5 ·
-Sprint 2 contracts: [`../sprint-2/feature-contracts.md`](../sprint-2/feature-contracts.md) v0.4 ·
+Inputs: [`../../srs.md`](../../srs.md) v0.7 · [`../../features.md`](../../features.md) v0.7 ·
+[`../../traceability.md`](../../traceability.md) v0.8 · [`../../system-sds.md`](../../system-sds.md) v0.13 ·
+[`../plan.md`](../plan.md) v0.3 §4 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.6 ·
+Sprint 2 contracts: [`../sprint-2/feature-contracts.md`](../sprint-2/feature-contracts.md) v0.5 ·
 Tests: [`sts.md`](sts.md) · Issues and Definition of Done: [`README.md`](README.md)
 
 This document has one engineering contract per Sprint 3 feature (P, Q, R, S, T, V, and the tournament features W
@@ -595,7 +595,7 @@ Issue S3-11 · Decisions D-32, D-33, D-34
 
    The same screens are checked at 390, 768 and 1440 px.
 2. A keyboard-only walk-through of three journeys is recorded (M): register, check in, and cancel an event.
-3. Fixes follow design-direction v0.4: focus ring, `--control-line` and 44 px targets.
+3. Fixes follow design-direction v0.6: Deep Lagoon tokens, focus ring, `--control-line` and 44 px targets.
 
 | AC | Given | When | Then |
 |---|---|---|---|
