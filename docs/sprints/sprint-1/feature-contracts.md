@@ -1,6 +1,6 @@
 # Sprint 1 Feature Engineering Contracts
 
-Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.12 (v1.0 reviewed in PR 2; changes in §15)
+Project: **TCG Event Hub** · Sprint 1 (4–8 Nov 2026) · Document version: v1.13 — Lab 7 change CH-13 for team review (Issue #77); v1.0 reviewed in PR 2; changes in §15
 Inputs: [`../../srs.md`](../../srs.md) v0.5 · [`../../features.md`](../../features.md) v0.2 ·
 [`../../traceability.md`](../../traceability.md) v0.2 · [`../../system-sds.md`](../../system-sds.md) v0.2 ·
 [`../plan.md`](../plan.md) v0.1 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.3 ·
@@ -347,7 +347,8 @@ and I-04 (sign-in wiring)
 
 ## 7. Feature-D — Event Creation and Publication
 
-**Links:** FR-06; BR-01, BR-02, BR-03, BR-13; NFR-07, NFR-11 · Depends on: Feature-B, SR-01, SR-03 · Issue I-07
+**Links:** FR-06; BR-01, BR-02, BR-03, BR-13; NFR-07, NFR-11 · Depends on: Feature-B, SR-01, SR-03 · Issue I-07 ·
+Changed by CH-13 (Lab 7, Issue #77, v1.13)
 
 **Behaviour**
 1. An organizer opens `/organizer/events/new`, fills in the form and presses **PUBLISH EVENT**.
@@ -375,16 +376,20 @@ and I-04 (sign-in wiring)
 | any other key | — | forbidden | includes `organizerId`, `status`, `publishedAt` | "This value cannot be set." |
 
 Time rules (BR-02), checked after the shape passes, answer `422 EVENT_TIME_INVALID` with details:
-- `startAt ≤ now()` → `startAt`: "The start must be in the future."
+- `startAt < now() + 60 min` → `startAt`: "The start must be at least 60 minutes from now." *(v1.13, CH-13; until v1.12 the rule was `startAt ≤ now()`
+  with "The start must be in the future.")*
 - `endAt ≤ startAt` → `endAt`: "The end must be after the start."
 - `endAt > startAt + 24 h` → `endAt`: "An event can last at most 24 hours."
-- Boundaries: `endAt = startAt + 24 h` is accepted; `+ 24 h + 1 min` is rejected.
+- Boundaries: `startAt = now() + 60 min` is accepted; `now() + 59 min` (and `+ 60 min − 1 ms`) is rejected. "Now" is
+  the server clock (`clock.now()`) when the request is handled. `endAt = startAt + 24 h` is accepted; `+ 24 h + 1
+  min` is rejected.
 
 **Permissions:** organizer only (participant 403, visitor 401). Any organizer may create, and becomes the owner.
 
 **UI** (`/organizer/events/new`)
 - Fields in this order: title · type and format (radio cards) · venue name, address, city · start and end date-time
-  (shown and entered in Bangkok time, sent with `+07:00`) · capacity (number, 1–256) · fee label · structure note ·
+  (shown and entered in Bangkok time, sent with `+07:00`; the start field's hint reads "at least 1 hour from now",
+  v1.13) · capacity (number, 1–256) · fee label · structure note ·
   contact · description (character counter).
 - Client checks mirror the table, for speed only. Server errors map to the same fields.
 - **PUBLISH EVENT** shows "Publishing…" while sending. On error, the input is kept.
@@ -401,7 +406,7 @@ Time rules (BR-02), checked after the shape passes, answer `422 EVENT_TIME_INVAL
 |---|---|---|---|
 | **AC-D-01** | Quantum Cards signed in; clock fixed | a valid event starting tomorrow with capacity 24 is posted | `201`; the stored row has `status PUBLISHED`, `organizerId` = Quantum Cards, `publishedAt` = now; E-04 now lists it with `registeredCount 0, seatsRemaining 24`; the UI lands on its detail page with "Your event is live." |
 | **AC-D-02** | Quantum Cards signed in | capacity is sent as 0, −1, 1.5, 257, `"24"` and `null`, then as 1 and 256 | the first six give `400` on `capacity` with "Capacity must be a whole number from 1 to 256." and store nothing; 1 and 256 give `201` |
-| **AC-D-03** | Quantum Cards signed in; clock fixed at T | start = T, start = T − 1 min, end = start, end = start + 24 h 1 min, and end = start + 24 h | the first four give `422 EVENT_TIME_INVALID` naming the right field and store nothing; the last gives `201` |
+| **AC-D-03** | *(v2, CH-13)* Quantum Cards signed in; clock fixed at T | start = T; start = T − 1 min; start = T + 1 min; start = T + 59 min; start = T + 60 min; then, with a valid start, end = start; end = start + 24 h 1 min; end = start + 24 h | the first four give `422 EVENT_TIME_INVALID` on `startAt` with "The start must be at least 60 minutes from now." and store nothing; T + 60 min gives `201`; end = start and end = start + 24 h 1 min give `422` on `endAt` and store nothing; end = start + 24 h gives `201`. *(v1: start = T, T − 1 min, the two end cases → 422; end = start + 24 h → 201)* |
 | **AC-D-04** | Quantum Cards signed in | a body with no title, a 2-char title, a 101-char title, a 2,001-char description, and all required fields missing | `400` with a `details` entry for **every** failing field in one response; whitespace-only text counts as missing; nothing stored |
 | **AC-D-05** | Mint signed in; then no session | E-06 with a valid body | Mint: `403 FORBIDDEN`; signed out: `401 UNAUTHENTICATED`; no event stored in either case |
 
@@ -661,3 +666,4 @@ the same Pull Request, so the history stays visible (Deliverable 1 §3.5).
 | v1.10 | 7 Nov 2026 | §0.2, §10 Behaviour 3, AC-G-01: the registered button is **REGISTERED** with the drawn check icon, not the "✓" glyph; the card's type · format line reads "Casual · Constructed" (design-direction v0.3) | UI polish in PR #24: design-direction §8 bans Unicode glyphs as icons | Team (AI-assisted) |
 | v1.11 | 7 Nov 2026 | §12 Feature-I: Playwright E2E half of TEST-I-01 moves to I-12 (following PR #18 pattern); UI behaviour checked at component level (`Registrations.test.tsx`); real E-08 replaces probe in TEST-B-02 and TEST-B-03, route table gains E-08 | Found while implementing #13 (I-11): Playwright is set up in I-12 | Praewa (MeldyRose) |
 | v1.12 | 7 Nov 2026 | §6 AC-C-03 names Nok instead of Mint; §0.3 says how the Playwright suite uses the seed (test database, fresh seed per file, E2E-only participant Fern); §10 the E2E half of TEST-G-02 loses the last seat of EV-2 while the page is open, since EV-3's button is FULL | Found while implementing #14 (I-12): Mint is registered for EV-1 in §0.3, so after signing in the button reads REGISTERED, and a FULL button cannot be pressed | Team (AI-assisted) |
+| v1.13 | 23 Nov 2026 | Lab 7 change CH-13 (Issue #77): §7 BR-02 start rule is now `startAt ≥ now() + 60 min` with the message "The start must be at least 60 minutes from now.", its boundaries, the start-field hint, and AC-D-03 (v2) with cases T + 1 min, T + 59 min and T + 60 min | Team (AI-assisted) |

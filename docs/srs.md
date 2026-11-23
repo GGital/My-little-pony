@@ -4,7 +4,7 @@ Project: **TCG Event Hub** — Event Registration and Attendance System
 Course: CPE 334, Semester 1/2026 — Theme 3 (Event Registration and Attendance System)
 Team: Phattaratorn Mahatkeerati (67070503433, [@GGital](https://github.com/GGital)) ·
 Praewa Thuwatharanimitkul (67070503432, [@MeldyRose](https://github.com/MeldyRose))
-Document version: v0.5 — v0.4 approved in PR #1; the v0.5 change (D-15) approved in PR #2
+Document version: v0.5.1 — Lab 7 change CH-13 (Issue #77, D-39) for team review; v0.4 approved in PR #1; the v0.5 change (D-15) approved in PR #2
 Companion documents: [`docs/features.md`](features.md), [`docs/traceability.md`](traceability.md),
 [`docs/diagrams/`](diagrams/README.md), [`docs/ui/design-direction.md`](ui/design-direction.md), [`docs/system-sds.md`](system-sds.md), [`docs/sprints/plan.md`](sprints/plan.md),
 [`docs/sprints/sprint-1/`](sprints/sprint-1/README.md)
@@ -261,8 +261,9 @@ database where a constraint can express it.
 
 - **BR-01** *(Sprint 1)* Capacity is a whole number from **1 to 256**. Zero, negative, fractional or larger values
   are rejected.
-- **BR-02** *(Sprint 1)* A new event's start time must be **in the future**, and its end time must be **after** its
-  start time and **no more than 24 hours** after it.
+- **BR-02** *(Sprint 1; revised by CH-13 in v0.5.1)* A new event's start time must be **at least 60 minutes after the
+  moment it is created** (start ≥ now + 60 min), and its end time must be **after** its start time and **no more
+  than 24 hours** after it. *Until v0.5 the start only had to be in the future.*
 - **BR-03** *(Sprint 1)* Title (3–100 characters), event type, format, venue name, venue address, city, start,
   end and capacity are required. Entry-fee label (up to 40 characters), play structure note (up to 80), contact (up
   to 120) and description (up to 2,000 characters) are optional.
@@ -392,6 +393,7 @@ Later sprints rerun earlier checks as regression tests.
 | D-13 | Keep the reference's **layout** (tabs, search bar, event cards with chips, two-column detail page) but give the product its **own visual theme**, defined in `docs/ui/design-direction.md` | Familiar flow for TCG players without copying another product's brand | 4 Nov 2026 | Decided by team |
 | D-14 | Organizers see participants' display names only, not emails; contacting players is outside the product (X-03) | Data minimisation: a display name is enough to check a player in | 4 Nov 2026 | Decided by team |
 | D-15 | Password hashing uses **scrypt** from Node's built-in crypto, reusing the team's TokTickIT implementation, instead of bcrypt | No native dependency to build in Docker; parameters already reviewed in TokTickIT Lab 3; memory-hard like bcrypt or better | 4 Nov 2026 | Decided by team (SDS SD-03) |
+| D-39 | **CH-13 (Lab 7):** BR-02 requires a new event's start to be at least **60 minutes** after it is created, instead of any future time. The end-time rules are unchanged, existing events are not re-checked, and no migration is needed. *(D-16 … D-38 are Sprint 2 and 3 decisions recorded on the Sprint 2 line.)* | Registration closes at the start (BR-04), so an event that starts minutes after it is published can't realistically be found, joined and travelled to | 23 Nov 2026 | Approved by Supachok Deetaweesukh (P'Tik, TA) on 23 Nov 2026, 13:18 Bangkok time, in a chat message (evidence L7-A01, `docs/labs/lab07/evidence/L7-A01-ta-approval.png`; Issue #77) |
 
 ### 10.2 Open questions
 
@@ -418,3 +420,4 @@ Later sprints rerun earlier checks as regression tests.
 | v0.3 | 4 Nov 2026 | Event-card and header patterns from the reference (§1.2); access summary (§2.1); FR-26 sign-in-then-return, FR-27 header account menu; D-13 own visual theme | Team (AI-assisted) |
 | v0.4 | 4 Nov 2026 | Review pass: BR-04 rewritten (cancelled events visible, drafts owner-only) to remove a conflict with FR-14 and FR-17; added FR-28 record keeping, NFR-15 input hygiene, NFR-16 sign-in throttling, "Upcoming" definition, problem → requirement links, C-06, D-14, Q-08, Q-09; clarified FR-12, FR-13, FR-17, BR-08, BR-09, BR-12, BR-15, BR-16, NFR-02, NFR-04, NFR-13, A-06; fixed X-08 reference | Team (AI-assisted) |
 | v0.5 | 4 Nov 2026 | NFR-03 hashing changed from bcrypt to scrypt (D-15), decided while writing the System-Level SDS | Team (AI-assisted) |
+| v0.5.1 | 23 Nov 2026 | Lab 7 change **CH-13** (Issue #77): BR-02 start must be at least 60 minutes after creation instead of "in the future"; D-39. A maintenance version on the Sprint 1 line (the Sprint 2 line already uses v0.6 and v0.7) | Team (AI-assisted) |

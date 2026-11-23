@@ -1,6 +1,6 @@
 # System-Level Software Design Specification (SDS)
 
-Project: **TCG Event Hub** · Document version: v0.9 (v0.2 reviewed in PR 2; changes in §14)
+Project: **TCG Event Hub** · Document version: v0.9.1 — Lab 7 change CH-13 for team review (Issue #77); v0.2 reviewed in PR 2; changes in §14
 Inputs: [`srs.md`](srs.md) v0.5 · [`features.md`](features.md) v0.2 · [`traceability.md`](traceability.md) v0.2 ·
 [`ui/design-direction.md`](ui/design-direction.md) v0.3 · [`diagrams/`](diagrams/README.md)
 
@@ -81,7 +81,7 @@ Two notes on the order:
 | Rule | Client (shows) | zod schema | Domain service | Database |
 |---|---|---|---|---|
 | BR-01 capacity 1–256 | form hint | `int().min(1).max(256)` | — | `CHECK (capacity BETWEEN 1 AND 256)` |
-| BR-02 future start, end after start, ≤ 24 h | form hint | shape only | start > `clock.now()` | `CHECK (end_at > start_at AND end_at <= start_at + interval '24 hours')` |
+| BR-02 start ≥ now + 60 min (CH-13), end after start, ≤ 24 h | form hint "at least 1 hour from now" | shape only | start ≥ `clock.now()` + 60 min (`MIN_LEAD_MINUTES`) | `CHECK (end_at > start_at AND end_at <= start_at + interval '24 hours')` |
 | BR-03 required fields and lengths | field errors | lengths, required | — | `NOT NULL`, `varchar(n)` |
 | BR-04 visibility and openness | button state from server | — | query filters + open check under lock | — |
 | BR-05 capacity | seat chip | — | count active under row lock | — (count cannot be a static constraint; the lock serialises it) |
@@ -331,7 +331,7 @@ wrong role. They exist only for convenience. The server repeats every check.
 | 409 | `CAPACITY_BELOW_REGISTERED`, `EVENT_STARTED`, `ALREADY_CANCELLED`, `NOT_IN_CHECK_IN_WINDOW`, `ALREADY_CHECKED_IN` | Sprint 2–3 rule conflicts (BR-09, BR-15, BR-12, BR-18, BR-19) |
 | 413 | `PAYLOAD_TOO_LARGE` | Request body over 100 kB |
 | 415 | `UNSUPPORTED_MEDIA_TYPE` | Body without JSON content type (a request with no body is not checked) |
-| 422 | `EVENT_TIME_INVALID` | Valid shape but impossible times: start not in the future, end too late (BR-02) |
+| 422 | `EVENT_TIME_INVALID` | Valid shape but impossible times: start less than 60 minutes from now, end too late (BR-02) |
 | 429 | `TOO_MANY_ATTEMPTS` | Sign-in throttled (NFR-16, Sprint 3) |
 | 500 | `INTERNAL_ERROR` | Anything unexpected |
 
@@ -562,3 +562,4 @@ Design points:
 | v0.7 | 13 Nov 2026 | Lab 5 (#31): `APP_ORIGIN` may list several origins (§6.1, §9.1); `GET /api/ready` E-12b, static serving of the built client and SIGTERM shutdown (§9.2); `APP_ORIGIN` no longer listed as the cookie `Secure` input (that is `NODE_ENV`) | Team (AI-assisted) |
 | v0.8 | 13 Nov 2026 | Lab 5 (#32): §3 container row is `node:24-alpine` (was `node:22-slim`), matching development and the Starter Kit | Team (AI-assisted) |
 | v0.9 | 13 Nov 2026 | Lab 5 (#36): `GIT_SHA` (§9.1), `GET /api/version` E-12c and the build footer (§9.2), so the running commit can be read from the live URL (R-08) | Team (AI-assisted) |
+| v0.9.1 | 23 Nov 2026 | Lab 7 change CH-13 (Issue #77): §2.4 BR-02 row uses start ≥ `clock.now()` + 60 min; §6.2 `EVENT_TIME_INVALID` wording. Same status and code, no schema change. A maintenance version on the Sprint 1 line | Team (AI-assisted) |
