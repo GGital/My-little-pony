@@ -1,6 +1,6 @@
 # Requirements-to-Features Traceability
 
-Project: **TCG Event Hub** · Document version: v0.4 — v0.1 approved in PR #1; CH-10 in PR 2; Sprint 1 results in I-12
+Project: **TCG Event Hub** · Document version: v0.4.1 — Lab 7 change CH-13 for team review (Issue #77); v0.1 approved in PR #1; CH-10 in PR 2; Sprint 1 results in I-12
 Inputs: [`docs/srs.md`](srs.md) v0.5 · [`docs/features.md`](features.md) v0.3 · Diagrams: [`docs/diagrams/`](diagrams/README.md)
 
 This is step 3 of the course design process. Every requirement is followed through four links, so anyone can
@@ -77,7 +77,7 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | Req. | Rule (short) | Feature / SR | Established | Planned verification | Re-verified |
 |---|---|---|---|---|---|
 | BR-01 | Capacity 1–256 whole number | Feature-D | Sprint 1 | AC-D-02 · U, I → **Pass**: TEST-D-02, TEST-SR1-03 | 2 (Feature-L) |
-| BR-02 | Start in future; end after start, ≤ 24 h | Feature-D, SR-03 | Sprint 1 | AC-D-03 · U, I → **Pass**: TEST-D-03, TEST-SR1-04 | 2 |
+| BR-02 | Start ≥ 60 min after creation (CH-13); end after start, ≤ 24 h | Feature-D, SR-03 | Sprint 1 (revised in Lab 7) | AC-D-03 (v2) · U, I, E2E → **Planned**: TEST-D-03 (v2), TEST-L7-01, L7-02 (changed), TEST-L7-03, L7-04 (preserved); **Pass**: TEST-SR1-04 | 2 |
 | BR-03 | Required fields and lengths | Feature-D | Sprint 1 | AC-D-04 · U, I → **Pass**: TEST-D-04 | 2 |
 | BR-04 | Visibility (published/cancelled public, drafts owner-only); only open events accept registrations | Feature-F, Feature-G | Sprint 1 | AC-F-04, AC-G-04 · I → **Pass**: TEST-F-04, TEST-G-04 | 2 (drafts, cancelled, deadline) |
 | BR-05 | Active registrations never exceed capacity | Feature-G, SR-01 | Sprint 1 | AC-G-02 · U, I → **Pass**: TEST-G-02 | 2, 3 |
@@ -175,7 +175,7 @@ response shapes). Each AC gets a test in the Software Test Specification with th
 | AC-C-06 | C | An event description containing `<script>` is shown as plain text | NFR-15 |
 | AC-D-01 | D | An organizer's valid event is saved as `PUBLISHED`, owned by that organizer, and appears in the public list | FR-06 |
 | AC-D-02 | D | Capacity 0, −1, 1.5 and 257 are rejected; 1 and 256 are accepted | BR-01 |
-| AC-D-03 | D | Past start, end not after start, or end more than 24 h after start are rejected | BR-02 |
+| AC-D-03 | D | Start less than 60 minutes from now (v2, CH-13), end not after start, or end more than 24 h after start are rejected; start = now + 60 min is accepted | BR-02 |
 | AC-D-04 | D | Missing required fields and over-length text are rejected with field details | BR-03 |
 | AC-D-05 | D | A participant gets 403 and a visitor 401 when creating an event; nothing is stored | BR-13 |
 | AC-E-01 | E | The dashboard lists the organizer's events with status, capacity, active count and seats left | FR-07 |
@@ -264,3 +264,4 @@ No requirement was withdrawn and no ID was renumbered.
 | v0.2 | 4 Nov 2026 | CH-10: scrypt instead of bcrypt (NFR-03, AC-A-05) | Team (AI-assisted) |
 | v0.3 | 7 Nov 2026 | Sprint 1 results: every Sprint 1 row names its tests and their result (I-12, STS §6) | Team (AI-assisted) |
 | v0.4 | 7 Nov 2026 | §4.1 coverage checked against SRS v0.5 (64 / 64, same IDs as v0.4); input features v0.3; v0.3 date corrected (7 Nov) | Team (AI-assisted) |
+| v0.4.1 | 23 Nov 2026 | Lab 7 change CH-13 (Issue #77): BR-02 and AC-D-03 rows describe the 60-minute lead time; TEST-D-03 (v2) and TEST-L7-01 … 04 Planned until the CH-13 run | Team (AI-assisted) |

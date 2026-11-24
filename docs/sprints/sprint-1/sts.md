@@ -1,6 +1,6 @@
 # Sprint 1 Software Test Specification (STS)
 
-Project: **TCG Event Hub** · Sprint 1 · Document version: v1.13 (v1.0 reviewed in PR 2; changes in §8)
+Project: **TCG Event Hub** · Sprint 1 · Document version: v1.14 — Lab 7 change CH-13 for team review (Issue #77); v1.0 reviewed in PR 2; changes in §8
 Contracts: [`feature-contracts.md`](feature-contracts.md) v1.12 · Issues and Definition of Done: [`README.md`](README.md)
 
 This document turns every Sprint 1 acceptance criterion into planned tests, **before** the code exists. It
@@ -128,9 +128,13 @@ the commit id in §6. All 55 rows below were filled at release from the runs on 
 |---|---|---|---|---|---|---|---|
 | TEST-D-01 | I, C, E2E | AC-D-01, FR-06 | Organizer O1; clock fixed | E-06 valid body (capacity 24, start tomorrow); then E-04. (C) CreateEvent form submit. (E2E, in I-12) fill the form and publish | `201`; row `PUBLISHED`, `organizerId` O1, `publishedAt` = now; listed with 0 / 24 and 24 left. (C) fields sent with +07:00 Bangkok offset, redirects to /events/:id with toast. (E2E) detail page with "Your event is live." | `server/tests/sprint-1/events.create.api.test.ts`, `client/tests/sprint-1/CreateEvent.test.tsx`, `e2e/sprint-1/organizer.spec.ts` (I-12) | Pass |
 | TEST-D-02 | U, I | AC-D-02, BR-01 | O1 | Capacity 0, −1, 1.5, 257, `"24"`, `null`; then 1, 256 | First six `400` on `capacity` with the exact message, 0 rows; 1 and 256 `201` | `server/tests/sprint-1/unit/event-input.unit.test.ts`, `server/tests/sprint-1/events.create.api.test.ts` | Pass |
-| TEST-D-03 | U, I | AC-D-03, BR-02 | O1; clock at T | start = T; start = T − 1 min; end = start; end = start + 24 h 1 min; end = start + 24 h | First four `422 EVENT_TIME_INVALID` naming `startAt` / `startAt` / `endAt` / `endAt`, 0 rows; last `201` | `server/tests/sprint-1/unit/event-rules.unit.test.ts`, `server/tests/sprint-1/events.create.api.test.ts` | Pass |
+| TEST-D-03 | U, I | AC-D-03 (v2, CH-13), BR-02 | O1; clock at T | start = T; T − 1 min; **T + 1 min**; **T + 59 min**; (U) **T + 60 min − 1 ms**; **T + 60 min**; then with start = T + 1 day: end = start; end = start + 24 h 1 min; end = start + 24 h | Start cases below 60 min: `422 EVENT_TIME_INVALID` on `startAt`, message "The start must be at least 60 minutes from now.", 0 rows; T + 60 min: `201`; end = start and + 24 h 1 min: `422` on `endAt`, 0 rows; + 24 h: `201` | `server/tests/sprint-1/unit/event-rules.unit.test.ts`, `server/tests/sprint-1/events.create.api.test.ts` | Pass (v1, I-07) · v2 Pending until the CH-13 run |
 | TEST-D-04 | U, I | AC-D-04, BR-03 | O1 | Body missing all required fields; title `"ab"`, 101 chars, `"   "`; description 2,001 chars; then 3- and 100-char titles | One `400` listing **every** failing field; 0 rows; the 3- and 100-char titles accepted | `server/tests/sprint-1/unit/event-input.unit.test.ts`, `server/tests/sprint-1/events.create.api.test.ts` | Pass |
 | TEST-D-05 | I | AC-D-05, BR-13 | Participant P; no session | E-06 valid body | P `403 FORBIDDEN`; visitor `401`; 0 rows | `server/tests/sprint-1/events.create.api.test.ts` | Pass |
+| TEST-L7-01 | E2E | AC-D-03 (v2, CH-13), BR-02 | Quantum Cards signed in; fresh seed; real clock | Fill the create form with a start 30 min from now (Bangkok) and PUBLISH EVENT; screenshots L7-B01-form, L7-B01-result | Stays on `/organizer/events/new`; `startAt` has `aria-invalid` and the error "The start must be at least 60 minutes from now."; the hint "(at least 1 hour from now)" is shown; no event on the dashboard | `e2e/sprint-1/lab7-ch13.spec.ts` | Pending (CH-13) |
+| TEST-L7-02 | E2E | AC-D-03 (v2, CH-13), BR-02 | same | Publish with a start 62 min from now (2 min margin for the minute-precision input); screenshot L7-B02-result | Detail page with "Your event is live." | `e2e/sprint-1/lab7-ch13.spec.ts` | Pending (CH-13) |
+| TEST-L7-03 | E2E | AC-D-03, BR-02 (end rule, preserved) | same | Publish an event 5 days ahead lasting 25 h; screenshot L7-P01-result | Stays on the form; `endAt` error "An event can last at most 24 hours." (unchanged by CH-13) | `e2e/sprint-1/lab7-ch13.spec.ts` | Pending (CH-13) |
+| TEST-L7-04 | E2E | AC-D-05, BR-13 (preserved) | Mint signed in | Open `/organizer/events/new`; screenshot L7-P02-result | The "This page isn't available for your account" page; no form (unchanged by CH-13) | `e2e/sprint-1/lab7-ch13.spec.ts` | Pending (CH-13) |
 
 ### 2.7 Feature-E — organizer dashboard
 
@@ -223,7 +227,7 @@ NFR-14 requires a negative test for every BR. Sprint 1 BRs:
 | BR | Rejection tested by | What is rejected |
 |---|---|---|
 | BR-01 | TEST-D-02, TEST-SR1-03 | Capacity 0, −1, 1.5, 257 (API and database) |
-| BR-02 | TEST-D-03, TEST-SR1-04, TEST-SR3-01 | Past or now start; end not after start; over 24 h |
+| BR-02 | TEST-D-03 (v2), TEST-SR1-04, TEST-SR3-01 | Start less than 60 min from now (past, now, T + 1 min, T + 59 min); end not after start; over 24 h |
 | BR-03 | TEST-D-04 | Missing, too short, too long, whitespace-only fields |
 | BR-04 | TEST-F-04, TEST-G-04, TEST-SR3-01 | Started events hidden from the list and not registrable |
 | BR-05 | TEST-G-02 | Registration on a full event |
@@ -338,3 +342,4 @@ npm run secret:scan
 | v1.11 | 7 Nov 2026 | I-11 TDD record filled from real runs; TEST-I-01 gains a component level (`Registrations.test.tsx`) and moves its E2E half to I-12; real E-08 replaces probe in TEST-B-02 and TEST-B-03, and the E-08 probe is removed; review: TEST-I-01 data out of order with a cancelled row, not-found page case (PR #25) | Praewa (MeldyRose); review Team (AI-assisted) |
 | v1.12 | 7 Nov 2026 | I-12: every §2 result filled from the release runs; §5 I-12 row (TEST-SR7-01 red → green, first E2E run and mutations); §6 results; §7 E2E, coverage and scan commands; §1.2 E2E environment; TEST-G-02 E2E uses EV-2 (contracts v1.12) | Team (AI-assisted) |
 | v1.13 | 7 Nov 2026 | §6: staging `8dd1371` re-run after the I-12 merge, and the fresh-clone run (DoD-10) | Team (AI-assisted) |
+| v1.14 | 23 Nov 2026 | Lab 7 change CH-13 (Issue #77): TEST-D-03 (v2) adds start = T + 1 min and T + 59 min (rejected) and T + 60 min (accepted) and the new message; TEST-L7-01 … 04 (E2E, run on the pre-change code and on the changed code, with screenshots in `docs/labs/lab07/evidence/`) planned; result "Pass (v1) · v2 Pending" until the CH-13 run (`sts:check` accepts only a recorded Pass or Fail); BR-02 rejection row | Team (AI-assisted) |
