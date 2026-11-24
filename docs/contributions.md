@@ -82,7 +82,7 @@ tests, then code; the evidence index is [`labs/lab07/README.md`](labs/lab07/READ
 | L7 change request and contract revision (SRS, contracts, STS, SDS, traceability) | [#77](https://github.com/GGital/My-little-pony/issues/77) | `feature/l7-ch13-lead-time` · [#88](https://github.com/GGital/My-little-pony/pull/88) | Phattaratorn (TA approval obtained 23 Nov) | Praewa (approved #88, 24 Nov) | Merged 24 Nov (`a44fcac`); contract commit `751e9cd` |
 | L7 tests, implementation and evidence | [#77](https://github.com/GGital/My-little-pony/issues/77) | `feature/l7-ch13-code` · [#89](https://github.com/GGital/My-little-pony/pull/89) | Phattaratorn | Praewa (approved #89, 24 Nov) | Merged 24 Nov (`816230a`); red `f41f52f`, green `72ae022`, evidence `68d4377` |
 | L7 release to `main` and deploy | [#77](https://github.com/GGital/My-little-pony/issues/77) | `sprint-1-staging` · [#90](https://github.com/GGital/My-little-pony/pull/90) | Phattaratorn (release PR, tag, live checks with Claude Code; signed in by hand) | Praewa (approved #90, 24 Nov) | Merged 24 Nov (`dff72b6`), tag `v0.1.2`; Cloud Run `tcg-event-hub-00018-s6f`; L7-D01, L7-D02 PASS |
-| L7 release and deploy records (README v1.1) | [#77](https://github.com/GGital/My-little-pony/issues/77) | `docs/l7-release-records` · PR pending | Phattaratorn | Praewa (to request) | Open |
+| L7 release and deploy records (README v1.1) | [#77](https://github.com/GGital/My-little-pony/issues/77) | `docs/l7-release-records` · [#91](https://github.com/GGital/My-little-pony/pull/91) | Phattaratorn | Praewa (to request) | Open |
 
 ## 6. Keeping this table current
 
