@@ -1,6 +1,6 @@
 # Lab 7: Sprint 1 maintenance, change CH-13 (evidence index)
 
-Project: **TCG Event Hub** · Issue [#77](https://github.com/GGital/My-little-pony/issues/77) · Document version: v1.0 (24 Nov 2026)
+Project: **TCG Event Hub** · Issue [#77](https://github.com/GGital/My-little-pony/issues/77) · Document version: v1.1 (25 Nov 2026)
 
 This page indexes the Part A and Part B evidence kept in the repository. The submission PDF embeds the same items
 (Lab 7 §4.1) and uses these evidence IDs. Parts C and D (metrics, readiness, retrospective) are written for the PDF
@@ -27,10 +27,10 @@ existing events, the schema (no migration).
 | Contract revision (before code) | `751e9cd`, PR #88, merged as `a44fcac` (24 Nov 2026) | SRS v0.5.1, contracts v1.13, STS v1.14, SDS v0.9.1, traceability v0.4.1; reviewed by Praewa |
 | Tests (red) | `f41f52f` | Branch `feature/l7-ch13-code` from `a44fcac` |
 | Implementation (green) | `72ae022` | |
-| Evidence and results | the commit that adds this page | STS v1.15, traceability v0.4.2 |
-| PR into `sprint-1-staging`, CI | *pending* | |
-| Main release | *pending*: `v0.1.2` | |
-| Deployed revision, post-deploy checks | *pending* | Lab 5 pipeline |
+| Evidence and results | `68d4377` | STS v1.15, traceability v0.4.2 |
+| PR into `sprint-1-staging`, CI | PR #89 merged as `816230a` (24 Nov 2026 16:53) | Reviewed by Praewa; CI run 45430174916 green (L7-PR) |
+| Main release | `v0.1.2` = `dff72b6` (PR #90, merged 24 Nov 2026 17:22) | Reviewed by Praewa; contains only the six CH-13 commits (L7-REL) |
+| Deployed revision, post-deploy checks | Cloud Run `tcg-event-hub-00018-s6f`, serving `dff72b6` | Lab 5 pipeline run 45447898603, smoke 5 PASS; L7-D01, L7-D02 PASS |
 
 No Sprint 2 code is on this line: Sprint 2 work is on `sprint-2-staging` and the CH-13 contract revision for Sprint 2
 (edit and publish) is a separate change there.
@@ -85,17 +85,37 @@ The exact 60-minute boundary (now + 60 min accepted, now + 60 min − 1 ms and +
 clock in L7-R01 / L7-G01. The browser test uses 62 minutes because the `datetime-local` input has minute precision and
 the real clock moves during the test.
 
-### 2.4 Still to record (after this PR)
+### 2.4 Review, integration, release and deploy
 
-| ID | Item |
-|---|---|
-| L7-PR | Praewa's review of the code PR and the CI run on it; merge into `sprint-1-staging` |
-| L7-REL | Release PR `sprint-1-staging` → `main`, tag `v0.1.2`, Lab 5 deploy run and Cloud Run revision |
-| L7-D01 | Post-deploy, changed: on the live site, a start 30 min away gives the Start-field error; a start just over 1 h away publishes |
-| L7-D02 | Post-deploy, preserved: Mint cannot open the create page; a 25-hour event is still rejected on End |
+| ID | What | Result | Source |
+|---|---|---|---|
+| L7-PR | PR #89 (tests, code, evidence) into `sprint-1-staging` | Approved by Praewa (MeldyRose) 24 Nov 2026 16:47; CI `test-and-docker` run 45430174916 on `68d4377` green; merged as `816230a` at 16:53 | [PR #89](https://github.com/GGital/My-little-pony/pull/89) |
+| L7-REL | Release PR #90 `sprint-1-staging` → `main` | CI run 45442901114 on `816230a` green; approved by Praewa 17:20; merged as `dff72b6` at 17:22; annotated tag `v0.1.2` on `dff72b6`. Deploy demo run 45447898603 (17:22–17:28): test job 308 / 91 / 53 passed, 0 failed, 0 skipped; image `tcg-event-hub:dff72b6…`; migration execution completed (no new migration); revision `tcg-event-hub-00018-s6f` at 100 % (replaces `00017-j4p`); smoke `/api/health`, `/api/ready`, `/`, `/api/events`, `/api/version` = `dff72b6` PASS; login smoke SKIP (optional credentials not configured) | [PR #90](https://github.com/GGital/My-little-pony/pull/90), [`L7-REL-deploy.txt`](evidence/L7-REL-deploy.txt) |
+
+The merge commits are the normal project workflow: `816230a` merges #89 into staging, `dff72b6` merges staging into
+`main`. `git log 5425300..dff72b6` lists only the CH-13 commits and their merges; no Sprint 2 work is in this release.
+
+### 2.5 Post-deploy checks on the live site
+
+Live site `https://tcg-event-hub-932557875237.asia-southeast1.run.app`, revision `tcg-event-hub-00018-s6f`,
+`/api/version` = `dff72b6` at the time of the checks (recorded in each JSON as `deployedCommit`). **Manual sign-in,
+automated steps**: the tester signed in by hand in a headed Chromium window (Quantum Cards, then Mint); a Playwright
+script then filled the form and saved the screenshot and the JSON record, with `actual` read from the page. 24 Nov 2026
+17:30 UTC (25 Nov 00:30 Bangkok). Synthetic data only; the 62-minute event is left on the live site.
+
+| ID | Behaviour | Action | Expected | Actual | Result | Files |
+|---|---|---|---|---|---|---|
+| L7-D01-a | changed | Quantum Cards publishes an event starting 30 min from now | Stays on the form; Start field: "The start must be at least 60 minutes from now."; nothing published | `/organizer/events/new`, Start field shows that message | PASS | [png](evidence/L7-D01-a-live.png) · [json](evidence/L7-D01-a-live.json) |
+| L7-D01-b | changed rule, allowed side | Quantum Cards publishes an event starting 62 min from now | "Your event is live." | `/events/44` "Lab 7 live check 0029 (62 min)", banner "Your event is live.", footer `Build dff72b6` | PASS | [png](evidence/L7-D01-b-live.png) · [json](evidence/L7-D01-b-live.json) |
+| L7-D02-a | preserved | Quantum Cards publishes an event 5 days ahead lasting 25 h | End field: "An event can last at most 24 hours." | `/organizer/events/new`, End field shows that message | PASS | [png](evidence/L7-D02-a-live.png) · [json](evidence/L7-D02-a-live.json) |
+| L7-D02-b | preserved (access) | Mint (participant) opens `/organizer/events/new` | "This page isn't available for your account"; no form | That page, no form (`formPresent: false`), footer `Build dff72b6` | PASS | [png](evidence/L7-D02-b-live.png) · [json](evidence/L7-D02-b-live.json) |
+
+The banner "Your event is live." in L7-D01-b is visible in the screenshot but is not an ARIA alert, so the JSON
+`messages` list is empty; the URL and heading show the published event.
 
 ## 3. Version history
 
 | Version | Date | Change | Author |
 |---|---|---|---|
 | v1.0 | 24 Nov 2026 | Index of the CH-13 approval, red / green runs and before / after screenshots | Team (AI-assisted) |
+| v1.1 | 25 Nov 2026 | Review and CI of #89, release #90 / `v0.1.2`, deploy run and revision, post-deploy checks L7-D01 and L7-D02 | Team (AI-assisted) |
