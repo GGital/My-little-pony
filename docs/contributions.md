@@ -72,7 +72,17 @@ UAT findings from Team 1 KitLoop are Issues #56–#64; the triage is Part 4 of t
 | L6-61 Signed-in user on /login goes on | [#61](https://github.com/GGital/My-little-pony/issues/61) | `fix/l6-61-login-when-signed-in` · [#72](https://github.com/GGital/My-little-pony/pull/72) | Phattaratorn | Praewa (approved #72, 20 Nov) | Merged 20 Nov (`6f7c5ba`); red `a317329`, green `4dd625b` |
 | L6-59 Long contact stays inside the event page | [#59](https://github.com/GGital/My-little-pony/issues/59) | `fix/l6-59-contact-overflow` · [#73](https://github.com/GGital/My-little-pony/pull/73) | Phattaratorn | Praewa (approved #73, 20 Nov) | Merged 20 Nov (`62615bb`); red `46af54f`, green `5302003` |
 
-## 5. Keeping this table current
+## 5. Lab 7: Sprint 1 maintenance (CH-13)
+
+One approved change to BR-02 (a new event must start at least 60 minutes after it is created). Contract first, then
+tests, then code; the evidence index is [`labs/lab07/README.md`](labs/lab07/README.md).
+
+| Item | Issue | Branch · PR | Built by | Reviewed by | Status |
+|---|---|---|---|---|---|
+| L7 change request and contract revision (SRS, contracts, STS, SDS, traceability) | [#77](https://github.com/GGital/My-little-pony/issues/77) | `feature/l7-ch13-lead-time` · [#88](https://github.com/GGital/My-little-pony/pull/88) | Phattaratorn (TA approval obtained 23 Nov) | Praewa (approved #88, 24 Nov) | Merged 24 Nov (`a44fcac`); contract commit `751e9cd` |
+| L7 tests, implementation and evidence | [#77](https://github.com/GGital/My-little-pony/issues/77) | `feature/l7-ch13-code` · PR pending | Phattaratorn | Praewa (to request) | Red `f41f52f`, green `72ae022`; evidence committed; review, release `v0.1.2` and deploy pending |
+
+## 6. Keeping this table current
 
 Every Issue PR updates its own row (branch, PR, built by, reviewed by, status) and the summary in §2, in the same PR
 as the work. Pair work names both students. Reviewers are filled in from the PR's review record, not in advance.
@@ -105,3 +115,4 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.24 | 20 Nov 2026 | §4 Lab 6: #62 merged (#66), #63 merged (#68), CI runner pin (#67), L6-58 in progress | Team (AI-assisted) |
 | v0.25 | 21 Nov 2026 | §4 Lab 6: #58 merged (#69), #60 merged (#70), #57 merged (#71), #56 merged (#65, approved by Phattaratorn); L6-61 in review (#72) | Team (AI-assisted) |
 | v0.26 | 21 Nov 2026 | §4 Lab 6: #61 merged (#72), #59 merged (#73); all eight accepted defects on `sprint-1-staging`, release to `main` and KitLoop retest pending | Team (AI-assisted) |
+| v0.26.1 | 24 Nov 2026 | §5 Lab 7 CH-13 rows (#88 merged; tests, code and evidence); "Keeping this table current" becomes §6 | Team (AI-assisted) |

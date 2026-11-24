@@ -1,0 +1,14 @@
+{
+  "id": "L7-B01-result",
+  "side": "before",
+  "action": "Press PUBLISH EVENT",
+  "expected": "Stays on the form; the start field says \"The start must be at least 60 minutes from now.\"; no event is published",
+  "actual": {
+    "url": "/events/7",
+    "heading": "Lunch Break Casual",
+    "messages": []
+  },
+  "time": "2026-11-24T15:37:48.589Z",
+  "commit": "f41f52f",
+  "screenshot": "L7-B01-result-before.png"
+}

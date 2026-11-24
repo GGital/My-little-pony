@@ -1,0 +1,16 @@
+{
+  "id": "L7-B01-result",
+  "side": "after",
+  "action": "Press PUBLISH EVENT",
+  "expected": "Stays on the form; the start field says \"The start must be at least 60 minutes from now.\"; no event is published",
+  "actual": {
+    "url": "/organizer/events/new",
+    "heading": "Create an event",
+    "messages": [
+      "The start must be at least 60 minutes from now."
+    ]
+  },
+  "time": "2026-11-24T15:41:03.489Z",
+  "commit": "72ae022",
+  "screenshot": "L7-B01-result-after.png"
+}

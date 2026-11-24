@@ -1,0 +1,14 @@
+{
+  "id": "L7-B02-result",
+  "side": "after",
+  "action": "Publish an event starting 62 minutes from now",
+  "expected": "Event detail page with \"Your event is live.\"",
+  "actual": {
+    "url": "/events/7",
+    "heading": "Evening Casual",
+    "messages": []
+  },
+  "time": "2026-11-24T15:41:05.669Z",
+  "commit": "72ae022",
+  "screenshot": "L7-B02-result-after.png"
+}
