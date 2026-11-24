@@ -1,0 +1,44 @@
+Lab 7 · CH-13 (Issue #77) · Evidence L7-R02 · RED, E2E before|after spec on the old code (L7_SIDE=before)
+Commit: f41f52f (tests only, pre-change code)
+Time: 2026-11-24T15:37:40Z to 15:38:05Z (screenshot records L7-*-before.json)
+Command: $env:L7_SIDE='before'; npx playwright test lab7-ch13 --reporter=list
+Tests: TEST-L7-01 … 04 (e2e/sprint-1/lab7-ch13.spec.ts). Setup: fresh seed, real clock, Quantum Cards / Mint signed in.
+Expected: TEST-L7-01 fails (old code publishes a start 30 min away); TEST-L7-02 … 04 pass (allowed side and preserved behaviour).
+Actual: 1 failed / 3 passed / 0 skipped. TEST-L7-01: expected URL /organizer/events/new, received /events/7 (the event was published).
+Versions: Node 24.19.0 · Vitest 4.0.18 · Playwright 1.56.1 (Chromium) · PostgreSQL 17.9 (local Docker test database, fresh seed)
+
+=== Output ===
+[WebServer] Environment variables loaded from .env
+Running 4 tests using 1 worker
+  x  1 [chromium] › e2e\sprint-1\lab7-ch13.spec.ts:67:7 › changed behaviour (CH-13) › TEST-L7-01 (E2E) — a start 30 minutes away is rejected on the start field, nothing published (AC-D-03 v2) (8.6s)
+  ok 2 [chromium] › e2e\sprint-1\lab7-ch13.spec.ts:82:7 › changed behaviour (CH-13) › TEST-L7-02 (E2E) — a start 62 minutes away is accepted: "Your event is live." (AC-D-03 v2 boundary side) (2.3s)
+  ok 3 [chromium] › e2e\sprint-1\lab7-ch13.spec.ts:94:7 › preserved Sprint 1 behaviour › TEST-L7-03 (E2E) — an event longer than 24 hours is still rejected on the end field (BR-02 end rule) (1.9s)
+  ok 4 [chromium] › e2e\sprint-1\lab7-ch13.spec.ts:106:7 › preserved Sprint 1 behaviour › TEST-L7-04 (E2E) — a participant still cannot open the create page (BR-13 access) (1.3s)
+  1) [chromium] › e2e\sprint-1\lab7-ch13.spec.ts:67:7 › changed behaviour (CH-13) › TEST-L7-01 (E2E) — a start 30 minutes away is rejected on the start field, nothing published (AC-D-03 v2) 
+    Error: expect(page).toHaveURL(expected) failed
+    Expected: "http://localhost:5174/organizer/events/new"
+    Received: "http://localhost:5174/events/7"
+    Timeout:  5000ms
+    Call log:
+      - Expect "toHaveURL" with timeout 5000ms
+        9 × unexpected value "http://localhost:5174/events/7"
+      72 |     await evidence(page, 'L7-B01-result', 'Press PUBLISH EVENT', `Stays on the form; the start field says "${MSG}"; no event is published`, b01)
+      73 |
+    > 74 |     await expect(page).toHaveURL('/organizer/events/new')
+         |                        ^
+      75 |     await expect(page.locator('#startAt')).toHaveAttribute('aria-invalid', 'true')
+      76 |     await expect(page.getByTestId('field-error-startAt')).toHaveText(MSG)
+      77 |     await expect(page.getByText('(at least 1 hour from now)')).toBeVisible()
+        at .\e2e\sprint-1\lab7-ch13.spec.ts:74:24
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\lab7-ch13-changed-behaviou-c0085-thing-published-AC-D-03-v2--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error Context: test-results\lab7-ch13-changed-behaviou-c0085-thing-published-AC-D-03-v2--chromium\error-context.md
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\lab7-ch13-changed-behaviou-c0085-thing-published-AC-D-03-v2--chromium\trace.zip
+    Usage:
+        npx playwright show-trace test-results\lab7-ch13-changed-behaviou-c0085-thing-published-AC-D-03-v2--chromium\trace.zip
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+  1 failed
+    [chromium] › e2e\sprint-1\lab7-ch13.spec.ts:67:7 › changed behaviour (CH-13) › TEST-L7-01 (E2E) — a start 30 minutes away is rejected on the start field, nothing published (AC-D-03 v2) 
+  3 passed (38.1s)

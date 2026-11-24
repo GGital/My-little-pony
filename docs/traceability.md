@@ -1,6 +1,6 @@
 # Requirements-to-Features Traceability
 
-Project: **TCG Event Hub** · Document version: v0.4.1 — Lab 7 change CH-13 for team review (Issue #77); v0.1 approved in PR #1; CH-10 in PR 2; Sprint 1 results in I-12
+Project: **TCG Event Hub** · Document version: v0.4.2 — Lab 7 change CH-13 results (Issue #77); v0.1 approved in PR #1; CH-10 in PR 2; Sprint 1 results in I-12
 Inputs: [`docs/srs.md`](srs.md) v0.5 · [`docs/features.md`](features.md) v0.3 · Diagrams: [`docs/diagrams/`](diagrams/README.md)
 
 This is step 3 of the course design process. Every requirement is followed through four links, so anyone can
@@ -77,7 +77,7 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | Req. | Rule (short) | Feature / SR | Established | Planned verification | Re-verified |
 |---|---|---|---|---|---|
 | BR-01 | Capacity 1–256 whole number | Feature-D | Sprint 1 | AC-D-02 · U, I → **Pass**: TEST-D-02, TEST-SR1-03 | 2 (Feature-L) |
-| BR-02 | Start ≥ 60 min after creation (CH-13); end after start, ≤ 24 h | Feature-D, SR-03 | Sprint 1 (revised in Lab 7) | AC-D-03 (v2) · U, I, E2E → **Planned**: TEST-D-03 (v2), TEST-L7-01, L7-02 (changed), TEST-L7-03, L7-04 (preserved); **Pass**: TEST-SR1-04 | 2 |
+| BR-02 | Start ≥ 60 min after creation (CH-13); end after start, ≤ 24 h | Feature-D, SR-03 | Sprint 1 (revised in Lab 7) | AC-D-03 (v2) · U, I, E2E → **Pass** (`72ae022`, red on `f41f52f`): TEST-D-03 (v2), TEST-L7-01, L7-02 (changed), TEST-L7-03, L7-04 (preserved); **Pass**: TEST-SR1-04 | 2 |
 | BR-03 | Required fields and lengths | Feature-D | Sprint 1 | AC-D-04 · U, I → **Pass**: TEST-D-04 | 2 |
 | BR-04 | Visibility (published/cancelled public, drafts owner-only); only open events accept registrations | Feature-F, Feature-G | Sprint 1 | AC-F-04, AC-G-04 · I → **Pass**: TEST-F-04, TEST-G-04 | 2 (drafts, cancelled, deadline) |
 | BR-05 | Active registrations never exceed capacity | Feature-G, SR-01 | Sprint 1 | AC-G-02 · U, I → **Pass**: TEST-G-02 | 2, 3 |
@@ -265,3 +265,4 @@ No requirement was withdrawn and no ID was renumbered.
 | v0.3 | 7 Nov 2026 | Sprint 1 results: every Sprint 1 row names its tests and their result (I-12, STS §6) | Team (AI-assisted) |
 | v0.4 | 7 Nov 2026 | §4.1 coverage checked against SRS v0.5 (64 / 64, same IDs as v0.4); input features v0.3; v0.3 date corrected (7 Nov) | Team (AI-assisted) |
 | v0.4.1 | 23 Nov 2026 | Lab 7 change CH-13 (Issue #77): BR-02 and AC-D-03 rows describe the 60-minute lead time; TEST-D-03 (v2) and TEST-L7-01 … 04 Planned until the CH-13 run | Team (AI-assisted) |
+| v0.4.2 | 24 Nov 2026 | Lab 7 CH-13: BR-02 row Pass (red `f41f52f`, green `72ae022`) | Team (AI-assisted) |

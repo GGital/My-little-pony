@@ -176,7 +176,7 @@ export const CreateEvent: React.FC = () => {
           <section className="form-card">
             <h2>When</h2>
             <div className="form-grid">
-              {field({ id: 'startAt', label: 'Start Date & Time (Bangkok)', required: true, type: 'datetime-local' })}
+              {field({ id: 'startAt', label: 'Start Date & Time (Bangkok)', required: true, hint: 'at least 1 hour from now', type: 'datetime-local' })}
               {field({ id: 'endAt', label: 'End Date & Time (Bangkok)', required: true, type: 'datetime-local' })}
             </div>
             <p className="sub small">An event can last at most 24 hours.</p>

@@ -168,12 +168,14 @@ describe('TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01
   })
 })
 
-describe('TEST-D-03 (I) — Time rules enforcement (AC-D-03, BR-02)', () => {
+describe('TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02)', () => {
   const T = new Date('2026-11-06T10:00:00.000Z')
 
   it.each([
-    ['start = T', () => T.toISOString(), () => new Date(T.getTime() + 2 * 3600000).toISOString(), 'startAt', 'The start must be in the future.'],
-    ['start = T - 1 min', () => new Date(T.getTime() - 60000).toISOString(), () => new Date(T.getTime() + 2 * 3600000).toISOString(), 'startAt', 'The start must be in the future.'],
+    ['start = T', () => T.toISOString(), () => new Date(T.getTime() + 2 * 3600000).toISOString(), 'startAt', 'The start must be at least 60 minutes from now.'],
+    ['start = T - 1 min', () => new Date(T.getTime() - 60000).toISOString(), () => new Date(T.getTime() + 2 * 3600000).toISOString(), 'startAt', 'The start must be at least 60 minutes from now.'],
+    ['start = T + 1 min (CH-13)', () => new Date(T.getTime() + 60000).toISOString(), () => new Date(T.getTime() + 2 * 3600000).toISOString(), 'startAt', 'The start must be at least 60 minutes from now.'],
+    ['start = T + 59 min (CH-13)', () => new Date(T.getTime() + 59 * 60000).toISOString(), () => new Date(T.getTime() + 2 * 3600000).toISOString(), 'startAt', 'The start must be at least 60 minutes from now.'],
     ['end = start', () => new Date(T.getTime() + 3600000).toISOString(), () => new Date(T.getTime() + 3600000).toISOString(), 'endAt', 'The end must be after the start.'],
     ['end = start + 24 h 1 min', () => new Date(T.getTime() + 3600000).toISOString(), () => new Date(T.getTime() + (25 * 3600000 + 60000)).toISOString(), 'endAt', 'An event can last at most 24 hours.'],
   ])('%s → 422 EVENT_TIME_INVALID naming %s, 0 rows stored', async (_label, getStart, getEnd, expectedField, expectedMessage) => {
@@ -197,6 +199,28 @@ describe('TEST-D-03 (I) — Time rules enforcement (AC-D-03, BR-02)', () => {
       expect(detail).toBeDefined()
       expect(detail.message).toBe(expectedMessage)
       expect(await tableCounts()).toEqual(before)
+    } finally {
+      resetNow()
+    }
+  })
+
+  it('start = T + 60 min → 201 accepted, stored once (CH-13 boundary)', async () => {
+    setNow(T)
+    try {
+      const before = await prisma.event.count()
+      const res = await request(app)
+        .post('/api/events')
+        .set('Origin', TEST_ORIGIN)
+        .set('Cookie', quantumCookie)
+        .send({
+          ...VALID_EVENT_PAYLOAD,
+          title: 'Lead Time Boundary',
+          startAt: new Date(T.getTime() + 60 * 60000).toISOString(),
+          endAt: new Date(T.getTime() + 3 * 3600000).toISOString(),
+        })
+
+      expect(res.status).toBe(201)
+      expect(await prisma.event.count()).toBe(before + 1)
     } finally {
       resetNow()
     }
