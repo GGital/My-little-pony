@@ -1,0 +1,147 @@
+Lab 7 · CH-13 (Issue #77) · Evidence L7-R01 · RED, server unit + API (test database)
+Commit: f41f52f (tests only; server/ and client/ identical to the pre-change sprint-1-staging a44fcac / accepted main 5425300)
+Time: 2026-11-24T15:37:19Z
+Command: cd server; npx vitest run tests/sprint-1/unit/event-rules.unit.test.ts tests/sprint-1/events.create.api.test.ts --reporter=verbose
+Tests: TEST-D-03 (U, v2) and TEST-D-03 (I, v2). Setup: clock fixed at T = 2026-11-06T10:00Z (setNow); Quantum Cards session.
+Action: run the CH-13 tests on the old rule (startAt > now()).
+Expected: every case below now + 60 min fails on its assertion (old code accepts it or returns the old message); unchanged cases pass.
+Actual: 9 failed / 26 passed / 0 skipped (35). Unit 5 failed / 11, API 4 failed / 24. Every failure is an AssertionError on the
+        missing rule or the new message ("The start must be at least 60 minutes from now."); no compile or fixture error.
+Versions: Node 24.19.0 · Vitest 4.0.18 · Playwright 1.56.1 (Chromium) · PostgreSQL 17.9 (local Docker test database, fresh seed)
+
+=== Output ===
+ RUN  v4.0.18 ./server
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-01 (I) — Valid event creation and publication (AC-D-01, FR-06) > posts a valid event tomorrow with capacity 24 → 201, stored row PUBLISHED, listed in E-04 51ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-01 (I) — Valid event creation and publication (AC-D-01, FR-06) > the owner is the caller, not anyone else (Dragon's Den creates, not id 1) 19ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = 0 → 400 VALIDATION_FAILED with exact message, 0 rows stored 39ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = -1 → 400 VALIDATION_FAILED with exact message, 0 rows stored 18ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = 1.5 → 400 VALIDATION_FAILED with exact message, 0 rows stored 15ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = 257 → 400 VALIDATION_FAILED with exact message, 0 rows stored 12ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = 24 → 400 VALIDATION_FAILED with exact message, 0 rows stored 15ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = null → 400 VALIDATION_FAILED with exact message, 0 rows stored 12ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = 1 gives 201 and stores row 26ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = 256 gives 201 and stores row 15ms
+ × tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > start = T → 422 EVENT_TIME_INVALID naming () => T.toISOString(), 0 rows stored 15ms
+   → expected 'The start must be in the future.' to be 'The start must be at least 60 minutes…' // Object.is equality
+ × tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > start = T - 1 min → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() - 6e4).toISOString(), 0 rows stored 10ms
+   → expected 'The start must be in the future.' to be 'The start must be at least 60 minutes…' // Object.is equality
+ × tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > start = T + 1 min (CH-13) → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() + 6e4).toISOString(), 0 rows stored 24ms
+   → expected 201 to be 422 // Object.is equality
+ × tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > start = T + 59 min (CH-13) → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() + 59 * 6e4).toISOString(), 0 rows stored 19ms
+   → expected 201 to be 422 // Object.is equality
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > end = start → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() + 36e5).toISOString(), 0 rows stored 12ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > end = start + 24 h 1 min → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() + 36e5).toISOString(), 0 rows stored 11ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > start = T + 60 min → 201 accepted, stored once (CH-13 boundary) 21ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > end = start + 24 h → 201 accepted 13ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-04 (I) — Validation details and string rules (AC-D-04, BR-03) > body missing all required fields → 400 with details for EVERY failing field in one response, 0 rows stored 12ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-04 (I) — Validation details and string rules (AC-D-04, BR-03) > whitespace-only text counts as missing, 0 rows stored 13ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-04 (I) — Validation details and string rules (AC-D-04, BR-03) > rejects title of 2 chars and 101 chars, description 2,001 chars 26ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-04 (I) — Validation details and string rules (AC-D-04, BR-03) > accepts 3-char and 100-char titles → 201 36ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-05 (I) — Access control: organizer only (AC-D-05, BR-13) > participant (Mint) → 403 FORBIDDEN, 0 rows stored 11ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-05 (I) — Access control: organizer only (AC-D-05, BR-13) > visitor (signed out) → 401 UNAUTHENTICATED, 0 rows stored 8ms
+ × tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — Event time rules validation (BR-02, AC-D-03) > rejects start equal to now (start = T) with startAt: The start must be at least 60 minutes from now. 7ms
+   → expected 'The start must be in the future.' to be 'The start must be at least 60 minutes…' // Object.is equality
+ × tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — Event time rules validation (BR-02, AC-D-03) > rejects start in the past (start = T - 1 min) with startAt: The start must be at least 60 minutes from now. 1ms
+   → expected 'The start must be in the future.' to be 'The start must be at least 60 minutes…' // Object.is equality
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — Event time rules validation (BR-02, AC-D-03) > rejects end equal to start (end = start) with endAt: The end must be after the start. 0ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — Event time rules validation (BR-02, AC-D-03) > rejects end before start (end < start) with endAt: The end must be after the start. 0ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — Event time rules validation (BR-02, AC-D-03) > rejects duration over 24 h (end = start + 24 h 1 min) with endAt: An event can last at most 24 hours. 0ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — Event time rules validation (BR-02, AC-D-03) > accepts duration exactly 24 h (end = start + 24 h) 0ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — Event time rules validation (BR-02, AC-D-03) > source check: event-rules.ts uses clock.now() and never calls Date.now() directly 2ms
+ × tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — the start must be at least 60 minutes after now (BR-02, AC-D-03, Issue #77) > rejects start = T + 1 min with startAt: The start must be at least 60 minutes from now. 3ms
+   → expected { valid: true } to deeply equal { Object (valid, field, ...) }
+ × tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — the start must be at least 60 minutes after now (BR-02, AC-D-03, Issue #77) > rejects start = T + 59 min with startAt: The start must be at least 60 minutes from now. 1ms
+   → expected { valid: true } to deeply equal { Object (valid, field, ...) }
+ × tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — the start must be at least 60 minutes after now (BR-02, AC-D-03, Issue #77) > rejects start = T + 60 min - 1 ms with startAt: The start must be at least 60 minutes from now. 1ms
+   → expected { valid: true } to deeply equal { Object (valid, field, ...) }
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — the start must be at least 60 minutes after now (BR-02, AC-D-03, Issue #77) > accepts start = T + 60 min exactly (the boundary) 0ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > 
+start = T → 422 EVENT_TIME_INVALID naming () => T.toISOString(), 0 rows stored
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > 
+start = T - 1 min → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() - 6e4).toISOString(), 0 rows stored
+AssertionError: expected 'The start must be in the future.' to be 'The start must be at least 60 minutes…' // 
+Object.is equality
+Expected: "The start must be at least 60 minutes from now."
+Received: "The start must be in the future."
+ ❯ tests/sprint-1/events.create.api.test.ts:200:30
+    198|       const detail = res.body.error.details.find((d: { field: string }…
+    199|       expect(detail).toBeDefined()
+    200|       expect(detail.message).toBe(expectedMessage)
+       |                              ^
+    201|       expect(await tableCounts()).toEqual(before)
+    202|     } finally {
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > 
+start = T + 1 min (CH-13) → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() + 6e4).toISOString(), 0 rows 
+stored
+ FAIL  tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > 
+start = T + 59 min (CH-13) → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() + 59 * 6e4).toISOString(), 0 
+rows stored
+AssertionError: expected 201 to be 422 // Object.is equality
+- Expected
+- 422
+ ❯ tests/sprint-1/events.create.api.test.ts:196:26
+    194|         })
+    195| 
+    196|       expect(res.status).toBe(422)
+       |                          ^
+    197|       expect(res.body.error.code).toBe('EVENT_TIME_INVALID')
+    198|       const detail = res.body.error.details.find((d: { field: string }…
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+ FAIL  tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — Event time rules validation (BR-02, 
+AC-D-03) > rejects start equal to now (start = T) with startAt: The start must be at least 60 minutes from now.
+AssertionError: expected 'The start must be in the future.' to be 'The start must be at least 60 minutes…' // 
+Object.is equality
+Expected: "The start must be at least 60 minutes from now."
+Received: "The start must be in the future."
+ ❯ tests/sprint-1/unit/event-rules.unit.test.ts:19:29
+     17|       if (!res.valid) {
+     18|         expect(res.field).toBe('startAt')
+     19|         expect(res.message).toBe('The start must be at least 60 minute…
+       |                             ^
+     20|       }
+     21|     } finally {
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+ FAIL  tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — Event time rules validation (BR-02, 
+AC-D-03) > rejects start in the past (start = T - 1 min) with startAt: The start must be at least 60 minutes from now.
+AssertionError: expected 'The start must be in the future.' to be 'The start must be at least 60 minutes…' // 
+Object.is equality
+Expected: "The start must be at least 60 minutes from now."
+Received: "The start must be in the future."
+ ❯ tests/sprint-1/unit/event-rules.unit.test.ts:35:29
+     33|       if (!res.valid) {
+     34|         expect(res.field).toBe('startAt')
+     35|         expect(res.message).toBe('The start must be at least 60 minute…
+       |                             ^
+     36|       }
+     37|     } finally {
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+ FAIL  tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — the start must be at least 60 minutes 
+after now (BR-02, AC-D-03, Issue #77) > rejects start = T + 1 min with startAt: The start must be at least 60 minutes 
+from now.
+ FAIL  tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — the start must be at least 60 minutes 
+after now (BR-02, AC-D-03, Issue #77) > rejects start = T + 59 min with startAt: The start must be at least 60 minutes 
+from now.
+ FAIL  tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — the start must be at least 60 minutes 
+after now (BR-02, AC-D-03, Issue #77) > rejects start = T + 60 min - 1 ms with startAt: The start must be at least 60 
+minutes from now.
+AssertionError: expected { valid: true } to deeply equal { Object (valid, field, ...) }
+- Expected
+  {
+-   "field": "startAt",
+-   "message": "The start must be at least 60 minutes from now.",
+-   "valid": false,
+  }
+ ❯ tests/sprint-1/unit/event-rules.unit.test.ts:121:19
+    119|       const start = new Date(T.getTime() + offset)
+    120|       const res = validateEventTimes(start, new Date(start.getTime() +…
+    121|       expect(res).toEqual({ valid: false, field: 'startAt', message: '…
+       |                   ^
+    122|     } finally {
+    123|       resetNow()
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+ Test Files  2 failed (2)
+      Tests  9 failed | 26 passed (35)
+   Start at  22:37:19
+   Duration  3.46s (transform 398ms, setup 0ms, import 1.32s, tests 1.52s, environment 0ms)
