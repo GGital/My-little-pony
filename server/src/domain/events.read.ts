@@ -68,10 +68,12 @@ export async function searchEvents(
   if (query.to) and.push({ startAt: { lt: bangkokDayRange(query.to)[1] } })
 
   if (query.q) {
+    // Backslash is PostgreSQL's default LIKE escape. Do not add ESCAPE '\' here: inside a JS template
+    // literal it becomes ESCAPE '' (no escape character) and a literal % or _ would never match.
     const pattern = `%${escapeLikeWildcards(query.q)}%`
     const rows = await prisma.$queryRaw<{ id: number }[]>`
       SELECT "id" FROM "Event"
-      WHERE "title" ILIKE ${pattern} ESCAPE '\' OR "venueName" ILIKE ${pattern} ESCAPE '\' OR "city" ILIKE ${pattern} ESCAPE '\'`
+      WHERE "title" ILIKE ${pattern} OR "venueName" ILIKE ${pattern} OR "city" ILIKE ${pattern}`
     and.push({ id: { in: rows.map((r) => r.id) } })
   }
 
