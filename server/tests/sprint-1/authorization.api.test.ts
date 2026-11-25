@@ -36,6 +36,7 @@ const E08 = (id: number | string) => `/api/organizer/events/${id}/registrations`
 const E09 = (id: number | string) => `/api/events/${id}/registrations` // real since I-08
 const E10 = '/api/me/registrations' // real since I-10
 const E11 = (id: number | string) => `/api/me/registrations/${id}` // real since I-10
+const E17 = (id: number | string) => `/api/organizer/events/${id}/changes` // Sprint 2, S2-01 (SR-08)
 
 async function sessionFor(email: string) {
   const res = await signIn(request(app), email, SEED_PASSWORD)
@@ -119,6 +120,7 @@ describe('TEST-B-02 — no session: every protected endpoint answers 401 with on
     ['E-09', 'POST', (): string => E09(ids.ev5)],
     ['E-10', 'GET', (): string => E10],
     ['E-11', 'GET', (): string => E11(ids.mintReg)],
+    ['E-17', 'GET', (): string => E17(ids.ev1)],
   ] as const)('%s → 401 UNAUTHENTICATED', async (_id, method, path) => {
     const res = await call(method, path(), 'visitor')
     expect(res.status).toBe(401)
@@ -180,12 +182,18 @@ const MATRIX: Cell[] = [
   ['E-11', 'GET', () => E11(ids.mintReg), 'mint', 200],
   ['E-11', 'GET', () => E11(ids.ployReg), 'mint', 404],
   ...ANY_ORGANIZER.map((who): Cell => ['E-11', 'GET', () => E11(ids.mintReg), who, 403]),
+  // E-17 change history of EV-1 (Sprint 2, SDS §7.1 "Change history"): organizer + owner; another organizer 404.
+  ['E-17', 'GET', () => E17(ids.ev1), 'visitor', 401],
+  ['E-17', 'GET', () => E17(ids.ev1), 'mint', 403],
+  ['E-17', 'GET', () => E17(ids.ev1), 'quantum', 200],
+  ['E-17', 'GET', () => E17(ids.ev1), 'dragon', 404],
+  ['E-17', 'GET', () => E17('abc'), 'quantum', 400],
 ]
 
 describe('TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16)', () => {
-  it('lists every endpoint E-01 … E-11 (E-02 is in its own case below)', () => {
+  it('lists every endpoint E-01 … E-11 and the Sprint 2 ones built so far (E-02 is in its own case below)', () => {
     const listed = new Set(MATRIX.map(([endpoint]) => endpoint))
-    expect([...listed].sort()).toEqual(['E-01', 'E-03', 'E-04', 'E-05', 'E-06', 'E-07', 'E-08', 'E-09', 'E-10', 'E-11'])
+    expect([...listed].sort()).toEqual(['E-01', 'E-03', 'E-04', 'E-05', 'E-06', 'E-07', 'E-08', 'E-09', 'E-10', 'E-11', 'E-17'])
   })
 
   it.each(MATRIX.map((cell) => [`${cell[0]} ${cell[1]} as ${cell[3]} → ${cell[4]}`, cell] as const))(
@@ -208,6 +216,11 @@ describe('TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, N
     const noEvent = await call('GET', E08(999999), 'dragon')
     expect(otherEvent.status).toBe(404)
     expect(otherEvent.text).toBe(noEvent.text)
+
+    const otherHistory = await call('GET', E17(ids.ev1), 'dragon')
+    const noHistory = await call('GET', E17(999999), 'dragon')
+    expect(otherHistory.status).toBe(404)
+    expect(otherHistory.text).toBe(noHistory.text)
 
     const otherReg = await call('GET', E11(ids.ployReg), 'mint')
     const noReg = await call('GET', E11(999999), 'mint')
