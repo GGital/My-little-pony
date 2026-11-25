@@ -1,5 +1,6 @@
 import type { EventFormat, EventStatus, EventType, Prisma, PrismaClient } from '@prisma/client'
 import type { Actor } from './actor.js'
+import { bangkokDayRange, escapeLikeWildcards, type SearchQuery } from './search-query.js'
 import { hasStarted, upcomingWhere } from './time.js'
 
 export type ViewerAction =
@@ -42,20 +43,60 @@ export type EventDetail = EventSummary & {
   }
 }
 
+/** Page size is fixed at 20 (Feature-J contracts §7). */
+const PAGE_SIZE = 20
+
+export type SearchMeta = { page: number; pageSize: number; totalItems: number }
+
 /**
- * E-04: Returns upcoming published events in startAt asc, then id asc order.
- * Registered counts and seats remaining are computed from active registrations.
+ * E-04 (Feature-J, contracts §7): published events that match every filter (AND), startAt then id order, 20 a page.
+ * Drafts are impossible by construction: DRAFT is never in the status list.
+ * `%` and `_` in the text are matched literally, so the text and seat parts run as raw SQL id queries.
  */
-export async function listUpcomingEvents(prisma: PrismaClient): Promise<{ items: EventSummary[] }> {
-  const events = await prisma.event.findMany({
-    where: {
-      status: 'PUBLISHED',
-      ...upcomingWhere(),
-    },
-    orderBy: [{ startAt: 'asc' }, { id: 'asc' }],
-    select: summarySelect,
-  })
-  return { items: events.map(toSummary) }
+export async function searchEvents(
+  prisma: PrismaClient,
+  query: SearchQuery,
+): Promise<{ items: EventSummary[]; meta: SearchMeta }> {
+  const include = query.include ? query.include.split(',').map((p) => p.trim()) : []
+  const and: Prisma.EventWhereInput[] = [
+    { status: include.includes('cancelled') ? { in: ['PUBLISHED', 'CANCELLED'] } : 'PUBLISHED' },
+  ]
+  if (!include.includes('past')) and.push(upcomingWhere())
+  if (query.type) and.push({ type: query.type })
+  if (query.format) and.push({ format: query.format })
+  if (query.from) and.push({ startAt: { gte: bangkokDayRange(query.from)[0] } })
+  if (query.to) and.push({ startAt: { lt: bangkokDayRange(query.to)[1] } })
+
+  if (query.q) {
+    const pattern = `%${escapeLikeWildcards(query.q)}%`
+    const rows = await prisma.$queryRaw<{ id: number }[]>`
+      SELECT "id" FROM "Event"
+      WHERE "title" ILIKE ${pattern} ESCAPE '\' OR "venueName" ILIKE ${pattern} ESCAPE '\' OR "city" ILIKE ${pattern} ESCAPE '\'`
+    and.push({ id: { in: rows.map((r) => r.id) } })
+  }
+
+  if (query.seatsAvailable === 'true') {
+    // registeredCount < capacity; a full event has as many active registrations as seats (contracts §0.1).
+    const full = await prisma.$queryRaw<{ id: number }[]>`
+      SELECT e."id" FROM "Event" e
+      WHERE e."capacity" <= (
+        SELECT count(*) FROM "Registration" r
+        WHERE r."eventId" = e."id" AND r."status" IN ('REGISTERED', 'CHECKED_IN'))`
+    and.push({ id: { notIn: full.map((r) => r.id) } })
+  }
+
+  const where: Prisma.EventWhereInput = { AND: and }
+  const [totalItems, events] = await prisma.$transaction([
+    prisma.event.count({ where }),
+    prisma.event.findMany({
+      where,
+      orderBy: [{ startAt: 'asc' }, { id: 'asc' }],
+      skip: (query.page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+      select: summarySelect,
+    }),
+  ])
+  return { items: events.map(toSummary), meta: { page: query.page, pageSize: PAGE_SIZE, totalItems } }
 }
 
 /** Active registrations count towards the seats (contracts §0.1). */
