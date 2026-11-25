@@ -1,0 +1,31 @@
+{
+  "id": "S2-01-A2-create-history",
+  "side": "after",
+  "action": "POST /api/events as Quantum Cards (capacity 24), then GET /api/organizer/events/10/changes",
+  "expected": "After: 201, then 200 with one item: status null → PUBLISHED, changedBy \"Quantum Cards\", no email or user id",
+  "actual": {
+    "create": {
+      "status": 201,
+      "id": 10
+    },
+    "history": {
+      "status": 200,
+      "body": {
+        "items": [
+          {
+            "id": 1,
+            "field": "status",
+            "oldValue": null,
+            "newValue": "PUBLISHED",
+            "changedAt": "2026-11-25T07:33:54.652Z",
+            "changedBy": {
+              "displayName": "Quantum Cards"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "time": "2026-11-25T07:33:54.711Z",
+  "commit": "dfa124f"
+}

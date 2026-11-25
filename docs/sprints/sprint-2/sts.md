@@ -1,6 +1,6 @@
 # Sprint 2 Software Test Specification (STS)
 
-Project: **TCG Event Hub** · Sprint 2 · Document version: v0.5 — **draft for team review** (changes in §8)
+Project: **TCG Event Hub** · Sprint 2 · Document version: v0.6 — **draft for team review** (changes in §8)
 Contracts: [`feature-contracts.md`](feature-contracts.md) v0.6 · Issues and Definition of Done: [`README.md`](README.md) ·
 Sprint 1 STS: [`../sprint-1/sts.md`](../sprint-1/sts.md) v1.13
 
@@ -72,10 +72,10 @@ output**, with the commit id in §6.
 
 | Test ID | Level | AC / Req | Precondition / input | Action | Expected result | File | Result |
 |---|---|---|---|---|---|---|---|
-| TEST-SR8-01 | I | AC-SR8-01, FR-28 | O1 signed in; clock T | E-06 (capacity 24); clock T + 1 h, E-13 capacity 30; clock T + 2 h, E-13 deadline; E-17 | 3 items newest first: `deadline` (old = start ISO, new = deadline ISO), `capacity` 24 → 30, `status` null → `PUBLISHED`; `changedBy.displayName` "Quantum Cards"; `changedAt` = clock times; the body has no `email`, `changedById` or user id | `server/tests/sprint-2/changes.api.test.ts` | Pending |
-| TEST-SR8-02 | I | AC-SR8-02, X-11 | 2 change rows | `UPDATE "EventChange" SET "newValue" = 'x'`; `DELETE FROM "EventChange"` | both throw, naming `event_change_append_only`; the rows are unchanged (read back) | `server/tests/sprint-2/constraints.api.test.ts` | Pending |
-| TEST-SR8-03 | I | AC-SR8-03, BR-08, BR-12 | — | SQL: deadline = start + 1 min; `status = 'CANCELLED'` with null `cancelReason`; a registration `CANCELLED` with null `cancelledAt`; also `PUBLISHED` with `cancelledAt` set | each is rejected with SQLSTATE 23514 and the constraint name (`event_deadline_before_start`, `event_cancel_fields`, `registration_cancel_fields`) | `server/tests/sprint-2/constraints.api.test.ts` | Pending |
-| TEST-SR8-04 | I | AC-SR8-04, NFR-02 | event X owned by O1 | E-17 for X as O2, P, visitor; E-17 for 999999 as O1; `/abc` | `404` (body equal to the 999999 body), `403`, `401`, `404`, `400` | `server/tests/sprint-2/changes.api.test.ts` | Pending |
+| TEST-SR8-01 | I | AC-SR8-01, FR-28 | O1 signed in; clock T | E-06 (capacity 24); clock T + 1 h, E-13 capacity 30; clock T + 2 h, E-13 deadline; E-17 | 3 items newest first: `deadline` (old = start ISO, new = deadline ISO), `capacity` 24 → 30, `status` null → `PUBLISHED`; `changedBy.displayName` "Quantum Cards"; `changedAt` = clock times; the body has no `email`, `changedById` or user id | `server/tests/sprint-2/changes.api.test.ts` | S2-01 part (E-06 creation row, E-17 order) **Pass** (`dfa124f`); the E-13 capacity and deadline steps are added in S2-04 (split, v0.6) |
+| TEST-SR8-02 | I | AC-SR8-02, X-11 | 2 change rows | `UPDATE "EventChange" SET "newValue" = 'x'`; `DELETE FROM "EventChange"` | both throw, naming `event_change_append_only`; the rows are unchanged (read back) | `server/tests/sprint-2/constraints.api.test.ts` | **Pass** (`dfa124f`) |
+| TEST-SR8-03 | I | AC-SR8-03, BR-08, BR-12 | — | SQL: deadline = start + 1 min; `status = 'CANCELLED'` with null `cancelReason`; a registration `CANCELLED` with null `cancelledAt`; also `PUBLISHED` with `cancelledAt` set | each is rejected with SQLSTATE 23514 and the constraint name (`event_deadline_before_start`, `event_cancel_fields`, `registration_cancel_fields`) | `server/tests/sprint-2/constraints.api.test.ts` | **Pass** (`dfa124f`) |
+| TEST-SR8-04 | I | AC-SR8-04, NFR-02 | event X owned by O1 | E-17 for X as O2, P, visitor; E-17 for 999999 as O1; `/abc` | `404` (body equal to the 999999 body), `403`, `401`, `404`, `400` | `server/tests/sprint-2/changes.api.test.ts` | **Pass** (`dfa124f`) |
 
 ### 2.2 Feature-K — drafts
 
@@ -161,10 +161,10 @@ output**, with the commit id in §6.
 
 | Test ID | Level | AC / Req | Change in Sprint 2 | File | Result |
 |---|---|---|---|---|---|
-| TEST-B-03 (rows added) | I | AC-B-03, NFR-02 | rows for E-13 … E-17 from SDS §7.1, including byte-identical 404s for another owner's event and another participant's registration | `server/tests/sprint-1/authorization.api.test.ts` | Pending |
-| TEST-SR1-02 (revised) | I | AC-SR1-02 | 9 events; EV-7 `DRAFT`, EV-8 `CANCELLED` with Boss `EVENT_CANCELLED`, EV-9 with a past deadline and Mint `REGISTERED`; a second run adds 0 rows | `server/tests/sprint-1/seed.api.test.ts` | Pending |
-| TEST-SR2-03 (rows added) | I | AC-SR2-03 | E-13 … E-17 in the route table; GET on the POST/PATCH-only paths → 404, no writes | `server/tests/sprint-1/validation.api.test.ts` | Pending |
-| TEST-SR2-04 (codes added) | U | NFR-07 | `ALREADY_PUBLISHED`, `NOT_PUBLISHED` map to 409 | `server/tests/sprint-1/unit/errors.unit.test.ts` | Pending |
+| TEST-B-03 (rows added) | I | AC-B-03, NFR-02 | rows for E-13 … E-17 from SDS §7.1, including byte-identical 404s for another owner's event and another participant's registration | `server/tests/sprint-1/authorization.api.test.ts` | E-17 rows **Pass** (`dfa124f`); E-13 … E-16 Pending |
+| TEST-SR1-02 (revised) | I | AC-SR1-02 | 9 events; EV-7 `DRAFT`, EV-8 `CANCELLED` with Boss `EVENT_CANCELLED`, EV-9 with a past deadline and Mint `REGISTERED`; a second run adds 0 rows | `server/tests/sprint-1/seed.api.test.ts` | **Pass** (`dfa124f`) |
+| TEST-SR2-03 (rows added) | I | AC-SR2-03 | E-13 … E-17 in the route table; GET on the POST/PATCH-only paths → 404, no writes | `server/tests/sprint-1/validation.api.test.ts` | E-17 row **Pass** (`dfa124f`); E-13 … E-16 Pending |
+| TEST-SR2-04 (codes added) | U | NFR-07 | `ALREADY_PUBLISHED`, `NOT_PUBLISHED` map to 409 | `server/tests/sprint-1/unit/errors.unit.test.ts` | **Pass** (`dfa124f`) |
 | TEST-E-01 (rows added) | I | AC-E-01 | E-07 includes the owner's draft and cancelled event with their status | `server/tests/sprint-1/organizer.api.test.ts` | Pending |
 | TEST-SR5-02 | E2E | NFR-08 | the 3 new screens (edit, search with filters open, cancelled detail) at 390 / 768 / 1440 px, no horizontal scroll | `e2e/sprint-2/responsive.spec.ts` | Pending |
 | JRN-03 | E2E | K, L, M, N, O, SR-08 | contracts §9 | `e2e/sprint-2/journey.spec.ts` | Pending |
@@ -229,7 +229,7 @@ Fill this table from the real runs (README §3). The commit ids are the evidence
 
 | Issue | Tests written first | Red commit | Red run (failed / total) | Green commit | Green run (passed / total) |
 |---|---|---|---|---|---|
-| S2-01 SR-08 data foundation | TEST-SR8-01 … 04, TEST-SR1-02 (revised), TEST-SR2-04 (codes) | | | | |
+| S2-01 SR-08 data foundation | TEST-SR8-01 (S2-01 part) … 04, TEST-SR1-02 (revised), TEST-SR2-04 (codes), TEST-B-02/B-03 and TEST-SR2-03 (E-17 rows); TEST-F-01, H-01, E-01 E2E lists (A1 `8694d76`) | `7c3ad62` | server 22 / 328 failed; E2E 3 / 9 failed (the three revised lists) | `dc987f9`, fixtures `dfa124f` | `dc987f9`: 322 passed, 1 failed, 5 skipped / 328 (2 Sprint 1 fixtures stored `CANCELLED` without `cancelledAt`); `dfa124f`: server 328 / 328, client 91 / 91, E2E 58 / 58 |
 | S2-02 Feature-K drafts | TEST-K-01 … 05, TEST-B-03 (E-14 rows) | | | | |
 | S2-03 Feature-J search | TEST-J-01 … 06 | | | | |
 | S2-04 Feature-L edit | TEST-L-01 … 06, TEST-B-03 (E-13 rows) | | | | |
@@ -271,3 +271,4 @@ checked.
 | v0.3 | 21 Nov 2026 | Contracts v0.4 (D-37): TEST-U-04 (store contact on events, no sign-in email leak) and TEST-U-05 (contact validation and safe links); 42 AC tests | Team (AI-assisted) |
 | v0.4 | 21 Nov 2026 | Contracts v0.5 (D-38): §2.9 TEST-C-07 (tokens, fonts, Thai fallback, self-hosting) and TEST-C-08 (contrast and axe); TDD row S2-10; 44 AC tests | Team (AI-assisted) |
 | v0.5 | 25 Nov 2026 | Contracts v0.6 (Lab 7 CH-13, Issue #77): TEST-K-04 adds drafts starting in 30 min (422) and 60 min (200); TEST-L-04 adds `startAt` = T + 59 min (422) and T + 60 min (200) | Team (AI-assisted) |
+| v0.6 | 25 Nov 2026 | S2-01: TEST-SR8-01 is split (team decision 24 Nov). E-13 arrives in S2-04, so S2-01 checks the creation row (E-06 writes `status` null → `PUBLISHED`) and E-17; the capacity and deadline steps join the test in S2-04. TEST-SR1-02, TEST-F-01 and the Sprint 1 E2E lists TEST-F-01, TEST-H-01 and TEST-E-01 change because the seed now has EV-7 … EV-9 (rule 1). §2.1, §2.10 and §5: S2-01 results (red `7c3ad62`, green `dc987f9`, fixtures `dfa124f`) | Team (AI-assisted) |

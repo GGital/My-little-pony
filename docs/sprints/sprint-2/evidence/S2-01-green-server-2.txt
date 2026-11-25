@@ -1,0 +1,54 @@
+Sprint 2 · S2-01 (Issue #78) · GREEN 2, server unit + API (test database, migrations 0001 … 0004)
+Commit: dfa124f (fixture fix after green 1 on dc987f9; see S2-01-green-server-1.txt)
+Time: 2026-11-25T07:29:59Z
+Command: cd server; npx vitest run
+
+
+ RUN  v4.0.18 <repo>/server
+
+ ✓ tests/sprint-1/organizer.api.test.ts (9 tests) 1534ms
+ ✓ tests/sprint-1/constraints.api.test.ts (12 tests) 141ms
+ ✓ tests/sprint-1/registrations.concurrency.api.test.ts (1 test) 6592ms
+     ✓ 20 rounds: 20 racers for 1 seat → one 201, 19 × 409 EVENT_FULL; 5 calls by one participant → one 201, four 409 ALREADY_REGISTERED  4340ms
+ ✓ tests/sprint-1/auth.api.test.ts (21 tests) 7499ms
+     ✓ an unknown email takes as long as a wrong password (dummy hash): mean difference < 50 ms over 20 tries  4907ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts (28 tests) 2642ms
+     ✓ refuses an unknown code at compile time, and accepts a known one  2630ms
+ ✓ tests/sprint-1/authorization.api.test.ts (66 tests) 2303ms
+ ✓ tests/lab5/ready.api.test.ts (2 tests) 2145ms
+     ✓ answers 503 {status:"not_ready"} when the database cannot be reached, without leaking why  2040ms
+ ✓ tests/sprint-1/health.api.test.ts (2 tests) 2095ms
+     ✓ answers 503 {status:"unavailable"} when the database cannot be reached, and logs why  2026ms
+ ✓ tests/sprint-1/validation.api.test.ts (19 tests) 1817ms
+ ✓ tests/sprint-1/events.read.api.test.ts (11 tests) 1477ms
+     ✓ returns matching viewer.action and all public fields across visitor, player, owner, other organizer  440ms
+ ✓ tests/sprint-1/events.create.api.test.ts (24 tests) 1175ms
+ ✓ tests/sprint-2/changes.api.test.ts (4 tests) 996ms
+ ✓ tests/sprint-1/registrations.api.test.ts (15 tests) 950ms
+ ✓ tests/sprint-1/me.api.test.ts (6 tests) 851ms
+ ✓ tests/sprint-1/seed.api.test.ts (7 tests) 894ms
+     ✓ creates 2 organizers, 4 participants, the 6 events of contracts §0.3 and the 3 of Sprint 2 §0.4  605ms
+ ✓ tests/lab6/calendar-date.api.test.ts (6 tests) 854ms
+ ✓ tests/lab6/nul-character.api.test.ts (3 tests) 789ms
+ ✓ tests/sprint-1/persistence.api.test.ts (2 tests) 644ms
+     ✓ an event published with E-06 and a registration made with E-09 read back identically after a "restart"  507ms
+ ✓ tests/sprint-1/time.api.test.ts (9 tests) 554ms
+ ✓ tests/sprint-1/unit/config.unit.test.ts (6 tests) 595ms
+     ✓ the real server refuses to start without DATABASE_URL and says why  581ms
+ ✓ tests/sprint-1/errors.api.test.ts (10 tests) 457ms
+ ✓ tests/sprint-1/unit/password.unit.test.ts (2 tests) 356ms
+ ✓ tests/sprint-2/constraints.api.test.ts (6 tests) 129ms
+ ✓ tests/lab5/static.api.test.ts (4 tests) 57ms
+ ✓ tests/lab5/origin.api.test.ts (6 tests) 45ms
+ ✓ tests/lab5/version.api.test.ts (2 tests) 36ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts (16 tests) 11ms
+ ✓ tests/lab5/unit/config.unit.test.ts (5 tests) 10ms
+ ✓ tests/lab5/unit/version-config.unit.test.ts (5 tests) 8ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts (11 tests) 7ms
+ ✓ tests/sprint-1/unit/registration-rules.unit.test.ts (8 tests) 5ms
+
+ Test Files  31 passed (31)
+      Tests  328 passed (328)
+   Start at  14:30:02
+   Duration  62.58s (transform 1.01s, setup 0ms, import 16.25s, tests 37.67s, environment 4ms)
+
