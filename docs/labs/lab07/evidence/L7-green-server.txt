@@ -1,0 +1,54 @@
+Lab 7 · CH-13 (Issue #77) · Evidence L7-G01 · GREEN + regression, whole server suite (unit + API, test database)
+Commit: 72ae022 (implementation)
+Time: 2026-11-24T15:38:54Z
+Command: cd server; npx vitest run
+Why this suite: it holds TEST-D-03 (the changed rule) and every server test of the dependent behaviour: E-06 input rules
+  (TEST-D-01, D-02, D-04), access (TEST-D-05, TEST-B-01 … 03), time-dependent reads and registration (TEST-F-*, TEST-G-*,
+  BR-04 closing at the start), persistence and the seed (TEST-SR1-*), the error catalogue (TEST-SR2-*) and the clock (TEST-SR3-*).
+Expected: all pass. Actual: 308 passed / 0 failed / 0 skipped (29 files).
+Versions: Node 24.19.0 · Vitest 4.0.18 · Playwright 1.56.1 (Chromium) · PostgreSQL 17.9 (local Docker test database, fresh seed)
+
+=== Output ===
+ RUN  v4.0.18 ./server
+ ✓ tests/sprint-1/events.create.api.test.ts (24 tests) 1144ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts (11 tests) 7ms
+ ✓ tests/sprint-1/registrations.concurrency.api.test.ts (1 test) 5776ms
+     ✓ 20 rounds: 20 racers for 1 seat → one 201, 19 × 409 EVENT_FULL; 5 calls by one participant → one 201, four 409 ALREADY_REGISTERED  3753ms
+ ✓ tests/sprint-1/auth.api.test.ts (21 tests) 5115ms
+     ✓ an unknown email takes as long as a wrong password (dummy hash): mean difference < 50 ms over 20 tries  3066ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts (26 tests) 2423ms
+     ✓ refuses an unknown code at compile time, and accepts a known one  2416ms
+ ✓ tests/sprint-1/authorization.api.test.ts (60 tests) 2098ms
+ ✓ tests/sprint-1/organizer.api.test.ts (9 tests) 1335ms
+ ✓ tests/sprint-1/health.api.test.ts (2 tests) 2101ms
+     ✓ answers 503 {status:"unavailable"} when the database cannot be reached, and logs why  2051ms
+ ✓ tests/lab5/ready.api.test.ts (2 tests) 2071ms
+     ✓ answers 503 {status:"not_ready"} when the database cannot be reached, without leaking why  2020ms
+ ✓ tests/sprint-1/events.read.api.test.ts (11 tests) 1494ms
+     ✓ returns matching viewer.action and all public fields across visitor, player, owner, other organizer  418ms
+ ✓ tests/sprint-1/validation.api.test.ts (19 tests) 1577ms
+ ✓ tests/sprint-1/registrations.api.test.ts (15 tests) 976ms
+ ✓ tests/sprint-1/me.api.test.ts (6 tests) 839ms
+ ✓ tests/sprint-1/unit/config.unit.test.ts (6 tests) 528ms
+     ✓ the real server refuses to start without DATABASE_URL and says why  515ms
+ ✓ tests/lab6/nul-character.api.test.ts (3 tests) 1052ms
+ ✓ tests/sprint-1/seed.api.test.ts (5 tests) 915ms
+     ✓ creates 2 organizers, 4 participants and the 6 events of contracts §0.3  619ms
+ ✓ tests/sprint-1/persistence.api.test.ts (2 tests) 783ms
+     ✓ an event published with E-06 and a registration made with E-09 read back identically after a "restart"  654ms
+ ✓ tests/lab6/calendar-date.api.test.ts (6 tests) 837ms
+ ✓ tests/sprint-1/time.api.test.ts (9 tests) 507ms
+ ✓ tests/sprint-1/errors.api.test.ts (10 tests) 428ms
+ ✓ tests/sprint-1/unit/password.unit.test.ts (2 tests) 359ms
+ ✓ tests/sprint-1/constraints.api.test.ts (12 tests) 130ms
+ ✓ tests/lab5/static.api.test.ts (4 tests) 75ms
+ ✓ tests/lab5/origin.api.test.ts (6 tests) 53ms
+ ✓ tests/lab5/version.api.test.ts (2 tests) 37ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts (16 tests) 11ms
+ ✓ tests/lab5/unit/config.unit.test.ts (5 tests) 11ms
+ ✓ tests/lab5/unit/version-config.unit.test.ts (5 tests) 9ms
+ ✓ tests/sprint-1/unit/registration-rules.unit.test.ts (8 tests) 4ms
+ Test Files  29 passed (29)
+      Tests  308 passed (308)
+   Start at  22:38:54
+   Duration  55.03s (transform 700ms, setup 0ms, import 14.40s, tests 32.70s, environment 4ms)

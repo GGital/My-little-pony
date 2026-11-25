@@ -1,0 +1,14 @@
+{
+  "id": "L7-B01-form",
+  "side": "before",
+  "action": "Quantum Cards fills the create form with a start 30 minutes from now",
+  "expected": "Start field shows the hint \"(at least 1 hour from now)\"",
+  "actual": {
+    "url": "/organizer/events/new",
+    "heading": "Create an event",
+    "messages": []
+  },
+  "time": "2026-11-24T15:37:48.026Z",
+  "commit": "f41f52f",
+  "screenshot": "L7-B01-form-before.png"
+}

@@ -7,10 +7,13 @@ test.beforeEach(async ({ page }) => signIn(page, EMAIL.quantum))
 
 test('TEST-E-01 (E2E) — /organizer lists exactly Quantum Cards\' events in start order (AC-E-01)', async ({ page }) => {
   await page.goto('/organizer')
+  // Sprint 2 (S2-01) seeds EV-9 and the draft EV-7 for Quantum Cards (Sprint 2 contracts §0.4).
   await expect(page.locator('.event-card .event-card__title')).toHaveText([
     'Friday Night Constructed',
+    'Early Deadline Sealed',
     'Last Seat Sealed',
     'Release Weekend Sealed · เปิดกล่องสุดสัปดาห์',
+    'Prerelease Planning Night',
   ])
   await expect(page.getByText('Store Championship Qualifier')).toHaveCount(0)
 })

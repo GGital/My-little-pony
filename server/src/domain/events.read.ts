@@ -104,7 +104,7 @@ export async function getEventSummary(prisma: Pick<PrismaClient, 'event'>, event
 }
 
 /**
- * E-05: Returns details of a published event with viewer.action.
+ * E-05: Returns details of a published event, or of the caller's own draft, with viewer.action.
  * viewer.action is evaluated in strict order (contracts 0.2).
  */
 export async function getEventDetail(
@@ -112,10 +112,12 @@ export async function getEventDetail(
   eventId: number,
   actor?: Actor,
 ): Promise<EventDetail | null> {
+  // A draft is visible to its owner only (Sprint 2 contracts §2, BR-04); for anyone else it does not exist.
+  const ownDraft = actor?.role === 'ORGANIZER' ? [{ status: 'DRAFT' as const, organizerId: actor.id }] : []
   const event = await prisma.event.findFirst({
     where: {
       id: eventId,
-      status: 'PUBLISHED',
+      OR: [{ status: 'PUBLISHED' }, ...ownDraft],
     },
     select: {
       id: true,

@@ -2,6 +2,7 @@ import type { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 import { now } from '../clock.js'
 import type { Actor } from './actor.js'
+import { recordEventChange } from './changes.js'
 import { validateEventTimes } from './event-rules.js'
 import { getEventDetail, type EventDetail } from './events.read.js'
 
@@ -86,15 +87,18 @@ export const createEventInputSchema = z
     structureNote: optionalTrimmedString(80, 'Use up to 80 characters.'),
     contact: optionalTrimmedString(120, 'Use up to 120 characters.'),
     description: optionalTrimmedString(2000, 'Use up to 2,000 characters.'),
+    // Sprint 2 Feature-K (D-18): true saves a draft that only the owner can see. The client never sends `status`.
+    saveAsDraft: z.boolean({ message: 'Use true or false.' }).optional(),
   })
   .strict()
 
 export type CreateEventInput = z.infer<typeof createEventInputSchema>
 
 /**
- * Creates and publishes an event in one step (FR-06, Feature-D, contracts §7).
- * Validates time rules against domain logic, then stores with status PUBLISHED,
- * organizerId = actor.id, publishedAt = now().
+ * Creates an event (FR-06, Feature-D, contracts §7): published at once, or saved as a draft with `saveAsDraft`
+ * (FR-08, Sprint 2 Feature-K). Validates time rules against domain logic, then stores it with organizerId = actor.id,
+ * status PUBLISHED and publishedAt = now() (a draft: DRAFT and null), and the history row status null → that status in
+ * the same transaction (Sprint 2 contracts §1 SR-08).
  */
 export async function createEvent(
   prisma: PrismaClient,
@@ -110,26 +114,38 @@ export async function createEvent(
   }
 
   const currentTime = now()
+  const status = input.saveAsDraft ? 'DRAFT' : 'PUBLISHED'
 
-  const event = await prisma.event.create({
-    data: {
-      organizerId: actor.id,
-      title: input.title,
-      type: input.type,
-      format: input.format,
-      venueName: input.venueName,
-      venueAddress: input.venueAddress,
-      city: input.city,
-      startAt: start,
-      endAt: end,
-      capacity: input.capacity,
-      feeLabel: input.feeLabel,
-      structureNote: input.structureNote,
-      contact: input.contact,
-      description: input.description,
-      status: 'PUBLISHED',
-      publishedAt: currentTime,
-    },
+  const event = await prisma.$transaction(async (tx) => {
+    const created = await tx.event.create({
+      data: {
+        organizerId: actor.id,
+        title: input.title,
+        type: input.type,
+        format: input.format,
+        venueName: input.venueName,
+        venueAddress: input.venueAddress,
+        city: input.city,
+        startAt: start,
+        endAt: end,
+        capacity: input.capacity,
+        feeLabel: input.feeLabel,
+        structureNote: input.structureNote,
+        contact: input.contact,
+        description: input.description,
+        status,
+        publishedAt: status === 'PUBLISHED' ? currentTime : null,
+      },
+    })
+    await recordEventChange(tx, {
+      eventId: created.id,
+      changedById: actor.id,
+      field: 'status',
+      oldValue: null,
+      newValue: status,
+      changedAt: currentTime,
+    })
+    return created
   })
 
   return (await getEventDetail(prisma, event.id, actor))!

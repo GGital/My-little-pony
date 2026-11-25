@@ -82,7 +82,7 @@ describe('TEST-SR1-05 one ACTIVE registration per participant per event (BR-06)'
 
     await prisma.registration.updateMany({
       where: { eventId: event.id, participantId: participant.id },
-      data: { status: 'CANCELLED' },
+      data: { status: 'CANCELLED', cancelledAt: new Date() }, // Sprint 2 SR-08: registration_cancel_fields
     })
     await expect(insertRegistrationRaw(event.id, participant.id, 'REGISTERED')).resolves.toBe(1)
     expect(await prisma.registration.count({ where: { eventId: event.id, participantId: participant.id } })).toBe(2)

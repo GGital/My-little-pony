@@ -1,0 +1,19 @@
+{
+  "id": "S2-01-U2-organizer",
+  "side": "after",
+  "action": "Quantum Cards opens /organizer",
+  "expected": "After: 5 events, with \"Early Deadline Sealed\" and the draft \"Prerelease Planning Night\"",
+  "actual": {
+    "url": "/organizer",
+    "titles": [
+      "Friday Night Constructed",
+      "Early Deadline Sealed",
+      "Last Seat Sealed",
+      "Release Weekend Sealed · เปิดกล่องสุดสัปดาห์",
+      "Prerelease Planning Night"
+    ]
+  },
+  "time": "2026-11-25T07:33:49.321Z",
+  "commit": "dfa124f",
+  "screenshot": "S2-01-U2-organizer-after.png"
+}

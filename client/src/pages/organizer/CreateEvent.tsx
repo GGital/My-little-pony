@@ -28,7 +28,8 @@ export const CreateEvent: React.FC = () => {
 
   const [details, setDetails] = useState<ApiErrorDetail[]>([])
   const [generalError, setGeneralError] = useState<string | null>(null)
-  const [submitting, setSubmitting] = useState(false)
+  // Which button is working: PUBLISH EVENT or SAVE DRAFT (Sprint 2 Feature-K). Both are disabled while either is.
+  const [submitting, setSubmitting] = useState<false | 'publish' | 'draft'>(false)
 
   const formatBangkokIso = (localStr: string) => {
     if (!localStr) return ''
@@ -40,11 +41,17 @@ export const CreateEvent: React.FC = () => {
     return localStr
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    void send(false)
+  }
+
+  /** E-06; `asDraft` adds saveAsDraft (D-18) and lands on the draft's own page (contracts §2 v0.7). */
+  const send = async (asDraft: boolean) => {
+    if (submitting) return
     setDetails([])
     setGeneralError(null)
-    setSubmitting(true)
+    setSubmitting(asDraft ? 'draft' : 'publish')
 
     const payload = {
       title,
@@ -60,17 +67,20 @@ export const CreateEvent: React.FC = () => {
       structureNote: structureNote || null,
       contact: contact || null,
       description: description || null,
+      ...(asDraft ? { saveAsDraft: true } : {}),
     }
 
     try {
       const res = await api.post<EventDetail>('/api/events', payload)
-      navigate(`/events/${res.id}`, { state: { toast: 'Your event is live.' } })
+      navigate(`/events/${res.id}`, {
+        state: { toast: asDraft ? 'Draft saved. Only you can see it.' : 'Your event is live.' },
+      })
     } catch (err) {
       if (err instanceof ApiError) {
         setDetails(err.details ?? [])
         setGeneralError(err.message)
       } else {
-        setGeneralError('Failed to publish event. Please try again.')
+        setGeneralError(asDraft ? 'Failed to save the draft. Please try again.' : 'Failed to publish event. Please try again.')
       }
     } finally {
       setSubmitting(false)
@@ -117,7 +127,7 @@ export const CreateEvent: React.FC = () => {
         max={type === 'number' ? 256 : undefined}
         value={values[id]}
         onChange={(e) => setters[id](e.target.value)}
-        disabled={submitting}
+        disabled={submitting !== false}
         aria-required={required || undefined}
         {...fieldErrorProps(id, details)}
       />
@@ -140,7 +150,7 @@ export const CreateEvent: React.FC = () => {
               checked={value === o}
               onChange={() => set(o)}
               className="visually-hidden"
-              disabled={submitting}
+              disabled={submitting !== false}
             />
             {o}
           </label>
@@ -152,7 +162,7 @@ export const CreateEvent: React.FC = () => {
 
   return (
     <>
-      <PageTop title="Create an event" subtitle="It goes live as soon as you publish it. Times are Bangkok time." />
+      <PageTop title="Create an event" subtitle="It goes live as soon as you publish it, or save a draft that only you can see. Times are Bangkok time." />
       <div className="pbody">
         <form onSubmit={handleSubmit} noValidate className="form-section" style={{ maxWidth: 760 }}>
           {generalError && (!details || details.length === 0) && <Notice tone="error">{generalError}</Notice>}
@@ -176,7 +186,7 @@ export const CreateEvent: React.FC = () => {
           <section className="form-card">
             <h2>When</h2>
             <div className="form-grid">
-              {field({ id: 'startAt', label: 'Start Date & Time (Bangkok)', required: true, type: 'datetime-local' })}
+              {field({ id: 'startAt', label: 'Start Date & Time (Bangkok)', required: true, hint: 'at least 1 hour from now', type: 'datetime-local' })}
               {field({ id: 'endAt', label: 'End Date & Time (Bangkok)', required: true, type: 'datetime-local' })}
             </div>
             <p className="sub small">An event can last at most 24 hours.</p>
@@ -210,7 +220,7 @@ export const CreateEvent: React.FC = () => {
                 placeholder="Deck rules, prizes, schedule…"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                disabled={submitting}
+                disabled={submitting !== false}
                 {...fieldErrorProps('description', details)}
               />
               <FormFieldError field="description" details={details} />
@@ -218,9 +228,18 @@ export const CreateEvent: React.FC = () => {
           </section>
 
           <div className="form-actions">
-            <SubmitButton busy={submitting} busyLabel="Publishing…" className="btn-big">
+            <SubmitButton busy={submitting === 'publish'} busyLabel="Publishing…" disabled={submitting !== false} className="btn-big">
               PUBLISH EVENT
             </SubmitButton>
+            <button
+              type="button"
+              className="btn-big btn-big--outline"
+              onClick={() => void send(true)}
+              disabled={submitting !== false}
+              aria-busy={submitting === 'draft'}
+            >
+              {submitting === 'draft' ? 'Saving…' : 'SAVE DRAFT'}
+            </button>
             <span className="sub small">Fields marked * are required.</span>
           </div>
         </form>

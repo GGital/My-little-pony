@@ -1,0 +1,16 @@
+{
+  "id": "L7-D01-b",
+  "side": "live",
+  "manual": "signed in by hand; steps automated (Playwright, headed Chromium)",
+  "site": "https://tcg-event-hub-932557875237.asia-southeast1.run.app",
+  "action": "Live: Quantum Cards publishes an event starting 62 minutes from now",
+  "expected": "Event detail page with \"Your event is live.\"",
+  "actual": {
+    "url": "/events/44",
+    "heading": "Lab 7 live check 0029 (62 min)",
+    "messages": []
+  },
+  "time": "2026-11-24T17:30:23.277Z",
+  "deployedCommit": "dff72b668f36b40a2502cc83c7e3d4874044d606",
+  "screenshot": "L7-D01-b-live.png"
+}

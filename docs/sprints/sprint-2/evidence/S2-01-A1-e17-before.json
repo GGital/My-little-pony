@@ -1,0 +1,46 @@
+{
+  "id": "S2-01-A1-e17",
+  "side": "before",
+  "action": "GET /api/organizer/events/1/changes as Quantum Cards (owner), Dragon's Den, Mint and a visitor",
+  "expected": "After: 200 { items: [] } for the owner (the seed writes no history rows), 404 EVENT_NOT_FOUND, 403 FORBIDDEN, 401 UNAUTHENTICATED",
+  "actual": {
+    "owner": {
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "NOT_FOUND",
+          "message": "There is nothing here."
+        }
+      }
+    },
+    "otherOrganizer": {
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "NOT_FOUND",
+          "message": "There is nothing here."
+        }
+      }
+    },
+    "participant": {
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "NOT_FOUND",
+          "message": "There is nothing here."
+        }
+      }
+    },
+    "visitor": {
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "NOT_FOUND",
+          "message": "There is nothing here."
+        }
+      }
+    }
+  },
+  "time": "2026-11-25T07:26:41.002Z",
+  "commit": "fa9c056"
+}

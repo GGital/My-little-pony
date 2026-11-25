@@ -25,6 +25,8 @@ const CATALOGUE: [string, number][] = [
   ['ALREADY_CANCELLED', 409],
   ['NOT_IN_CHECK_IN_WINDOW', 409],
   ['ALREADY_CHECKED_IN', 409],
+  ['ALREADY_PUBLISHED', 409], // Sprint 2 contracts §0.5 (S2-01)
+  ['NOT_PUBLISHED', 409], // Sprint 2 contracts §0.5 (S2-01)
   ['PAYLOAD_TOO_LARGE', 413],
   ['UNSUPPORTED_MEDIA_TYPE', 415],
   ['EVENT_TIME_INVALID', 422],

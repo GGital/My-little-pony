@@ -8,7 +8,7 @@ import { TEST_ORIGIN, makeApp } from '../helpers/app.js'
 import { cookieHeader, readSessionCookie, signIn } from '../helpers/auth.js'
 import { prisma, resetDb, tableCounts } from '../helpers/db.js'
 import { PROBE_POST_ONLY, probeRoutes } from '../helpers/probes.js'
-import { SPRINT1_ROUTES } from '../helpers/routes.js'
+import { ALL_ROUTES, SPRINT1_ROUTES } from '../helpers/routes.js'
 
 const app = makeApp({ extraRoutes: probeRoutes })
 const echo = () => request(app).post('/api/__test/echo')
@@ -90,10 +90,10 @@ describe('TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15)', () => {
     expect(withProbe).toEqual([])
   })
 
-  it('calling every Sprint 1 route with GET leaves every table unchanged', async () => {
+  it('calling every Sprint 1 and Sprint 2 route with GET leaves every table unchanged', async () => {
     const before = await tableCounts()
     expect(before.users).toBeGreaterThan(0) // the seed really ran
-    for (const route of SPRINT1_ROUTES) {
+    for (const route of ALL_ROUTES) {
       const res = await request(app).get(route.path)
       expect(res.status, `${route.id} ${route.path}`).toBeLessThan(500)
     }
@@ -105,21 +105,21 @@ describe('TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15)', () => {
   it.each([
     ['participant', 'mint@player.example'],
     ['organizer', 'quantum@organizer.example'],
-  ])('with a signed-in %s, GET on every Sprint 1 route leaves every table unchanged', async (_role, email) => {
+  ])('with a signed-in %s, GET on every Sprint 1 and Sprint 2 route leaves every table unchanged', async (_role, email) => {
     const signedIn = await signIn(request(app), email, 'test-only-seed-password')
     expect(signedIn.status).toBe(200)
     const cookie = cookieHeader(readSessionCookie(signedIn)!.value)
 
     const before = await tableCounts()
-    for (const route of SPRINT1_ROUTES) {
+    for (const route of ALL_ROUTES) {
       const res = await request(app).get(route.path).set('Cookie', cookie)
       expect(res.status, `${route.id} ${route.path}`).toBeLessThan(500)
     }
     expect(await tableCounts()).toEqual(before)
   })
 
-  const getPaths = new Set(SPRINT1_ROUTES.filter((r) => r.method === 'GET').map((r) => r.path))
-  const postOnlyRoutes = SPRINT1_ROUTES.filter((r) => r.method === 'POST' && !getPaths.has(r.path)).map((r) => r.path)
+  const getPaths = new Set(ALL_ROUTES.filter((r) => r.method === 'GET').map((r) => r.path))
+  const postOnlyRoutes = ALL_ROUTES.filter((r) => r.method === 'POST' && !getPaths.has(r.path)).map((r) => r.path)
 
   it.each([...postOnlyRoutes, ...PROBE_POST_ONLY])(
     'GET on POST-only %s → 404 NOT_FOUND',

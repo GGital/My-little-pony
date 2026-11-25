@@ -4,18 +4,20 @@ import { EMAIL, EV, resetSeed, signIn } from './helpers'
 // Feature-F (contracts §9) and AC-C-06, on the seeded app.
 test.beforeAll(resetSeed)
 
-test('TEST-F-01 (E2E) — /events lists EV-1, 2, 3, 5, 6 in start order; EV-3 shows FULL 2 / 2 (AC-F-01)', async ({ page }) => {
+// Sprint 2 (S2-01) seeds EV-9, published and starting with EV-1, so it is the second card (Sprint 2 contracts §0.4).
+test('TEST-F-01 (E2E) — /events lists EV-1, 9, 2, 3, 5, 6 in start order; EV-3 shows FULL 2 / 2 (AC-F-01)', async ({ page }) => {
   await page.goto('/events')
   const cards = page.locator('a.event-card')
-  await expect(cards).toHaveCount(5)
+  await expect(cards).toHaveCount(6)
   await expect(cards.locator('.event-card__title')).toHaveText([
     'Friday Night Constructed',
+    'Early Deadline Sealed',
     'Last Seat Sealed',
     'Store Championship Qualifier',
     'Dragon Draft Night',
     'Release Weekend Sealed · เปิดกล่องสุดสัปดาห์',
   ])
-  await expect(cards.nth(2).locator('.chip--full')).toHaveText('FULL 2 / 2')
+  await expect(cards.nth(3).locator('.chip--full')).toHaveText('FULL 2 / 2')
   await expect(page.getByText('Live Now Casual')).toHaveCount(0)
 })
 

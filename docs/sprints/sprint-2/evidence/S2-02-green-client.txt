@@ -1,0 +1,14 @@
+Sprint 2 · S2-02 (Issue #79) · GREEN, client component tests and build
+Commit: e4c8940 (implementation 40f5687 + the Drafts.test.tsx type fix)
+Time: 2026-11-25T14:35:38Z
+Command: cd client; npx vitest run; npm run build
+
+
+ Test Files  24 passed (24)
+      Tests  99 passed (99)
+   Start at  21:35:41
+   Duration  10.45s (transform 2.23s, setup 19.20s, import 17.05s, tests 12.18s, environment 64.63s)
+
+dist/assets/index-C3Enp7l2.css                                      267.78 kB │ gzip: 45.79 kB
+dist/assets/index-CMHsKsTe.js                                       301.55 kB │ gzip: 94.80 kB
+✓ built in 1.56s
