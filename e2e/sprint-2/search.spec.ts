@@ -1,4 +1,5 @@
 import { spawnSync } from 'node:child_process'
+import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 import { resetSeed } from '../sprint-1/helpers'
 
@@ -98,4 +99,12 @@ test('TEST-J-05 (E2E) — Search, filters, URL synchronization and back/forward 
   await clearBtn.click()
   await expect(cards).toHaveCount(defaultTitles.length)
   await expect.poll(titlesOnPage).toEqual(defaultTitles)
+})
+
+// AC-C-08 on the new controls: chips, Clear all, pager, form fields (the C-08 scan sees /events with no filters only).
+test('TEST-J-05 (E2E) — the filtered list passes the axe colour-contrast scan (AC-C-08)', async ({ page }) => {
+  await page.goto('/events?q=quantum&include=past,cancelled')
+  await expect(page.getByRole('button', { name: 'Clear all' })).toBeVisible()
+  const results = await new AxeBuilder({ page }).withRules(['color-contrast']).analyze()
+  expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)).toEqual([])
 })
