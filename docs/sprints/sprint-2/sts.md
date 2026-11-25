@@ -1,7 +1,7 @@
 # Sprint 2 Software Test Specification (STS)
 
-Project: **TCG Event Hub** · Sprint 2 · Document version: v0.6 — **draft for team review** (changes in §8)
-Contracts: [`feature-contracts.md`](feature-contracts.md) v0.6 · Issues and Definition of Done: [`README.md`](README.md) ·
+Project: **TCG Event Hub** · Sprint 2 · Document version: v0.7 — **draft for team review** (changes in §8)
+Contracts: [`feature-contracts.md`](feature-contracts.md) v0.7 · Issues and Definition of Done: [`README.md`](README.md) ·
 Sprint 1 STS: [`../sprint-1/sts.md`](../sprint-1/sts.md) v1.13
 
 This document turns every Sprint 2 acceptance criterion into planned tests, **before** the code exists. It uses the
@@ -81,11 +81,11 @@ output**, with the commit id in §6.
 
 | Test ID | Level | AC / Req | Precondition / input | Action | Expected result | File | Result |
 |---|---|---|---|---|---|---|---|
-| TEST-K-01 | I, C | AC-K-01, FR-08 | O1; clock T | E-06 valid body + `saveAsDraft: true`; E-07; E-05 as O1. (C) the create form: press SAVE DRAFT with E-06 stubbed | `201`, row `DRAFT`, `publishedAt null`, `organizerId` O1; 1 change row `null → DRAFT`; E-07 includes it with `status DRAFT`; E-05 `MANAGE`. (C) the body has `saveAsDraft: true`; navigates to `/organizer/events/:id/edit`; toast text | `server/tests/sprint-2/drafts.api.test.ts`, `client/tests/sprint-2/CreateEvent.draft.test.tsx` | Pending |
-| TEST-K-02 | I | AC-K-02, BR-04 | draft D (O1); published E; visitor, Nok, O2 sessions | E-04 plain, `include=past,cancelled`, `q=<D title>`; E-05 D for each viewer; E-09 D by Nok | D in no list; E-05 ×3 `404 EVENT_NOT_FOUND`, each body equal to the 999999 body; E-09 `404`, Registration count 0 | `server/tests/sprint-2/drafts.api.test.ts` | Pending |
-| TEST-K-03 | I, E2E | AC-K-03, FR-08, FR-28 | draft D; clock T | E-14 by O1; E-04 as visitor. (E2E) Quantum Cards: dashboard → Publish on EV-7 | `200`, `PUBLISHED`, `publishedAt = T`, change row `DRAFT → PUBLISHED`; D is listed. (E2E) toast "Your event is live." and EV-7 appears on `/events` | `server/tests/sprint-2/drafts.api.test.ts`, `e2e/sprint-2/drafts.spec.ts` | Pending |
-| TEST-K-04 | U, I | AC-K-04, BR-02, D-21 | draft starting T + 1 h; clock moved to T + 2 h; drafts starting T2 + 30 min and T2 + 60 min (clock T2, CH-13); published P; cancelled C | (U) `decidePublish` with each state; (I) E-14 on each | (U) `EVENT_TIME_INVALID`, `ALREADY_PUBLISHED`, `ALREADY_CANCELLED`. (I) `422` field `startAt`, still `DRAFT` (past and 30-min drafts); `200` for the 60-min draft; `409 ALREADY_PUBLISHED`; `409 ALREADY_CANCELLED`; change-row count unchanged | `server/tests/sprint-2/unit/event-lifecycle.unit.test.ts`, `server/tests/sprint-2/drafts.api.test.ts` | Pending |
-| TEST-K-05 | I | AC-K-05, BR-13, BR-17 | draft D (O1) | E-14 by O2, P, visitor, `Origin: https://evil.example`; E-06 by P with `saveAsDraft`; E-06 by O1 with `saveAsDraft: "yes"`, with `status: "DRAFT"` | `404`, `403`, `401`, `403`; `403`; `400` (`saveAsDraft`), `400` (`status`); event and change-row counts unchanged | `server/tests/sprint-2/drafts.api.test.ts` | Pending |
+| TEST-K-01 | I, C | AC-K-01, FR-08 | O1; clock T | E-06 valid body + `saveAsDraft: true`; E-07; E-05 as O1. (C) the create form: press SAVE DRAFT with E-06 stubbed | `201`, row `DRAFT`, `publishedAt null`, `organizerId` O1; 1 change row `null → DRAFT`; E-07 includes it with `status DRAFT`; E-05 `MANAGE`. (C) the body has `saveAsDraft: true`; navigates to `/events/:id` (v0.7); toast text; both buttons busy-safe | `server/tests/sprint-2/drafts.api.test.ts`, `client/tests/sprint-2/CreateEvent.draft.test.tsx` | **Pass** (`40f5687`) |
+| TEST-K-02 | I | AC-K-02, BR-04 | draft D (O1); published E; visitor, Nok, O2 sessions | E-04 plain, `include=past,cancelled`, `q=<D title>`; E-05 D for each viewer; E-09 D by Nok | D in no list; E-05 ×3 `404 EVENT_NOT_FOUND`, each body equal to the 999999 body; E-09 `404`, Registration count 0 | `server/tests/sprint-2/drafts.api.test.ts` | **Pass** (`40f5687`) |
+| TEST-K-03 | I, E2E | AC-K-03, FR-08, FR-28 | draft D; clock T | E-14 by O1; E-04 as visitor. (E2E) Quantum Cards: dashboard → Publish on EV-7 | `200`, `PUBLISHED`, `publishedAt = T`, change row `DRAFT → PUBLISHED`; D is listed. (E2E) toast "Your event is live." and EV-7 appears on `/events`. (C, v0.7) the owner's draft banner and PUBLISH EVENT; the dashboard Publish button | `server/tests/sprint-2/drafts.api.test.ts`, `client/tests/sprint-2/Drafts.test.tsx`, `e2e/sprint-2/drafts.spec.ts` | **Pass** (`40f5687`) |
+| TEST-K-04 | U, I | AC-K-04, BR-02, D-21 | draft starting T + 1 h; clock moved to T + 2 h; drafts starting T2 + 30 min and T2 + 60 min (clock T2, CH-13); published P; cancelled C | (U) `decidePublish` with each state; (I) E-14 on each | (U) `EVENT_TIME_INVALID`, `ALREADY_PUBLISHED`, `ALREADY_CANCELLED`. (I) `422` field `startAt`, still `DRAFT` (past and 30-min drafts); `200` for the 60-min draft; `409 ALREADY_PUBLISHED`; `409 ALREADY_CANCELLED`; change-row count unchanged | `server/tests/sprint-2/unit/event-lifecycle.unit.test.ts`, `server/tests/sprint-2/drafts.api.test.ts` | **Pass** (`40f5687`) |
+| TEST-K-05 | I | AC-K-05, BR-13, BR-17 | draft D (O1) | E-14 by O2, P, visitor, `Origin: https://evil.example`; E-06 by P with `saveAsDraft`; E-06 by O1 with `saveAsDraft: "yes"`, with `status: "DRAFT"` | `404`, `403`, `401`, `403`; `403`; `400` (`saveAsDraft`), `400` (`status`); event and change-row counts unchanged | `server/tests/sprint-2/drafts.api.test.ts` | **Pass** (`40f5687`) |
 
 ### 2.3 Feature-L — editing and capacity
 
@@ -161,11 +161,11 @@ output**, with the commit id in §6.
 
 | Test ID | Level | AC / Req | Change in Sprint 2 | File | Result |
 |---|---|---|---|---|---|
-| TEST-B-03 (rows added) | I | AC-B-03, NFR-02 | rows for E-13 … E-17 from SDS §7.1, including byte-identical 404s for another owner's event and another participant's registration | `server/tests/sprint-1/authorization.api.test.ts` | E-17 rows **Pass** (`dfa124f`); E-13 … E-16 Pending |
+| TEST-B-03 (rows added) | I | AC-B-03, NFR-02 | rows for E-13 … E-17 from SDS §7.1, including byte-identical 404s for another owner's event and another participant's registration | `server/tests/sprint-1/authorization.api.test.ts` | E-14 rows **Pass** (`40f5687`), E-17 rows **Pass** (`dfa124f`); E-13, E-15, E-16 Pending |
 | TEST-SR1-02 (revised) | I | AC-SR1-02 | 9 events; EV-7 `DRAFT`, EV-8 `CANCELLED` with Boss `EVENT_CANCELLED`, EV-9 with a past deadline and Mint `REGISTERED`; a second run adds 0 rows | `server/tests/sprint-1/seed.api.test.ts` | **Pass** (`dfa124f`) |
-| TEST-SR2-03 (rows added) | I | AC-SR2-03 | E-13 … E-17 in the route table; GET on the POST/PATCH-only paths → 404, no writes | `server/tests/sprint-1/validation.api.test.ts` | E-17 row **Pass** (`dfa124f`); E-13 … E-16 Pending |
+| TEST-SR2-03 (rows added) | I | AC-SR2-03 | E-13 … E-17 in the route table; GET on the POST/PATCH-only paths → 404, no writes | `server/tests/sprint-1/validation.api.test.ts` | E-14 row **Pass** (`40f5687`), E-17 row **Pass** (`dfa124f`); E-13, E-15, E-16 Pending |
 | TEST-SR2-04 (codes added) | U | NFR-07 | `ALREADY_PUBLISHED`, `NOT_PUBLISHED` map to 409 | `server/tests/sprint-1/unit/errors.unit.test.ts` | **Pass** (`dfa124f`) |
-| TEST-E-01 (rows added) | I | AC-E-01 | E-07 includes the owner's draft and cancelled event with their status | `server/tests/sprint-1/organizer.api.test.ts` | Pending |
+| TEST-E-01 (rows added) | I | AC-E-01 | E-07 includes the owner's draft and cancelled event with their status | `server/tests/sprint-1/organizer.api.test.ts` | **Pass** (`40f5687`; it also passed on the red run, because E-07 already listed every status) |
 | TEST-SR5-02 | E2E | NFR-08 | the 3 new screens (edit, search with filters open, cancelled detail) at 390 / 768 / 1440 px, no horizontal scroll | `e2e/sprint-2/responsive.spec.ts` | Pending |
 | JRN-03 | E2E | K, L, M, N, O, SR-08 | contracts §9 | `e2e/sprint-2/journey.spec.ts` | Pending |
 | JRN-04 | E2E | J, FR-26 | contracts §9 | `e2e/sprint-2/journey.spec.ts` | Pending |
@@ -230,7 +230,7 @@ Fill this table from the real runs (README §3). The commit ids are the evidence
 | Issue | Tests written first | Red commit | Red run (failed / total) | Green commit | Green run (passed / total) |
 |---|---|---|---|---|---|
 | S2-01 SR-08 data foundation | TEST-SR8-01 (S2-01 part) … 04, TEST-SR1-02 (revised), TEST-SR2-04 (codes), TEST-B-02/B-03 and TEST-SR2-03 (E-17 rows); TEST-F-01, H-01, E-01 E2E lists (A1 `8694d76`) | `7c3ad62` | server 22 / 328 failed; E2E 3 / 9 failed (the three revised lists) | `dc987f9`, fixtures `dfa124f` | `dc987f9`: 322 passed, 1 failed, 5 skipped / 328 (2 Sprint 1 fixtures stored `CANCELLED` without `cancelledAt`); `dfa124f`: server 328 / 328, client 91 / 91, E2E 58 / 58 |
-| S2-02 Feature-K drafts | TEST-K-01 … 05, TEST-B-03 (E-14 rows) | | | | |
+| S2-02 Feature-K drafts | TEST-K-01 … 05, TEST-B-02/B-03 and TEST-SR2-03 (E-14 rows), TEST-E-01 (rows); TEST-G-04 draft case revised (`1730bc8`) | `47b3838` (+ setup fix `c1dc85b`) | server 17 failed, 6 skipped / 356 (the K-02 and K-05 setups get 400 for `saveAsDraft`); client 6 / 99; E2E TEST-K-03 1 / 1 | `40f5687` (+ client test type fix `e4c8940`) | server 356 / 356, client 99 / 99, build OK, E2E 63 / 63 |
 | S2-03 Feature-J search | TEST-J-01 … 06 | | | | |
 | S2-04 Feature-L edit | TEST-L-01 … 06, TEST-B-03 (E-13 rows) | | | | |
 | S2-05 Feature-O cancel event | TEST-O-01 … 06, TEST-B-03 (E-15 rows) | | | | |
@@ -272,3 +272,4 @@ checked.
 | v0.4 | 21 Nov 2026 | Contracts v0.5 (D-38): §2.9 TEST-C-07 (tokens, fonts, Thai fallback, self-hosting) and TEST-C-08 (contrast and axe); TDD row S2-10; 44 AC tests | Team (AI-assisted) |
 | v0.5 | 25 Nov 2026 | Contracts v0.6 (Lab 7 CH-13, Issue #77): TEST-K-04 adds drafts starting in 30 min (422) and 60 min (200); TEST-L-04 adds `startAt` = T + 59 min (422) and T + 60 min (200) | Team (AI-assisted) |
 | v0.6 | 25 Nov 2026 | S2-01: TEST-SR8-01 is split (team decision 24 Nov). E-13 arrives in S2-04, so S2-01 checks the creation row (E-06 writes `status` null → `PUBLISHED`) and E-17; the capacity and deadline steps join the test in S2-04. TEST-SR1-02, TEST-F-01 and the Sprint 1 E2E lists TEST-F-01, TEST-H-01 and TEST-E-01 change because the seed now has EV-7 … EV-9 (rule 1). §2.1, §2.10 and §5: S2-01 results (red `7c3ad62`, green `dc987f9`, fixtures `dfa124f`) | Team (AI-assisted) |
+| v0.7 | 25 Nov 2026 | Contracts v0.7 (S2-02): TEST-K-01 (C) lands on `/events/:id`; TEST-K-03 gains the (C) file `Drafts.test.tsx`. §2.2, §2.10 and §5: S2-02 results (red `47b3838`, green `40f5687`) | Team (AI-assisted) |

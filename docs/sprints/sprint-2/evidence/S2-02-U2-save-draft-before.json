@@ -1,0 +1,14 @@
+{
+  "id": "S2-02-U2-save-draft",
+  "side": "before",
+  "action": "Quantum Cards fills the form and presses SAVE DRAFT",
+  "expected": "After: lands on /events/:id with \"Draft saved. Only you can see it.\" and the banner \"Draft — only you can see this event.\"",
+  "actual": {
+    "saveDraftButton": false,
+    "url": "/organizer/events/new",
+    "notices": []
+  },
+  "time": "2026-11-25T14:27:44.212Z",
+  "commit": "47b3838",
+  "screenshot": "S2-02-U2-save-draft-before.png"
+}

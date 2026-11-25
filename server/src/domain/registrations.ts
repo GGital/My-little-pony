@@ -26,7 +26,8 @@ export async function register(db: PrismaClient, actor: Actor, eventId: number):
       async (tx) => {
         const [event] = await tx.$queryRaw<LockedEvent[]>`
           SELECT id, status, "startAt", capacity FROM "Event" WHERE id = ${eventId} FOR UPDATE`
-        if (!event) throw new HttpError('EVENT_NOT_FOUND')
+        // A draft does not exist for anyone but its owner (Sprint 2 contracts §2, BR-04), so it is the same 404.
+        if (!event || event.status === 'DRAFT') throw new HttpError('EVENT_NOT_FOUND')
 
         const [alreadyRegistered, active] = await Promise.all([
           tx.registration.count({ where: { eventId, participantId: actor.id, status: ACTIVE_STATUSES } }),
