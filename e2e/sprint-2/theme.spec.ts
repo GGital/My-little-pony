@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
-import { EMAIL, EV, resetSeed, signIn } from '../sprint-1/helpers'
+import { EMAIL, EV, resetSeed, signIn, signOut } from '../sprint-1/helpers'
 
 // TEST-C-07 and TEST-C-08 (E2E): AC-C-07, AC-C-08, D-38. Deep Lagoon colours; Inter, Manrope and IBM Plex Sans Thai,
 // self-hosted; no colour-contrast violation. TEST-SR5-01 (Sprint 1 responsive.spec.ts) is rerun with the whole suite.
@@ -85,6 +85,7 @@ test.describe('TEST-C-08 contrast and colours (AC-C-08)', () => {
     expect(await registered.evaluate((el) => getComputedStyle(el).boxShadow)).toContain(GREEN)
     await page.goto('/events')
     expect(await style(page, '.date-badge', 'background-color')).toBe(TEAL)
+    await signOut(page)
     await signIn(page, EMAIL.quantum)
     await page.goto('/organizer')
     expect(await style(page, '.btn-big', 'background-color')).toBe(TEAL)
