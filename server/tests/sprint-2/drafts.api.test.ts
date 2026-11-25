@@ -192,8 +192,9 @@ describe('TEST-K-04 (I) publishing re-checks the time rules; published and cance
 
   it('a draft starting in 30 minutes: 422 on startAt (CH-13); in exactly 60 minutes: 200', async () => {
     setNow(T)
-    const soon = await createDraft(24 * 60)
-    const onTheHour = await createDraft(24 * 60)
+    // 3 hours ahead keeps the moved clock inside the sessions' lifetime (signed in at T).
+    const soon = await createDraft(3 * 60)
+    const onTheHour = await createDraft(3 * 60)
 
     setNow(at(soon.startAt, -30))
     await expectRefused(soon.id, 422, 'EVENT_TIME_INVALID', 'startAt')
