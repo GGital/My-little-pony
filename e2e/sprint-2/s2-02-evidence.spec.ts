@@ -62,7 +62,8 @@ test('S2-02-U2 saving a draft from the form lands on the draft with the owner-on
   const hasButton = (await saveDraft.count()) > 0
   if (hasButton) {
     await saveDraft.click()
-    await expect(page.getByRole('heading', { name: 'S2-02 Evidence Draft' })).toBeVisible()
+    // Since S2-04 a new draft lands on its edit page (contracts v0.8), so wait for the toast both pages show.
+    await expect(page.getByText('Draft saved. Only you can see it.')).toBeVisible()
   }
   const file = await shot(page, 'S2-02-U2-save-draft')
   record('S2-02-U2-save-draft', 'Quantum Cards fills the form and presses SAVE DRAFT',
