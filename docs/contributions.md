@@ -77,6 +77,7 @@ UAT findings from Team 1 KitLoop are Issues #56–#64; the triage is Part 4 of t
 | Item | Issue | Branch · PR | Built by | Reviewed by | Status |
 |---|---|---|---|---|---|
 | S2-00 / S3-00 Sprint 2 and 3 contracts, STS, Issue plans; SRS v0.7 (CH-11, CH-12), features, plan, SDS, traceability, UI direction | (to be created) | `docs/s2-s3-contracts` · [#76](https://github.com/GGital/My-little-pony/pull/76) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | (filled in from the PR's review record) | In review |
+| S2-10 Deep Lagoon theme and type (Issue #86, D-38) | (to be created) | `feature/s2-10-theme` | MeldyRose (drafted with Claude Code, see `ai-use.md`) | (filled in from the PR's review record) | In review |
 
 ## 6. Keeping this table current
 
@@ -113,3 +114,4 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.26 | 21 Nov 2026 | §4 Lab 6: #61 merged (#72), #59 merged (#73); all eight accepted defects on `sprint-1-staging`, release to `main` and KitLoop retest pending | Team (AI-assisted) |
 | v0.27 | 21 Nov 2026 | §5 Sprints 2 and 3 added (contracts PR row); the maintenance section becomes §6 | Team (AI-assisted) |
 | v0.28 | 21 Nov 2026 | §5: PR #76 linked; CH-12 added to its scope | Team (AI-assisted) |
+| v0.29 | 25 Nov 2026 | §5: S2-10 Deep Lagoon theme row | Team (AI-assisted) |

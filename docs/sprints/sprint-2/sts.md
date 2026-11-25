@@ -154,8 +154,8 @@ output**, with the commit id in §6.
 
 | Test ID | Level | AC / Req | Precondition / input | Action | Expected result | File | Result |
 |---|---|---|---|---|---|---|---|
-| TEST-C-07 | U, E2E | AC-C-07, D-38 | the built client; the seed | (U) parse `theme.css` and compare every `:root` token with `tests/fixtures/deep-lagoon.json` (the design-direction §2 table); check `package.json` has no `@fontsource/chakra-petch`. (E2E) open `/events`, EV-1 and EV-6 (Thai title), My Events; read computed styles, `document.fonts` and the network log | (U) all tokens equal; no Chakra Petch dependency. (E2E) body `font-family` starts with Inter; the seat count and date badge are Manrope with `tabular-nums`; IBM Plex Sans Thai loaded for EV-6; 0 requests to `fonts.googleapis.com` | `client/tests/sprint-2/unit/theme-tokens.unit.test.ts`, `e2e/sprint-2/theme.spec.ts` | Pending |
-| TEST-C-08 | U, E2E | AC-C-08, NFR-10, NFR-08 | the token table; the seed; participant and organizer sessions | (U) a WCAG contrast function over every text and control pair; (E2E) `@axe-core/playwright` with only `color-contrast` on the 9 screens; rerun TEST-SR5-01 | (U) text ≥ 4.5, controls ≥ 3. (E2E) 0 violations; 21 / 21 width checks; PLAYER badge, seat chip and REGISTERED compute to `#1F6F43`, primary button to `#167D8D` | `client/tests/sprint-2/unit/theme-contrast.unit.test.ts`, `e2e/sprint-2/theme.spec.ts` | Pending |
+| TEST-C-07 | U, E2E | AC-C-07, D-38 | the built client; the seed | (U) parse `theme.css` and compare every `:root` token with `tests/fixtures/deep-lagoon.json` (the design-direction §2 table); check `package.json` has no `@fontsource/chakra-petch`. (E2E) open `/events`, EV-1 and EV-6 (Thai title), My Events; read computed styles, `document.fonts` and the network log | (U) all tokens equal; no Chakra Petch dependency. (E2E) body `font-family` starts with Inter; the seat count and date badge are Manrope with `tabular-nums`; IBM Plex Sans Thai loaded for EV-6; 0 requests to `fonts.googleapis.com` | `client/tests/sprint-2/unit/theme-tokens.unit.test.ts`, `e2e/sprint-2/theme.spec.ts` | Pass |
+| TEST-C-08 | U, E2E | AC-C-08, NFR-10, NFR-08 | the token table; the seed; participant and organizer sessions | (U) a WCAG contrast function over every text and control pair; (E2E) `@axe-core/playwright` with only `color-contrast` on the 9 screens; rerun TEST-SR5-01 | (U) text ≥ 4.5, controls ≥ 3. (E2E) 0 violations; 21 / 21 width checks; PLAYER badge, seat chip and REGISTERED compute to `#1F6F43`, primary button to `#167D8D` | `client/tests/sprint-2/unit/theme-contrast.unit.test.ts`, `e2e/sprint-2/theme.spec.ts` | Pass |
 
 ### 2.10 Regression additions to Sprint 1 tests and journeys
 
@@ -237,7 +237,7 @@ Fill this table from the real runs (README §3). The commit ids are the evidence
 | S2-06 Feature-M deadline | TEST-M-01 … 04 | | | | |
 | S2-07 Feature-N cancel / re-register | TEST-N-01 … 06, TEST-B-03 (E-16 rows) | | | | |
 | S2-09 Feature-U game and store profile | TEST-U-01 … 05, TEST-B-03 (E-23 rows) | | | | |
-| S2-10 Deep Lagoon theme and type | TEST-C-07, TEST-C-08 | | | | |
+| S2-10 Deep Lagoon theme and type | TEST-C-07, TEST-C-08 | `ec3e8a0` | unit 23 / 51 failed; E2E 2 / 10 failed (axe rows pass on the old palette) | `e671f38` | client 142 / 142; E2E 59 / 59 (incl. 21 / 21 TEST-SR5-01) |
 | S2-08 Integration and release `v0.2.0` | JRN-03, JRN-04, TEST-SR5-02, TEST-E-01 (rows), TEST-SR2-03 (rows) | | | | |
 
 For the Deliverable 2 PDF excerpts, keep red and green output for **TEST-L-03** or **TEST-N-03** (domain rule) and

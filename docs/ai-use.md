@@ -60,6 +60,7 @@ tasks they assisted. Both students are responsible for, and must be able to expl
 | CH-12 Swiss tournaments added to the Sprint 3 specification (PR #76) | — | Pointed out that X-05 excluded pairings and asked how much tournament support and how much privacy to add; drafted FR-32 … FR-37, BR-21 … BR-24, NFR-18, the D-32 exception to BR-16, the Feature-W and Feature-X contracts (14 ACs), tests including a 1,000-tournament property test, the SDS tables, endpoints and the pairing design SD-14; computed the standings fixture with a script and exact fractions | Phattaratorn chose full Swiss pairings and results, and owner-and-player-only privacy; Praewa reviews the PR |
 | Store contact details on the store profile (PR #76, D-37) | — | Checked that events already had a free-text `contact` field (FR-06) but the store had no contact details; drafted the store contact fields, validation, safe-link rules, AC-U-04 and AC-U-05 with their tests, and the matching SRS, SDS, feature, traceability and UI-direction edits | Phattaratorn asked for the store's contact information on events in Sprint 2 |
 | Sprint 2 palette and font trials; Deep Lagoon theme (PR #76, D-38) | — | Built the palette trials (five Color Hunt palettes with measured WCAG contrast) and the font trials on the prototype canvas; checked the 1001fonts licences, downloaded Giphurs and Creato Display (SIL OFL 1.1) with the team's approval and uploaded them; wrote the Deep Lagoon token table (every pair measured), the Inter / Manrope / IBM Plex Sans Thai rules, AC-C-07, AC-C-08 and their tests | Phattaratorn chose the palettes and fonts to try, then chose Deep Lagoon, Inter for text and Manrope for figures |
+| S2-10 Deep Lagoon theme and type (Issue #86) | — | Wrote TEST-C-07 and TEST-C-08 first (red), then swapped the theme.css token values and font stacks, the Fontsource imports and dependencies, applied the figure font to date badge, chips and seat counts, and tightened the header gap so Inter fits at 768 px; ran the unit, build and E2E suites | The team reviews the diff and the contrast results on the real database |
 
 ## 3. How we supervise the agent
 
@@ -112,3 +113,4 @@ same way it fills its row in `sts.md` §5 and in [`contributions.md`](contributi
 | v0.28 | 21 Nov 2026 | CH-12 Swiss tournaments row | Team (AI-assisted) |
 | v0.29 | 21 Nov 2026 | Store contact details row | Team (AI-assisted) |
 | v0.30 | 21 Nov 2026 | Palette and font trials, Deep Lagoon theme row | Team (AI-assisted) |
+| v0.31 | 25 Nov 2026 | S2-10 Deep Lagoon theme implementation row | Team (AI-assisted) |
