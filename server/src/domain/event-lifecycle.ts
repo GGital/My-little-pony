@@ -166,3 +166,11 @@ export async function updateEvent(
   })
   return (await getEventDetail(db, eventId, actor))!
 }
+
+export type CancelFacts = { status: EventStatus; startAt: Date }
+export type CancelDecision = { ok: true } | { ok: false; code: 'ALREADY_CANCELLED' | 'NOT_PUBLISHED' | 'EVENT_STARTED' }
+
+// STUB (S2-05 commit A): allows everything, so TEST-O-04 fails on its assertions until commit B.
+export function decideCancel(_facts: CancelFacts, _at: Date): CancelDecision {
+  return { ok: true }
+}
