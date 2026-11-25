@@ -3,8 +3,8 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { CreateEvent } from '../../src/pages/organizer/CreateEvent'
 
-// TEST-K-01 (C) · AC-K-01, UX-05 (Sprint 2 contracts §2 v0.7): SAVE DRAFT sends saveAsDraft and lands on the
-// draft's own page (the edit page comes with S2-04, decision 25 Nov 2026).
+// TEST-K-01 (C) · AC-K-01, UX-05 (Sprint 2 contracts §2 v0.8): SAVE DRAFT sends saveAsDraft and lands on the
+// draft's edit page. Until S2-04 built that page it landed on /events/:id (v0.7, decision 25 Nov 2026).
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
 
@@ -24,6 +24,7 @@ const renderPage = () =>
       <Routes>
         <Route path="/organizer/events/new" element={<CreateEvent />} />
         <Route path="/events/:id" element={<Landed />} />
+        <Route path="/organizer/events/:id/edit" element={<Landed />} />
       </Routes>
     </MemoryRouter>,
   )
@@ -39,12 +40,12 @@ describe('TEST-K-01 (C) SAVE DRAFT on the create page (AC-K-01, UX-05)', () => {
     expect(screen.getByRole('button', { name: 'SAVE DRAFT' })).toBeInTheDocument()
   })
 
-  it('SAVE DRAFT posts E-06 with saveAsDraft: true and lands on the draft with "Draft saved. Only you can see it."', async () => {
+  it('SAVE DRAFT posts E-06 with saveAsDraft: true and lands on its edit page with "Draft saved. Only you can see it."', async () => {
     const spy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(json(201, { id: 42, status: 'DRAFT' }))
     renderPage()
     fireEvent.click(screen.getByRole('button', { name: 'SAVE DRAFT' }))
 
-    expect(await screen.findByTestId('path')).toHaveTextContent('/events/42')
+    expect(await screen.findByTestId('path')).toHaveTextContent('/organizer/events/42/edit')
     expect(screen.getByTestId('toast')).toHaveTextContent('Draft saved. Only you can see it.')
     expect(spy.mock.calls[0][0]).toBe('/api/events')
     expect(sentBody(spy).saveAsDraft).toBe(true)
@@ -68,6 +69,6 @@ describe('TEST-K-01 (C) SAVE DRAFT on the create page (AC-K-01, UX-05)', () => {
     expect(await screen.findByRole('button', { name: /Saving…/ })).toBeDisabled()
     expect(screen.getByRole('button', { name: /PUBLISH EVENT/ })).toBeDisabled()
     resolve(json(201, { id: 44, status: 'DRAFT' }))
-    await waitFor(() => expect(screen.getByTestId('path')).toHaveTextContent('/events/44'))
+    await waitFor(() => expect(screen.getByTestId('path')).toHaveTextContent('/organizer/events/44/edit'))
   })
 })
