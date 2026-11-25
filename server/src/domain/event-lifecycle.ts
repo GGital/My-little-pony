@@ -53,3 +53,18 @@ export async function publishEvent(db: PrismaClient, actor: Actor, eventId: numb
   })
   return (await getEventDetail(db, eventId, actor))!
 }
+
+// ---- Feature-L stubs for the red run (S2-04 commit A); the rules are written in commit B ----
+export function decideCapacity(_active: number, _capacity: number): 'OK' | 'CAPACITY_BELOW_REGISTERED' {
+  return 'OK'
+}
+export function decideEditTimes(
+  _stored: { startAt: Date; endAt: Date; registrationDeadline: Date | null },
+  _body: { startAt?: Date; endAt?: Date },
+  _at: Date,
+): { field: 'startAt' | 'endAt' | 'registrationDeadline'; message: string } | null {
+  return null
+}
+export function frozenFields(_keys: string[], _started: boolean): string[] {
+  return []
+}
