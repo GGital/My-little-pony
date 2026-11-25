@@ -1,6 +1,6 @@
 # Sprint 2 Feature Engineering Contracts
 
-Project: **TCG Event Hub** · Sprint 2 (9–29 Nov 2026) · Document version: v0.6 — **draft for team review** (changes in §13; v0.6 = Lab 7 CH-13, Issue #77)
+Project: **TCG Event Hub** · Sprint 2 (9–29 Nov 2026) · Document version: v0.7 — **draft for team review** (changes in §13; v0.6 = Lab 7 CH-13, Issue #77; v0.7 = S2-02)
 Inputs: [`../../srs.md`](../../srs.md) v0.6 · [`../../features.md`](../../features.md) v0.4 ·
 [`../../traceability.md`](../../traceability.md) · [`../../system-sds.md`](../../system-sds.md) ·
 [`../plan.md`](../plan.md) §3 · [`../../ui/design-direction.md`](../../ui/design-direction.md) ·
@@ -228,7 +228,8 @@ changed capacity from 24 to 30". The registration list (Feature-I) shows cancell
    **PUBLISH EVENT**. Both send E-06. SAVE DRAFT adds `"saveAsDraft": true` (D-18).
 2. The server validates exactly as Feature-D does (all fields, BR-01 … BR-03). A draft is stored with
    `status DRAFT` and `publishedAt null`, and an `EventChange` row is written (`status` null → `DRAFT`). The UI goes
-   to the edit page with the toast "Draft saved. Only you can see it."
+   to the draft's own page (`/events/:id`) with the toast "Draft saved. Only you can see it." (v0.7: the edit page
+   arrives with Feature-L in S2-04, which then sends a new draft there)
 3. The draft appears on the dashboard (E-07) with a **Draft** chip and a **Publish** button. Only its owner can
    open its detail page, which shows the banner "Draft — only you can see this event." and **PUBLISH EVENT**.
 4. **PUBLISH EVENT** calls E-14. It checks BR-02 and BR-08 again (D-21), then sets `status PUBLISHED`,
@@ -251,7 +252,8 @@ changed capacity from 24 to 30". The registration list (Feature-I) shows cancell
 **UI**
 - Create page: **PUBLISH EVENT** (primary) and **SAVE DRAFT** (secondary). Both show a busy state, and both keep
   the input when there is an error.
-- Dashboard: Draft chip (muted) · **Publish** and **Edit** buttons · no **Registrations** link for drafts.
+- Dashboard: Draft chip (muted) · **Publish** button · no **Registrations** link for drafts. The **Edit** button comes
+  with the edit page (Feature-L, S2-04).
 - Detail page (owner, draft): amber banner and **PUBLISH EVENT**. Organizer actions are not shown to anyone else.
 
 **API**
@@ -266,7 +268,7 @@ changed capacity from 24 to 30". The registration list (Feature-I) shows cancell
 
 | AC | Given | When | Then |
 |---|---|---|---|
-| **AC-K-01** | Quantum Cards signed in; clock fixed | E-06 with a valid body and `saveAsDraft: true`; then E-07 and E-05 as the owner; UI: fill the form and press SAVE DRAFT | `201`; the row has `status DRAFT`, `publishedAt null`, owner = Quantum Cards; one `EventChange` null → `DRAFT`; E-07 lists it as Draft; E-05 gives `MANAGE`; the UI lands on the edit page with "Draft saved. Only you can see it." |
+| **AC-K-01** | Quantum Cards signed in; clock fixed | E-06 with a valid body and `saveAsDraft: true`; then E-07 and E-05 as the owner; UI: fill the form and press SAVE DRAFT | `201`; the row has `status DRAFT`, `publishedAt null`, owner = Quantum Cards; one `EventChange` null → `DRAFT`; E-07 lists it as Draft; E-05 gives `MANAGE`; the UI lands on the draft's page with "Draft saved. Only you can see it." and the draft banner |
 | **AC-K-02** | the draft from AC-K-01 | E-04 (no filter, and with `include=past,cancelled` and `q` = its title) as a visitor, Nok and Dragon's Den; E-05 for it as a visitor, Nok and Dragon's Den; E-09 for it by Nok | the draft is in no list; every E-05 is `404 EVENT_NOT_FOUND`, byte-identical to id 999999; E-09 is `404` and no row is stored |
 | **AC-K-03** | the draft; clock T | the owner calls E-14; then E-04 as a visitor; UI: press PUBLISH EVENT on the dashboard | `200`, `status PUBLISHED`, `publishedAt = T`; `EventChange` `DRAFT → PUBLISHED`; the event is now in E-04; toast "Your event is live." |
 | **AC-K-04** | a draft whose start is now in the past (clock moved); a draft starting in 30 min; a draft starting in exactly 60 min; a published event; a cancelled event | the owner calls E-14 on each | `422 EVENT_TIME_INVALID` (field `startAt`) and the event stays `DRAFT` for the first two (CH-13); `200` for the 60-min draft; `409 ALREADY_PUBLISHED`; `409 ALREADY_CANCELLED`; nothing is changed and no change row is written |
@@ -556,7 +558,7 @@ show a **Past** or **Cancelled** chip.
 | Feature-D, E-06 | Optional `saveAsDraft` and `registrationDeadline`; creation writes an `EventChange`; the `contact` field's hint now points at the store contact (D-37), with no rule change | TEST-D-01 … 05 unchanged and still green; TEST-K-01, TEST-M-01, TEST-U-04 |
 | Feature-E, E-07 | Shows drafts and cancelled events with their chips; Edit and Publish buttons | TEST-E-01 gains a draft and a cancelled row |
 | Feature-F, E-04 / E-05 | Query, paging and `meta` (J); drafts are 404 (K); the new `CLOSED` rule (M); cancel fields (O) | TEST-F-01 … 05 unchanged and still green with no query; TEST-J-*, K-02, M-03, O-02 |
-| Feature-G, E-09 | Draft → 404; deadline → closed; cancelled → closed | TEST-G-01 … 06 still green; TEST-K-02, M-03, O-02 |
+| Feature-G, E-09 | Draft → 404; deadline → closed; cancelled → closed | TEST-G-01 … 06 still green, except TEST-G-04's draft case, which now expects `404 EVENT_NOT_FOUND` (v0.7, Sprint 1 STS v1.16); TEST-K-02, M-03, O-02 |
 | Feature-H / I, E-08, E-10, E-11 | `cancelledAt`, `canCancel` | TEST-H-*, I-* still green; TEST-N-01, M-04 |
 | SR-01, AC-SR1-02 | The seed has 9 events (§0.4) | TEST-SR1-02 is updated in S2-01, and the change is recorded in Sprint 1 STS §8 |
 | SR-02, TEST-SR2-03 / 04 | Route table + new codes | rows added |
@@ -757,3 +759,4 @@ that fails blocks the merge. Nothing in Sprint 1's AC-C-01 … 06 or AC-SR5-01 m
 | v0.4 | 21 Nov 2026 | D-37: store contact details (phone, email, website, LINE) on the Feature-U store profile, shown on every event, with the event's own `contact` kept as "Contact for this event"; validation table; AC-U-04, AC-U-05; seed contacts; §10 total 40 → 42 | Team (AI-assisted) |
 | v0.5 | 21 Nov 2026 | D-38: §12 Feature-C Deep Lagoon theme and type (Inter text, Manrope figures, Thai fallback), AC-C-07 and AC-C-08; re-verification row; version history becomes §13; 44 ACs | Team (AI-assisted) |
 | v0.6 | 25 Nov 2026 | Lab 7 change CH-13 (Issue #77): D-21, E-14 check order and the E-13 time rule use the 60-minute lead time (only when the body sets `startAt`); AC-K-04 and AC-L-04 gain the boundary cases | Team (AI-assisted) |
+| v0.7 | 25 Nov 2026 | S2-02 (team decision 25 Nov): SAVE DRAFT lands on the draft's own page, which shows the owner's banner and PUBLISH EVENT, because the edit page is built in S2-04; the dashboard **Edit** button moves to S2-04 too (Behaviour 2, UI, AC-K-01). §8: TEST-G-04's draft case changes to 404, which the Feature-G row had missed | Team (AI-assisted) |
