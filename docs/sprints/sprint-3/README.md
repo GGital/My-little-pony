@@ -78,9 +78,9 @@ submitted candidate and never says more than the evidence shows.
 | SR-05 accessibility (AC-SR5-02 … 04) | [#104](https://github.com/GGital/My-little-pony/issues/104) | Planned | — | Scan, fixes, keyboard record (M evidence) | all screens | Phattaratorn, 10 Dec |
 | SR-06 performance (AC-SR6-01, 02) | [#105](https://github.com/GGital/My-little-pony/issues/105) | Planned | — | Perf seed, load run, indexes if needed (M evidence) | S3-03 | Praewa, 10 Dec |
 | SR-07, journeys, release (AC-SR7-02, JRN-05 … 08) | [#106](https://github.com/GGital/My-little-pony/issues/106) | Planned | — | Regression, UAT re-tests of the Lab 6 cases, `v1.0.0`, demo video of at most 10 minutes | all | Both, 12–13 Dec |
-| Known defect: the draft EV-7 opens by direct URL (BR-04) | #79 (S2-02) | Remaining | — | Fixed by Feature-K (AC-K-02) in Sprint 2 | S2-01 | Phattaratorn, before `v0.2.0` |
 
-Sprint 2 rows are tracked in the Sprint 2 README and `sts.md` §5; they are not repeated here.
+No defect is open on 25 Nov 2026 (the Lab 6 findings are closed; #64 is delivered by S2-04). Sprint 2 rows are
+tracked in the Sprint 2 README and `sts.md` §5; they are not repeated here.
 
 ## 4. Test-driven workflow
 
@@ -108,4 +108,4 @@ Issue. Sprint 3 adds:
 |---|---|---|---|
 | v0.1 | 21 Nov 2026 | First Sprint 3 package: contracts v0.1, STS v0.1, Issue plan S3-00 … S3-09, remaining-work table for Deliverable 2, DoD additions | Team (AI-assisted) |
 | v0.2 | 21 Nov 2026 | CH-12: S3-10 Feature-W and S3-11 Feature-X with targets; remaining-work rows; S3-03 moved to 1 Dec; DoD-6 endpoints; contract section numbers follow contracts v0.2 | Team (AI-assisted) |
-| v0.3 | 25 Nov 2026 | Deliverable 2 check: §2 links the GitHub Issues #96 … #106 and names the students, says where `sprint-3-staging` was cut and that S3-00 merged in PR #76; §3 uses the Deliverable 2 columns (status words, achieved AC and tested commit, missing work, dependencies, owner by name and date) and lists the one known open defect | Team (AI-assisted) |
+| v0.3 | 25 Nov 2026 | Deliverable 2 check: §2 links the GitHub Issues #96 … #106 and names the students, says where `sprint-3-staging` was cut and that S3-00 merged in PR #76; §3 uses the Deliverable 2 columns (status words, achieved AC and tested commit, missing work, dependencies, owner by name and date). No defect is open on 25 Nov | Team (AI-assisted) |
