@@ -29,12 +29,14 @@ describe('TEST-F-01 — public event list E-04 (AC-F-01, FR-11)', () => {
     expect(Array.isArray(res.body.items)).toBe(true)
 
     const items = res.body.items
-    // EV-4 has started, so 5 events: EV-1, EV-2, EV-3, EV-5, EV-6
-    expect(items.length).toBe(5)
+    // EV-4 has started, EV-7 is a draft and EV-8 is cancelled, so 6 events: EV-1, EV-9, EV-2, EV-3, EV-5, EV-6.
+    // Sprint 2 (S2-01) added EV-9; it starts at the same time as EV-1, so the id decides (Sprint 2 contracts §0.4).
+    expect(items.length).toBe(6)
 
     // S2: verify exact titles listed in startAt then id order
     expect(items.map((e: { title: string }) => e.title)).toEqual([
       'Friday Night Constructed',
+      'Early Deadline Sealed',
       'Last Seat Sealed',
       'Store Championship Qualifier',
       'Dragon Draft Night',

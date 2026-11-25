@@ -78,6 +78,7 @@ UAT findings from Team 1 KitLoop are Issues #56–#64; the triage is Part 4 of t
 |---|---|---|---|---|---|
 | S2-00 / S3-00 Sprint 2 and 3 contracts, STS, Issue plans; SRS v0.7 (CH-11, CH-12), features, plan, SDS, traceability, UI direction | Issues [#78](https://github.com/GGital/My-little-pony/issues/78)–[#87](https://github.com/GGital/My-little-pony/issues/87) created 23 Nov | `docs/s2-s3-contracts` · [#76](https://github.com/GGital/My-little-pony/pull/76) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (approved #76, 21 Nov) | Merged 21 Nov (`40d3699`) |
 | CH-13 merged into the Sprint 2 line; Sprint 2 contracts v0.6 and STS v0.5 use the 60-minute lead time | [#77](https://github.com/GGital/My-little-pony/issues/77) | `chore/s2-sync-ch13` · (PR to be opened) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (requested when the PR opens) | In progress |
+| S2-01 SR-08 data foundation: migrations `0003`, `0004`, change history, E-17, seed EV-7 … EV-9 | [#78](https://github.com/GGital/My-little-pony/issues/78) | `feature/s2-01-data-foundation` · (PR to be opened) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (requested when the PR opens) | In review: red `7c3ad62`, green `dc987f9` + fixtures `dfa124f` |
 
 ## 6. Lab 7: Sprint 1 maintenance (CH-13)
 
@@ -130,3 +131,4 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.26.2 | 25 Nov 2026 | §5 Lab 7: #89 merged, release #90 (`v0.1.2`, revision `tcg-event-hub-00018-s6f`), records PR row | Team (AI-assisted) |
 | v0.29 | 25 Nov 2026 | Lab 7 CH-13 merged into the Sprint 2 line: its rows become §6 and "Keeping this table current" §7; §5 contracts row: #76 merged, Issues #78–#87; §6 #91 merged (`be04c17`) | Team (AI-assisted) |
 | v0.30 | 25 Nov 2026 | §5: CH-13 sync row | Team (AI-assisted) |
+| v0.31 | 25 Nov 2026 | §5: S2-01 row | Team (AI-assisted) |

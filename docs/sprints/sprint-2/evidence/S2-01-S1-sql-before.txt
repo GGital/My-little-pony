@@ -1,0 +1,66 @@
+Sprint 2 · S2-01 (Issue #78) · S2-01-S1 · direct SQL against the test database (side: before)
+Commit: fa9c056 (pre-change schema: migrations 0001, 0002)
+Time: 2026-11-25T07:27:05Z
+Command: docker exec -i TCGEventDB psql -U postgres -d tcg_event_hub_test -e < s201-sql.sql   (every statement is rolled back)
+
+-- S2-01-S1: the SR-08 constraints and trigger on the test database (everything is rolled back)
+BEGIN;
+BEGIN
+SELECT conname FROM pg_constraint WHERE conname IN ('event_deadline_before_start','event_cancel_fields','registration_cancel_fields') ORDER BY conname;
+ conname 
+---------
+(0 rows)
+
+SELECT tgname FROM pg_trigger WHERE tgname = 'event_change_append_only';
+ tgname 
+--------
+(0 rows)
+
+-- 1. a registration deadline 1 minute after the start (BR-08)
+SAVEPOINT s;
+SAVEPOINT
+UPDATE "Event" SET "registrationDeadline" = "startAt" + interval '1 minute' WHERE "seedKey" = 'EV-1';
+ROLLBACK TO s;
+ERROR:  column "registrationDeadline" of relation "Event" does not exist
+LINE 1: UPDATE "Event" SET "registrationDeadline" = "startAt" + inte...
+                           ^
+ROLLBACK
+-- 2. CANCELLED without a reason (BR-12)
+SAVEPOINT s;
+SAVEPOINT
+UPDATE "Event" SET "status" = 'CANCELLED', "cancelledAt" = now(), "cancelledById" = "organizerId" WHERE "seedKey" = 'EV-1';
+ERROR:  column "cancelledAt" of relation "Event" does not exist
+LINE 1: UPDATE "Event" SET "status" = 'CANCELLED', "cancelledAt" = n...
+                                                   ^
+ROLLBACK TO s;
+ROLLBACK
+-- 3. a registration CANCELLED without cancelledAt (FR-28)
+SAVEPOINT s;
+SAVEPOINT
+UPDATE "Registration" SET "status" = 'CANCELLED' WHERE id = (SELECT min(id) FROM "Registration" WHERE "status" = 'REGISTERED');
+UPDATE 1
+ROLLBACK TO s;
+ROLLBACK
+-- 4. UPDATE and DELETE on the change history (X-11)
+SAVEPOINT s;
+SAVEPOINT
+UPDATE "EventChange" SET "newValue" = 'x';
+ROLLBACK TO s;
+ERROR:  relation "EventChange" does not exist
+LINE 1: UPDATE "EventChange" SET "newValue" = 'x';
+               ^
+ROLLBACK
+SAVEPOINT s;
+SAVEPOINT
+DELETE FROM "EventChange";
+ROLLBACK TO s;
+ERROR:  relation "EventChange" does not exist
+LINE 1: DELETE FROM "EventChange";
+                    ^
+ROLLBACK
+SELECT count(*) AS change_rows FROM "EventChange";
+ERROR:  relation "EventChange" does not exist
+LINE 1: SELECT count(*) AS change_rows FROM "EventChange";
+                                            ^
+ROLLBACK;
+ROLLBACK

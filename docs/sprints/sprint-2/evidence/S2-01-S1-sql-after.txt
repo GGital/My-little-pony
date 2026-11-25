@@ -1,0 +1,69 @@
+Sprint 2 · S2-01 (Issue #78) · S2-01-S1 · direct SQL against the test database (side: after)
+Commit: dfa124f (migrations 0001 … 0004)
+Time: 2026-11-25T07:34:03Z
+Command: docker exec -i TCGEventDB psql -U postgres -d tcg_event_hub_test -e < S2-01-S1.sql   (every statement is rolled back)
+
+-- S2-01-S1: the SR-08 constraints and trigger on the test database (everything is rolled back)
+BEGIN;
+BEGIN
+SELECT conname FROM pg_constraint WHERE conname IN ('event_deadline_before_start','event_cancel_fields','registration_cancel_fields') ORDER BY conname;
+           conname           
+-----------------------------
+ event_cancel_fields
+ event_deadline_before_start
+ registration_cancel_fields
+(3 rows)
+
+SELECT tgname FROM pg_trigger WHERE tgname = 'event_change_append_only';
+          tgname          
+--------------------------
+ event_change_append_only
+(1 row)
+
+-- 1. a registration deadline 1 minute after the start (BR-08)
+SAVEPOINT s;
+SAVEPOINT
+UPDATE "Event" SET "registrationDeadline" = "startAt" + interval '1 minute' WHERE "seedKey" = 'EV-1';
+ROLLBACK TO s;
+ROLLBACK
+-- 2. CANCELLED without a reason (BR-12)
+SAVEPOINT s;
+ERROR:  new row for relation "Event" violates check constraint "event_deadline_before_start"
+DETAIL:  Failing row contains (1, 1, Friday Night Constructed, CASUAL, CONSTRUCTED, Quantum Cards, 1631 Kanchanaphisek Rd, Bang Khae, Bangkok 10160, Bangkok, 2026-11-27 07:33:46.86+00, 2026-11-27 11:33:46.86+00, 24, THB 250, 4 rounds · Best of 1, hello@quantumcards.example, Bring a legal constructed deck. Promo pack for every player. Ple..., PUBLISHED, 2026-11-25 07:33:46.86+00, EV-1, 2026-11-25 07:33:46.863+00, 2026-11-25 07:33:46.863+00, null, null, null, MAGIC, 2026-11-27 07:34:46.86+00).
+SAVEPOINT
+UPDATE "Event" SET "status" = 'CANCELLED', "cancelledAt" = now(), "cancelledById" = "organizerId" WHERE "seedKey" = 'EV-1';
+ROLLBACK TO s;
+ERROR:  new row for relation "Event" violates check constraint "event_cancel_fields"
+DETAIL:  Failing row contains (1, 1, Friday Night Constructed, CASUAL, CONSTRUCTED, Quantum Cards, 1631 Kanchanaphisek Rd, Bang Khae, Bangkok 10160, Bangkok, 2026-11-27 07:33:46.86+00, 2026-11-27 11:33:46.86+00, 24, THB 250, 4 rounds · Best of 1, hello@quantumcards.example, Bring a legal constructed deck. Promo pack for every player. Ple..., CANCELLED, 2026-11-25 07:33:46.86+00, EV-1, 2026-11-25 07:33:46.863+00, 2026-11-25 07:33:46.863+00, null, 2026-11-25 07:34:03.777+00, 1, MAGIC, null).
+ROLLBACK
+-- 3. a registration CANCELLED without cancelledAt (FR-28)
+SAVEPOINT s;
+SAVEPOINT
+UPDATE "Registration" SET "status" = 'CANCELLED' WHERE id = (SELECT min(id) FROM "Registration" WHERE "status" = 'REGISTERED');
+ERROR:  new row for relation "Registration" violates check constraint "registration_cancel_fields"
+DETAIL:  Failing row contains (1, 1, 3, CANCELLED, 2026-11-25 07:33:46.874+00, null).
+ROLLBACK TO s;
+ROLLBACK
+-- 4. UPDATE and DELETE on the change history (X-11)
+SAVEPOINT s;
+SAVEPOINT
+UPDATE "EventChange" SET "newValue" = 'x';
+ERROR:  event_change_append_only: EventChange rows cannot be updated or deleted (X-11)
+CONTEXT:  PL/pgSQL function reject_change() line 3 at RAISE
+ROLLBACK TO s;
+ROLLBACK
+SAVEPOINT s;
+SAVEPOINT
+DELETE FROM "EventChange";
+ERROR:  event_change_append_only: EventChange rows cannot be updated or deleted (X-11)
+CONTEXT:  PL/pgSQL function reject_change() line 3 at RAISE
+ROLLBACK TO s;
+ROLLBACK
+SELECT count(*) AS change_rows FROM "EventChange";
+ change_rows 
+-------------
+           1
+(1 row)
+
+ROLLBACK;
+ROLLBACK

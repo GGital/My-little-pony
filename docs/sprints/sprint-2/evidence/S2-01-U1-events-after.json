@@ -1,0 +1,20 @@
+{
+  "id": "S2-01-U1-events",
+  "side": "after",
+  "action": "Visitor opens /events",
+  "expected": "After: 6 cards, \"Early Deadline Sealed\" (EV-9) second; no draft, no cancelled event",
+  "actual": {
+    "url": "/events",
+    "titles": [
+      "Friday Night Constructed",
+      "Early Deadline Sealed",
+      "Last Seat Sealed",
+      "Store Championship Qualifier",
+      "Dragon Draft Night",
+      "Release Weekend Sealed · เปิดกล่องสุดสัปดาห์"
+    ]
+  },
+  "time": "2026-11-25T07:33:47.774Z",
+  "commit": "dfa124f",
+  "screenshot": "S2-01-U1-events-after.png"
+}
