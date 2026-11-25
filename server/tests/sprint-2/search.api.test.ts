@@ -108,6 +108,43 @@ describe('TEST-J-01 — search text queries against seed (AC-J-01, FR-13)', () =
   })
 })
 
+describe('TEST-J-01 — literal % and _ in q (AC-J-01, contracts §7 q rule)', () => {
+  it('finds an event whose title contains % or _ by that exact text, and q=% is not a wildcard', async () => {
+    const organizer = await prisma.user.findFirstOrThrow({ where: { role: 'ORGANIZER' } })
+    const event = await prisma.event.create({
+      data: {
+        organizerId: organizer.id,
+        title: '50% off_night',
+        type: 'CASUAL',
+        format: 'CONSTRUCTED',
+        venueName: 'Literal Venue',
+        venueAddress: 'Literal Address',
+        city: 'Bangkok',
+        startAt: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000),
+        endAt: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000 + 2 * 60 * 60 * 1000),
+        capacity: 10,
+        status: 'PUBLISHED',
+      },
+    })
+    try {
+      const idsFor = async (q: string) => {
+        const res = await request(app).get(`/api/events?q=${encodeURIComponent(q)}`)
+        expect(res.status).toBe(200)
+        return res.body.items.map((i: { id: number }) => i.id) as number[]
+      }
+      expect(await idsFor('50%')).toEqual([event.id])
+      expect(await idsFor('50% off')).toEqual([event.id])
+      expect(await idsFor('off_night')).toEqual([event.id])
+      // "_" is not a single-character wildcard: "off-night" and "offXnight" must not match
+      expect(await idsFor('off-night')).toEqual([])
+      // "%" is not a wildcard: only titles containing a real percent sign match
+      expect(await idsFor('%')).toEqual([event.id])
+    } finally {
+      await prisma.event.delete({ where: { id: event.id } })
+    }
+  })
+})
+
 describe('TEST-J-02 — filter combinations and Bangkok date boundaries (AC-J-02, FR-13, NFR-11, D-22)', () => {
   it('filters by type, format, from/to across Bangkok midnight, seatsAvailable, and combined', async () => {
     const organizer = await prisma.user.findFirstOrThrow({ where: { role: 'ORGANIZER' } })
