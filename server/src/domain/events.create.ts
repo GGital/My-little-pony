@@ -2,6 +2,7 @@ import type { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 import { now } from '../clock.js'
 import type { Actor } from './actor.js'
+import { recordEventChange } from './changes.js'
 import { validateEventTimes } from './event-rules.js'
 import { getEventDetail, type EventDetail } from './events.read.js'
 
@@ -94,7 +95,8 @@ export type CreateEventInput = z.infer<typeof createEventInputSchema>
 /**
  * Creates and publishes an event in one step (FR-06, Feature-D, contracts §7).
  * Validates time rules against domain logic, then stores with status PUBLISHED,
- * organizerId = actor.id, publishedAt = now().
+ * organizerId = actor.id, publishedAt = now(), and the history row status null → PUBLISHED in the same
+ * transaction (Sprint 2 contracts §1 SR-08).
  */
 export async function createEvent(
   prisma: PrismaClient,
@@ -111,25 +113,36 @@ export async function createEvent(
 
   const currentTime = now()
 
-  const event = await prisma.event.create({
-    data: {
-      organizerId: actor.id,
-      title: input.title,
-      type: input.type,
-      format: input.format,
-      venueName: input.venueName,
-      venueAddress: input.venueAddress,
-      city: input.city,
-      startAt: start,
-      endAt: end,
-      capacity: input.capacity,
-      feeLabel: input.feeLabel,
-      structureNote: input.structureNote,
-      contact: input.contact,
-      description: input.description,
-      status: 'PUBLISHED',
-      publishedAt: currentTime,
-    },
+  const event = await prisma.$transaction(async (tx) => {
+    const created = await tx.event.create({
+      data: {
+        organizerId: actor.id,
+        title: input.title,
+        type: input.type,
+        format: input.format,
+        venueName: input.venueName,
+        venueAddress: input.venueAddress,
+        city: input.city,
+        startAt: start,
+        endAt: end,
+        capacity: input.capacity,
+        feeLabel: input.feeLabel,
+        structureNote: input.structureNote,
+        contact: input.contact,
+        description: input.description,
+        status: 'PUBLISHED',
+        publishedAt: currentTime,
+      },
+    })
+    await recordEventChange(tx, {
+      eventId: created.id,
+      changedById: actor.id,
+      field: 'status',
+      oldValue: null,
+      newValue: 'PUBLISHED',
+      changedAt: currentTime,
+    })
+    return created
   })
 
   return (await getEventDetail(prisma, event.id, actor))!

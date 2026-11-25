@@ -22,6 +22,8 @@ export const ERRORS = {
   ALREADY_CANCELLED: { status: 409, message: 'This is already cancelled.' },
   NOT_IN_CHECK_IN_WINDOW: { status: 409, message: 'Check-in is not open right now.' },
   ALREADY_CHECKED_IN: { status: 409, message: 'This player is already checked in.' },
+  ALREADY_PUBLISHED: { status: 409, message: 'This event is already published.' }, // Sprint 2 contracts §0.5
+  NOT_PUBLISHED: { status: 409, message: 'Only a published event can be cancelled.' }, // Sprint 2 contracts §0.5
   PAYLOAD_TOO_LARGE: { status: 413, message: 'That request is too large.' },
   UNSUPPORTED_MEDIA_TYPE: { status: 415, message: 'Requests must be sent as JSON.' },
   EVENT_TIME_INVALID: { status: 422, message: "Those event times don't work." },

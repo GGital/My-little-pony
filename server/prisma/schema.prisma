@@ -1,4 +1,5 @@
-// TCG Event Hub data model, Sprint 1 (System-Level SDS §4.1; Sprint 1 contracts §1 SR-01).
+// TCG Event Hub data model, Sprints 1 and 2 (System-Level SDS §4.1; Sprint 1 contracts §1 SR-01;
+// Sprint 2 contracts §1 SR-08).
 // Rules that Prisma cannot express (CHECK constraints, the partial unique index) live in raw SQL migrations.
 
 generator client {
@@ -40,16 +41,43 @@ enum RegistrationStatus {
   EVENT_CANCELLED
 }
 
+/// The trading card game of an event or a store (Sprint 2, CH-11, FR-29, FR-30). Shown by name only (X-14).
+enum Game {
+  POKEMON
+  MAGIC
+  ONE_PIECE
+  YUGIOH
+  DIGIMON
+  LORCANA
+  OTHER
+}
+
+/// Which part of an event an EventChange row records (Sprint 2 contracts §1, FR-28).
+enum ChangeField {
+  status
+  details
+  capacity
+  deadline
+}
+
 model User {
-  id            Int            @id @default(autoincrement())
-  email         String         @unique @db.VarChar(254)
-  displayName   String         @db.VarChar(40)
-  passwordHash  String
-  role          Role
-  createdAt     DateTime       @default(now()) @db.Timestamptz(3)
-  sessions      Session[]
-  events        Event[]        @relation("OrganizerEvents")
-  registrations Registration[]
+  id              Int            @id @default(autoincrement())
+  email           String         @unique @db.VarChar(254)
+  displayName     String         @db.VarChar(40)
+  passwordHash    String
+  role            Role
+  createdAt       DateTime       @default(now()) @db.Timestamptz(3)
+  // Sprint 2, organizers only: the store's games and public contact (FR-30, D-37). Never the sign-in email.
+  games           Game[]         @default([])
+  contactPhone    String?        @db.VarChar(20)
+  contactEmail    String?        @db.VarChar(254)
+  contactWebsite  String?        @db.VarChar(200)
+  contactLine     String?        @db.VarChar(40)
+  sessions        Session[]
+  events          Event[]        @relation("OrganizerEvents")
+  cancelledEvents Event[]        @relation("CancelledEvents")
+  registrations   Registration[]
+  eventChanges    EventChange[]
 }
 
 model Session {
@@ -64,28 +92,36 @@ model Session {
 }
 
 model Event {
-  id            Int            @id @default(autoincrement())
-  organizerId   Int
-  title         String         @db.VarChar(100)
-  type          EventType
-  format        EventFormat
-  venueName     String         @db.VarChar(80)
-  venueAddress  String         @db.VarChar(200)
-  city          String         @db.VarChar(60)
-  startAt       DateTime       @db.Timestamptz(3)
-  endAt         DateTime       @db.Timestamptz(3)
-  capacity      Int
-  feeLabel      String?        @db.VarChar(40)
-  structureNote String?        @db.VarChar(80)
-  contact       String?        @db.VarChar(120)
-  description   String?        @db.VarChar(2000)
-  status        EventStatus    @default(PUBLISHED)
-  publishedAt   DateTime?      @db.Timestamptz(3)
-  seedKey       String?        @unique @db.VarChar(40) // set only by the seed, so re-runs find their rows
-  createdAt     DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt     DateTime       @updatedAt @db.Timestamptz(3)
-  organizer     User           @relation("OrganizerEvents", fields: [organizerId], references: [id])
-  registrations Registration[]
+  id                   Int            @id @default(autoincrement())
+  organizerId          Int
+  title                String         @db.VarChar(100)
+  type                 EventType
+  format               EventFormat
+  venueName            String         @db.VarChar(80)
+  venueAddress         String         @db.VarChar(200)
+  city                 String         @db.VarChar(60)
+  startAt              DateTime       @db.Timestamptz(3)
+  endAt                DateTime       @db.Timestamptz(3)
+  capacity             Int
+  feeLabel             String?        @db.VarChar(40)
+  structureNote        String?        @db.VarChar(80)
+  contact              String?        @db.VarChar(120)
+  description          String?        @db.VarChar(2000)
+  status               EventStatus    @default(PUBLISHED)
+  publishedAt          DateTime?      @db.Timestamptz(3)
+  // Sprint 2 (SR-08): null deadline = the start time (BR-08); the cancel fields are all set or all null (BR-12).
+  registrationDeadline DateTime?      @db.Timestamptz(3)
+  cancelledAt          DateTime?      @db.Timestamptz(3)
+  cancelledById        Int?
+  cancelReason         String?        @db.VarChar(200)
+  game                 Game           @default(OTHER)
+  seedKey              String?        @unique @db.VarChar(40) // set only by the seed, so re-runs find their rows
+  createdAt            DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt            DateTime       @updatedAt @db.Timestamptz(3)
+  organizer            User           @relation("OrganizerEvents", fields: [organizerId], references: [id])
+  cancelledBy          User?          @relation("CancelledEvents", fields: [cancelledById], references: [id])
+  registrations        Registration[]
+  changes              EventChange[]
 
   @@index([status, startAt])
   @@index([organizerId])
@@ -97,9 +133,25 @@ model Registration {
   participantId Int
   status        RegistrationStatus @default(REGISTERED)
   createdAt     DateTime           @default(now()) @db.Timestamptz(3)
+  cancelledAt   DateTime?          @db.Timestamptz(3) // set with CANCELLED / EVENT_CANCELLED (Sprint 2, FR-28)
   event         Event              @relation(fields: [eventId], references: [id])
   participant   User               @relation(fields: [participantId], references: [id])
 
   @@index([eventId])
   @@index([participantId])
+}
+
+/// One row of an event's change history (Sprint 2, SR-08, FR-28). Append-only: a trigger rejects UPDATE and DELETE (X-11).
+model EventChange {
+  id          Int         @id @default(autoincrement())
+  eventId     Int
+  changedById Int
+  field       ChangeField
+  oldValue    String?
+  newValue    String
+  changedAt   DateTime    @db.Timestamptz(3)
+  event       Event       @relation(fields: [eventId], references: [id])
+  changedBy   User        @relation(fields: [changedById], references: [id])
+
+  @@index([eventId, changedAt])
 }
