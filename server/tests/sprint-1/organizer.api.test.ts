@@ -193,7 +193,7 @@ describe('Feature-I — Event Registration List (E-08, contracts §12)', () => {
       data: { eventId: ev1.id, participantId: mint.id, createdAt: new Date(T.getTime() + 1000) },
     })
     await prisma.registration.create({
-      data: { eventId: ev1.id, participantId: fern.id, status: 'CANCELLED', createdAt: new Date(T.getTime() + 500) },
+      data: { eventId: ev1.id, participantId: fern.id, status: 'CANCELLED', cancelledAt: T, createdAt: new Date(T.getTime() + 500) }, // + cancelledAt (Sprint 2 SR-08)
     })
     const r2 = await prisma.registration.create({
       data: { eventId: ev1.id, participantId: ploy.id, createdAt: new Date(T.getTime() + 2000) },
