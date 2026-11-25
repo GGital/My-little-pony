@@ -11,7 +11,7 @@ export interface FilterChipsProps {
 /** Active filters as chips with a remove button, plus Clear all (UX-03). */
 export const FilterChips: React.FC<FilterChipsProps> = ({ filters, onChange }) => {
   const chips: { key: keyof SearchFilters; text: string }[] = []
-  if (filters.q.trim()) chips.push({ key: 'q', text: `Where: ${filters.q.trim()}` })
+  if (filters.q.trim()) chips.push({ key: 'q', text: `Matching: ${filters.q.trim()}` })
   if (filters.type) chips.push({ key: 'type', text: `Type: ${label(filters.type)}` })
   if (filters.format) chips.push({ key: 'format', text: `Format: ${label(filters.format)}` })
   if (filters.from) chips.push({ key: 'from', text: `From: ${filters.from}` })
