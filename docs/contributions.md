@@ -86,7 +86,9 @@ tests, then code; the evidence index is [`labs/lab07/README.md`](labs/lab07/READ
 | Item | Issue | Branch · PR | Built by | Reviewed by | Status |
 |---|---|---|---|---|---|
 | L7 change request and contract revision (SRS, contracts, STS, SDS, traceability) | [#77](https://github.com/GGital/My-little-pony/issues/77) | `feature/l7-ch13-lead-time` · [#88](https://github.com/GGital/My-little-pony/pull/88) | Phattaratorn (TA approval obtained 23 Nov) | Praewa (approved #88, 24 Nov) | Merged 24 Nov (`a44fcac`); contract commit `751e9cd` |
-| L7 tests, implementation and evidence | [#77](https://github.com/GGital/My-little-pony/issues/77) | `feature/l7-ch13-code` · PR pending | Phattaratorn | Praewa (to request) | Red `f41f52f`, green `72ae022`; evidence committed; review, release `v0.1.2` and deploy pending |
+| L7 tests, implementation and evidence | [#77](https://github.com/GGital/My-little-pony/issues/77) | `feature/l7-ch13-code` · [#89](https://github.com/GGital/My-little-pony/pull/89) | Phattaratorn | Praewa (approved #89, 24 Nov) | Merged 24 Nov (`816230a`); red `f41f52f`, green `72ae022`, evidence `68d4377` |
+| L7 release to `main` and deploy | [#77](https://github.com/GGital/My-little-pony/issues/77) | `sprint-1-staging` · [#90](https://github.com/GGital/My-little-pony/pull/90) | Phattaratorn (release PR, tag, live checks with Claude Code; signed in by hand) | Praewa (approved #90, 24 Nov) | Merged 24 Nov (`dff72b6`), tag `v0.1.2`; Cloud Run `tcg-event-hub-00018-s6f`; L7-D01, L7-D02 PASS |
+| L7 release and deploy records (README v1.1) | [#77](https://github.com/GGital/My-little-pony/issues/77) | `docs/l7-release-records` · [#91](https://github.com/GGital/My-little-pony/pull/91) | Phattaratorn | Praewa (approved #91, 24 Nov) | Merged 24 Nov (`be04c17`) |
 
 ## 7. Keeping this table current
 
@@ -124,4 +126,5 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.27 | 21 Nov 2026 | §5 Sprints 2 and 3 added (contracts PR row); the maintenance section becomes §6 | Team (AI-assisted) |
 | v0.28 | 21 Nov 2026 | §5: PR #76 linked; CH-12 added to its scope | Team (AI-assisted) |
 | v0.26.1 | 24 Nov 2026 | §5 Lab 7 CH-13 rows (#88 merged; tests, code and evidence); "Keeping this table current" becomes §6 | Team (AI-assisted) |
-| v0.29 | 25 Nov 2026 | Lab 7 CH-13 merged into the Sprint 2 line: its rows become §6 and "Keeping this table current" §7; §5 contracts row: #76 merged, Issues #78–#87 | Team (AI-assisted) |
+| v0.26.2 | 25 Nov 2026 | §5 Lab 7: #89 merged, release #90 (`v0.1.2`, revision `tcg-event-hub-00018-s6f`), records PR row | Team (AI-assisted) |
+| v0.29 | 25 Nov 2026 | Lab 7 CH-13 merged into the Sprint 2 line: its rows become §6 and "Keeping this table current" §7; §5 contracts row: #76 merged, Issues #78–#87; §6 #91 merged (`be04c17`) | Team (AI-assisted) |

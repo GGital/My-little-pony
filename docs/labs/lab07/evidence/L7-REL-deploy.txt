@@ -1,0 +1,61 @@
+Evidence ID: L7-REL
+Action:     Merge release PR #90 (sprint-1-staging -> main, approved by Praewa / MeldyRose 24 Nov 2026 17:20 UTC);
+            the merge commit starts the Lab 5 pipeline (.github/workflows/deploy.yml, "Deploy demo").
+Commit:     dff72b668f36b40a2502cc83c7e3d4874044d606 (main, tag v0.1.2)
+Run:        https://github.com/GGital/My-little-pony/actions/runs/45447898603 (push to main, 24 Nov 2026 17:22-17:28 UTC)
+Expected:   test job green; image tagged with the merge SHA; migration job completes (no new migration);
+            Cloud Run serves the new revision at 100%; smoke test passes with /api/version = merge SHA.
+Actual:     test job green (server 308/0/0, client 91/0/0, E2E 53/0/0, STS 59 Pass, secret scan clean);
+            image tcg-event-hub:dff72b6...; migration execution tcg-event-hub-migrate-4znp4 completed;
+            revision tcg-event-hub-00018-s6f serving 100% (replaces tcg-event-hub-00017-j4p, Lab 6 main 5425300);
+            smoke 5 PASS, login check SKIP (optional smoke credentials are not configured).
+Source:     job logs downloaded with `gh api repos/GGital/My-little-pony/actions/jobs/<id>/logs`; timestamps,
+            colour codes and environment blocks removed; lines below are copied, not retyped.
+
+=== Job "test / test-and-docker" (selected lines, in log order: secret scan, sts:check, server Vitest, client Vitest, Playwright E2E, Docker build) ===
+Local secret values checked: none.
+0 findings.
+STS §2 rows: 59 (Pass 59, Fail 0, other 0)
+BRs in STS §4: 12, each with a rejection test: 12
+Failed rows (reported in STS §6): none
+ Test Files  29 passed (29)
+      Tests  308 passed (308)
+ Test Files  22 passed (22)
+      Tests  91 passed (91)
+  53 passed (1.3m)
+#21 naming to docker.io/library/tcg-event-hub:ci done
+
+=== Job "deploy": image push ===
+dff72b668f36b40a2502cc83c7e3d4874044d606: digest: sha256:f1602f303b5f09ad2ac09d918fc7ceb10d38e56413a08b5c7b91e66d425a9582 size: 856
+
+=== Job "deploy": bash deploy/release.sh ===
+Updating Cloud Run job [tcg-event-hub-migrate] in project [cpe334-en007] region [asia-southeast1]
+Updating job...
+Done.
+Job [tcg-event-hub-migrate] has successfully been updated.
+Creating execution...
+Provisioning resources...............................................done
+Starting execution....................................................................done
+Running execution............................................................................................................................done
+Done.
+Execution [tcg-event-hub-migrate-4znp4] has successfully completed.
+Deploying...
+Creating Revision........................................................................................done
+Routing traffic.....done
+Done.
+Service [tcg-event-hub] revision [tcg-event-hub-00018-s6f] has been deployed and is serving 100 percent of traffic.
+Service URL: https://tcg-event-hub-932557875237.asia-southeast1.run.app
+Updating traffic...
+Done.
+URL: https://tcg-event-hub-kwdr2zue6a-as.a.run.app
+Traffic:
+  100% LATEST (currently tcg-event-hub-00018-s6f)
+Service URL: https://tcg-event-hub-kwdr2zue6a-as.a.run.app
+
+=== Job "deploy": python3 deploy/smoke_test.py "$SERVICE_URL" ===
+PASS /api/health
+PASS /api/ready
+PASS /
+PASS /api/events
+PASS /api/version
+SKIP login: optional smoke credentials not configured
