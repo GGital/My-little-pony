@@ -67,7 +67,7 @@ describe('TEST-J-05 (C) â€” EventSearch component tests (AC-J-05, FR-13, UX-01 â
 
     // Active chip is displayed
     await waitFor(() => {
-      expect(screen.getByText(/quantum/i)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Remove filter Matching: quantum' })).toBeInTheDocument()
     })
 
     // Search for "zzz" yields empty state
