@@ -47,6 +47,16 @@ export interface EventDetail extends EventSummary {
   };
 }
 
+/** One row of an event's change history, E-17 (Sprint 2 contracts §0.1, SR-08). Only the display name, never an id. */
+export interface EventChange {
+  id: number;
+  field: 'status' | 'details' | 'capacity' | 'deadline';
+  oldValue: string | null;
+  newValue: string;
+  changedAt: string;
+  changedBy: { displayName: string };
+}
+
 export interface ParticipantRegistration {
   id: number;
   status: 'REGISTERED' | 'CHECKED_IN' | 'CANCELLED';

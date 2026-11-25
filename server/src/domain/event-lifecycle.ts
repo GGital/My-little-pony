@@ -5,6 +5,7 @@ import type { Actor } from './actor.js'
 import { recordEventChange } from './changes.js'
 import { MIN_LEAD_MINUTES } from './event-rules.js'
 import { getEventDetail, type EventDetail } from './events.read.js'
+import { hasStarted } from './time.js'
 
 export type PublishFacts = { status: EventStatus; startAt: Date; registrationDeadline: Date | null }
 export type PublishDecision =
@@ -54,17 +55,114 @@ export async function publishEvent(db: PrismaClient, actor: Actor, eventId: numb
   return (await getEventDetail(db, eventId, actor))!
 }
 
-// ---- Feature-L stubs for the red run (S2-04 commit A); the rules are written in commit B ----
-export function decideCapacity(_active: number, _capacity: number): 'OK' | 'CAPACITY_BELOW_REGISTERED' {
-  return 'OK'
+// ---- Feature-L: E-13 edit and capacity (Sprint 2 contracts §3, v0.8) ----
+
+/** BR-09: capacity may equal the active registrations, never go below them (D-04: lowering never removes one). */
+export function decideCapacity(active: number, capacity: number): 'OK' | 'CAPACITY_BELOW_REGISTERED' {
+  return capacity < active ? 'CAPACITY_BELOW_REGISTERED' : 'OK'
 }
+
+/**
+ * BR-02 on the RESULTING start and end (contracts §3): a start in the body must be at least MIN_LEAD_MINUTES away
+ * (CH-13, checked only when the body sets it); the end must be after the start and at most 24 h later; and a new
+ * start may not fall before a stored deadline (D-23). Returns the first problem, or null.
+ */
 export function decideEditTimes(
-  _stored: { startAt: Date; endAt: Date; registrationDeadline: Date | null },
-  _body: { startAt?: Date; endAt?: Date },
-  _at: Date,
+  stored: { startAt: Date; endAt: Date; registrationDeadline: Date | null },
+  body: { startAt?: Date; endAt?: Date },
+  at: Date,
 ): { field: 'startAt' | 'endAt' | 'registrationDeadline'; message: string } | null {
+  if (!body.startAt && !body.endAt) return null
+  const start = body.startAt ?? stored.startAt
+  const end = body.endAt ?? stored.endAt
+  if (body.startAt && body.startAt.getTime() < at.getTime() + MIN_LEAD_MINUTES * 60_000) {
+    return { field: 'startAt', message: 'The start must be at least 60 minutes from now.' }
+  }
+  if (end.getTime() <= start.getTime()) return { field: 'endAt', message: 'The end must be after the start.' }
+  if (end.getTime() > start.getTime() + 24 * 60 * 60_000) return { field: 'endAt', message: 'An event can last at most 24 hours.' }
+  if (body.startAt && stored.registrationDeadline && stored.registrationDeadline.getTime() > start.getTime()) {
+    return { field: 'registrationDeadline', message: 'Registration must close at or before the start.' }
+  }
   return null
 }
-export function frozenFields(_keys: string[], _started: boolean): string[] {
-  return []
+
+/** BR-15, D-19: once started, only these may change. */
+const SAFE_AFTER_START = new Set(['description', 'structureNote', 'contact', 'feeLabel'])
+
+/** The body keys that are frozen because the event has started, in body order (empty before the start). */
+export function frozenFields(keys: string[], started: boolean): string[] {
+  return started ? keys.filter((k) => !SAFE_AFTER_START.has(k)) : []
+}
+
+/** The detail fields in form order; their names make a `details` change row (D-20). Capacity has its own row. */
+const DETAIL_FIELDS = [
+  'title', 'type', 'format', 'venueName', 'venueAddress', 'city', 'startAt', 'endAt',
+  'feeLabel', 'structureNote', 'contact', 'description',
+] as const
+
+export type EditEventInput = Partial<Record<(typeof DETAIL_FIELDS)[number], string | null>> & { capacity?: number }
+
+const same = (a: unknown, b: unknown) => (a instanceof Date && b instanceof Date ? a.getTime() === b.getTime() : a === b)
+
+/**
+ * E-13: edits the caller's event. The event row is locked FOR UPDATE, as registration locks it (SDS §4.3a), so a
+ * capacity cut and a registration can never both pass (TEST-L-03). Checks in contract order: 404 → cancelled →
+ * started (frozen fields) → times → capacity; then saves only what really changed, with one `details` and/or one
+ * `capacity` change row, in the same transaction (SR-08).
+ */
+export async function updateEvent(
+  db: PrismaClient,
+  actor: Actor,
+  eventId: number,
+  input: EditEventInput,
+  bodyOrder: string[] = Object.keys(input),
+): Promise<EventDetail> {
+  await db.$transaction(async (tx) => {
+    const [locked] = await tx.$queryRaw<{ id: number }[]>`
+      SELECT id FROM "Event" WHERE id = ${eventId} AND "organizerId" = ${actor.id} FOR UPDATE`
+    if (!locked) throw new HttpError('EVENT_NOT_FOUND')
+    const row = await tx.event.findUniqueOrThrow({ where: { id: eventId } })
+    if (row.status === 'CANCELLED') throw new HttpError('ALREADY_CANCELLED')
+
+    const at = now()
+    // In the order the caller sent them, so the 409 details read like the request (contracts §3).
+    const keys = bodyOrder.filter((k) => input[k as keyof EditEventInput] !== undefined)
+    const frozen = frozenFields(keys, hasStarted(row.startAt, at))
+    if (frozen.length) {
+      throw new HttpError('EVENT_STARTED', frozen.map((field) => ({ field, message: "This can't change after the event has started." })))
+    }
+
+    const startAt = input.startAt ? new Date(input.startAt) : undefined
+    const endAt = input.endAt ? new Date(input.endAt) : undefined
+    const time = decideEditTimes(row, { startAt, endAt }, at)
+    if (time) throw new HttpError('EVENT_TIME_INVALID', [time])
+
+    if (input.capacity !== undefined) {
+      const active = await tx.registration.count({ where: { eventId, status: { in: ['REGISTERED', 'CHECKED_IN'] } } })
+      if (decideCapacity(active, input.capacity) !== 'OK') {
+        throw new HttpError('CAPACITY_BELOW_REGISTERED', [
+          { field: 'capacity', message: `${active} players are registered, so capacity can't go below ${active}.` },
+        ])
+      }
+    }
+
+    const next: Record<string, unknown> = { ...input, ...(startAt ? { startAt } : {}), ...(endAt ? { endAt } : {}) }
+    const changed = DETAIL_FIELDS.filter((f) => next[f] !== undefined && !same(next[f], row[f]))
+    const capacityChanged = input.capacity !== undefined && input.capacity !== row.capacity
+    if (!changed.length && !capacityChanged) return
+
+    await tx.event.update({
+      where: { id: eventId },
+      data: { ...Object.fromEntries(changed.map((f) => [f, next[f]])), ...(capacityChanged ? { capacity: input.capacity } : {}) },
+    })
+    if (changed.length) {
+      await recordEventChange(tx, { eventId, changedById: actor.id, field: 'details', oldValue: null, newValue: changed.join(', '), changedAt: at })
+    }
+    if (capacityChanged) {
+      await recordEventChange(tx, {
+        eventId, changedById: actor.id, field: 'capacity', oldValue: String(row.capacity), newValue: String(input.capacity), changedAt: at,
+      })
+    }
+  })
+  return (await getEventDetail(db, eventId, actor))!
 }

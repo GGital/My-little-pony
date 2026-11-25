@@ -95,6 +95,19 @@ export const createEventInputSchema = z
 export type CreateEventInput = z.infer<typeof createEventInputSchema>
 
 /**
+ * E-13 body (Sprint 2 contracts §3): any E-06 field, each with its Feature-D rule; `saveAsDraft`, `status`,
+ * `organizerId` and `publishedAt` are unknown keys ("This value cannot be set."); `{}` is refused.
+ */
+export const editEventInputSchema = createEventInputSchema
+  .omit({ saveAsDraft: true })
+  .partial()
+  // Only when the shape is otherwise fine, so `{ organizerId: 2 }` reports the unknown key alone.
+  .refine((body) => Object.values(body).some((v) => v !== undefined), {
+    message: 'Change at least one field.',
+    when: (payload) => payload.issues.length === 0,
+  })
+
+/**
  * Creates an event (FR-06, Feature-D, contracts §7): published at once, or saved as a draft with `saveAsDraft`
  * (FR-08, Sprint 2 Feature-K). Validates time rules against domain logic, then stores it with organizerId = actor.id,
  * status PUBLISHED and publishedAt = now() (a draft: DRAFT and null), and the history row status null → that status in
