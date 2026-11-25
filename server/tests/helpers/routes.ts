@@ -20,6 +20,9 @@ export const SPRINT1_ROUTES: RouteRow[] = [
 ]
 
 /** The Sprint 2 routes built so far (SDS §6.3). Each Sprint 2 Issue that adds an endpoint adds its row here. */
-export const SPRINT2_ROUTES: RouteRow[] = [{ id: 'E-17', method: 'GET', path: '/api/organizer/events/1/changes' }]
+export const SPRINT2_ROUTES: RouteRow[] = [
+  { id: 'E-14', method: 'POST', path: '/api/organizer/events/1/publish' },
+  { id: 'E-17', method: 'GET', path: '/api/organizer/events/1/changes' },
+]
 
 export const ALL_ROUTES: RouteRow[] = [...SPRINT1_ROUTES, ...SPRINT2_ROUTES]

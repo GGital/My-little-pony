@@ -125,6 +125,26 @@ describe('TEST-E-01 — Organizer sees own events in start order with independen
     }
   })
 
+  // Sprint 2 (S2-02, TEST-E-01 rows added): the owner's dashboard also lists a draft and a cancelled event,
+  // each with its status, in the same start order.
+  it("lists the owner's draft and cancelled event with their status (Sprint 2 contracts §2, UX-15)", async () => {
+    const owner = await signedIn('ORGANIZER', 'Draft Store')
+    const draft = await makeEvent(owner.id, { startAt: new Date(T.getTime() + 2 * DAY) })
+    const cancelled = await makeEvent(owner.id, { startAt: new Date(T.getTime() + DAY) })
+    await prisma.event.update({ where: { id: draft.id }, data: { status: 'DRAFT', publishedAt: null } })
+    await prisma.event.update({
+      where: { id: cancelled.id },
+      data: { status: 'CANCELLED', cancelledAt: T, cancelledById: owner.id, cancelReason: 'Store closed.' },
+    })
+
+    const res = await get('/api/organizer/events', owner)
+    expect(res.status).toBe(200)
+    expect(res.body.items.map((e: { id: number; status: string }) => [e.id, e.status])).toEqual([
+      [cancelled.id, 'CANCELLED'],
+      [draft.id, 'DRAFT'],
+    ])
+  })
+
   it('an organizer with no events gets 200 { items: [] }', async () => {
     const res = await get('/api/organizer/events', oEmpty)
     expect(res.status).toBe(200)
