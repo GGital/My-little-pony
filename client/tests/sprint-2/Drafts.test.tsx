@@ -19,7 +19,7 @@ const summary = (over: Partial<EventSummary> = {}): EventSummary => ({
   city: 'Bangkok',
   startAt: '2030-03-10T10:00:00.000Z',
   endAt: '2030-03-10T14:00:00.000Z',
-  feeLabel: null,
+  feeLabel: 'THB 600',
   capacity: 16,
   registeredCount: 0,
   seatsRemaining: 16,
@@ -30,9 +30,9 @@ const summary = (over: Partial<EventSummary> = {}): EventSummary => ({
 const detail = (over: Partial<EventDetailType> = {}): EventDetailType => ({
   ...summary(),
   venueAddress: '1631 Kanchanaphisek Rd',
-  structureNote: null,
-  contact: null,
-  description: null,
+  structureNote: '3 rounds · Best of 3',
+  contact: 'hello@quantumcards.example',
+  description: 'Draft: the date and the product are still being confirmed.',
   organizer: { displayName: 'Quantum Cards' },
   hasStarted: false,
   viewer: { action: 'MANAGE', registrationId: null },
@@ -101,7 +101,7 @@ describe('TEST-K-03 (C) the owner publishes a draft from its page (AC-K-01, AC-K
 describe('TEST-K-03 (C) the dashboard Publish button (AC-K-03, UX-15)', () => {
   it('a draft row has Publish and no Registrations link; Publish calls E-14 and the row becomes Published', async () => {
     const published = summary({ id: 1, title: 'Friday Night Constructed', status: 'PUBLISHED' })
-    const spy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (url, init) =>
+    const spy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (_url, init) =>
       init?.method === 'POST' ? json(200, detail({ status: 'PUBLISHED' })) : json(200, { items: [published, summary()] }),
     )
     render(
