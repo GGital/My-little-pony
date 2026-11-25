@@ -1,6 +1,6 @@
 # System-Level Software Design Specification (SDS)
 
-Project: **TCG Event Hub** · Document version: v0.14 — draft for team review in PR #76 (v0.2 reviewed in PR 2; changes in §14)
+Project: **TCG Event Hub** · Document version: v0.15 — Sprint 2 line with Lab 7 CH-13 merged in (v0.14 reviewed in PR #76; v0.2 reviewed in PR 2; changes in §14)
 Inputs: [`srs.md`](srs.md) v0.7 · [`features.md`](features.md) v0.5 · [`traceability.md`](traceability.md) v0.6 ·
 [`ui/design-direction.md`](ui/design-direction.md) v0.6 · [`diagrams/`](diagrams/README.md)
 
@@ -81,7 +81,7 @@ Two notes on the order:
 | Rule | Client (shows) | zod schema | Domain service | Database |
 |---|---|---|---|---|
 | BR-01 capacity 1–256 | form hint | `int().min(1).max(256)` | — | `CHECK (capacity BETWEEN 1 AND 256)` |
-| BR-02 future start, end after start, ≤ 24 h | form hint | shape only | start > `clock.now()` | `CHECK (end_at > start_at AND end_at <= start_at + interval '24 hours')` |
+| BR-02 start ≥ now + 60 min (CH-13), end after start, ≤ 24 h | form hint "at least 1 hour from now" | shape only | start ≥ `clock.now()` + 60 min (`MIN_LEAD_MINUTES`) | `CHECK (end_at > start_at AND end_at <= start_at + interval '24 hours')` |
 | BR-03 required fields and lengths | field errors | lengths, required | — | `NOT NULL`, `varchar(n)` |
 | BR-04 visibility and openness | button state from server | — | query filters + open check under lock | — |
 | BR-05 capacity | seat chip | — | count active under row lock | — (count cannot be a static constraint; the lock serialises it) |
@@ -388,7 +388,7 @@ wrong role. They exist only for convenience. The server repeats every check.
 | 422 | `IMAGE_TOO_SMALL` | Logo under 256 × 256 or banner under 1200 × 400 (Sprint 3) |
 | 413 | `PAYLOAD_TOO_LARGE` | Request body over 100 kB, or an image over its limit |
 | 415 | `UNSUPPORTED_MEDIA_TYPE` | Body without JSON content type (a request with no body is not checked); an image route given bytes that are not PNG, JPEG or WebP |
-| 422 | `EVENT_TIME_INVALID` | Valid shape but impossible times: start not in the future, end too late (BR-02) |
+| 422 | `EVENT_TIME_INVALID` | Valid shape but impossible times: start less than 60 minutes from now, end too late (BR-02) |
 | 429 | `TOO_MANY_ATTEMPTS` | Sign-in throttled (NFR-16, Sprint 3) |
 | 500 | `INTERNAL_ERROR` | Anything unexpected |
 
@@ -664,3 +664,5 @@ Design points:
 | v0.12 | 21 Nov 2026 | D-37: store contact columns on User (§4.1), E-23 carries them, public in §7.2 | Team (AI-assisted) |
 | v0.13 | 21 Nov 2026 | D-38: §3 UI base, §5 and SD-06 describe the Deep Lagoon theme, Inter, Manrope and the Thai fallback (design-direction v0.6) | Team (AI-assisted) |
 | v0.14 | 21 Nov 2026 | `MEDIA_*` rows move from §9.1 to a new §9.4 (planned, S3-06), because TEST-SR4-01 requires §9.1 to match `.env.example` and `config.ts` | Team (AI-assisted) |
+| v0.9.1 | 23 Nov 2026 | Lab 7 change CH-13 (Issue #77): §2.4 BR-02 row uses start ≥ `clock.now()` + 60 min; §6.2 `EVENT_TIME_INVALID` wording. Same status and code, no schema change. A maintenance version on the Sprint 1 line | Team (AI-assisted) |
+| v0.15 | 25 Nov 2026 | Lab 7 CH-13 (v0.9.1, Sprint 1 line, PR #88) merged into the Sprint 2 line: §2.4 BR-02 row and the §6.2 `EVENT_TIME_INVALID` wording; the Sprint 2 and 3 §6.2 rows are kept | Team (AI-assisted) |

@@ -1,0 +1,16 @@
+{
+  "id": "L7-P01-result",
+  "side": "after",
+  "action": "Publish an event 5 days ahead that lasts 25 hours",
+  "expected": "Stays on the form; the end field says \"An event can last at most 24 hours.\"",
+  "actual": {
+    "url": "/organizer/events/new",
+    "heading": "Create an event",
+    "messages": [
+      "An event can last at most 24 hours."
+    ]
+  },
+  "time": "2026-11-24T15:41:07.531Z",
+  "commit": "72ae022",
+  "screenshot": "L7-P01-result-after.png"
+}
