@@ -1,0 +1,72 @@
+{
+  "id": "S2-04-A1-api",
+  "side": "after",
+  "action": "PATCH /api/organizer/events/1 as a visitor, Mint, Dragon's Den, then Quantum Cards with {}, capacity 2 and capacity 30; GET its changes",
+  "expected": "After: 401, 403, 404 EVENT_NOT_FOUND; 400 \"Change at least one field.\"; 409 CAPACITY_BELOW_REGISTERED; 200 capacity 30; history capacity 24 → 30",
+  "actual": {
+    "visitor": {
+      "status": 401,
+      "code": "UNAUTHENTICATED",
+      "details": null,
+      "title": null,
+      "capacity": null
+    },
+    "participant": {
+      "status": 403,
+      "code": "FORBIDDEN",
+      "details": null,
+      "title": null,
+      "capacity": null
+    },
+    "otherOrganizer": {
+      "status": 404,
+      "code": "EVENT_NOT_FOUND",
+      "details": null,
+      "title": null,
+      "capacity": null
+    },
+    "empty": {
+      "status": 400,
+      "code": "VALIDATION_FAILED",
+      "details": [
+        {
+          "field": "body",
+          "message": "Change at least one field."
+        }
+      ],
+      "title": null,
+      "capacity": null
+    },
+    "belowRegistered": {
+      "status": 409,
+      "code": "CAPACITY_BELOW_REGISTERED",
+      "details": [
+        {
+          "field": "capacity",
+          "message": "3 players are registered, so capacity can't go below 3."
+        }
+      ],
+      "title": null,
+      "capacity": null
+    },
+    "capacity": {
+      "status": 200,
+      "code": null,
+      "details": null,
+      "title": "Friday Night Constructed",
+      "capacity": 30
+    },
+    "history": {
+      "status": 200,
+      "items": [
+        [
+          "capacity",
+          "24",
+          "30"
+        ]
+      ]
+    }
+  },
+  "time": "2026-11-25T16:08:08.999Z",
+  "commit": "b5cf763"
+}

@@ -79,7 +79,8 @@ UAT findings from Team 1 KitLoop are Issues #56–#64; the triage is Part 4 of t
 | S2-00 / S3-00 Sprint 2 and 3 contracts, STS, Issue plans; SRS v0.7 (CH-11, CH-12), features, plan, SDS, traceability, UI direction | Issues [#78](https://github.com/GGital/My-little-pony/issues/78)–[#87](https://github.com/GGital/My-little-pony/issues/87) created 23 Nov | `docs/s2-s3-contracts` · [#76](https://github.com/GGital/My-little-pony/pull/76) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (approved #76, 21 Nov) | Merged 21 Nov (`40d3699`) |
 | CH-13 merged into the Sprint 2 line; Sprint 2 contracts v0.6 and STS v0.5 use the 60-minute lead time | [#77](https://github.com/GGital/My-little-pony/issues/77) | `chore/s2-sync-ch13` · (PR to be opened) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (requested when the PR opens) | In progress |
 | S2-01 SR-08 data foundation: migrations `0003`, `0004`, change history, E-17, seed EV-7 … EV-9 | [#78](https://github.com/GGital/My-little-pony/issues/78) | `feature/s2-01-data-foundation` · (PR to be opened) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (requested when the PR opens) | In review: red `7c3ad62`, green `dc987f9` + fixtures `dfa124f` |
-| S2-02 Feature-K: save a draft and publish it (E-06 `saveAsDraft`, E-14, owner-only drafts) | [#79](https://github.com/GGital/My-little-pony/issues/79) | `feature/s2-02-drafts` · (PR to be opened) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (requested when the PR opens) | In review: red `47b3838`, green `40f5687` |
+| S2-02 Feature-K: save a draft and publish it (E-06 `saveAsDraft`, E-14, owner-only drafts) | [#79](https://github.com/GGital/My-little-pony/issues/79) | `feature/s2-02-drafts` · [#107](https://github.com/GGital/My-little-pony/pull/107) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (approved #107, 25 Nov) | Merged 25 Nov (`752fb92`); red `47b3838`, green `40f5687` |
+| S2-04 Feature-L: edit an event and change its capacity (E-13, edit page, History panel); UAT #64 | [#81](https://github.com/GGital/My-little-pony/issues/81) | `feature/s2-04-edit-event` · (PR to be opened) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (requested when the PR opens) | In review: red `0906f89`, green `9f71b81` |
 
 ## 6. Lab 7: Sprint 1 maintenance (CH-13)
 
@@ -134,3 +135,4 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.30 | 25 Nov 2026 | §5: CH-13 sync row | Team (AI-assisted) |
 | v0.31 | 25 Nov 2026 | §5: S2-01 row | Team (AI-assisted) |
 | v0.33 | 25 Nov 2026 | §5: S2-02 row (v0.32 is the Sprint 3 Issues row on `docs/s3-contracts-d2`) | Team (AI-assisted) |
+| v0.34 | 25 Nov 2026 | §5: #107 merged; S2-04 row | Team (AI-assisted) |
