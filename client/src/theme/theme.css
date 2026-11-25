@@ -886,6 +886,11 @@ a.event-card:focus-visible {
   background: var(--primary-tint);
   color: var(--primary-hover);
 }
+/* Sprint 2 Feature-K: the owner's "Draft — only you can see this event." banner (amber, contracts §2 UI). */
+.notice--warning {
+  background: var(--warning-tint);
+  color: var(--warning-ink);
+}
 .notice__close {
   border: 0;
   background: none;

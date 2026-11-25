@@ -12,6 +12,12 @@ import { Icon, type IconName } from '../components/Icon'
 import { Notice } from '../components/Notice'
 import { formatDate, formatTimeRange, label } from '../utils/eventDisplay'
 
+/** The server's message plus each field detail, e.g. "Those event times don't work. The start must be …". */
+const reason = (err: unknown) =>
+  err instanceof ApiError
+    ? [err.message, ...(err.details ?? []).map((d) => d.message)].join(' ')
+    : 'Something went wrong. Please try again.'
+
 export const EventDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const location = useLocation()
@@ -31,6 +37,7 @@ export const EventDetail: React.FC = () => {
   const [secured, setSecured] = useState(false)
   const [alert, setAlert] = useState<string | null>(null)
   const [announcement, setAnnouncement] = useState('')
+  const [publishing, setPublishing] = useState(false)
 
   /** `silent` refreshes the counts after a 409 without replacing the page by the loading state. */
   const fetchDetail = useCallback(async (silent = false) => {
@@ -83,6 +90,21 @@ export const EventDetail: React.FC = () => {
     }
   }
 
+  // Sprint 2 Feature-K: E-14 publishes the owner's draft; the page then shows the published event.
+  const onPublish = async () => {
+    if (!event || publishing) return
+    setPublishing(true)
+    setAlert(null)
+    try {
+      setEvent(await api.post<EventDetailType>(`/api/organizer/events/${event.id}/publish`))
+      setToastMessage('Your event is live.')
+    } catch (err) {
+      setAlert(reason(err))
+    } finally {
+      setPublishing(false)
+    }
+  }
+
   if (loading) {
     return <Loading label="Loading event…" />
   }
@@ -104,8 +126,18 @@ export const EventDetail: React.FC = () => {
     </div>
   )
 
+  // Only the owner ever receives a draft (E-05 answers 404 to everyone else).
+  const isOwnDraft = event.status === 'DRAFT' && event.viewer.action === 'MANAGE'
+
   return (
     <>
+      {isOwnDraft && (
+        <div className="page-alerts">
+          <Notice tone="warning" role="status">
+            Draft — only you can see this event.
+          </Notice>
+        </div>
+      )}
       <div aria-live="polite" className="visually-hidden-live">
         {announcement}
       </div>
@@ -143,6 +175,11 @@ export const EventDetail: React.FC = () => {
           </div>
         </div>
         <div className="dhead__action">
+          {isOwnDraft ? (
+            <button type="button" className="btn-big" onClick={onPublish} disabled={publishing} aria-busy={publishing}>
+              {publishing ? 'Publishing…' : 'PUBLISH EVENT'}
+            </button>
+          ) : (
           <ActionButton
             action={event.viewer.action}
             eventId={event.id}
@@ -152,6 +189,7 @@ export const EventDetail: React.FC = () => {
             onRegister={onRegister}
             busy={registering}
           />
+          )}
         </div>
       </div>
 
@@ -196,7 +234,7 @@ export const EventDetail: React.FC = () => {
 
         <div className="cols__side">
           <SeatCard event={event} secured={secured} />
-          {event.viewer.action === 'MANAGE' && (
+          {event.viewer.action === 'MANAGE' && !isOwnDraft && (
             <section className="box manage-box">
               <h2>Your event</h2>
               <p className="sub mb-3">You can see who registered. Players only see the seat count.</p>
