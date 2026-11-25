@@ -11,7 +11,7 @@ const APP_PORT = 5174
 const APP = `http://localhost:${APP_PORT}`
 
 export default defineConfig({
-  testDir: 'e2e/sprint-1',
+  testDir: 'e2e',
   // The journeys change the shared seed (a seat taken, an event published), so the files run one at a time.
   workers: 1,
   fullyParallel: false,
