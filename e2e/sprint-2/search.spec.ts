@@ -60,6 +60,10 @@ test('TEST-J-05 (E2E) — Search, filters, URL synchronization and back/forward 
 
   // A long list: 25 PagingTest events, 20 on page 1 and 5 on page 2.
   await page.getByRole('button', { name: 'Clear all' }).click()
+  // Wait until the cleared URL has reached the form, or it would reset the text typed next.
+  await expect(page.getByRole('button', { name: /Remove filter/ })).toHaveCount(0)
+  await expect(page.getByLabel('Where')).toHaveValue('')
+  await expect(cards).toHaveCount(defaultTitles.length)
   await page.getByLabel('Where').fill('PagingTest')
   await page.getByRole('button', { name: 'Search', exact: true }).click()
   await expect(page).toHaveURL(/q=PagingTest/)
