@@ -1,0 +1,14 @@
+{
+  "id": "L7-P02-result",
+  "side": "before",
+  "action": "Mint (participant) opens /organizer/events/new",
+  "expected": "The \"This page isn't available for your account\" page; no form",
+  "actual": {
+    "url": "/organizer/events/new",
+    "heading": "This page isn't available for your account",
+    "messages": []
+  },
+  "time": "2026-11-24T15:38:04.174Z",
+  "commit": "f41f52f",
+  "screenshot": "L7-P02-result-before.png"
+}

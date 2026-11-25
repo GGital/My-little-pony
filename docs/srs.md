@@ -4,7 +4,7 @@ Project: **TCG Event Hub** — Event Registration and Attendance System
 Course: CPE 334, Semester 1/2026 — Theme 3 (Event Registration and Attendance System)
 Team: Phattaratorn Mahatkeerati (67070503433, [@GGital](https://github.com/GGital)) ·
 Praewa Thuwatharanimitkul (67070503432, [@MeldyRose](https://github.com/MeldyRose))
-Document version: v0.7 — draft for team review in PR #76 (CH-11 store identity incl. contact, CH-12 tournaments, D-16 … D-38); v0.5 approved in PR #2
+Document version: v0.8 — Sprint 2 line with Lab 7 CH-13 merged in (v0.7 reviewed in PR #76: CH-11, CH-12, D-16 … D-38; v0.5.1 CH-13 in PR #88); v0.5 approved in PR #2
 Companion documents: [`docs/features.md`](features.md), [`docs/traceability.md`](traceability.md),
 [`docs/diagrams/`](diagrams/README.md), [`docs/ui/design-direction.md`](ui/design-direction.md), [`docs/system-sds.md`](system-sds.md), [`docs/sprints/plan.md`](sprints/plan.md),
 [`docs/sprints/sprint-1/`](sprints/sprint-1/README.md), [`docs/sprints/sprint-2/`](sprints/sprint-2/README.md),
@@ -310,8 +310,9 @@ database where a constraint can express it.
 
 - **BR-01** *(Sprint 1)* Capacity is a whole number from **1 to 256**. Zero, negative, fractional or larger values
   are rejected.
-- **BR-02** *(Sprint 1)* A new event's start time must be **in the future**, and its end time must be **after** its
-  start time and **no more than 24 hours** after it.
+- **BR-02** *(Sprint 1; revised by CH-13 in v0.5.1)* A new event's start time must be **at least 60 minutes after the
+  moment it is created** (start ≥ now + 60 min), and its end time must be **after** its start time and **no more
+  than 24 hours** after it. *Until v0.5 the start only had to be in the future.*
 - **BR-03** *(Sprint 1)* Title (3–100 characters), event type, format, venue name, venue address, city, start,
   end and capacity are required. Entry-fee label (up to 40 characters), play structure note (up to 80), contact (up
   to 120) and description (up to 2,000 characters) are optional.
@@ -488,6 +489,7 @@ Later sprints rerun earlier checks as regression tests.
 | D-36 | CH-12 is built in **Sprint 3** (Feature-W pairings, Feature-X results and standings) after Feature-P check-in | It needs check-in; Sprint 2 is full | 21 Nov 2026 | Decided by team |
 | D-37 | The store profile holds the store's public contact details (phone, email, website, LINE ID), shown on every event; the event's own `contact` field stays as an optional "Contact for this event". The store email is a separate public field, never the sign-in email (D-14 unchanged); website links must be `http(s)://` | Organizers stop retyping contacts; players can always reach the store; no unsafe links (NFR-15) | 21 Nov 2026 | Requested by team (Sprint 2, Feature-U) |
 | D-38 | From Sprint 2 the product's visual theme is **Deep Lagoon** (`071B2B · 167D8D · B9E4E8 · EEEEEE`) with **Inter** for text, **Manrope** for figures and IBM Plex Sans Thai for Thai letters, replacing Arcane Ink and Chakra Petch. It refines D-13 (own visual theme) and is defined in design-direction v0.6 | Chosen by the team from five palette trials and eight font trials on the prototype canvas; every text pair passes WCAG AA | 21 Nov 2026 | Decided by team |
+| D-39 | **CH-13 (Lab 7):** BR-02 requires a new event's start to be at least **60 minutes** after it is created, instead of any future time. The end-time rules are unchanged, existing events are not re-checked, and no migration is needed. *(D-16 … D-38 are Sprint 2 and 3 decisions recorded on the Sprint 2 line.)* | Registration closes at the start (BR-04), so an event that starts minutes after it is published can't realistically be found, joined and travelled to | 23 Nov 2026 | Approved by Supachok Deetaweesukh (P'Tik, TA) on 23 Nov 2026, 13:18 Bangkok time, in a chat message (evidence L7-A01, `docs/labs/lab07/evidence/L7-A01-ta-approval.png`; Issue #77) |
 
 ### 10.2 Open questions
 
@@ -516,3 +518,5 @@ Later sprints rerun earlier checks as regression tests.
 | v0.5 | 4 Nov 2026 | NFR-03 hashing changed from bcrypt to scrypt (D-15), decided while writing the System-Level SDS | Team (AI-assisted) |
 | v0.6 | 21 Nov 2026 | Scope change **CH-11** (store identity and game): P-06, P-07, S-10, S-11, FR-29 … FR-31 (§5.7), NFR-17, vocabulary for game, store profile and banner, access rows; X-01 and X-08 revised and X-14 added so the store profile does not contradict the exclusions. Decisions D-16 … D-30 from the Sprint 2 and Sprint 3 contracts. No existing requirement changes meaning | Team (AI-assisted) |
 | v0.7 | 21 Nov 2026 | D-38 Deep Lagoon theme with Inter and Manrope (refines D-13; no requirement changes). CH-11 extended: FR-30 now includes the store's public contact details (Sprint 2), vocabulary and access rows, D-37. Scope change **CH-12** (Swiss tournaments): P-08, S-12, X-05 narrowed, vocabulary, access rows, FR-32 … FR-37 (§5.8), BR-21 … BR-24 (§6.5), NFR-18, BR-16 exception for the player's own opponent (D-32), D-31 … D-36 | Team (AI-assisted) |
+| v0.5.1 | 23 Nov 2026 | Lab 7 change **CH-13** (Issue #77): BR-02 start must be at least 60 minutes after creation instead of "in the future"; D-39. A maintenance version on the Sprint 1 line (the Sprint 2 line already uses v0.6 and v0.7) | Team (AI-assisted) |
+| v0.8 | 25 Nov 2026 | Lab 7 CH-13 (v0.5.1, Sprint 1 line, PR #88) merged into the Sprint 2 line: BR-02 60-minute lead time and D-39. Nothing else changes | Team (AI-assisted) |

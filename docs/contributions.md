@@ -76,9 +76,19 @@ UAT findings from Team 1 KitLoop are Issues #56–#64; the triage is Part 4 of t
 
 | Item | Issue | Branch · PR | Built by | Reviewed by | Status |
 |---|---|---|---|---|---|
-| S2-00 / S3-00 Sprint 2 and 3 contracts, STS, Issue plans; SRS v0.7 (CH-11, CH-12), features, plan, SDS, traceability, UI direction | (to be created) | `docs/s2-s3-contracts` · [#76](https://github.com/GGital/My-little-pony/pull/76) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | (filled in from the PR's review record) | In review |
+| S2-00 / S3-00 Sprint 2 and 3 contracts, STS, Issue plans; SRS v0.7 (CH-11, CH-12), features, plan, SDS, traceability, UI direction | Issues [#78](https://github.com/GGital/My-little-pony/issues/78)–[#87](https://github.com/GGital/My-little-pony/issues/87) created 23 Nov | `docs/s2-s3-contracts` · [#76](https://github.com/GGital/My-little-pony/pull/76) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (approved #76, 21 Nov) | Merged 21 Nov (`40d3699`) |
 
-## 6. Keeping this table current
+## 6. Lab 7: Sprint 1 maintenance (CH-13)
+
+One approved change to BR-02 (a new event must start at least 60 minutes after it is created). Contract first, then
+tests, then code; the evidence index is [`labs/lab07/README.md`](labs/lab07/README.md).
+
+| Item | Issue | Branch · PR | Built by | Reviewed by | Status |
+|---|---|---|---|---|---|
+| L7 change request and contract revision (SRS, contracts, STS, SDS, traceability) | [#77](https://github.com/GGital/My-little-pony/issues/77) | `feature/l7-ch13-lead-time` · [#88](https://github.com/GGital/My-little-pony/pull/88) | Phattaratorn (TA approval obtained 23 Nov) | Praewa (approved #88, 24 Nov) | Merged 24 Nov (`a44fcac`); contract commit `751e9cd` |
+| L7 tests, implementation and evidence | [#77](https://github.com/GGital/My-little-pony/issues/77) | `feature/l7-ch13-code` · PR pending | Phattaratorn | Praewa (to request) | Red `f41f52f`, green `72ae022`; evidence committed; review, release `v0.1.2` and deploy pending |
+
+## 7. Keeping this table current
 
 Every Issue PR updates its own row (branch, PR, built by, reviewed by, status) and the summary in §2, in the same PR
 as the work. Pair work names both students. Reviewers are filled in from the PR's review record, not in advance.
@@ -113,3 +123,5 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.26 | 21 Nov 2026 | §4 Lab 6: #61 merged (#72), #59 merged (#73); all eight accepted defects on `sprint-1-staging`, release to `main` and KitLoop retest pending | Team (AI-assisted) |
 | v0.27 | 21 Nov 2026 | §5 Sprints 2 and 3 added (contracts PR row); the maintenance section becomes §6 | Team (AI-assisted) |
 | v0.28 | 21 Nov 2026 | §5: PR #76 linked; CH-12 added to its scope | Team (AI-assisted) |
+| v0.26.1 | 24 Nov 2026 | §5 Lab 7 CH-13 rows (#88 merged; tests, code and evidence); "Keeping this table current" becomes §6 | Team (AI-assisted) |
+| v0.29 | 25 Nov 2026 | Lab 7 CH-13 merged into the Sprint 2 line: its rows become §6 and "Keeping this table current" §7; §5 contracts row: #76 merged, Issues #78–#87 | Team (AI-assisted) |
