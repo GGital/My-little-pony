@@ -234,7 +234,7 @@ describe('TEST-L-06 (I) who may edit, and empty or forbidden bodies (AC-L-06, BR
 
     const results = [
       await patch(event.id, { title: 'Mine now' }, cookies.mint),
-      await patch(event.id, { title: 'Mine now' }, undefined),
+      await patch(event.id, { title: 'Mine now' }, ''), // no cookie: a visitor
       await patch(event.id, { title: 'Mine now' }, cookies.quantum, 'https://evil.example'),
       await patch(event.id, {}),
       await patch(event.id, { organizerId: 2 }),

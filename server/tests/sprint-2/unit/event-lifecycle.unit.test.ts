@@ -71,7 +71,8 @@ describe('TEST-L-04 (U) decideEditTimes: BR-02 on the resulting start and end (A
     expect(decideEditTimes(stored, {}, NOW)).toBeNull()
     expect(decideEditTimes(stored, { startAt: min(3 * 24 * 60), endAt: min(3 * 24 * 60 + 240) }, NOW)).toBeNull()
     expect(decideEditTimes(stored, { endAt: new Date(start.getTime() + 24 * 60 * 60_000) }, NOW)).toBeNull()
-    expect(decideEditTimes(stored, { startAt: min(60) }, NOW)).toBeNull()
+    // 60 minutes away with its own end (a start alone would leave a 51-hour event: the end rule, contracts §3).
+    expect(decideEditTimes(stored, { startAt: min(60), endAt: min(300) }, NOW)).toBeNull()
   })
 
   it.each([
