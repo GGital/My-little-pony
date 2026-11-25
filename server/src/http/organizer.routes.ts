@@ -3,7 +3,8 @@ import type { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 import type { Config } from '../config.js'
 import { listEventChanges } from '../domain/changes.js'
-import { publishEvent, updateEvent } from '../domain/event-lifecycle.js'
+import { cancelEvent, publishEvent, updateEvent } from '../domain/event-lifecycle.js'
+import { cancelBody } from '../domain/event-input.js'
 import { editEventInputSchema } from '../domain/events.create.js'
 import { getOrganizerEventRegistrations, listOrganizerEvents } from '../domain/organizer.js'
 import { sendError } from './errors.js'
@@ -62,6 +63,14 @@ export function organizerRouter(db: PrismaClient, config: Config): Router {
     const id = parseId(req.params.id)
     if (id === null) return sendError(res, 'INVALID_PATH_PARAMETER')
     res.json(await updateEvent(db, req.actor!, id, res.locals.body, Object.keys(req.body ?? {})))
+  })
+
+  // E-15: POST /organizer/events/:id/cancel, owner only. Same order as E-14: 401 → 403 role → 403 Origin → 400 (path,
+  // body, the reason rule) → then the transaction's 404 / 409 (Sprint 2 contracts §6).
+  router.post('/organizer/events/:id/cancel', ...organizer, requireOrigin(config.APP_ORIGIN), validate({ body: cancelBody }), async (req, res) => {
+    const id = parseId(req.params.id)
+    if (id === null) return sendError(res, 'INVALID_PATH_PARAMETER')
+    res.json(await cancelEvent(db, req.actor!, id, (res.locals.body as { reason: string }).reason))
   })
 
   return router

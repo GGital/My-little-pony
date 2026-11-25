@@ -54,10 +54,17 @@ export const MyEvents: React.FC = () => {
                   event={event}
                   to={`/events/${event.id}`}
                   aside={
-                    <span className="chip chip--seats">
-                      <Icon name="check" size="sm" />
-                      {status}
-                    </span>
+                    status === 'EVENT_CANCELLED' ? (
+                      <span className="chip chip--cancelled">
+                        <Icon name="alert" size="sm" />
+                        Event cancelled
+                      </span>
+                    ) : (
+                      <span className="chip chip--seats">
+                        <Icon name="check" size="sm" />
+                        {status}
+                      </span>
+                    )
                   }
                 />
               ))}

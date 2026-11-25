@@ -44,6 +44,22 @@ beforeAll(async () => {
 }, 120_000)
 afterAll(() => prisma.$disconnect())
 
+describe('TEST-O-06 — two cancels at once: one wins, one is ALREADY_CANCELLED (AC-O-06, BR-12; this is what FOR UPDATE protects)', () => {
+  it(
+    `${ROUNDS} rounds: 5 simultaneous E-15 calls → exactly one 200 and four 409 ALREADY_CANCELLED, one history row`,
+    async () => {
+      for (let round = 1; round <= ROUNDS; round++) {
+        const event = await makeEvent(organizerId, { capacity: 20, startAt: new Date(Date.now() + 24 * HOUR) })
+        const responses = await Promise.all(Array.from({ length: 5 }, () => cancel(event.id)))
+        const codes = responses.map((r) => (r.status === 200 ? '200' : `${r.status} ${r.body.error?.code}`)).sort()
+        expect(codes, `round ${round}`).toEqual(['200', ...Array(4).fill('409 ALREADY_CANCELLED')])
+        expect(await prisma.eventChange.count({ where: { eventId: event.id } }), `round ${round}`).toBe(1)
+      }
+    },
+    300_000,
+  )
+})
+
 describe('TEST-O-06 — cancelling never leaves an active registration behind (AC-O-06, BR-07, NFR-02)', () => {
   it(
     `${ROUNDS} rounds: 1 cancel + ${RACERS} registrations at once → event CANCELLED, no active registration, every E-09 is 201 or 409 REGISTRATION_CLOSED`,

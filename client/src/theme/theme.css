@@ -558,6 +558,77 @@ a.event-card:focus-visible {
   background: var(--surface-muted);
   color: var(--text-muted);
 }
+/* Cancelled event (Sprint 2 Feature-O, UX-13): the same red as FULL and the error notice. */
+.chip--cancelled {
+  background: var(--danger-tint);
+  border-color: var(--danger-line);
+  color: var(--danger-ink);
+}
+
+/* ---------- Cancel dialog (Sprint 2 Feature-O, UX-12) ---------- */
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(7, 27, 43, 0.55);
+}
+.dialog {
+  width: min(520px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  box-shadow: var(--shadow-card);
+}
+.dialog h2 {
+  margin-bottom: 8px;
+}
+.dialog__label {
+  display: block;
+  margin: 18px 0 6px;
+}
+.dialog__help {
+  margin: 6px 0 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+.btn-soft--danger {
+  border-color: var(--danger-line);
+  color: var(--danger-ink);
+}
+.btn-soft--danger:hover {
+  background: var(--danger-tint);
+}
+.btn-danger {
+  min-height: 44px;
+  padding: 8px 20px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--danger-ink);
+  color: #fff;
+  font: 700 14px var(--font-body);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+.btn-danger:hover:not(:disabled) {
+  background: #741823;
+}
+.btn-danger:focus-visible {
+  box-shadow: var(--focus);
+  outline: none;
+}
+.btn-danger:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
 
 /* ---------- Buttons ---------- */
 .btn-big {

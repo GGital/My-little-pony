@@ -97,7 +97,7 @@ export const Dashboard: React.FC = () => {
                 aside={
                   <>
                     <div className="chips">
-                      <span className="chip chip--muted">{STATUS_LABEL[event.status] ?? event.status}</span>
+                      <span className={`chip ${event.status === 'CANCELLED' ? 'chip--cancelled' : 'chip--muted'}`}>{STATUS_LABEL[event.status] ?? event.status}</span>
                       <SeatsChip event={event} />
                     </div>
                     <span className="event-card__note tabular-nums">{seatsLeft(event.seatsRemaining)}</span>

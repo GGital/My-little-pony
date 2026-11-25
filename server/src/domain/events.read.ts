@@ -36,6 +36,9 @@ export type EventDetail = EventSummary & {
   organizer: {
     displayName: string
   }
+  /** Public on a cancelled event, null otherwise (Sprint 2 contracts §6, E-05); `cancelledById` is never returned. */
+  cancelReason: string | null
+  cancelledAt: string | null
   hasStarted: boolean
   viewer: {
     action: ViewerAction
@@ -160,7 +163,8 @@ export async function getEventDetail(
   const event = await prisma.event.findFirst({
     where: {
       id: eventId,
-      OR: [{ status: 'PUBLISHED' }, ...ownDraft],
+      // A cancelled event stays visible to everyone (BR-04).
+      OR: [{ status: { in: ['PUBLISHED', 'CANCELLED'] as EventStatus[] } }, ...ownDraft],
     },
     select: {
       id: true,
@@ -179,6 +183,8 @@ export async function getEventDetail(
       contact: true,
       description: true,
       status: true,
+      cancelReason: true,
+      cancelledAt: true,
       organizer: {
         select: {
           displayName: true,
@@ -254,6 +260,8 @@ export async function getEventDetail(
     contact: event.contact,
     description: event.description,
     organizer: event.organizer,
+    cancelReason: event.cancelReason,
+    cancelledAt: event.cancelledAt?.toISOString() ?? null,
     hasStarted: started,
     viewer: {
       action,

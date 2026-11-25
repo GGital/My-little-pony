@@ -4,7 +4,7 @@ import { HttpError } from '../http/errors.js'
 import type { Actor } from './actor.js'
 import { recordEventChange } from './changes.js'
 import { MIN_LEAD_MINUTES } from './event-rules.js'
-import { getEventDetail, type EventDetail } from './events.read.js'
+import { ACTIVE_STATUSES, getEventDetail, type EventDetail } from './events.read.js'
 import { hasStarted } from './time.js'
 
 export type PublishFacts = { status: EventStatus; startAt: Date; registrationDeadline: Date | null }
@@ -170,7 +170,47 @@ export async function updateEvent(
 export type CancelFacts = { status: EventStatus; startAt: Date }
 export type CancelDecision = { ok: true } | { ok: false; code: 'ALREADY_CANCELLED' | 'NOT_PUBLISHED' | 'EVENT_STARTED' }
 
-// STUB (S2-05 commit A): allows everything, so TEST-O-04 fails on its assertions until commit B.
-export function decideCancel(_facts: CancelFacts, _at: Date): CancelDecision {
+/**
+ * E-15 after the owner is found (Sprint 2 contracts §6): already cancelled → not published (D-16) → started
+ * (startAt ≤ now, so an event starting exactly now has started) → OK.
+ */
+export function decideCancel(facts: CancelFacts, at: Date): CancelDecision {
+  if (facts.status === 'CANCELLED') return { ok: false, code: 'ALREADY_CANCELLED' }
+  if (facts.status !== 'PUBLISHED') return { ok: false, code: 'NOT_PUBLISHED' }
+  if (hasStarted(facts.startAt, at)) return { ok: false, code: 'EVENT_STARTED' }
   return { ok: true }
+}
+
+/**
+ * E-15: cancels the caller's event. The event row is locked FOR UPDATE, the same lock E-09 takes (SDS §4.3a), so a
+ * registration either committed before this (and becomes EVENT_CANCELLED) or waits and is then refused as
+ * REGISTRATION_CLOSED. Event, registrations and the PUBLISHED → CANCELLED history row change in one transaction
+ * (FR-10, FR-28, BR-12). Rows already CANCELLED are not touched. Another organizer's event is the same 404 (D-08).
+ */
+export async function cancelEvent(db: PrismaClient, actor: Actor, eventId: number, reason: string): Promise<EventDetail> {
+  await db.$transaction(
+    async (tx) => {
+      const [event] = await tx.$queryRaw<CancelFacts[]>`
+        SELECT status, "startAt" FROM "Event"
+        WHERE id = ${eventId} AND "organizerId" = ${actor.id} FOR UPDATE`
+      if (!event) throw new HttpError('EVENT_NOT_FOUND')
+
+      const at = now()
+      const decision = decideCancel(event, at)
+      if (!decision.ok) throw new HttpError(decision.code)
+
+      await tx.event.update({
+        where: { id: eventId },
+        data: { status: 'CANCELLED', cancelledAt: at, cancelledById: actor.id, cancelReason: reason },
+      })
+      await tx.registration.updateMany({
+        where: { eventId, status: ACTIVE_STATUSES },
+        data: { status: 'EVENT_CANCELLED', cancelledAt: at },
+      })
+      await recordEventChange(tx, { eventId, changedById: actor.id, field: 'status', oldValue: 'PUBLISHED', newValue: 'CANCELLED', changedAt: at })
+    },
+    // Many registrations may be queued on the same row lock (TEST-O-06); same allowance as E-09.
+    { maxWait: 10_000, timeout: 10_000 },
+  )
+  return (await getEventDetail(db, eventId, actor))!
 }
