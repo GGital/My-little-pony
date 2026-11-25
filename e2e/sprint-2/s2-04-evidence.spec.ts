@@ -44,7 +44,7 @@ test('S2-04-U1 Quantum Cards opens the edit page of EV-1 from the event page', a
   await expect(page.locator('h1').first()).toBeVisible()
   const file = await shot(page, 'S2-04-U1-edit-page')
   record('S2-04-U1-edit-page', 'Quantum Cards: MANAGE EVENT on /events/1, then /organizer/events/1/edit',
-    'After: MANAGE EVENT opens /organizer/events/1/edit; the form holds EV-1, the capacity hint says "At least 3", the History panel lists the creation',
+    'After: MANAGE EVENT opens /organizer/events/1/edit; the form holds EV-1, the capacity hint says "At least 3"; History says "No changes yet." (the seed writes no history rows)',
     { manageHref: href, heading: await page.locator('h1').first().innerText(), hint: await text(page, '.field-hint, .capacity-hint'),
       history: await text(page, 'section[aria-label="History"] li') }, file)
 })
@@ -62,6 +62,7 @@ test('S2-04-U2 the dashboard rows offer Edit', async ({ page }) => {
 test('S2-04-U3 saving a title change, then a capacity below the registrations', async ({ page }) => {
   await signIn(page, EMAIL.quantum)
   await page.goto(`/organizer/events/${EV1}/edit`)
+  await expect(page.locator('h1').first()).toBeVisible() // the page (or Not found) has loaded
   const save = page.getByRole('button', { name: 'SAVE CHANGES' })
   const hasForm = (await save.count()) > 0
   let saved: unknown = null
