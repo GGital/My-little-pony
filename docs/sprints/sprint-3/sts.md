@@ -1,7 +1,7 @@
 # Sprint 3 Software Test Specification (STS)
 
-Project: **TCG Event Hub** · Sprint 3 · Document version: v0.2 — **draft for team review** (changes in §8)
-Contracts: [`feature-contracts.md`](feature-contracts.md) v0.2 · Issues and Definition of Done: [`README.md`](README.md) ·
+Project: **TCG Event Hub** · Sprint 3 · Document version: v0.3 — **draft for team review** (changes in §8)
+Contracts: [`feature-contracts.md`](feature-contracts.md) v0.3 · Issues and Definition of Done: [`README.md`](README.md) ·
 Earlier STS: [`../sprint-1/sts.md`](../sprint-1/sts.md), [`../sprint-2/sts.md`](../sprint-2/sts.md)
 
 This document turns every Sprint 3 acceptance criterion into planned tests, **before** the code exists, with the
@@ -48,6 +48,9 @@ These are the same as Sprint 1 STS §1.2, under `server/tests/sprint-3/`, `clien
 
 - Factories from Sprints 1–2, plus `checkIn(reg, at)`, `endEvent(event)` (moves the clock past `endAt`) and
   `failSignIn(email, n)`.
+- Since CH-13 (Lab 7), E-06 accepts only a start at least 60 minutes ahead. Fixtures that need an event starting
+  sooner (check-in window, in progress, ended) are written with `makeEvent()` straight to the database, or created
+  earlier on the fixed clock and then reached by moving the clock (`setNow`).
 - E2E: the seed with EV-4 (check-in window open after seeding) and EV-10 (ended, with a check-in, a no-show and a
   cancellation).
 - Images are generated in the test (`sharp({ create: … })`), so no binary fixtures are committed. The EXIF test
@@ -99,7 +102,8 @@ The suite passes when:
 ## 2. Planned tests
 
 Legend for **Result**: `Pending` = planned and not yet run. It changes to `Pass` or `Fail` **only from real
-output**, with the commit id in §6.
+output**, with the commit id in §6. The work status of each feature (planned, in progress, implemented, tested,
+accepted) is kept in the README §3 table, so a test result is never used as a feature status.
 
 ### 2.1 Feature-P — check-in and undo
 
@@ -312,3 +316,4 @@ node scripts/perf.mjs events report summary
 |---|---|---|---|
 | v0.1 | 21 Nov 2026 | First draft: strategy additions (independent counts, boundaries, M evidence), tools, concurrency plan, 39 AC tests, 3 regression rows, JRN-05 … 07, AC map, BR rejection map, empty TDD and results tables | Team (AI-assisted) |
 | v0.2 | 21 Nov 2026 | CH-12: §1.3 hand-computed standings fixture, TEST-W-06 race, §2.7 Feature-W and §2.8 Feature-X (14 tests incl. the 1,000-tournament property test and the 256-entry benchmark), JRN-08, AC map, BR-21 … BR-24 rejections, TDD rows S3-10, S3-11; 53 AC tests | Team (AI-assisted) |
+| v0.3 | 25 Nov 2026 | Contracts v0.3. §1.3: fixtures under CH-13 (events starting within 60 minutes are written directly or reached by moving the clock); §2 points the work status to README §3. No test changes | Team (AI-assisted) |
