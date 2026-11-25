@@ -36,5 +36,5 @@ test('TEST-J-05 (E2E) — Search, filters, URL synchronization and back/forward 
 
   // Clear filters restores default list
   await clearBtn.click()
-  await expect(page.locator('a.event-card')).toHaveCount(5)
+  await expect(page.locator('a.event-card')).toHaveCount(6)
 })

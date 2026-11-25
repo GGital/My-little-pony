@@ -36,7 +36,7 @@ describe('TEST-J-02 (U) — search query unit tests (AC-J-02, FR-13, NFR-11, D-2
       const res = searchQuerySchema.safeParse({ q: 'a'.repeat(101) })
       expect(res.success).toBe(false)
       if (!res.success) {
-        expect(res.error.issues[0].path).toContain('q')
+        expect(res.error.issues[0]?.path).toContain('q')
       }
     })
 
@@ -48,7 +48,7 @@ describe('TEST-J-02 (U) — search query unit tests (AC-J-02, FR-13, NFR-11, D-2
       const bad = searchQuerySchema.safeParse({ type: 'PARTY' })
       expect(bad.success).toBe(false)
       if (!bad.success) {
-        expect(bad.error.issues[0].path).toContain('type')
+        expect(bad.error.issues[0]?.path).toContain('type')
       }
     })
 
@@ -60,7 +60,7 @@ describe('TEST-J-02 (U) — search query unit tests (AC-J-02, FR-13, NFR-11, D-2
       const bad = searchQuerySchema.safeParse({ format: 'STANDARD' })
       expect(bad.success).toBe(false)
       if (!bad.success) {
-        expect(bad.error.issues[0].path).toContain('format')
+        expect(bad.error.issues[0]?.path).toContain('format')
       }
     })
 
@@ -70,7 +70,7 @@ describe('TEST-J-02 (U) — search query unit tests (AC-J-02, FR-13, NFR-11, D-2
       const bad = searchQuerySchema.safeParse({ from: '2026-02-30' })
       expect(bad.success).toBe(false)
       if (!bad.success) {
-        expect(bad.error.issues[0].path).toContain('from')
+        expect(bad.error.issues[0]?.path).toContain('from')
       }
     })
 
@@ -99,7 +99,7 @@ describe('TEST-J-02 (U) — search query unit tests (AC-J-02, FR-13, NFR-11, D-2
       const bad = searchQuerySchema.safeParse({ include: 'drafts' })
       expect(bad.success).toBe(false)
       if (!bad.success) {
-        expect(bad.error.issues[0].path).toContain('include')
+        expect(bad.error.issues[0]?.path).toContain('include')
       }
     })
 
