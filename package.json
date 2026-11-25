@@ -11,6 +11,7 @@
     "secret:scan": "node scripts/secret-scan.mjs"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.1",
     "@playwright/test": "1.56.1"
   }
 }
