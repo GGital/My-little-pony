@@ -77,7 +77,7 @@ describe('TEST-L-03 — a capacity cut and registrations racing for the last sea
 
 // TEST-N-06 (AC-N-06, NFR-05, BR-06): a cancellation and registrations racing for one freed seat (STS §1.4).
 // Capacity 2, P1 holds a seat and another player holds the second; P1's E-16 and 10 other players' E-09 are sent at
-// once; exactly one E-09 wins and active = 2. Separately, one participant sends E-16 twice: one 200, one
+// once; at most one E-09 wins (exactly one when the cancel takes the lock first) and active never exceeds 2. Separately, one participant sends E-16 twice: one 200, one
 // 409 ALREADY_CANCELLED. 20 rounds. E-16 and E-09 lock the same event row.
 describe('TEST-N-06 — cancel racing registrations, and a double cancel (AC-N-06, NFR-05, BR-06)', () => {
   const N_ROUNDS = 20
@@ -105,7 +105,10 @@ describe('TEST-N-06 — cancel racing registrations, and a double cancel (AC-N-0
     }
   }, 120_000)
 
-  it(`${N_ROUNDS} rounds: one of ${OTHERS} registrations wins the freed seat; active = 2`, async () => {
+  it(`${N_ROUNDS} rounds: at most one of ${OTHERS} registrations takes the freed seat; active never above 2`, async () => {
+    // Both orders are valid: if every E-09 takes the event lock before the E-16, each sees 2 / 2 and gets EVENT_FULL,
+    // so nobody takes the freed seat (won = 0, active = 1). If the E-16 goes first, exactly one E-09 wins (active = 2).
+    let roundsWithAWinner = 0
     for (let round = 1; round <= N_ROUNDS; round++) {
       const event = await makeEvent(organizerId, { capacity: 2, startAt: new Date(Date.now() + 24 * HOUR) })
       const mine = await prisma.registration.create({ data: { eventId: event.id, participantId: p1.id } })
@@ -121,12 +124,15 @@ describe('TEST-N-06 — cancel racing registrations, and a double cancel (AC-N-0
       const won = registrations.filter((r) => r.status === 201).length
       const active = await prisma.registration.count({ where: { eventId: event.id, status: ACTIVE } })
       expect(cancelled.status, `round ${round}`).toBe(200)
-      expect(won, `round ${round}`).toBe(1)
-      expect(active, `round ${round}`).toBe(2)
+      expect(won, `round ${round}`).toBeLessThanOrEqual(1)
+      expect(active, `round ${round}`).toBe(1 + won)
       expect(registrations.filter((r) => r.status !== 201).map((r) => r.body.error?.code), `round ${round}`).toEqual(
-        Array(OTHERS - 1).fill('EVENT_FULL'),
+        Array(OTHERS - won).fill('EVENT_FULL'),
       )
+      if (won === 1) roundsWithAWinner += 1
     }
+    // A freed seat still goes to a racer in at least one round.
+    expect(roundsWithAWinner).toBeGreaterThanOrEqual(1)
   }, 300_000)
 
   it(`${N_ROUNDS} rounds: two simultaneous cancels give one 200 and one 409 ALREADY_CANCELLED`, async () => {
