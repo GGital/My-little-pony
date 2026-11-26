@@ -5,6 +5,8 @@ import { effectiveDeadline, isRegistrationOpen } from './deadline.js'
 import { now } from '../clock.js'
 import { hasStarted, upcomingWhere } from './time.js'
 import { canCancelRegistration } from './registration-rules.js'
+import { storeSelect, toContact, type StoreContact } from './store-profile.js'
+import type { GameValue } from './store-contact.js'
 
 export type ViewerAction =
   | 'MANAGE'
@@ -29,11 +31,16 @@ export type EventSummary = {
   registeredCount: number
   seatsRemaining: number
   status: EventStatus
+  /** Feature-U (FR-29). */
+  game: GameValue
+  /** Feature-U: the host store. The logo is Sprint 3 (Feature-V), so `logoUrl` is null for now. */
+  store: { displayName: string; logoUrl: string | null }
   /** Sprint 2 Feature-M: the EFFECTIVE deadline, the stored one or startAt (contracts §0.1, BR-08). */
   registrationDeadline: string
 }
 
-export type EventDetail = EventSummary & {
+export type EventDetail = Omit<EventSummary, 'store'> & {
+  store: { displayName: string; logoUrl: string | null; games: GameValue[]; contact: StoreContact }
   venueAddress: string
   structureNote: string | null
   contact: string | null
@@ -74,6 +81,7 @@ export async function searchEvents(
   if (!include.includes('past')) and.push(upcomingWhere())
   if (query.type) and.push({ type: query.type })
   if (query.format) and.push({ format: query.format })
+  if (query.game) and.push({ game: query.game })
   if (query.from) and.push({ startAt: { gte: bangkokDayRange(query.from)[0] } })
   if (query.to) and.push({ startAt: { lt: bangkokDayRange(query.to)[1] } })
 
@@ -126,7 +134,9 @@ export const summarySelect = {
   feeLabel: true,
   capacity: true,
   status: true,
+  game: true,
   registrationDeadline: true,
+  organizer: { select: { displayName: true } },
   _count: { select: { registrations: { where: { status: ACTIVE_STATUSES } } } },
 } as const
 
@@ -149,6 +159,8 @@ export function toSummary(e: SummaryRow): EventSummary {
     registeredCount,
     seatsRemaining: Math.max(0, e.capacity - registeredCount),
     status: e.status,
+    game: e.game,
+    store: { displayName: e.organizer.displayName, logoUrl: null },
     registrationDeadline: effectiveDeadline(e).toISOString(),
   }
 }
@@ -195,10 +207,9 @@ export async function getEventDetail(
       cancelReason: true,
       cancelledAt: true,
       registrationDeadline: true,
+      game: true,
       organizer: {
-        select: {
-          displayName: true,
-        },
+        select: storeSelect, // explicit columns: the sign-in email is never read (D-14)
       },
       _count: {
         select: {
@@ -278,7 +289,14 @@ export async function getEventDetail(
     structureNote: event.structureNote,
     contact: event.contact,
     description: event.description,
-    organizer: event.organizer,
+    organizer: { displayName: event.organizer.displayName },
+    game: event.game,
+    store: {
+      displayName: event.organizer.displayName,
+      logoUrl: null,
+      games: event.organizer.games,
+      contact: toContact(event.organizer),
+    },
     cancelReason: event.cancelReason,
     cancelledAt: event.cancelledAt?.toISOString() ?? null,
     hasStarted: started,

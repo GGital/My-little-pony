@@ -1,6 +1,7 @@
 import React from 'react'
-import type { ApiErrorDetail } from '../api/types'
+import type { ApiErrorDetail, Game } from '../api/types'
 import { label } from '../utils/eventDisplay'
+import { GAME_LABELS, GAME_VALUES } from '../utils/games'
 import { FormFieldError, fieldErrorProps } from './FormFieldError'
 
 /** Every field of the create and edit forms, as the inputs hold them (times are Bangkok `datetime-local`). */
@@ -20,11 +21,13 @@ export type EventFormValues = {
   structureNote: string
   contact: string
   description: string
+  /** Feature-U: empty until chosen; the UI requires one (the API defaults to OTHER). */
+  game: Game | ''
 }
 
 export const EMPTY_EVENT_FORM: EventFormValues = {
   title: '', type: 'CASUAL', format: 'CONSTRUCTED', venueName: '', venueAddress: '', city: '',
-  startAt: '', endAt: '', registrationDeadline: '', capacity: '24', feeLabel: '', structureNote: '', contact: '', description: '',
+  startAt: '', endAt: '', registrationDeadline: '', capacity: '24', feeLabel: '', structureNote: '', contact: '', description: '', game: '',
 }
 
 /** `YYYY-MM-DDTHH:mm` (Bangkok wall time, the form's input) → ISO with +07:00, as the API expects (NFR-11). */
@@ -119,6 +122,29 @@ export const EventFields: React.FC<Props> = ({ values, onChange, details, disabl
       <section className="form-card">
         <h2>The event</h2>
         {field({ id: 'title', label: 'Title', required: true, placeholder: 'e.g. Friday Night Constructed' })}
+        <div>
+          <label htmlFor="game" className="form-label">
+            Game <span className="req" aria-hidden="true">*</span>
+          </label>
+          <select
+            id="game"
+            name="game"
+            className="form-select"
+            value={values.game}
+            onChange={(e) => onChange('game', e.target.value as EventFormValues['game'])}
+            disabled={disabled || readOnly?.has('game')}
+            aria-required="true"
+            {...fieldErrorProps('game', details)}
+          >
+            <option value="">Choose a game</option>
+            {GAME_VALUES.map((g) => (
+              <option key={g} value={g}>
+                {GAME_LABELS[g]}
+              </option>
+            ))}
+          </select>
+          <FormFieldError field="game" details={details} />
+        </div>
         <div className="form-grid">
           {choices('type', 'Event Type', ['CASUAL', 'TOURNAMENT', 'RELEASE'] as const)}
           {choices('format', 'Format', ['CONSTRUCTED', 'SEALED', 'DRAFT'] as const)}
@@ -153,7 +179,7 @@ export const EventFields: React.FC<Props> = ({ values, onChange, details, disabl
       <section className="form-card">
         <h2>More details</h2>
         {field({ id: 'structureNote', label: 'Structure Note', hint: 'optional, max 80', placeholder: 'e.g. 4 rounds · Best of 1', maxLength: 80 })}
-        {field({ id: 'contact', label: 'Contact', hint: 'optional, max 120', placeholder: 'e.g. hello@quantumcards.example', maxLength: 120 })}
+        {field({ id: 'contact', label: 'Contact', hint: "optional, max 120. Leave empty to use your store's contact details.", placeholder: 'e.g. hello@quantumcards.example', maxLength: 120 })}
         <div>
           <div className="d-flex justify-content-between align-items-baseline">
             <label htmlFor="description" className="form-label">

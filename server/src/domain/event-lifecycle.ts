@@ -97,7 +97,7 @@ export function frozenFields(keys: string[], started: boolean): string[] {
 
 /** The detail fields in form order; their names make a `details` change row (D-20). Capacity has its own row. */
 const DETAIL_FIELDS = [
-  'title', 'type', 'format', 'venueName', 'venueAddress', 'city', 'startAt', 'endAt',
+  'title', 'type', 'format', 'game', 'venueName', 'venueAddress', 'city', 'startAt', 'endAt',
   'feeLabel', 'structureNote', 'contact', 'description',
 ] as const
 

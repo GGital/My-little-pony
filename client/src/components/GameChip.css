@@ -1,0 +1,6 @@
+/* Feature-U (UX-16): the teal game chip on cards and the event page. */
+.chip--game {
+  background: var(--accent-tint);
+  border-color: var(--accent-line);
+  color: var(--accent-ink);
+}

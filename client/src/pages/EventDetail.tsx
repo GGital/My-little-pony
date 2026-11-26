@@ -9,6 +9,8 @@ import { CancelEventDialog } from '../components/CancelEventDialog'
 import { ErrorState } from '../components/ErrorState'
 import { Loading } from '../components/Loading'
 import { SeatCard } from '../components/SeatCard'
+import { GameChip } from '../components/GameChip'
+import { StoreHost } from '../components/StoreHost'
 import { NotFoundPage } from '../routes/pages/NotFoundPage'
 import { Icon, type IconName } from '../components/Icon'
 import { Notice } from '../components/Notice'
@@ -261,6 +263,7 @@ export const EventDetail: React.FC = () => {
           <section className="box details-box">
             <h2>Event details</h2>
             <span className="pill">{label(event.type)}</span>
+            {event.game && <GameChip game={event.game} />}
             {info(
               'cal',
               <>
@@ -287,12 +290,7 @@ export const EventDetail: React.FC = () => {
             {event.description && <p className="description">{event.description}</p>}
           </section>
 
-          {event.contact && (
-            <section className="box contact-box">
-              <h2>Contact</h2>
-              {info('mail', event.contact)}
-            </section>
-          )}
+          <StoreHost event={event} />
         </div>
 
         <div className="cols__side">

@@ -1,0 +1,5 @@
+/* Feature-U (UX-17, UX-19): the store profile page. */
+.store-profile__chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+.store-profile__chip { cursor: pointer; font: inherit; }
+.store-profile__chip.is-on { font-weight: 600; }
+.store-profile__saved { color: var(--accent-ink); font-weight: 600; }

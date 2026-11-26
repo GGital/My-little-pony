@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { GAMES } from './store-contact.js'
 
 /**
  * Validates that a string is a real calendar date in YYYY-MM-DD format.
@@ -45,6 +46,8 @@ export const searchQuerySchema = z
       .transform((v) => (v && v.length > 0 ? v : undefined)),
     type: z.enum(['CASUAL', 'TOURNAMENT', 'RELEASE']).optional(),
     format: z.enum(['CONSTRUCTED', 'SEALED', 'DRAFT']).optional(),
+    // Feature-U (FR-29): one game, ANDed with the other filters.
+    game: z.enum(GAMES, { message: 'Choose one of the listed games.' }).optional(),
     from: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format.')

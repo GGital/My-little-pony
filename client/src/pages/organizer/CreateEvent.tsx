@@ -28,14 +28,20 @@ export const CreateEvent: React.FC = () => {
   /** E-06; `asDraft` adds saveAsDraft (D-18) and lands on the draft's edit page (contracts §2 v0.8). */
   const send = async (asDraft: boolean) => {
     if (submitting) return
-    setDetails([])
     setGeneralError(null)
+    // Feature-U: the UI requires a game; nothing is sent without one.
+    if (!values.game) {
+      setDetails([{ field: 'game', message: 'Choose a game.' }])
+      return
+    }
+    setDetails([])
     setSubmitting(asDraft ? 'draft' : 'publish')
 
     const payload = {
       title: values.title,
       type: values.type,
       format: values.format,
+      game: values.game,
       venueName: values.venueName,
       venueAddress: values.venueAddress,
       city: values.city,

@@ -1,5 +1,6 @@
 import React from 'react'
 import { label } from '../utils/eventDisplay'
+import { gameLabel } from '../utils/games'
 import { EMPTY_FILTERS, type SearchFilters } from '../utils/searchParams'
 
 export interface FilterChipsProps {
@@ -14,6 +15,7 @@ export const FilterChips: React.FC<FilterChipsProps> = ({ filters, onChange }) =
   if (filters.q.trim()) chips.push({ key: 'q', text: `Matching: ${filters.q.trim()}` })
   if (filters.type) chips.push({ key: 'type', text: `Type: ${label(filters.type)}` })
   if (filters.format) chips.push({ key: 'format', text: `Format: ${label(filters.format)}` })
+  if (filters.game) chips.push({ key: 'game', text: `Game: ${gameLabel(filters.game)}` })
   if (filters.from) chips.push({ key: 'from', text: `From: ${filters.from}` })
   if (filters.to) chips.push({ key: 'to', text: `To: ${filters.to}` })
   if (filters.seatsAvailable) chips.push({ key: 'seatsAvailable', text: 'Seats available' })

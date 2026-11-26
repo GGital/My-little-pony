@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import type { EventSummary } from '../api/types'
 import { formatEventTime } from '../utils/formatEventTime'
 import { dateBadge, label, seatLevel, seatsLeft } from '../utils/eventDisplay'
+import { GameChip } from './GameChip'
 import { Icon } from './Icon'
 
 /** Seats chip: teal, amber when few are left, red FULL at 0 (design-direction §5.1). */
@@ -68,6 +69,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, to, aside, endedChi
         <h3 className="event-card__title">{event.title}</h3>
         <div className="event-card__sub">
           {label(event.type)} · {label(event.format)}
+          {event.game && <GameChip game={event.game} />}
         </div>
         <div className="event-card__venue">
           {event.venueName} · {event.city}

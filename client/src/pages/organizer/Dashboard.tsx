@@ -69,7 +69,15 @@ export const Dashboard: React.FC = () => {
 
   return (
     <>
-      <PageTop title="Dashboard" subtitle="Your events, earliest first, with live seat counts." action={items?.length ? create : undefined} />
+      <PageTop title="Dashboard" subtitle="Your events, earliest first, with live seat counts." action={
+          <>
+            <Link to="/organizer/store" className="btn-soft">
+              Store profile
+            </Link>
+            {items?.length ? create : null}
+          </>
+        }
+      />
       <div className="pbody">
         {notice && (
           <div className="page-alerts">

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Icon } from './Icon'
+import { GAME_LABELS, GAME_VALUES } from '../utils/games'
 import type { SearchFilters } from '../utils/searchParams'
 
 export interface SearchBarProps {
@@ -51,6 +52,17 @@ export const SearchBar: React.FC<SearchBarProps> = ({ filters, onSearch }) => {
           <option value="CONSTRUCTED">Constructed</option>
           <option value="SEALED">Sealed</option>
           <option value="DRAFT">Draft</option>
+        </select>
+      </label>
+      <label className="searchform__field">
+        <span className="lbl">Game</span>
+        <select value={draft.game} onChange={(e) => set('game', e.target.value)}>
+          <option value="">All games</option>
+          {GAME_VALUES.map((g) => (
+            <option key={g} value={g}>
+              {GAME_LABELS[g]}
+            </option>
+          ))}
         </select>
       </label>
       <label className="searchform__field">
