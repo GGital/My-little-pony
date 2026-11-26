@@ -432,7 +432,7 @@ what allows one new active row after a cancel, and never two.
 | **AC-N-03** | a full event (2 / 2: Ploy, Boss); Nok | Ploy cancels; Nok registers; Ploy registers again | `200`; `201`; `409 EVENT_FULL`; active = 2 = capacity |
 | **AC-N-04** | Mint's registrations: one `CANCELLED`, one `EVENT_CANCELLED`, one `CHECKED_IN` (set by SQL), one on an event whose deadline has passed | E-16 on each | `409 ALREADY_CANCELLED` ×2, `409 ALREADY_CHECKED_IN`, `409 REGISTRATION_CLOSED`; no row changes |
 | **AC-N-05** | Mint's active registration | E-16 by Ploy, by Quantum Cards (the event owner), by a visitor, with a foreign Origin, with body `{ "participantId": … }`; and for id 999999 by Mint | `404` (byte-identical to 999999), `403`, `401`, `403`, `400`; `404 REGISTRATION_NOT_FOUND`; nothing changes |
-| **AC-N-06** | a full event (capacity 2) where P1 holds a seat; 10 other participants; separately, Mint with one active registration | P1's E-16 and 10 E-09 calls are sent at the same time; separately, Mint sends 2 E-16 calls at the same time; 20 rounds | each round: exactly one of the 10 gets `201`, active = 2; Mint gets one `200` and one `409 ALREADY_CANCELLED` |
+| **AC-N-06** | a full event (capacity 2) where P1 holds a seat; 10 other participants; separately, Mint with one active registration | P1's E-16 and 10 E-09 calls are sent at the same time; separately, Mint sends 2 E-16 calls at the same time; 20 rounds | each round: at most one of the 10 gets `201` (exactly one when the cancel takes the lock first; if all 10 take it first, each gets `EVENT_FULL`), active = 1 + the number of `201`s and never above 2; across the 20 rounds at least one round has a winner; Mint gets one `200` and one `409 ALREADY_CANCELLED` |
 
 **Planned tests:** TEST-N-01 … 06 (U, I, C, E2E). TEST-N-06 is a concurrency test.
 
@@ -563,7 +563,7 @@ show a **Past** or **Cancelled** chip.
 | Feature-E, E-07 | Shows drafts and cancelled events with their chips; Edit and Publish buttons | TEST-E-01 gains a draft and a cancelled row |
 | Feature-F, E-04 / E-05 | Query, paging and `meta` (J); drafts are 404 (K); the new `CLOSED` rule (M); cancel fields (O) | TEST-F-01 … 05 unchanged and still green with no query; TEST-J-*, K-02, M-03, O-02 |
 | Feature-G, E-09 | Draft → 404; deadline → closed; cancelled → closed | TEST-G-01 … 06 still green, except TEST-G-04's draft case, which now expects `404 EVENT_NOT_FOUND` (v0.7, Sprint 1 STS v1.16); TEST-K-02, M-03, O-02 |
-| Feature-H / I, E-08, E-10, E-11 | `cancelledAt`, `canCancel` | TEST-H-*, I-* still green; TEST-N-01, M-04 |
+| Feature-H / I, E-08, E-10, E-11 | `cancelledAt`, `canCancel` | TEST-H-* still green; TEST-I-01 changes (lists `CANCELLED` rows, not counted); TEST-N-01, M-04 |
 | SR-01, AC-SR1-02 | The seed has 9 events (§0.4) | TEST-SR1-02 is updated in S2-01, and the change is recorded in Sprint 1 STS §8 |
 | SR-02, TEST-SR2-03 / 04 | Route table + new codes | rows added |
 | Feature-C, AC-C-01 … 06; SR-05, AC-SR5-01 | Theme values and fonts change (D-38, §12) | TEST-C-01 … 06 and TEST-SR5-01 still green; TEST-C-07, C-08 |
@@ -768,3 +768,4 @@ that fails blocks the merge. Nothing in Sprint 1's AC-C-01 … 06 or AC-SR5-01 m
 | v0.9 | 26 Nov 2026 | S2-04: a new draft now lands on its edit page, which has the draft banner and PUBLISH EVENT; the dashboard gets **Edit** (Feature-K Behaviour 2, UI, AC-K-01); Feature-L Behaviour 3 notes that the Cancel event section comes with S2-05, and Behaviour 4 the 409 `details`; AC-L-04's 60-minute case sends its own end, because the resulting-end rule refuses a 51-hour event | Team (AI-assisted) |
 | #110 | 26 Nov 2026 | D-39 was used twice: the SRS's D-39 is CH-13 (Lab 7), so the `include=cancelled` decision of S2-03 becomes **D-40** (§0.6, AC-J-04) and is added to SRS §10.1. Nothing else changes | Team (AI-assisted) |
 | S2-06 | 26 Nov 2026 | §4: TEST-M-04 runs with Feature-N in S2-07, because `canCancel` and E-16 are built there (decision 26 Nov). §1 (review of #111): a `deadline` row is written only for an explicit, different deadline; a deadline sent again unchanged is not checked again | Team (AI-assisted) |
+| S2-07 | 26 Nov 2026 | §5 (review of #112): AC-N-06 says at most one of the 10 registrations wins the freed seat (exactly one when the cancel takes the lock first), because all 10 can take the lock before the cancel and each then correctly gets `EVENT_FULL`; active never exceeds 2. §8: Feature-H / I row names TEST-I-01 (lists `CANCELLED` rows, not counted) | Team (AI-assisted) |

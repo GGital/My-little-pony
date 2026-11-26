@@ -79,7 +79,7 @@ describe('TEST-D-01 (I) — Valid event creation and publication (AC-D-01, FR-06
       expect(res.body.capacity).toBe(24)
       expect(res.body.registeredCount).toBe(0)
       expect(res.body.seatsRemaining).toBe(24)
-      expect(res.body.viewer).toEqual({ action: 'MANAGE', registrationId: null })
+      expect(res.body.viewer).toEqual({ action: 'MANAGE', registrationId: null, canCancel: false })
       expect(res.body.hasStarted).toBe(false)
       expect(res.body.organizer.displayName).toBe('Quantum Cards')
 

@@ -28,3 +28,29 @@ export function decideRegistration(facts: RegistrationFacts): RegistrationDecisi
   if (facts.active >= facts.capacity) return 'EVENT_FULL'
   return 'OK'
 }
+
+export type CancellationFacts = {
+  registrationStatus: 'REGISTERED' | 'CHECKED_IN' | 'CANCELLED' | 'EVENT_CANCELLED'
+  eventStatus: EventStatus
+  startAt: Date
+  registrationDeadline: Date | null
+}
+
+export type CancellationDecision = 'OK' | 'ALREADY_CANCELLED' | 'ALREADY_CHECKED_IN' | 'REGISTRATION_CLOSED'
+
+/**
+ * The E-16 rules after the registration is found (Sprint 2 contracts §5), in contract order:
+ * already cancelled (CANCELLED or EVENT_CANCELLED) → already checked in → registration closed (§0.3) → OK.
+ */
+export function decideCancellation(facts: CancellationFacts): CancellationDecision {
+  if (facts.registrationStatus === 'CANCELLED' || facts.registrationStatus === 'EVENT_CANCELLED') return 'ALREADY_CANCELLED'
+  if (facts.registrationStatus === 'CHECKED_IN') return 'ALREADY_CHECKED_IN'
+  const open = isRegistrationOpen(
+    { status: facts.eventStatus, startAt: facts.startAt, registrationDeadline: facts.registrationDeadline },
+    now(),
+  )
+  return open ? 'OK' : 'REGISTRATION_CLOSED'
+}
+
+/** `canCancel` on E-05, E-10 and E-11: the server decides, so the client only shows the button (Feature-N). */
+export const canCancelRegistration = (facts: CancellationFacts): boolean => decideCancellation(facts) === 'OK'

@@ -4,6 +4,7 @@ import { api } from '../api/client'
 import { ApiError } from '../api/errors'
 import type { EventDetail as EventDetailType, ParticipantRegistration } from '../api/types'
 import { ActionButton } from '../components/ActionButton'
+import { CancelRegistrationDialog } from '../components/CancelRegistrationDialog'
 import { CancelEventDialog } from '../components/CancelEventDialog'
 import { ErrorState } from '../components/ErrorState'
 import { Loading } from '../components/Loading'
@@ -46,6 +47,7 @@ export const EventDetail: React.FC = () => {
   const [announcement, setAnnouncement] = useState('')
   const [publishing, setPublishing] = useState(false)
   const [showCancel, setShowCancel] = useState(false)
+  const [showCancelSeat, setShowCancelSeat] = useState(false)
 
   /** `silent` refreshes the counts after a 409 without replacing the page by the loading state. */
   const fetchDetail = useCallback(async (silent = false) => {
@@ -85,7 +87,7 @@ export const EventDetail: React.FC = () => {
     try {
       const registration = await api.post<ParticipantRegistration>(`/api/events/${event.id}/registrations`)
       const { registeredCount, seatsRemaining } = registration.event
-      setEvent({ ...event, registeredCount, seatsRemaining, viewer: { action: 'REGISTERED', registrationId: registration.id } })
+      setEvent({ ...event, registeredCount, seatsRemaining, viewer: { action: 'REGISTERED', registrationId: registration.id, canCancel: registration.canCancel } })
       setSecured(true)
       setAnnouncement(
         `You're registered for ${event.title}. ${seatsRemaining} seat${seatsRemaining === 1 ? '' : 's'} left.`
@@ -151,6 +153,28 @@ export const EventDetail: React.FC = () => {
             setEvent(cancelled)
             setShowCancel(false)
             setAlert(null)
+          }}
+        />
+      )}
+      {showCancelSeat && event.viewer.registrationId !== null && (
+        <CancelRegistrationDialog
+          registrationId={event.viewer.registrationId}
+          eventTitle={event.title}
+          onClose={() => setShowCancelSeat(false)}
+          onCancelled={(done) => {
+            // The seat is free at once: counts come from the response, and the button goes back to REGISTER.
+            const { registeredCount, seatsRemaining } = done.event
+            setEvent({ ...event, registeredCount, seatsRemaining, viewer: { action: 'REGISTER', registrationId: null, canCancel: false } })
+            setShowCancelSeat(false)
+            setSecured(false)
+            setAlert(null)
+            setToastMessage('Your registration is cancelled.')
+            fetchDetail(true)
+          }}
+          onFailed={(message) => {
+            setShowCancelSeat(false)
+            setAlert(message)
+            fetchDetail(true)
           }}
         />
       )}
@@ -223,6 +247,11 @@ export const EventDetail: React.FC = () => {
             onRegister={onRegister}
             busy={registering}
           />
+          )}
+          {!isCancelled && event.viewer.action === 'REGISTERED' && event.viewer.canCancel && (
+            <button type="button" className="btn-soft btn-soft--danger" onClick={() => setShowCancelSeat(true)}>
+              Cancel registration
+            </button>
           )}
         </div>
       </div>

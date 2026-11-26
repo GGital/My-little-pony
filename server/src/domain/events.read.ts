@@ -4,6 +4,7 @@ import { bangkokDayRange, escapeLikeWildcards, type SearchQuery } from './search
 import { effectiveDeadline, isRegistrationOpen } from './deadline.js'
 import { now } from '../clock.js'
 import { hasStarted, upcomingWhere } from './time.js'
+import { canCancelRegistration } from './registration-rules.js'
 
 export type ViewerAction =
   | 'MANAGE'
@@ -47,6 +48,8 @@ export type EventDetail = EventSummary & {
   viewer: {
     action: ViewerAction
     registrationId: number | null
+    /** Sprint 2 Feature-N: the server decides whether the viewer may cancel now. */
+    canCancel: boolean
   }
 }
 
@@ -216,6 +219,7 @@ export async function getEventDetail(
   const seatsRemaining = Math.max(0, event.capacity - registeredCount)
 
   let activeRegistrationId: number | null = null
+  let canCancel = false
   if (actor && actor.role === 'PARTICIPANT') {
     const reg = await prisma.registration.findFirst({
       where: {
@@ -223,10 +227,16 @@ export async function getEventDetail(
         participantId: actor.id,
         status: { in: ['REGISTERED', 'CHECKED_IN'] },
       },
-      select: { id: true },
+      select: { id: true, status: true },
     })
     if (reg) {
       activeRegistrationId = reg.id
+      canCancel = canCancelRegistration({
+        registrationStatus: reg.status,
+        eventStatus: event.status,
+        startAt: event.startAt,
+        registrationDeadline: event.registrationDeadline,
+      })
     }
   }
 
@@ -275,6 +285,7 @@ export async function getEventDetail(
     viewer: {
       action,
       registrationId: action === 'REGISTERED' ? activeRegistrationId : null,
+      canCancel: action === 'REGISTERED' && canCancel,
     },
   }
 }
