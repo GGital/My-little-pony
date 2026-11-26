@@ -141,10 +141,13 @@ export async function updateEvent(
     const endAt = input.endAt ? new Date(input.endAt) : undefined
     // A deadline in the body is checked by its own rule (§4) against the resulting start; without one, a new start
     // may not fall before the stored deadline (D-23).
-    const sentDeadline = input.registrationDeadline !== undefined
+    // A deadline sent again unchanged counts as not sent (review of #111), so a passed one doesn't block other edits;
+    // the stored one is then still checked against a new start (D-23).
+    const sentValue = input.registrationDeadline ? new Date(input.registrationDeadline) : null
+    const sentDeadline = input.registrationDeadline !== undefined && !same(sentValue, row.registrationDeadline)
     const time = decideEditTimes({ ...row, registrationDeadline: sentDeadline ? null : row.registrationDeadline }, { startAt, endAt }, at)
     if (time) throw new HttpError('EVENT_TIME_INVALID', [time])
-    const deadline = sentDeadline && input.registrationDeadline ? new Date(input.registrationDeadline) : null
+    const deadline = sentDeadline ? sentValue : null
     if (sentDeadline) {
       const problem = decideDeadline(deadline, startAt ?? row.startAt, at)
       if (problem) throw new HttpError('EVENT_TIME_INVALID', [problem])
