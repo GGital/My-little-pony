@@ -21,8 +21,10 @@ const OPTIONAL = new Set<keyof EventFormValues>(['feeLabel', 'structureNote', 'c
 const toForm = (e: EventDetail): EventFormValues => ({
   title: e.title, type: e.type as EventFormValues['type'], format: e.format as EventFormValues['format'], venueName: e.venueName, venueAddress: e.venueAddress, city: e.city,
   startAt: toBangkokLocal(e.startAt), endAt: toBangkokLocal(e.endAt), capacity: String(e.capacity),
-  // The API sends the EFFECTIVE deadline; one equal to the start is the default, shown as empty (Feature-M).
-  registrationDeadline: e.registrationDeadline && e.registrationDeadline !== e.startAt ? toBangkokLocal(e.registrationDeadline) : '',
+  // The API sends the EFFECTIVE deadline; one at the same instant as the start is the default, shown as empty
+  // (Feature-M). Compared as instants, so `Z` and `+07:00` forms of one time agree (review of #111).
+  registrationDeadline:
+    e.registrationDeadline && Date.parse(e.registrationDeadline) !== Date.parse(e.startAt) ? toBangkokLocal(e.registrationDeadline) : '',
   feeLabel: e.feeLabel ?? '', structureNote: e.structureNote ?? '', contact: e.contact ?? '', description: e.description ?? '',
 })
 
