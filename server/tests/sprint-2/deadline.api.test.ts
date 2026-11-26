@@ -175,3 +175,34 @@ describe('Review of #111 (I) the deadline is frozen once the event has started (
     setNow(T)
   })
 })
+
+describe('Second review of #111 (I) a deadline sent again unchanged, and what a start move records', () => {
+  it('a passed deadline sent again unchanged (alone or with another field) is accepted and writes no deadline row; a different past one is still 422', async () => {
+    setNow(T)
+    const event = (await create(4 * HOUR, { registrationDeadline: iso(HOUR) })).body
+    setNow(at(2 * HOUR)) // the deadline has passed; the event has not started
+    const deadlineRows = () => prisma.eventChange.count({ where: { eventId: event.id, field: 'deadline' } })
+
+    const same = await patch(event.id, { registrationDeadline: iso(HOUR) })
+    expect([same.status, same.body.registrationDeadline]).toEqual([200, iso(HOUR)])
+    const withTitle = await patch(event.id, { registrationDeadline: iso(HOUR), title: 'Deadline passed, renamed' })
+    expect([withTitle.status, withTitle.body.title]).toEqual([200, 'Deadline passed, renamed'])
+    expect(await deadlineRows()).toBe(0)
+
+    const other = await patch(event.id, { registrationDeadline: iso(90 * MIN) })
+    expect([other.status, other.body.error?.details?.[0]?.message]).toEqual([422, 'The deadline must be in the future.'])
+    setNow(T)
+  })
+
+  it('moving the start of an event with no stored deadline writes a details row only (SR-08 records explicit deadline changes)', async () => {
+    setNow(T)
+    const event = (await create(24 * HOUR)).body
+    const res = await patch(event.id, { startAt: iso(30 * HOUR), endAt: iso(34 * HOUR) })
+    expect([res.status, res.body.registrationDeadline]).toEqual([200, iso(30 * HOUR)])
+    const rows = await prisma.eventChange.findMany({ where: { eventId: event.id }, orderBy: { id: 'asc' } })
+    expect(rows.map((r) => [r.field, r.newValue])).toEqual([
+      ['status', 'PUBLISHED'],
+      ['details', 'startAt, endAt'],
+    ])
+  })
+})
