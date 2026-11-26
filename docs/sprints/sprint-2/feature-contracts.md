@@ -174,7 +174,7 @@ not change, the contract says *No change in this layer*.
 | Event published (E-14) | `Event.publishedAt` + `EventChange status DRAFT → PUBLISHED` | owner | both |
 | Details edited (E-13) | `EventChange field = details`, `newValue` = changed field names (D-20) | owner | `changedAt` |
 | Capacity changed (E-13) | `EventChange field = capacity`, old → new | owner | `changedAt` |
-| Deadline changed (E-13) | `EventChange field = deadline`, old effective → new effective (ISO) | owner | `changedAt` |
+| Deadline changed (E-13) | `EventChange field = deadline`, old effective → new effective (ISO). Only when the body sets a **different** `registrationDeadline`; a start move with no stored deadline is recorded by its `details` row (S2-06, team decision 26 Nov) | owner | `changedAt` |
 | Event cancelled (E-15) | `Event.cancelledAt`, `cancelledById`, `cancelReason` + `EventChange status PUBLISHED → CANCELLED` | owner | both |
 | Registration created (E-09) | `Registration.participantId`, `createdAt` (Sprint 1) | participant | `createdAt` |
 | Registration cancelled (E-16) | `Registration.status = CANCELLED`, `cancelledAt` | the participant (the only one allowed, BR-11) | `cancelledAt` |
@@ -385,7 +385,7 @@ Errors appear under the field.
 | **AC-M-03** | an open event with deadline D (before start) and seats left; Nok | E-09 with the clock at D − 1 min, at D, and at D + 1 min (on separate events); E-05 at D | `201`; `409 REGISTRATION_CLOSED`; `409 REGISTRATION_CLOSED`; E-05 action `CLOSED`, and the page shows a disabled **REGISTRATION CLOSED**; the event is still in E-04 because it has not started |
 | **AC-M-04** | Mint is registered on an event with deadline D | E-10, E-11 and E-05 at D − 1 min and at D; E-16 at D | `canCancel true`, then `false` in all three; E-16 at D gives `409 REGISTRATION_CLOSED` and the registration stays `REGISTERED` |
 
-**Planned tests:** TEST-M-01 … 04 (U, I, C, E2E).
+**Planned tests:** TEST-M-01 … 04 (U, I, C, E2E). TEST-M-04 runs in S2-07 (#84), where `canCancel` and E-16 are built (S2-06).
 
 ---
 
@@ -767,3 +767,4 @@ that fails blocks the merge. Nothing in Sprint 1's AC-C-01 … 06 or AC-SR5-01 m
 | v0.8 | 26 Nov 2026 | S2-03 (review of PR #94): D-39 records the `include=cancelled` rule (cancelled events that have not started; `past` adds started ones), `seatsAvailable=false` and the literal `%` and `_` in `q`; AC-J-04 expected sets say so | Team (AI-assisted) |
 | v0.9 | 26 Nov 2026 | S2-04: a new draft now lands on its edit page, which has the draft banner and PUBLISH EVENT; the dashboard gets **Edit** (Feature-K Behaviour 2, UI, AC-K-01); Feature-L Behaviour 3 notes that the Cancel event section comes with S2-05, and Behaviour 4 the 409 `details`; AC-L-04's 60-minute case sends its own end, because the resulting-end rule refuses a 51-hour event | Team (AI-assisted) |
 | #110 | 26 Nov 2026 | D-39 was used twice: the SRS's D-39 is CH-13 (Lab 7), so the `include=cancelled` decision of S2-03 becomes **D-40** (§0.6, AC-J-04) and is added to SRS §10.1. Nothing else changes | Team (AI-assisted) |
+| S2-06 | 26 Nov 2026 | §4: TEST-M-04 runs with Feature-N in S2-07, because `canCancel` and E-16 are built there (decision 26 Nov). §1 (review of #111): a `deadline` row is written only for an explicit, different deadline; a deadline sent again unchanged is not checked again | Team (AI-assisted) |

@@ -12,7 +12,7 @@ export type ParticipantRegistration = {
   event: EventSummary
 }
 
-type LockedEvent = { id: number; status: EventStatus; startAt: Date; capacity: number }
+type LockedEvent = { id: number; status: EventStatus; startAt: Date; registrationDeadline: Date | null; capacity: number }
 
 /**
  * E-09: the registration transaction of SDS §4.4. The event row is locked FOR UPDATE, so simultaneous
@@ -25,7 +25,7 @@ export async function register(db: PrismaClient, actor: Actor, eventId: number):
     registrationId = await db.$transaction(
       async (tx) => {
         const [event] = await tx.$queryRaw<LockedEvent[]>`
-          SELECT id, status, "startAt", capacity FROM "Event" WHERE id = ${eventId} FOR UPDATE`
+          SELECT id, status, "startAt", "registrationDeadline", capacity FROM "Event" WHERE id = ${eventId} FOR UPDATE`
         // A draft does not exist for anyone but its owner (Sprint 2 contracts §2, BR-04), so it is the same 404.
         if (!event || event.status === 'DRAFT') throw new HttpError('EVENT_NOT_FOUND')
 

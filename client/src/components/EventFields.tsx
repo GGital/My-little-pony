@@ -13,6 +13,8 @@ export type EventFormValues = {
   city: string
   startAt: string
   endAt: string
+  /** Feature-M: empty = registration closes at the start. */
+  registrationDeadline: string
   capacity: string
   feeLabel: string
   structureNote: string
@@ -22,7 +24,7 @@ export type EventFormValues = {
 
 export const EMPTY_EVENT_FORM: EventFormValues = {
   title: '', type: 'CASUAL', format: 'CONSTRUCTED', venueName: '', venueAddress: '', city: '',
-  startAt: '', endAt: '', capacity: '24', feeLabel: '', structureNote: '', contact: '', description: '',
+  startAt: '', endAt: '', registrationDeadline: '', capacity: '24', feeLabel: '', structureNote: '', contact: '', description: '',
 }
 
 /** `YYYY-MM-DDTHH:mm` (Bangkok wall time, the form's input) → ISO with +07:00, as the API expects (NFR-11). */
@@ -136,6 +138,7 @@ export const EventFields: React.FC<Props> = ({ values, onChange, details, disabl
           {field({ id: 'startAt', label: 'Start Date & Time (Bangkok)', required: true, hint: startHint, type: 'datetime-local' })}
           {field({ id: 'endAt', label: 'End Date & Time (Bangkok)', required: true, type: 'datetime-local' })}
         </div>
+        {field({ id: 'registrationDeadline', label: 'Registration closes (Bangkok)', hint: 'Leave empty to close at the start time.', type: 'datetime-local' })}
         <p className="sub small">An event can last at most 24 hours.</p>
       </section>
 

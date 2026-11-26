@@ -3,6 +3,7 @@ import { now } from '../clock.js'
 import { HttpError } from '../http/errors.js'
 import type { Actor } from './actor.js'
 import { recordEventChange } from './changes.js'
+import { decideDeadline, effectiveDeadline } from './deadline.js'
 import { MIN_LEAD_MINUTES } from './event-rules.js'
 import { ACTIVE_STATUSES, getEventDetail, type EventDetail } from './events.read.js'
 import { hasStarted } from './time.js'
@@ -100,7 +101,11 @@ const DETAIL_FIELDS = [
   'feeLabel', 'structureNote', 'contact', 'description',
 ] as const
 
-export type EditEventInput = Partial<Record<(typeof DETAIL_FIELDS)[number], string | null>> & { capacity?: number }
+export type EditEventInput = Partial<Record<(typeof DETAIL_FIELDS)[number], string | null>> & {
+  capacity?: number
+  /** Feature-M (S2-06): null clears it, so registration closes at the start. */
+  registrationDeadline?: string | null
+}
 
 const same = (a: unknown, b: unknown) => (a instanceof Date && b instanceof Date ? a.getTime() === b.getTime() : a === b)
 
@@ -134,8 +139,19 @@ export async function updateEvent(
 
     const startAt = input.startAt ? new Date(input.startAt) : undefined
     const endAt = input.endAt ? new Date(input.endAt) : undefined
-    const time = decideEditTimes(row, { startAt, endAt }, at)
+    // A deadline in the body is checked by its own rule (§4) against the resulting start; without one, a new start
+    // may not fall before the stored deadline (D-23).
+    // A deadline sent again unchanged counts as not sent (review of #111), so a passed one doesn't block other edits;
+    // the stored one is then still checked against a new start (D-23).
+    const sentValue = input.registrationDeadline ? new Date(input.registrationDeadline) : null
+    const sentDeadline = input.registrationDeadline !== undefined && !same(sentValue, row.registrationDeadline)
+    const time = decideEditTimes({ ...row, registrationDeadline: sentDeadline ? null : row.registrationDeadline }, { startAt, endAt }, at)
     if (time) throw new HttpError('EVENT_TIME_INVALID', [time])
+    const deadline = sentDeadline ? sentValue : null
+    if (sentDeadline) {
+      const problem = decideDeadline(deadline, startAt ?? row.startAt, at)
+      if (problem) throw new HttpError('EVENT_TIME_INVALID', [problem])
+    }
 
     if (input.capacity !== undefined) {
       const active = await tx.registration.count({ where: { eventId, status: { in: ['REGISTERED', 'CHECKED_IN'] } } })
@@ -149,11 +165,19 @@ export async function updateEvent(
     const next: Record<string, unknown> = { ...input, ...(startAt ? { startAt } : {}), ...(endAt ? { endAt } : {}) }
     const changed = DETAIL_FIELDS.filter((f) => next[f] !== undefined && !same(next[f], row[f]))
     const capacityChanged = input.capacity !== undefined && input.capacity !== row.capacity
-    if (!changed.length && !capacityChanged) return
+    const deadlineStored = sentDeadline && !same(deadline, row.registrationDeadline)
+    const oldEffective = effectiveDeadline(row)
+    const newEffective = effectiveDeadline({ startAt: startAt ?? row.startAt, registrationDeadline: sentDeadline ? deadline : row.registrationDeadline })
+    const deadlineChanged = sentDeadline && oldEffective.getTime() !== newEffective.getTime()
+    if (!changed.length && !capacityChanged && !deadlineStored) return
 
     await tx.event.update({
       where: { id: eventId },
-      data: { ...Object.fromEntries(changed.map((f) => [f, next[f]])), ...(capacityChanged ? { capacity: input.capacity } : {}) },
+      data: {
+        ...Object.fromEntries(changed.map((f) => [f, next[f]])),
+        ...(capacityChanged ? { capacity: input.capacity } : {}),
+        ...(deadlineStored ? { registrationDeadline: deadline } : {}),
+      },
     })
     if (changed.length) {
       await recordEventChange(tx, { eventId, changedById: actor.id, field: 'details', oldValue: null, newValue: changed.join(', '), changedAt: at })
@@ -161,6 +185,12 @@ export async function updateEvent(
     if (capacityChanged) {
       await recordEventChange(tx, {
         eventId, changedById: actor.id, field: 'capacity', oldValue: String(row.capacity), newValue: String(input.capacity), changedAt: at,
+      })
+    }
+    if (deadlineChanged) {
+      // SR-08: old and new EFFECTIVE deadlines, as ISO times (contracts §1).
+      await recordEventChange(tx, {
+        eventId, changedById: actor.id, field: 'deadline', oldValue: oldEffective.toISOString(), newValue: newEffective.toISOString(), changedAt: at,
       })
     }
   })
