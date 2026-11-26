@@ -1,0 +1,25 @@
+{
+  "id": "S2-06-U2-create-form",
+  "side": "after",
+  "action": "Quantum Cards opens /organizer/events/new",
+  "expected": "After: \"Registration closes (Bangkok)\" with the hint \"Leave empty to close at the start time.\"",
+  "actual": {
+    "labels": [
+      "Title *",
+      "Venue Name *",
+      "Venue Address *",
+      "City *",
+      "Start Date & Time (Bangkok) *(at least 1 hour from now)",
+      "End Date & Time (Bangkok) *",
+      "Registration closes (Bangkok) (Leave empty to close at the start time.)",
+      "Capacity *(1–256)",
+      "Fee Label (optional, max 40)",
+      "Structure Note (optional, max 80)",
+      "Contact (optional, max 120)",
+      "Description (optional)"
+    ]
+  },
+  "time": "2026-11-26T03:13:58.236Z",
+  "commit": "3886e35",
+  "screenshot": "S2-06-U2-create-form-after.png"
+}

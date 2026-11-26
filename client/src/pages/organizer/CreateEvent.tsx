@@ -41,6 +41,7 @@ export const CreateEvent: React.FC = () => {
       city: values.city,
       startAt: toBangkokIso(values.startAt),
       endAt: toBangkokIso(values.endAt),
+      ...(values.registrationDeadline ? { registrationDeadline: toBangkokIso(values.registrationDeadline) } : {}),
       capacity: values.capacity === '' ? (null as unknown as number) : Number(values.capacity),
       feeLabel: values.feeLabel || null,
       structureNote: values.structureNote || null,

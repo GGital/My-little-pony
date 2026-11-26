@@ -12,6 +12,12 @@ import { Icon, type IconName } from '../components/Icon'
 import { Notice } from '../components/Notice'
 import { formatDate, formatTimeRange, label } from '../utils/eventDisplay'
 
+/** UX-10: "Thu 5 Nov · 15:00" in Bangkok time (Feature-M). */
+const closesAt = (iso: string) => {
+  const p = (o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Bangkok', ...o }).format(new Date(iso))
+  return `${p({ weekday: 'short' })} ${p({ day: 'numeric' })} ${p({ month: 'short' })} · ${p({ hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })}`
+}
+
 /** The server's message plus each field detail, e.g. "Those event times don't work. The start must be …". */
 const reason = (err: unknown) =>
   err instanceof ApiError
@@ -234,6 +240,9 @@ export const EventDetail: React.FC = () => {
 
         <div className="cols__side">
           <SeatCard event={event} secured={secured} />
+          {event.registrationDeadline && (
+            <p className="sub small deadline-note">Registration closes {closesAt(event.registrationDeadline)}</p>
+          )}
           {event.viewer.action === 'MANAGE' && !isOwnDraft && (
             <section className="box manage-box">
               <h2>Your event</h2>

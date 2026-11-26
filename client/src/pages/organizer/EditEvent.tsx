@@ -13,7 +13,7 @@ import { NotFoundPage } from '../../routes/pages/NotFoundPage'
 /** BR-15, D-19: after the start only these may change; the rest is shown read-only (UX-08). */
 const SAFE_AFTER_START = new Set<keyof EventFormValues>(['description', 'structureNote', 'contact', 'feeLabel'])
 const ALL_FIELDS: (keyof EventFormValues)[] = [
-  'title', 'type', 'format', 'venueName', 'venueAddress', 'city', 'startAt', 'endAt',
+  'title', 'type', 'format', 'venueName', 'venueAddress', 'city', 'startAt', 'endAt', 'registrationDeadline',
   'capacity', 'feeLabel', 'structureNote', 'contact', 'description',
 ]
 const OPTIONAL = new Set<keyof EventFormValues>(['feeLabel', 'structureNote', 'contact', 'description'])
@@ -21,6 +21,10 @@ const OPTIONAL = new Set<keyof EventFormValues>(['feeLabel', 'structureNote', 'c
 const toForm = (e: EventDetail): EventFormValues => ({
   title: e.title, type: e.type as EventFormValues['type'], format: e.format as EventFormValues['format'], venueName: e.venueName, venueAddress: e.venueAddress, city: e.city,
   startAt: toBangkokLocal(e.startAt), endAt: toBangkokLocal(e.endAt), capacity: String(e.capacity),
+  // The API sends the EFFECTIVE deadline; one at the same instant as the start is the default, shown as empty
+  // (Feature-M). Compared as instants, so `Z` and `+07:00` forms of one time agree (review of #111).
+  registrationDeadline:
+    e.registrationDeadline && Date.parse(e.registrationDeadline) !== Date.parse(e.startAt) ? toBangkokLocal(e.registrationDeadline) : '',
   feeLabel: e.feeLabel ?? '', structureNote: e.structureNote ?? '', contact: e.contact ?? '', description: e.description ?? '',
 })
 
@@ -29,7 +33,8 @@ function changedBody(values: EventFormValues, saved: EventFormValues): Record<st
   const body: Record<string, unknown> = {}
   for (const key of ALL_FIELDS) {
     if (values[key] === saved[key]) continue
-    if (key === 'startAt' || key === 'endAt') body[key] = toBangkokIso(values[key])
+    if (key === 'registrationDeadline') body[key] = values[key] ? toBangkokIso(values[key]) : null
+    else if (key === 'startAt' || key === 'endAt') body[key] = toBangkokIso(values[key])
     else if (key === 'capacity') body[key] = values.capacity === '' ? null : Number(values.capacity)
     else if (OPTIONAL.has(key)) body[key] = values[key] || null
     else body[key] = values[key]
