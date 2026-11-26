@@ -171,10 +171,29 @@ describe('TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-
     expect(res.body.error.code).toBe('ALREADY_CANCELLED')
   })
 
+  it('E-13 edit of a cancelled event is 409 ALREADY_CANCELLED and changes nothing (cancellation is final)', async () => {
+    const res = await request(app)
+      .patch(`/api/organizer/events/${eventId}`)
+      .set('Origin', TEST_ORIGIN)
+      .set('Cookie', cookies.quantum)
+      .send({ title: 'A new title after cancelling' })
+    expect(res.status).toBe(409)
+    expect(res.body.error.code).toBe('ALREADY_CANCELLED')
+    expect((await storedEvent(eventId)).title).not.toBe('A new title after cancelling')
+  })
+
   it('E-04 leaves the event out of the default list', async () => {
     const res = await get('/api/events')
     expect(res.status).toBe(200)
     expect(res.body.items.map((e: { id: number }) => e.id)).not.toContain(eventId)
+  })
+
+  it('E-04 with include=cancelled lists it with status CANCELLED, and only then (FR-14, BR-04)', async () => {
+    const res = await get('/api/events?include=cancelled')
+    expect(res.status).toBe(200)
+    expect(res.body.items).toContainEqual(expect.objectContaining({ id: eventId, status: 'CANCELLED' }))
+    const plain = await get('/api/events')
+    expect(plain.body.items.map((e: { id: number }) => e.id)).not.toContain(eventId)
   })
 
   it('E-05 as a visitor: still visible, with the reason and time, action CLOSED, and never cancelledById', async () => {

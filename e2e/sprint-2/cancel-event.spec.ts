@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 import { EMAIL, resetSeed, signIn, signOut } from '../sprint-1/helpers'
 
 // TEST-O-02 (E2E) · AC-O-02, FR-10, BR-04 (Sprint 2 contracts §6): Quantum Cards cancels EV-1 "Friday Night
@@ -7,6 +7,13 @@ import { EMAIL, resetSeed, signIn, signOut } from '../sprint-1/helpers'
 test.beforeAll(resetSeed)
 
 const boss = 'boss@player.example'
+
+/** True when focus is inside the open dialog, or on <body> (the browser edge); false when it reached the page behind. */
+const focusIsInsideOrAtBrowserEdge = (page: Page) =>
+  page.evaluate(() => {
+    const el = document.activeElement
+    return !el || el === document.body || !!el.closest('dialog')
+  })
 const REASON = 'Store closed for renovation.'
 
 test('TEST-O-02 (E2E) — Boss sees the seeded cancelled EV-8: red banner with the reason, REGISTRATION CLOSED, "Event cancelled" in My Events', async ({ page }) => {
@@ -20,6 +27,33 @@ test('TEST-O-02 (E2E) — Boss sees the seeded cancelled EV-8: red banner with t
   const card = page.locator('.event-card', { hasText: 'Rainy Day Casual' })
   await expect(card.getByText('Event cancelled')).toBeVisible()
   await signOut(page)
+})
+
+test('TEST-O-02 (E2E) — the cancel dialog keeps keyboard focus inside and Escape returns it to Cancel event (UX-12)', async ({ page }) => {
+  await signIn(page, EMAIL.quantum)
+  await page.goto('/events/2')
+  const opener = page.getByRole('button', { name: 'Cancel event' })
+  await opener.focus()
+  await page.keyboard.press('Enter')
+
+  const dialog = page.getByRole('dialog')
+  await expect(dialog).toBeVisible()
+  await expect(dialog.getByLabel('Reason')).toBeFocused()
+
+  // Tab more times than the dialog has controls (Reason, Keep event; CANCEL EVENT is disabled). Focus may pass through
+  // the browser's own UI (document.body) but must never land on the page behind the dialog.
+  for (let i = 0; i < 6; i++) {
+    await page.keyboard.press('Tab')
+    expect(await focusIsInsideOrAtBrowserEdge(page)).toBe(true)
+  }
+  for (let i = 0; i < 6; i++) {
+    await page.keyboard.press('Shift+Tab')
+    expect(await focusIsInsideOrAtBrowserEdge(page)).toBe(true)
+  }
+
+  await page.keyboard.press('Escape')
+  await expect(dialog).toHaveCount(0)
+  await expect(opener).toBeFocused()
 })
 
 test('TEST-O-02 (E2E) — the owner cancels EV-1 from its page; the dashboard, /events and Boss all agree (UX-12, UX-13)', async ({ page }) => {

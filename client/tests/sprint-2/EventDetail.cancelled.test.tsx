@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { EventDetail } from '../../src/pages/EventDetail'
 import { Dashboard } from '../../src/pages/organizer/Dashboard'
 import { MyEvents } from '../../src/pages/MyEvents'
+import { EventCard } from '../../src/components/EventCard'
 import type { EventDetail as EventDetailType, EventSummary, ParticipantRegistration } from '../../src/api/types'
 
 // TEST-O-02 (C) · AC-O-02, UX-13 (Sprint 2 contracts §6): the red banner with the reason, REGISTRATION CLOSED,
@@ -72,6 +73,29 @@ describe('TEST-O-02 (C) the cancelled event page (AC-O-02, UX-13)', () => {
     expect(screen.queryByRole('button', { name: 'Cancel event' })).not.toBeInTheDocument()
   })
 
+  it('shows no seat count or "seats left" on a cancelled event (seats are not on offer, S2-05 review)', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(json(200, cancelled({ viewer: { action: 'CLOSED', registrationId: null } })))
+    renderDetail()
+    await screen.findByText(`Cancelled by the organizer: ${REASON}`)
+    expect(screen.queryByText(/seats left/)).not.toBeInTheDocument()
+    expect(screen.queryByText('0 / 16')).not.toBeInTheDocument()
+    expect(screen.getByText('Registration closed')).toBeInTheDocument()
+  })
+
+  it('Escape closes the dialog and focus returns to the Cancel event button (keyboard use)', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(json(200, detail()))
+    renderDetail()
+    const opener = await screen.findByRole('button', { name: 'Cancel event' })
+    opener.focus()
+    fireEvent.click(opener)
+    const dialog = screen.getByRole('dialog')
+    expect(dialog).toContainElement(document.activeElement as HTMLElement)
+
+    fireEvent.keyDown(dialog, { key: 'Escape' })
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(opener).toHaveFocus()
+  })
+
   it('a published event has no banner; the owner sees Cancel event', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(json(200, detail()))
     renderDetail()
@@ -121,6 +145,18 @@ describe('TEST-O-02 (C) the chips (AC-O-02, UX-13)', () => {
     const other = screen.getByText('Sealed Sunday').closest('.event-card') as HTMLElement
     expect(within(other).getByText('REGISTERED')).toBeInTheDocument()
     expect(within(other).queryByText('Event cancelled')).not.toBeInTheDocument()
+  })
+
+  it('a cancelled event card in a list has the red Cancelled chip and no seats chip or "seats left"', () => {
+    render(
+      <MemoryRouter>
+        <EventCard event={summary({ status: 'CANCELLED', registeredCount: 0, seatsRemaining: 4, capacity: 4, title: 'Last Seat Sealed' })} />
+      </MemoryRouter>,
+    )
+    const card = screen.getByText('Last Seat Sealed').closest('.event-card') as HTMLElement
+    expect(within(card).getByText('Cancelled').className).toContain('chip--cancelled')
+    expect(within(card).queryByText(/seats left/)).not.toBeInTheDocument()
+    expect(within(card).queryByText('0 / 4')).not.toBeInTheDocument()
   })
 
   it('the dashboard row of a cancelled event has the red Cancelled chip and no Edit button', async () => {

@@ -193,9 +193,9 @@ export const EventDetail: React.FC = () => {
           <div className="dhead__fact tabular-nums">{formatTimeRange(event.startAt, event.endAt)}</div>
         </div>
         <div>
-          <div className="lbl">Players</div>
+          <div className="lbl">{isCancelled ? 'Status' : 'Players'}</div>
           <div className="dhead__fact tabular-nums">
-            {event.registeredCount} / {event.capacity}
+            {isCancelled ? 'Cancelled' : `${event.registeredCount} / ${event.capacity}`}
           </div>
         </div>
         <div className="dhead__action">

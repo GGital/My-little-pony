@@ -28,6 +28,22 @@ export const SeatCard: React.FC<SeatCardProps> = ({ event, secured }) => {
     </div>
   )
 
+  // A cancelled event offers no seats (all its registrations are EVENT_CANCELLED, so the counts would say "n seats
+  // left"). Say why instead of showing a bar and a count (S2-05 review).
+  if (event.status === 'CANCELLED') {
+    return (
+      <div className="seat-card">
+        <section className="box" aria-labelledby="seats-title">
+          <h2 id="seats-title" className="seat-card__head">
+            Seats
+          </h2>
+          <p className="seat-card__left seat-card__left--full">Registration closed</p>
+          <p className="sub mt-2">The organizer cancelled this event, so there are no seats to take.</p>
+        </section>
+      </div>
+    )
+  }
+
   return (
     <div className={`seat-card${secured ? ' is-flipped' : ''}`}>
       <div className="seat-card__inner">
