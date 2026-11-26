@@ -96,3 +96,27 @@ describe('TEST-U-05 (C) contact fields and their server errors (AC-U-05, UX-19)'
     expect(screen.queryByText('Profile saved.')).not.toBeInTheDocument()
   })
 })
+
+// Review of #113 (non-blocking): after a failed save focus goes to the first invalid field, and each hint is part of
+// its field's label so screen readers read it.
+describe('TEST-U-05 (C) focus and hints (review of #113)', () => {
+  it('after a 400 the first invalid field has focus', async () => {
+    const details = [
+      { field: 'contactEmail', message: 'Enter an email address, for example hello@store.example.' },
+      { field: 'contactLine', message: 'Enter a LINE ID, for example @quantumcards.' },
+    ]
+    stubApi(() => json(400, { error: { code: 'VALIDATION_FAILED', message: 'Some details need fixing.', details } }))
+    renderPage()
+    fireEvent.change(await screen.findByLabelText(/Email/), { target: { value: 'hello@' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Save profile' }))
+    await screen.findByText(details[0].message)
+    await waitFor(() => expect(screen.getByLabelText(/Email/)).toHaveFocus())
+  })
+
+  it('each contact hint is inside its input’s label', async () => {
+    stubApi()
+    renderPage()
+    expect(await screen.findByLabelText(/for example 02 555 0101/)).toHaveAttribute('id', 'contactPhone')
+    expect(screen.getByLabelText(/starts with https:\/\//)).toHaveAttribute('id', 'contactWebsite')
+  })
+})

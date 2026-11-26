@@ -130,3 +130,25 @@ describe('TEST-U-05 (C) safe links and plain text (AC-U-05, NFR-15)', () => {
     expect(within(container).queryByRole('link', { name: /<i>/ })).toBeNull()
   })
 })
+
+// Review of #113: with nothing to show (no games, no contact details, no event contact of its own) the host section
+// is not shown at all (Sprint 2 contracts §11.1).
+describe('TEST-U-04 (C) an empty host section is not shown (review of #113)', () => {
+  it('a store with no games and no contact on an event with no contact shows no "Hosted by" box', async () => {
+    renderEvent({
+      ...EVENT,
+      store: { displayName: 'Quantum Cards', logoUrl: null, games: [], contact: { phone: null, email: null, website: null, line: null } },
+    } as unknown as EventDetailType)
+    await screen.findByText('Release Weekend Sealed')
+    expect(screen.queryByText(/Hosted by/)).not.toBeInTheDocument()
+  })
+
+  it('the event’s own contact alone still shows the section', async () => {
+    renderEvent({
+      ...EVENT,
+      contact: 'Ask for Ken at the counter',
+      store: { displayName: 'Quantum Cards', logoUrl: null, games: [], contact: { phone: null, email: null, website: null, line: null } },
+    } as unknown as EventDetailType)
+    expect(await screen.findByText(/Contact for this event:/)).toBeInTheDocument()
+  })
+})
