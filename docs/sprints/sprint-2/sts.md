@@ -236,7 +236,7 @@ Fill this table from the real runs (README §3). The commit ids are the evidence
 | S2-05 Feature-O cancel event | TEST-O-01 … 06, TEST-B-03 (E-15 rows) | `47e1cee` | server 33 / 45 failed, 9 skipped (suites that failed in set-up); client 13 / 14 failed | `c2e0238` | server 455 / 455 (full suite, rebased on S2-04 and S2-06); client 179 / 179; E2E 84 / 84 |
 | S2-06 Feature-M deadline | TEST-M-01 … 03 (TEST-M-04 moved to S2-07), TEST-SR8-01 (deadline step) | `d348686` (+ clock reset `26a6e4e`) | server 16 / 423 (one of them a clock cascade, fixed in `26a6e4e`); client 4 / 167; E2E TEST-M-03 1 / 1 | `3886e35` | server 423 / 423, client 167 / 167, build OK, E2E 86 / 86 |
 | S2-07 Feature-N cancel / re-register | TEST-N-01 … 06, TEST-M-04, TEST-B-03 (E-16 row) | `95d8e69` | server 15 / 490 failed; client 5 / 5 failed (new file); E2E not run red | `62db165` | server 490 / 490; client 192 / 192; E2E 90 / 90; both builds OK; TEST-N-06 3 full runs of 20 rounds green; `FOR UPDATE` mutation check recorded below |
-| S2-09 Feature-U game and store profile | TEST-U-01 … 05, TEST-B-03 (E-23 rows) | | | | |
+| S2-09 Feature-U game and store profile | TEST-U-01 … 05, TEST-B-03 (E-23 rows) | `9f3b967` | server 53 / 549 failed (4 new tests pass on Sprint 1 behaviour: unknown `game` key and query key give 400, and Dragon's store is untouched); client 22 / 215 failed; E2E not run red | | |
 | S2-10 Deep Lagoon theme and type | TEST-C-07, TEST-C-08 | `ec3e8a0` | unit 23 / 51 failed; E2E 2 / 10 failed (axe rows pass on the old palette) | `e671f38` | client 142 / 142; E2E 59 / 59 (incl. 21 / 21 TEST-SR5-01) |
 | S2-08 Integration and release `v0.2.0` | JRN-03, JRN-04, TEST-SR5-02, TEST-E-01 (rows), TEST-SR2-03 (rows) | | | | |
 
