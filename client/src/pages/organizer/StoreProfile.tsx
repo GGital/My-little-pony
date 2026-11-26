@@ -61,6 +61,15 @@ export const StoreProfile: React.FC = () => {
     }
   }, [])
 
+  // After a refused save, focus goes to the first invalid field (games first, then the contact fields in order).
+  useEffect(() => {
+    if (details.length === 0) return
+    const first = details.some((d) => d.field === 'games')
+      ? document.querySelector<HTMLElement>('.store-profile__chip')
+      : FIELDS.map((f) => document.getElementById(f.id)).find((el, i) => el && details.some((d) => d.field === FIELDS[i].id))
+    first?.focus()
+  }, [details])
+
   const toggle = (g: Game) => {
     setSaved(false)
     setGames((list) => (list.includes(g) ? list.filter((x) => x !== g) : [...list, g]))
@@ -124,7 +133,7 @@ export const StoreProfile: React.FC = () => {
             {FIELDS.map((f) => (
               <div key={f.id}>
                 <label htmlFor={f.id} className="form-label">
-                  {f.label}
+                  {f.label} <span className="field-hint">({f.hint})</span>
                 </label>
                 <input
                   id={f.id}
@@ -140,7 +149,6 @@ export const StoreProfile: React.FC = () => {
                   disabled={busy}
                   {...fieldErrorProps(f.id, details)}
                 />
-                <p className="field-hint">{f.hint}</p>
                 <FormFieldError field={f.id} details={details} />
               </div>
             ))}

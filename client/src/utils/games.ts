@@ -7,7 +7,7 @@ export const GAME_LABELS: Record<Game, string> = {
   ONE_PIECE: 'One Piece Card Game',
   YUGIOH: 'Yu-Gi-Oh!',
   DIGIMON: 'Digimon Card Game',
-  LORCANA: 'Disney Lorcana',
+  LORCANA: 'Lorcana',
   OTHER: 'Other',
 }
 export const GAME_VALUES = Object.keys(GAME_LABELS) as Game[]

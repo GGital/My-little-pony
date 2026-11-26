@@ -20,7 +20,8 @@ export const StoreHost: React.FC<{ event: EventDetail }> = ({ event }) => {
   const store = event.store
   const contact = store?.contact
   const hasContact = !!contact && !!(contact.phone || contact.email || contact.website || contact.line)
-  if (!store && !event.contact) return null
+  // Nothing to show (no games, no contact details, no contact of its own): no section at all (contracts §11.1).
+  if (!(store?.games && store.games.length > 0) && !hasContact && !event.contact) return null
   return (
     <section className="box contact-box store-host">
       <h2>Hosted by {store?.displayName ?? event.organizer.displayName}</h2>
