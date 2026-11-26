@@ -112,3 +112,28 @@ test('TEST-J-05 (E2E) — the filtered list passes the axe colour-contrast scan 
   const results = await new AxeBuilder({ page }).withRules(['color-contrast']).analyze()
   expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)).toEqual([])
 })
+
+// TEST-U-02 (E2E) · AC-U-02, FR-29, JRN-04 (Sprint 2 contracts §11.1): the game filter. EV-6 (Pokémon) is shown,
+// EV-1 (Magic) is not; the URL, the chip and every card agree.
+test('TEST-U-02 (E2E) — filter by game: EV-6 shown, EV-1 not; URL, chip and cards agree (AC-U-02, JRN-04)', async ({ page }) => {
+  const cards = page.locator('a.event-card')
+  await page.goto('/events')
+  await page.getByLabel('Game').selectOption('POKEMON')
+  await page.getByRole('button', { name: 'Search', exact: true }).click()
+
+  await expect(page).toHaveURL(/game=POKEMON/)
+  await expect(page.getByRole('button', { name: 'Remove filter Game: Pokémon TCG' })).toBeVisible()
+
+  const res = await page.request.get('/api/events?game=POKEMON&page=1')
+  expect(res.status()).toBe(200)
+  const items = ((await res.json()) as { items: { title: string; game: string }[] }).items
+  expect(items.length).toBeGreaterThan(0)
+  expect(items.every((i) => i.game === 'POKEMON')).toBe(true)
+  await expect(cards).toHaveCount(items.length)
+
+  const titles = (await page.locator('.event-card__title').allTextContents()).map((t) => t.trim())
+  expect(titles).toContain('Release Weekend Sealed · เปิดกล่องสุดสัปดาห์') // EV-6
+  expect(titles).not.toContain('Friday Night Constructed') // EV-1 is Magic
+  await expect(page.locator('a.event-card .chip--game')).toHaveCount(items.length)
+  for (const chip of await page.locator('a.event-card .chip--game').allTextContents()) expect(chip).toBe('Pokémon TCG')
+})

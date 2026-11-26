@@ -74,6 +74,7 @@ describe('CreateEvent page (contracts §7 UI, Feature-D)', () => {
     )
 
     renderCreateEvent()
+    fireEvent.change(screen.getByLabelText(/^Game/), { target: { value: 'POKEMON' } })
     fireEvent.click(screen.getByRole('button', { name: /PUBLISH EVENT/i }))
 
     expect(await screen.findByTestId('field-error-title')).toHaveTextContent(
@@ -103,6 +104,7 @@ describe('CreateEvent page (contracts §7 UI, Feature-D)', () => {
     fireEvent.change(screen.getByLabelText(/Capacity/i), { target: { value: '32' } })
 
     const submitBtn = screen.getByRole('button', { name: /PUBLISH EVENT/i })
+    fireEvent.change(screen.getByLabelText(/^Game/), { target: { value: 'POKEMON' } })
     fireEvent.click(submitBtn)
 
     // Button shows busy state

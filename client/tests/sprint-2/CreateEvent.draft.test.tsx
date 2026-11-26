@@ -43,6 +43,7 @@ describe('TEST-K-01 (C) SAVE DRAFT on the create page (AC-K-01, UX-05)', () => {
   it('SAVE DRAFT posts E-06 with saveAsDraft: true and lands on its edit page with "Draft saved. Only you can see it."', async () => {
     const spy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(json(201, { id: 42, status: 'DRAFT' }))
     renderPage()
+    fireEvent.change(screen.getByLabelText(/^Game/), { target: { value: 'POKEMON' } })
     fireEvent.click(screen.getByRole('button', { name: 'SAVE DRAFT' }))
 
     expect(await screen.findByTestId('path')).toHaveTextContent('/organizer/events/42/edit')
@@ -54,6 +55,7 @@ describe('TEST-K-01 (C) SAVE DRAFT on the create page (AC-K-01, UX-05)', () => {
   it('PUBLISH EVENT does not send saveAsDraft and still says "Your event is live."', async () => {
     const spy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(json(201, { id: 43, status: 'PUBLISHED' }))
     renderPage()
+    fireEvent.change(screen.getByLabelText(/^Game/), { target: { value: 'POKEMON' } })
     fireEvent.click(screen.getByRole('button', { name: 'PUBLISH EVENT' }))
 
     expect(await screen.findByTestId('toast')).toHaveTextContent('Your event is live.')
@@ -64,6 +66,7 @@ describe('TEST-K-01 (C) SAVE DRAFT on the create page (AC-K-01, UX-05)', () => {
     let resolve!: (r: Response) => void
     vi.spyOn(globalThis, 'fetch').mockReturnValue(new Promise<Response>((r) => (resolve = r)))
     renderPage()
+    fireEvent.change(screen.getByLabelText(/^Game/), { target: { value: 'POKEMON' } })
     fireEvent.click(screen.getByRole('button', { name: 'SAVE DRAFT' }))
 
     expect(await screen.findByRole('button', { name: /Saving…/ })).toBeDisabled()

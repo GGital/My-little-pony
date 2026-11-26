@@ -77,6 +77,7 @@ describe('TEST-M-01 (C) the create and edit forms send a deadline only when one 
     renderAt('/organizer/events/new', <CreateEvent />, '/organizer/events/new')
     expect(screen.getByText('(Leave empty to close at the start time.)')).toBeInTheDocument()
     fireEvent.change(screen.getByLabelText(/Registration closes/), { target: { value: '2026-11-07T15:00' } })
+    fireEvent.change(screen.getByLabelText(/^Game/), { target: { value: 'POKEMON' } })
     fireEvent.click(screen.getByRole('button', { name: 'PUBLISH EVENT' }))
     await screen.findByText('Elsewhere')
     expect(calls.find((c) => c.method === 'POST')?.body?.registrationDeadline).toBe('2026-11-07T15:00:00.000+07:00')
@@ -85,6 +86,7 @@ describe('TEST-M-01 (C) the create and edit forms send a deadline only when one 
   it('create without a deadline: the body has no registrationDeadline', async () => {
     const calls = stubApi(EVENT)
     renderAt('/organizer/events/new', <CreateEvent />, '/organizer/events/new')
+    fireEvent.change(screen.getByLabelText(/^Game/), { target: { value: 'POKEMON' } })
     fireEvent.click(screen.getByRole('button', { name: 'PUBLISH EVENT' }))
     await screen.findByText('Elsewhere')
     expect(calls.find((c) => c.method === 'POST')?.body).not.toHaveProperty('registrationDeadline')

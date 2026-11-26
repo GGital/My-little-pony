@@ -26,6 +26,7 @@ test.describe('TEST-L6-56 (E2E) — 100-character title layout and seat info vis
     await page.locator('#startAt').fill(bangkokLocal(10, 10))
     await page.locator('#endAt').fill(bangkokLocal(10, 14))
     await page.locator('#capacity').fill('256')
+    await page.getByLabel(/^Game/).selectOption('POKEMON')
     await page.getByRole('button', { name: 'PUBLISH EVENT' }).click()
 
     await expect(page).toHaveURL(/\/events\/(\d+)$/)
