@@ -175,7 +175,7 @@ describe('TEST-U-03 (I) the store profile games (AC-U-03, FR-30, BR-17, NFR-02)'
 
   it('E-23 by Mint (participant) 403, by a visitor 401', async () => {
     expect((await e23({ games: ['POKEMON'] }, cookies.mint)).status).toBe(403)
-    expect((await e23({ games: ['POKEMON'] }, undefined)).status).toBe(401)
+    expect((await e23({ games: ['POKEMON'] }, '')).status).toBe(401)
     expect((await request(app).get(E23)).status).toBe(401)
     expect((await request(app).get(E23).set('Cookie', cookies.mint)).status).toBe(403)
   })
@@ -294,7 +294,7 @@ describe('TEST-U-05 (I) contact validation (AC-U-05, NFR-15)', () => {
 describe('TEST-B-03 rows (E-23) GET and PATCH /api/organizer/store', () => {
   it('visitor 401; Mint 403; Quantum Cards 200 on both methods', async () => {
     expect((await request(app).get(E23)).status).toBe(401)
-    expect((await e23({ games: [] }, undefined)).status).toBe(401)
+    expect((await e23({ games: [] }, '')).status).toBe(401)
     expect((await request(app).get(E23).set('Cookie', cookies.mint)).status).toBe(403)
     expect((await e23({ games: [] }, cookies.mint)).status).toBe(403)
     expect((await request(app).get(E23).set('Cookie', cookies.quantum)).status).toBe(200)
