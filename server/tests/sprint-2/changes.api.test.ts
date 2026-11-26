@@ -1,5 +1,5 @@
 import request from 'supertest'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, onTestFinished } from 'vitest'
 import { seed } from '../../prisma/seed.js'
 import { resetNow, setNow } from '../../src/clock.js'
 import { TEST_ORIGIN, makeApp } from '../helpers/app.js'
@@ -115,6 +115,7 @@ describe('TEST-SR8-01 (S2-01 + S2-04 parts) creating and editing an event record
     const plusOne = new Date(T.getTime() + 60 * 60 * 1000)
     const plusTwo = new Date(T.getTime() + 2 * 60 * 60 * 1000)
     const deadline = '2030-03-09T10:00:00.000Z'
+    onTestFinished(() => setNow(T)) // the next test expects the clock at T even if this one fails
     setNow(plusOne)
     expect((await edit({ capacity: 30 })).status).toBe(200)
     setNow(plusTwo)
