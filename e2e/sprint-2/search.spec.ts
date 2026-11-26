@@ -134,6 +134,7 @@ test('TEST-U-02 (E2E) — filter by game: EV-6 shown, EV-1 not; URL, chip and ca
   const titles = (await page.locator('.event-card__title').allTextContents()).map((t) => t.trim())
   expect(titles).toContain('Release Weekend Sealed · เปิดกล่องสุดสัปดาห์') // EV-6
   expect(titles).not.toContain('Friday Night Constructed') // EV-1 is Magic
-  await expect(page.locator('a.event-card .chip--game')).toHaveCount(items.length)
-  for (const chip of await page.locator('a.event-card .chip--game').allTextContents()) expect(chip).toBe('Pokémon TCG')
+  // Review of #113 (D-41): filtered to one game, the cards drop the chip and the heading names the game.
+  await expect(page.locator('a.event-card .chip--game')).toHaveCount(0)
+  await expect(page.getByRole('heading', { level: 1, name: /Pokémon TCG/ })).toBeVisible()
 })

@@ -154,12 +154,22 @@ describe('TEST-U-02 (C) the game filter in the search bar (AC-U-02, UX-16)', () 
     expect(urls.every((u) => u.includes('game=POKEMON'))).toBe(true)
   })
 
-  it('every card shows the game chip (not just the dropdown option)', async () => {
+  // Changed in review of #113 (D-41, own commit): the game chip is neutral, and a list filtered to one game hides it
+  // (every card would repeat it) and names the game in the heading instead. An unfiltered list still shows it.
+  const cardChips = () => screen.getAllByText('Pokémon TCG').filter((el) => el.classList.contains('chip') && !el.closest('button'))
+  it('an unfiltered list shows the game chip on every card', async () => {
+    stubList()
+    renderList('/events')
+    await screen.findByText('Release Weekend Sealed')
+    expect(cardChips()).toHaveLength(POKEMON_EVENTS.length)
+  })
+
+  it('a list filtered to one game hides the card chips and names the game in the heading', async () => {
     stubList()
     renderList('/events?game=POKEMON')
     await screen.findByText('Release Weekend Sealed')
-    const chips = screen.getAllByText('Pokémon TCG').filter((el) => el.tagName !== 'OPTION' && !el.closest('button'))
-    expect(chips).toHaveLength(POKEMON_EVENTS.length)
+    expect(screen.queryAllByText('Pokémon TCG').filter((el) => el.classList.contains('chip') && !el.closest('button'))).toHaveLength(0)
+    expect(screen.getByRole('heading', { level: 1, name: /Pokémon TCG/ })).toBeInTheDocument()
   })
 
   it('removing the Game chip drops game from the next request', async () => {
