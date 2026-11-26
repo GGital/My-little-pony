@@ -132,4 +132,4 @@ same way it fills its row in `sts.md` §5 and in [`contributions.md`](contributi
 | v0.34 | 25 Nov 2026 | S2-02 Feature-K drafts row (v0.33 is the Sprint 3 Issues row on `docs/s3-contracts-d2`) | Team (AI-assisted) |
 | v0.35 | 26 Nov 2026 | S2-03 Feature-J search row | Team (AI-assisted) |
 | v0.36 | 26 Nov 2026 | S2-04 Feature-L row | Team (AI-assisted) |
-| rules | 26 Nov 2026 | §2 merge-rules row; §3 points every agent at `AGENTS.md` | Team (AI-assisted) |
+| #110 | 26 Nov 2026 | §2 merge-rules row; §3 points every agent at `AGENTS.md` | Team (AI-assisted) |

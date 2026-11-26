@@ -26,7 +26,7 @@ Most of these rules make each PR touch only lines that belong to its own Issue.
 | File / table | What your PR does | What it never does |
 |---|---|---|
 | `docs/contributions.md` §5 · `docs/ai-use.md` §2 | Adds **one row for its Issue** at the end of the table. Its status reads `In review (PR #N)` | Edit another Issue's row, a summary or a heading |
-| Every version-history table: `srs.md`, `system-sds.md`, `features.md`, `traceability.md`, sprint `feature-contracts.md`, `sts.md` and `README.md`, `ai-use.md`, `contributions.md` | Adds rows **labelled with the Issue ID**, not a number: `\| S2-06 \| 26 Nov 2026 \| what changed and why \| Team (AI-assisted) \|` | Pick the next `vX.Y`, or edit the `Document version:` line at the top |
+| Every version-history table: `srs.md`, `system-sds.md`, `features.md`, `traceability.md`, sprint `feature-contracts.md`, `sts.md` and `README.md`, `ai-use.md`, `contributions.md` | Adds rows **labelled with the Issue ID**, not a number: `\| S2-06 \| 26 Nov 2026 \| what changed and why \| Team (AI-assisted) \|`. A PR with no Issue (a chore) uses its PR number instead: `\| #110 \| … \|` | Pick the next `vX.Y`, or edit the `Document version:` line at the top |
 | `docs/sprints/sprint-N/sts.md` §5 (TDD record) | Fills **its own Issue's row**, which already exists | Touch another row |
 
 The integration Issue of each sprint (S2-08, S3-09) makes one **records commit** on staging. That commit:
@@ -36,7 +36,8 @@ The integration Issue of each sprint (S2-08, S3-09) makes one **records commit**
 
 `.gitattributes` sets `merge=union` on `docs/contributions.md` and `docs/ai-use.md`. When you merge staging into your
 branch locally, git then keeps both sides' new rows. Look for duplicated rows afterwards. GitHub's web conflict
-editor ignores this setting, so merge locally.
+editor ignores this setting, so merge locally. Union keeps **both** versions of a line that two branches edited
+(for example a status), which is why a PR never edits an existing line in these two files: it only adds its own.
 
 ## 3. IDs: claim before you use
 
@@ -67,8 +68,17 @@ If two PRs still pick the same number, the PR that merges second renumbers.
 ## 5. Evidence files
 
 - Files are prefixed with their Issue ID (`S2-06-…`). Only that Issue's PR adds or changes them.
-- A spec writes evidence only when its variable is set (`S2_SIDE=before|after`, `L7_SIDE=…`, `EVIDENCE=1`). A plain
-  `npx playwright test` writes nothing, so a test run never rewrites another Issue's screenshots.
+- A spec writes evidence only when its variable is set. A plain `npx playwright test` writes nothing, so a test run
+  never rewrites another Issue's screenshots. To regenerate evidence, set the variable for that spec:
+
+  | Spec | Writes to | Set |
+  |---|---|---|
+  | `e2e/sprint-1/responsive.spec.ts` | `docs/sprints/sprint-1/evidence/responsive/` | `EVIDENCE=1` |
+  | `e2e/sprint-1/lab7-ch13.spec.ts` | `docs/labs/lab07/evidence/` | `L7_SIDE=before` or `after` |
+  | `e2e/sprint-2/s2-NN-evidence.spec.ts` | `docs/sprints/sprint-2/evidence/S2-NN-*` | `S2_SIDE=before` or `after` |
+
+  Run only the spec you mean, for example `S2_SIDE=after npx playwright test e2e/sprint-2/s2-06-evidence.spec.ts`.
+  A new evidence spec follows the same pattern and adds its row here.
 - Logs replace absolute local paths with `<repo>`. No secret, password or token ever appears in evidence.
 
 ## 6. Before you open or update a PR
