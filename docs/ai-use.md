@@ -138,4 +138,4 @@ same way it fills its row in `sts.md` §5 and in [`contributions.md`](contributi
 | v0.37 | 26 Nov 2026 | S2-05 Feature-O cancel event row | Team (AI-assisted) |
 | #110 | 26 Nov 2026 | §2 merge-rules row; §3 points every agent at `AGENTS.md` | Team (AI-assisted) |
 | S2-06 | 26 Nov 2026 | §2: S2-06 Feature-M row | Team (AI-assisted) |
-| v0.38 | 26 Nov 2026 | S2-07 Feature-N cancel registration row | Team (AI-assisted) |
+| S2-07 | 26 Nov 2026 | S2-07 Feature-N cancel registration row | Team (AI-assisted) |

@@ -45,7 +45,7 @@ with evidence.
 | Test | Set-up | Sent at the same time (`Promise.all`) | Invariant checked every round (20 rounds) |
 |---|---|---|---|
 | TEST-L-03 | capacity 10, 8 active, 5 participant agents | E-13 `capacity 8` + 5 × E-09 | active ≤ capacity; the outcome is one of the two allowed outcomes |
-| TEST-N-06 | full event (2 / 2), 10 participant agents; Mint with 1 active | P1's E-16 + 10 × E-09; Mint 2 × E-16 | exactly one new `201`; active = 2; Mint gets one `200` and one `409` |
+| TEST-N-06 | full event (2 / 2), 10 participant agents; Mint with 1 active | P1's E-16 + 10 × E-09; Mint 2 × E-16 | at most one new `201` (exactly one if the E-16 takes the lock first); active = 1 + the `201`s, never above 2; at least one round with a winner in 20; Mint gets one `200` and one `409` |
 | TEST-O-06 | open event, 20 seats, 10 participant agents | E-15 + 10 × E-09 | event `CANCELLED`; 0 active rows; each E-09 is `201` or `409 REGISTRATION_CLOSED` |
 
 **Mutation check at review:** remove `FOR UPDATE` from the new transaction. At least one round must fail. Record
@@ -278,3 +278,4 @@ checked.
 | v0.10 | 26 Nov 2026 | S2-05 Feature-O: TDD row and test statuses; TEST-O-06 gets a double-cancel round | Team (AI-assisted) |
 | S2-06 | 26 Nov 2026 | TEST-M-04 moves to S2-07 (#84) with `canCancel` and E-16 (decision 26 Nov); the TEST-M-02 and M-03 unit tests live in `unit/deadline.unit.test.ts`; TEST-SR8-01 gains its deadline step, completing AC-SR8-01. §2.1, §2.4 and §5: S2-06 results | Team (AI-assisted) |
 | S2-07 | 26 Nov 2026 | Feature-N: E-16, `canCancel`, `cancelledAt`; TEST-M-04 done. E-08 now lists the player's own CANCELLED rows with `cancelledAt` (contracts §3 UI, §5 AC-N-01), not counted in `registeredCount`; the Sprint 1 assertions that listed only active rows (TEST-I-01) and the exact `viewer` shape (TEST-D-01, F-02, F-04, G-01) are updated for `canCancel`. §5: S2-07 results. Mutation check: with `FOR UPDATE` removed the double-cancel round fails (200 + 200); the cancel-vs-10-registrations round did not fail, because the registrations queue behind row updates anyway | Team (AI-assisted) |
+| S2-07 | 26 Nov 2026 | Review of #112: TEST-N-06's first round asserts at most one winner, active = 1 + winners and at least one winning round in 20 (the test change is its own commit, with the reason); TEST-I-01 gains an `EVENT_CANCELLED` row; the event-page Cancel registration client test; TEST-B-03 rows for E-16 (visitor 401, owner 403, another organizer 403, another player 404, own 200) | Team (AI-assisted) |
