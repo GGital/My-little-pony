@@ -6,6 +6,8 @@ export type RegistrationDecision = 'OK' | 'REGISTRATION_CLOSED' | 'ALREADY_REGIS
 export type RegistrationFacts = {
   status: EventStatus
   startAt: Date
+  /** Sprint 2 Feature-M (BR-08): null or absent = registration closes at the start. */
+  registrationDeadline?: Date | null
   capacity: number
   /** Active registrations (REGISTERED or CHECKED_IN) on the event, counted inside the locked transaction. */
   active: number

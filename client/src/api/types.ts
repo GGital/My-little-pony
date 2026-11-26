@@ -30,6 +30,8 @@ export interface EventSummary {
   registeredCount: number;
   seatsRemaining: number;
   status: 'PUBLISHED' | 'DRAFT' | 'CANCELLED';
+  /** Sprint 2 Feature-M: the EFFECTIVE deadline (the stored one, or startAt). Optional so older fixtures still compile. */
+  registrationDeadline?: string;
 }
 
 export interface EventDetail extends EventSummary {
