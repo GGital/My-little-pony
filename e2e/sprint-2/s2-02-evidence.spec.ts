@@ -8,6 +8,8 @@ import { EMAIL, bangkokLocal, resetSeed, signIn } from '../sprint-1/helpers'
 // and/or a JSON record (ID, action, expected, actual read from the page or the response, time, tested commit) under
 // docs/sprints/sprint-2/evidence/. The assertions hold on both sides; the difference is in the records.
 const SIDE = process.env.S2_SIDE === 'before' ? 'before' : 'after'
+// Files are written only when S2_SIDE is set, so a plain E2E run leaves the evidence alone (AGENTS.md §5).
+const WRITE = process.env.S2_SIDE !== undefined
 const DIR = 'docs/sprints/sprint-2/evidence'
 const EV7 = 7 // the seeded draft "Prerelease Planning Night" (Sprint 2 contracts §0.4; e2e-seed restarts ids)
 
@@ -18,6 +20,7 @@ function commit(): string {
 }
 
 function record(id: string, action: string, expected: string, actual: unknown, screenshot?: string) {
+  if (!WRITE) return
   mkdirSync(DIR, { recursive: true })
   const body = { id, side: SIDE, action, expected, actual, time: new Date().toISOString(), commit: commit(), screenshot }
   writeFileSync(`${DIR}/${id}-${SIDE}.json`, JSON.stringify(body, null, 2) + '\n')
@@ -25,6 +28,7 @@ function record(id: string, action: string, expected: string, actual: unknown, s
 
 async function shot(page: Page, id: string) {
   const file = `${id}-${SIDE}.png`
+  if (!WRITE) return file
   await page.screenshot({ path: `${DIR}/${file}`, fullPage: true })
   return file
 }

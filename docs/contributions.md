@@ -85,6 +85,7 @@ UAT findings from Team 1 KitLoop are Issues #56–#64; the triage is Part 4 of t
 | S2-02 Feature-K: save a draft and publish it (E-06 `saveAsDraft`, E-14, owner-only drafts) | [#79](https://github.com/GGital/My-little-pony/issues/79) | `feature/s2-02-drafts` · (PR to be opened) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (requested when the PR opens) | In review: red `47b3838`, green `40f5687` |
 | S2-03 Feature-J: search, filters and paging (E-04 query and meta, live search bar, filter chips) | [#80](https://github.com/GGital/My-little-pony/issues/80) | `feature/s2-03-search` · [#94](https://github.com/GGital/My-little-pony/pull/94) | MeldyRose (drafted with Claude Code, see `ai-use.md`) | GGital (review on the real database: literal `%` and `_`, TEST-J-05 steps, theme tokens) | In review: red `82b7aa9`, green `2c5e075`, review fixes `18564ab`, `a0a86f3`, `23d5526` |
 | S2-04 Feature-L: edit an event and change its capacity (E-13, edit page, History panel); UAT #64 | [#81](https://github.com/GGital/My-little-pony/issues/81) | `feature/s2-04-edit-event` · (PR to be opened) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (requested when the PR opens) | In review: red `0906f89`, green `9f71b81` |
+| Merge rules for parallel PRs: `AGENTS.md`, `CLAUDE.md`, `merge=union`, evidence only when asked, D-39 → D-40 | — (chore, no Issue) | `chore/merge-rules` · [#110](https://github.com/GGital/My-little-pony/pull/110) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (MeldyRose) | In review (PR #110) |
 
 ## 6. Lab 7: Sprint 1 maintenance (CH-13)
 
@@ -99,6 +100,8 @@ tests, then code; the evidence index is [`labs/lab07/README.md`](labs/lab07/READ
 | L7 release and deploy records (README v1.1) | [#77](https://github.com/GGital/My-little-pony/issues/77) | `docs/l7-release-records` · [#91](https://github.com/GGital/My-little-pony/pull/91) | Phattaratorn | Praewa (approved #91, 24 Nov) | Merged 24 Nov (`be04c17`) |
 
 ## 7. Keeping this table current
+
+From 26 Nov 2026 the rules in [`AGENTS.md`](../AGENTS.md) §2 apply: each PR adds only its own Issue's row with the status `In review (PR #N)`, and labels its version rows with its Issue ID. The sprint's integration Issue numbers the versions and marks the rows `Merged (sha)` in one records commit.
 
 Every Issue PR updates its own row (branch, PR, built by, reviewed by, status) and the summary in §2, in the same PR
 as the work. Pair work names both students. Reviewers are filled in from the PR's review record, not in advance.
@@ -142,3 +145,4 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.34 | 26 Nov 2026 | §5: S2-03 row (rebased onto #95 and #107) | Team (AI-assisted) |
 | v0.35 | 26 Nov 2026 | §5: #107 merged; S2-04 row | Team (AI-assisted) |
 | v0.36 | 26 Nov 2026 | S2-05 Feature-O cancel event row | Team (AI-assisted) |
+| #110 | 26 Nov 2026 | §5 merge-rules row; §7 points at `AGENTS.md` §2 | Team (AI-assisted) |
