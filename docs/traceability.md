@@ -303,4 +303,3 @@ in the Sprint 2 contracts PR (S2-00), and the course's approved-scope rule for D
 | v0.10 | 26 Nov 2026 | S2-03: FR-13 Pass (TEST-J-01 … 03, 05) and FR-14 TEST-J-04 Pass; TEST-O-02 stays Planned | Team (AI-assisted) |
 | v0.11 | 26 Nov 2026 | S2-05: FR-10, FR-14 (TEST-O-02), FR-28 (AC-O-01) and BR-12 Pass | Team (AI-assisted) |
 | S2-07 | 26 Nov 2026 | FR-19, FR-20 and BR-11 Pass (TEST-N-01 … 05); FR-28 (AC-N-01), BR-06 (TEST-N-02, N-03) and NFR-05 (TEST-N-06) re-verified | Team (AI-assisted) |
-| S2-07 | 26 Nov 2026 | FR-19, FR-20 and BR-11 Pass (TEST-N-01 … 05); FR-28 (AC-N-01), BR-06 (TEST-N-02, N-03) and NFR-05 (TEST-N-06) re-verified | Team (AI-assisted) |
