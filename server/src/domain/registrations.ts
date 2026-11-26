@@ -1,14 +1,19 @@
 import { Prisma, type EventStatus, type PrismaClient } from '@prisma/client'
+import { now } from '../clock.js'
 import { HttpError } from '../http/errors.js'
 import type { Actor } from './actor.js'
 import { ACTIVE_STATUSES, getEventSummary, type EventSummary } from './events.read.js'
-import { decideRegistration } from './registration-rules.js'
+import { canCancelRegistration, decideCancellation, decideRegistration } from './registration-rules.js'
 
 /** ParticipantRegistration (contracts §0.1): the caller's own registration with its event's fresh counts. */
 export type ParticipantRegistration = {
   id: number
   status: 'REGISTERED' | 'CHECKED_IN' | 'CANCELLED' | 'EVENT_CANCELLED'
   createdAt: string
+  /** Set when the row is CANCELLED or EVENT_CANCELLED (Feature-N, SR-08). */
+  cancelledAt: string | null
+  /** The server decides whether the player may cancel now (Feature-N). */
+  canCancel: boolean
   event: EventSummary
 }
 
@@ -50,11 +55,51 @@ export async function register(db: PrismaClient, actor: Actor, eventId: number):
     throw err
   }
 
-  const row = await db.registration.findUniqueOrThrow({ where: { id: registrationId } })
+  return loadParticipantRegistration(db, registrationId)
+}
+
+/** One registration as a ParticipantRegistration, with its event's fresh counts and `canCancel`. */
+export async function loadParticipantRegistration(db: PrismaClient, registrationId: number): Promise<ParticipantRegistration> {
+  const row = await db.registration.findUniqueOrThrow({
+    where: { id: registrationId },
+    include: { event: { select: { status: true, startAt: true, registrationDeadline: true } } },
+  })
   return {
     id: row.id,
     status: row.status,
     createdAt: row.createdAt.toISOString(),
-    event: await getEventSummary(db, eventId),
+    cancelledAt: row.cancelledAt?.toISOString() ?? null,
+    canCancel: canCancelRegistration({ registrationStatus: row.status, eventStatus: row.event.status, ...row.event }),
+    event: await getEventSummary(db, row.eventId),
   }
+}
+
+/**
+ * E-16: a participant cancels their own seat (Sprint 2 contracts §5). The Event row is locked FOR UPDATE, exactly as
+ * E-09 does, so the cancellation queues with registrations and capacity edits (NFR-05). The registration is read again
+ * after the lock, so two simultaneous cancels give one 200 and one ALREADY_CANCELLED. The owner is in the where
+ * clause: another player's id and a missing id are the same 404 (D-08).
+ */
+export async function cancelRegistration(db: PrismaClient, actor: Actor, registrationId: number): Promise<ParticipantRegistration> {
+  await db.$transaction(
+    async (tx) => {
+      // One statement finds the caller's registration and locks its event, so there is no gap before the lock.
+      const [event] = await tx.$queryRaw<LockedEvent[]>`
+        SELECT e.id, e.status, e."startAt", e."registrationDeadline", e.capacity
+        FROM "Event" e JOIN "Registration" r ON r."eventId" = e.id
+        WHERE r.id = ${registrationId} AND r."participantId" = ${actor.id} FOR UPDATE OF e`
+      if (!event) throw new HttpError('REGISTRATION_NOT_FOUND')
+      const row = await tx.registration.findUniqueOrThrow({ where: { id: registrationId }, select: { status: true } })
+      const decision = decideCancellation({
+        registrationStatus: row.status,
+        eventStatus: event.status,
+        startAt: event.startAt,
+        registrationDeadline: event.registrationDeadline,
+      })
+      if (decision !== 'OK') throw new HttpError(decision)
+      await tx.registration.update({ where: { id: registrationId }, data: { status: 'CANCELLED', cancelledAt: now() } })
+    },
+    { maxWait: 10_000, timeout: 10_000 },
+  )
+  return loadParticipantRegistration(db, registrationId)
 }

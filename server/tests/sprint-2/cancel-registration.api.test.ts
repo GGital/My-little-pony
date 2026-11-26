@@ -225,7 +225,7 @@ describe('TEST-M-04 · AC-M-04, BR-08, BR-11: the deadline closes cancelling too
       expect(await flags()).toEqual([false, false, false])
       const res = await cancel(reg.id, cookies.mint)
       expect([res.status, res.body.error.code]).toEqual([409, 'REGISTRATION_CLOSED'])
-      expect((await storedRegs(event.id))[0].status).toBe('REGISTERED')
+      expect((await storedRegs(event.id))[0]?.status).toBe('REGISTERED')
     } finally {
       setNow(T)
     }

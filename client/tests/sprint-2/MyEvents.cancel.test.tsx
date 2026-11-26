@@ -56,8 +56,8 @@ describe('TEST-N-01 (C) Cancel registration in My Events (AC-N-01, UX-11)', () =
       json(200, { items: [reg({ id: 1, canCancel: false, event: summary({ id: 1, title: 'Closed One' }) }), reg({ id: 2, event: summary({ id: 2, title: 'Open One' }) })] }),
     )
     renderPage()
-    const open = (await screen.findByText('Open One')).closest('.event-card') as HTMLElement
-    const closed = screen.getByText('Closed One').closest('.event-card') as HTMLElement
+    const open = (await screen.findByText('Open One')).closest('.registration-row') as HTMLElement
+    const closed = screen.getByText('Closed One').closest('.registration-row') as HTMLElement
     expect(within(open).getByRole('button', { name: 'Cancel registration' })).toBeInTheDocument()
     expect(within(closed).queryByRole('button', { name: 'Cancel registration' })).not.toBeInTheDocument()
   })
@@ -82,7 +82,7 @@ describe('TEST-N-01 (C) Cancel registration in My Events (AC-N-01, UX-11)', () =
 
   it('confirming posts to E-16, shows "Cancelling…" with aria-busy, ignores extra presses, then the Cancelled chip and the toast', async () => {
     let finish: (r: Response) => void = () => {}
-    const spy = vi.spyOn(globalThis, 'fetch').mockImplementation((url, init) => {
+    const spy = vi.spyOn(globalThis, 'fetch').mockImplementation((_url, init) => {
       if (init?.method === 'POST') return new Promise((resolve) => (finish = resolve))
       return Promise.resolve(json(200, { items: [reg()] }))
     })
@@ -102,7 +102,7 @@ describe('TEST-N-01 (C) Cancel registration in My Events (AC-N-01, UX-11)', () =
     finish(json(200, cancelledReg))
     expect(await screen.findByText('Your registration is cancelled.')).toBeInTheDocument()
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-    const card = screen.getByText('Friday Night Constructed').closest('.event-card') as HTMLElement
+    const card = screen.getByText('Friday Night Constructed').closest('.registration-row') as HTMLElement
     expect(within(card).getByText(/Cancelled/)).toBeInTheDocument()
     expect(within(card).queryByRole('button', { name: 'Cancel registration' })).not.toBeInTheDocument()
   })

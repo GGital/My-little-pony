@@ -1483,3 +1483,10 @@ textarea.form-control {
   white-space: nowrap;
   border: 0;
 }
+
+/* My Events (Sprint 2 Feature-N): the Cancel registration button under its event card. */
+.registration-row__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-2, 8px);
+}

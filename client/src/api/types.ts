@@ -81,6 +81,7 @@ export interface OrganizerRegistrationRow {
   };
   status: 'REGISTERED' | 'CHECKED_IN' | 'CANCELLED';
   createdAt: string;
+  cancelledAt?: string | null;
 }
 
 export interface EventRegistrationsResponse {

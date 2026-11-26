@@ -45,7 +45,7 @@ export function createApp({
   api.use('/auth', authRouter(prisma, config))
   api.use(organizerRouter(prisma, config))
   api.use(eventsRouter(prisma, config))
-  api.use(meRouter(prisma))
+  api.use(meRouter(prisma, config))
   extraRoutes?.(api)
   api.use((_req, res) => sendError(res, 'NOT_FOUND'))
   api.use(errorHandler(log))

@@ -203,8 +203,8 @@ describe('Feature-I — Event Registration List (E-08, contracts §12)', () => {
     })
 
     // Registered Mint, Ploy, Boss (createdAt order), but inserted Boss first, so id order and insert order differ
-    // from createdAt order and the test proves the sort. Fern's CANCELLED registration is the earliest and must
-    // be neither listed nor counted.
+    // from createdAt order and the test proves the sort. Fern's CANCELLED registration is the earliest. Sprint 2
+    // contracts §3 and §5 (Feature-N): it is listed with its cancel time, but not counted.
     const fern = await makeParticipant('Fern')
     const r3 = await prisma.registration.create({
       data: { eventId: ev1.id, participantId: boss.id, createdAt: new Date(T.getTime() + 3000) },
@@ -222,7 +222,7 @@ describe('Feature-I — Event Registration List (E-08, contracts §12)', () => {
   })
 
   describe('TEST-I-01 — Owner sees who registered in createdAt order with counts; empty list (AC-I-01, FR-18)', () => {
-    it('O1 gets 200 with three rows in registration order, display names, times, REGISTERED, and counts 3/24/21', async () => {
+    it('O1 gets 200 with the cancelled row first, then three REGISTERED rows in registration order, and counts 3/24/21 (cancelled rows are not counted)', async () => {
       const res = await get(`/api/organizer/events/${ev1.id}/registrations`, qc)
 
       expect(res.status).toBe(200)
@@ -234,18 +234,24 @@ describe('Feature-I — Event Registration List (E-08, contracts §12)', () => {
         seatsRemaining: 21,
       })
 
-      expect(res.body.items).toHaveLength(3)
+      expect(res.body.items).toHaveLength(4)
       expect(res.body.items[0]).toMatchObject({
+        participant: { displayName: 'Fern' },
+        status: 'CANCELLED',
+        cancelledAt: T.toISOString(),
+      })
+      expect(res.body.items[1]).toMatchObject({
         participant: { displayName: 'Mint' },
         status: 'REGISTERED',
         createdAt: regTimes[0],
+        cancelledAt: null,
       })
-      expect(res.body.items[1]).toMatchObject({
+      expect(res.body.items[2]).toMatchObject({
         participant: { displayName: 'Ploy' },
         status: 'REGISTERED',
         createdAt: regTimes[1],
       })
-      expect(res.body.items[2]).toMatchObject({
+      expect(res.body.items[3]).toMatchObject({
         participant: { displayName: 'Boss' },
         status: 'REGISTERED',
         createdAt: regTimes[2],

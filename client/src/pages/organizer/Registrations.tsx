@@ -102,10 +102,17 @@ export const Registrations: React.FC = () => {
                       <time dateTime={row.createdAt}>{formatEventTime(row.createdAt)}</time>
                     </td>
                     <td>
-                      <span className="chip chip--seats">
-                        <Icon name="check" size="sm" />
-                        {row.status}
-                      </span>
+                      {row.status === 'CANCELLED' ? (
+                        <>
+                          <span className="chip chip--muted">Cancelled</span>{' '}
+                          {row.cancelledAt && <time dateTime={row.cancelledAt}>{formatEventTime(row.cancelledAt)}</time>}
+                        </>
+                      ) : (
+                        <span className="chip chip--seats">
+                          <Icon name="check" size="sm" />
+                          {row.status}
+                        </span>
+                      )}
                     </td>
                   </tr>
                 ))}

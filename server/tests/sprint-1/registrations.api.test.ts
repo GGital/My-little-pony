@@ -70,7 +70,7 @@ describe('TEST-G-01 — a participant takes a seat (AC-G-01, FR-15)', () => {
     expect(row).toMatchObject({ eventId: event.id, participantId: p.id, status: 'REGISTERED' })
 
     const detail = await request(app).get(`/api/events/${event.id}`).set('Cookie', p.cookie)
-    expect(detail.body.viewer).toEqual({ action: 'REGISTERED', registrationId: res.body.id })
+    expect(detail.body.viewer).toEqual({ action: 'REGISTERED', registrationId: res.body.id, canCancel: true })
     expect(detail.body.registeredCount).toBe(4)
   })
 

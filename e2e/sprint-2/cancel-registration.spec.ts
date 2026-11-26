@@ -13,7 +13,7 @@ test('TEST-N-01 (E2E) — Fern registers, cancels in My Events, then registers a
   await expect(page.getByRole('button', { name: /REGISTERED/ })).toBeVisible()
 
   await page.goto('/me/registrations')
-  const card = page.locator('.event-card', { hasText: 'Friday Night Constructed' })
+  const card = page.locator('.registration-row', { hasText: 'Friday Night Constructed' })
   await card.getByRole('button', { name: 'Cancel registration' }).click()
 
   const dialog = page.getByRole('dialog')
