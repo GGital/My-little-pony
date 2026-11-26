@@ -559,7 +559,7 @@ show a **Past** or **Cancelled** chip.
 | Sprint 1 item | Sprint 2 change | How it is re-tested |
 |---|---|---|
 | Feature-B, TEST-B-03 | The permission matrix gains E-13 … E-17 (SDS §7.1 rows) | TEST-B-03 gains rows; every cell is checked |
-| Feature-D, E-06 | Optional `saveAsDraft` and `registrationDeadline`; creation writes an `EventChange`; the `contact` field's hint now points at the store contact (D-37), with no rule change | TEST-D-01 … 05 unchanged and still green; TEST-K-01, TEST-M-01, TEST-U-04 |
+| Feature-D, E-06 | Optional `saveAsDraft` and `registrationDeadline`; creation writes an `EventChange`; the `contact` field's hint now points at the store contact (D-37), with no rule change | TEST-D-02 … 05 unchanged and still green; TEST-D-01 (C) and its E2E choose a game before publishing, because the UI requires one (Feature-U, S2-09); TEST-K-01, TEST-M-01, TEST-U-04 |
 | Feature-E, E-07 | Shows drafts and cancelled events with their chips; Edit and Publish buttons | TEST-E-01 gains a draft and a cancelled row |
 | Feature-F, E-04 / E-05 | Query, paging and `meta` (J); drafts are 404 (K); the new `CLOSED` rule (M); cancel fields (O) | TEST-F-01 … 05 unchanged and still green with no query; TEST-J-*, K-02, M-03, O-02 |
 | Feature-G, E-09 | Draft → 404; deadline → closed; cancelled → closed | TEST-G-01 … 06 still green, except TEST-G-04's draft case, which now expects `404 EVENT_NOT_FOUND` (v0.7, Sprint 1 STS v1.16); TEST-K-02, M-03, O-02 |
@@ -769,3 +769,4 @@ that fails blocks the merge. Nothing in Sprint 1's AC-C-01 … 06 or AC-SR5-01 m
 | #110 | 26 Nov 2026 | D-39 was used twice: the SRS's D-39 is CH-13 (Lab 7), so the `include=cancelled` decision of S2-03 becomes **D-40** (§0.6, AC-J-04) and is added to SRS §10.1. Nothing else changes | Team (AI-assisted) |
 | S2-06 | 26 Nov 2026 | §4: TEST-M-04 runs with Feature-N in S2-07, because `canCancel` and E-16 are built there (decision 26 Nov). §1 (review of #111): a `deadline` row is written only for an explicit, different deadline; a deadline sent again unchanged is not checked again | Team (AI-assisted) |
 | S2-07 | 26 Nov 2026 | §5 (review of #112): AC-N-06 says at most one of the 10 registrations wins the freed seat (exactly one when the cancel takes the lock first), because all 10 can take the lock before the cancel and each then correctly gets `EVENT_FULL`; active never exceeds 2. §8: Feature-H / I row names TEST-I-01 (lists `CANCELLED` rows, not counted) | Team (AI-assisted) |
+| S2-09 | 26 Nov 2026 | §8 (review of [#113](https://github.com/GGital/My-little-pony/pull/113)): the Feature-D row names the one Sprint 1 test that changes with Feature-U (TEST-D-01 chooses a game). No behaviour changed | Team (AI-assisted) |
