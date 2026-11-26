@@ -49,6 +49,7 @@ export interface EventDetail extends EventSummary {
   viewer: {
     action: ViewerAction;
     registrationId: number | null;
+    canCancel?: boolean;
   };
 }
 
@@ -66,6 +67,10 @@ export interface ParticipantRegistration {
   id: number;
   status: 'REGISTERED' | 'CHECKED_IN' | 'CANCELLED' | 'EVENT_CANCELLED';
   createdAt: string;
+  /** Set when status is CANCELLED or EVENT_CANCELLED (Sprint 2 Feature-N). */
+  cancelledAt?: string | null;
+  /** The server decides whether the player may cancel now (Feature-N). */
+  canCancel?: boolean;
   event: EventSummary;
 }
 

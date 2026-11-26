@@ -28,3 +28,16 @@ export function decideRegistration(facts: RegistrationFacts): RegistrationDecisi
   if (facts.active >= facts.capacity) return 'EVENT_FULL'
   return 'OK'
 }
+
+export type CancellationFacts = {
+  registrationStatus: 'REGISTERED' | 'CHECKED_IN' | 'CANCELLED' | 'EVENT_CANCELLED'
+  eventStatus: EventStatus
+  startAt: Date
+  registrationDeadline: Date | null
+}
+
+export type CancellationDecision = 'OK' | 'ALREADY_CANCELLED' | 'ALREADY_CHECKED_IN' | 'REGISTRATION_CLOSED'
+
+export function decideCancellation(_facts: CancellationFacts): CancellationDecision {
+  throw new Error('not implemented')
+}

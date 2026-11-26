@@ -74,3 +74,70 @@ describe('TEST-L-03 — a capacity cut and registrations racing for the last sea
     expect(outcomes.size, `outcomes seen: ${[...outcomes].join(', ')}`).toBeGreaterThanOrEqual(1)
   }, 300_000)
 })
+
+// TEST-N-06 (AC-N-06, NFR-05, BR-06): a cancellation and registrations racing for one freed seat (STS §1.4).
+// Capacity 2, P1 holds a seat and another player holds the second; P1's E-16 and 10 other players' E-09 are sent at
+// once; exactly one E-09 wins and active = 2. Separately, one participant sends E-16 twice: one 200, one
+// 409 ALREADY_CANCELLED. 20 rounds. E-16 and E-09 lock the same event row.
+describe('TEST-N-06 — cancel racing registrations, and a double cancel (AC-N-06, NFR-05, BR-06)', () => {
+  const N_ROUNDS = 20
+  const OTHERS = 10
+  let organizerId = 0
+  let p1: { id: number; cookie: string }
+  let others: string[] = []
+
+  const sessionOf = async (email: string, password: string) => {
+    const res = await signIn(request(app), email, password)
+    expect(res.status).toBe(200)
+    return cookieHeader(readSessionCookie(res)!.value)
+  }
+
+  beforeAll(async () => {
+    const password = 'race-test-password'
+    const passwordHash = await hashPassword(password)
+    organizerId = (await makeUser('ORGANIZER', 'Cancel Race Owner', { passwordHash })).id
+    const first = await makeUser('PARTICIPANT', undefined, { passwordHash })
+    p1 = { id: first.id, cookie: await sessionOf(first.email, password) }
+    others = []
+    for (let i = 0; i < OTHERS; i++) {
+      const u = await makeUser('PARTICIPANT', undefined, { passwordHash })
+      others.push(await sessionOf(u.email, password))
+    }
+  }, 120_000)
+
+  it(`${N_ROUNDS} rounds: one of ${OTHERS} registrations wins the freed seat; active = 2`, async () => {
+    for (let round = 1; round <= N_ROUNDS; round++) {
+      const event = await makeEvent(organizerId, { capacity: 2, startAt: new Date(Date.now() + 24 * HOUR) })
+      const mine = await prisma.registration.create({ data: { eventId: event.id, participantId: p1.id } })
+      const holder = await makeParticipant()
+      await prisma.registration.create({ data: { eventId: event.id, participantId: holder.id } })
+
+      const [cancelled, ...registrations] = await Promise.all([
+        request(app).post(`/api/me/registrations/${mine.id}/cancel`).set('Origin', TEST_ORIGIN).set('Cookie', p1.cookie),
+        ...others.map((cookie) =>
+          request(app).post(`/api/events/${event.id}/registrations`).set('Origin', TEST_ORIGIN).set('Cookie', cookie),
+        ),
+      ])
+      const won = registrations.filter((r) => r.status === 201).length
+      const active = await prisma.registration.count({ where: { eventId: event.id, status: ACTIVE } })
+      expect(cancelled.status, `round ${round}`).toBe(200)
+      expect(won, `round ${round}`).toBe(1)
+      expect(active, `round ${round}`).toBe(2)
+      expect(registrations.filter((r) => r.status !== 201).map((r) => r.body.error?.code), `round ${round}`).toEqual(
+        Array(OTHERS - 1).fill('EVENT_FULL'),
+      )
+    }
+  }, 300_000)
+
+  it(`${N_ROUNDS} rounds: two simultaneous cancels give one 200 and one 409 ALREADY_CANCELLED`, async () => {
+    for (let round = 1; round <= N_ROUNDS; round++) {
+      const event = await makeEvent(organizerId, { capacity: 2, startAt: new Date(Date.now() + 24 * HOUR) })
+      const mine = await prisma.registration.create({ data: { eventId: event.id, participantId: p1.id } })
+      const send = () => request(app).post(`/api/me/registrations/${mine.id}/cancel`).set('Origin', TEST_ORIGIN).set('Cookie', p1.cookie)
+      const [a, b] = await Promise.all([send(), send()])
+      expect([a.status, b.status].sort(), `round ${round}`).toEqual([200, 409])
+      expect([a, b].find((r) => r.status === 409)!.body.error.code, `round ${round}`).toBe('ALREADY_CANCELLED')
+      expect(await prisma.registration.count({ where: { eventId: event.id, status: ACTIVE } }), `round ${round}`).toBe(0)
+    }
+  }, 300_000)
+})
