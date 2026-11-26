@@ -42,6 +42,9 @@ export interface EventDetail extends EventSummary {
   organizer: {
     displayName: string;
   };
+  /** Public on a cancelled event, null otherwise (E-05). Always sent by the server; optional so older fixtures still type-check. */
+  cancelReason?: string | null;
+  cancelledAt?: string | null;
   hasStarted: boolean;
   viewer: {
     action: ViewerAction;
@@ -61,7 +64,7 @@ export interface EventChange {
 
 export interface ParticipantRegistration {
   id: number;
-  status: 'REGISTERED' | 'CHECKED_IN' | 'CANCELLED';
+  status: 'REGISTERED' | 'CHECKED_IN' | 'CANCELLED' | 'EVENT_CANCELLED';
   createdAt: string;
   event: EventSummary;
 }

@@ -4,6 +4,7 @@ import { api } from '../api/client'
 import { ApiError } from '../api/errors'
 import type { EventDetail as EventDetailType, ParticipantRegistration } from '../api/types'
 import { ActionButton } from '../components/ActionButton'
+import { CancelEventDialog } from '../components/CancelEventDialog'
 import { ErrorState } from '../components/ErrorState'
 import { Loading } from '../components/Loading'
 import { SeatCard } from '../components/SeatCard'
@@ -44,6 +45,7 @@ export const EventDetail: React.FC = () => {
   const [alert, setAlert] = useState<string | null>(null)
   const [announcement, setAnnouncement] = useState('')
   const [publishing, setPublishing] = useState(false)
+  const [showCancel, setShowCancel] = useState(false)
 
   /** `silent` refreshes the counts after a 409 without replacing the page by the loading state. */
   const fetchDetail = useCallback(async (silent = false) => {
@@ -134,9 +136,31 @@ export const EventDetail: React.FC = () => {
 
   // Only the owner ever receives a draft (E-05 answers 404 to everyone else).
   const isOwnDraft = event.status === 'DRAFT' && event.viewer.action === 'MANAGE'
+  const isCancelled = event.status === 'CANCELLED'
+  // Only a published event that has not started can be cancelled (E-15); the server checks again.
+  const canCancel = event.viewer.action === 'MANAGE' && event.status === 'PUBLISHED' && !event.hasStarted
 
   return (
     <>
+      {showCancel && (
+        <CancelEventDialog
+          eventId={event.id}
+          registeredCount={event.registeredCount}
+          onClose={() => setShowCancel(false)}
+          onCancelled={(cancelled) => {
+            setEvent(cancelled)
+            setShowCancel(false)
+            setAlert(null)
+          }}
+        />
+      )}
+      {isCancelled && (
+        <div className="page-alerts">
+          <Notice tone="error" role="status">
+            Cancelled by the organizer: {event.cancelReason}
+          </Notice>
+        </div>
+      )}
       {isOwnDraft && (
         <div className="page-alerts">
           <Notice tone="warning" role="status">
@@ -175,15 +199,19 @@ export const EventDetail: React.FC = () => {
           <div className="dhead__fact tabular-nums">{formatTimeRange(event.startAt, event.endAt)}</div>
         </div>
         <div>
-          <div className="lbl">Players</div>
+          <div className="lbl">{isCancelled ? 'Status' : 'Players'}</div>
           <div className="dhead__fact tabular-nums">
-            {event.registeredCount} / {event.capacity}
+            {isCancelled ? 'Cancelled' : `${event.registeredCount} / ${event.capacity}`}
           </div>
         </div>
         <div className="dhead__action">
           {isOwnDraft ? (
             <button type="button" className="btn-big" onClick={onPublish} disabled={publishing} aria-busy={publishing}>
               {publishing ? 'Publishing…' : 'PUBLISH EVENT'}
+            </button>
+          ) : isCancelled ? (
+            <button type="button" className="btn-big" disabled>
+              REGISTRATION CLOSED
             </button>
           ) : (
           <ActionButton
@@ -251,6 +279,11 @@ export const EventDetail: React.FC = () => {
                 View registrations
                 <Icon name="arrow" size="sm" />
               </Link>
+              {canCancel && (
+                <button type="button" className="btn-soft btn-soft--danger mt-3" onClick={() => setShowCancel(true)}>
+                  Cancel event
+                </button>
+              )}
             </section>
           )}
         </div>

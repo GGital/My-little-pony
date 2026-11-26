@@ -23,6 +23,7 @@ export const SPRINT1_ROUTES: RouteRow[] = [
 export const SPRINT2_ROUTES: RouteRow[] = [
   { id: 'E-13', method: 'PATCH', path: '/api/organizer/events/1' },
   { id: 'E-14', method: 'POST', path: '/api/organizer/events/1/publish' },
+  { id: 'E-15', method: 'POST', path: '/api/organizer/events/1/cancel' },
   { id: 'E-17', method: 'GET', path: '/api/organizer/events/1/changes' },
 ]
 

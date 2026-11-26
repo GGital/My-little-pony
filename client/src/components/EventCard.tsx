@@ -19,15 +19,27 @@ export const SeatsChip: React.FC<{ event: EventSummary }> = ({ event }) => {
 }
 
 /** Fee chip, then seats chip, then "n seats left" (unless full). */
-export const DefaultAside: React.FC<{ event: EventSummary }> = ({ event }) => (
-  <>
-    <div className="chips">
-      <span className="chip">{event.feeLabel || 'Free'}</span>
-      <SeatsChip event={event} />
-    </div>
-    {event.seatsRemaining > 0 && <span className="event-card__note tabular-nums">{seatsLeft(event.seatsRemaining)}</span>}
-  </>
-)
+export const DefaultAside: React.FC<{ event: EventSummary }> = ({ event }) => {
+  // A cancelled event has no seats to offer: its registrations are all EVENT_CANCELLED, so the counts would read
+  // "n seats left" on an event nobody can join (S2-05 review). Show the red Cancelled chip instead.
+  if (event.status === 'CANCELLED') {
+    return (
+      <div className="chips">
+        <span className="chip">{event.feeLabel || 'Free'}</span>
+        <span className="chip chip--cancelled">Cancelled</span>
+      </div>
+    )
+  }
+  return (
+    <>
+      <div className="chips">
+        <span className="chip">{event.feeLabel || 'Free'}</span>
+        <SeatsChip event={event} />
+      </div>
+      {event.seatsRemaining > 0 && <span className="event-card__note tabular-nums">{seatsLeft(event.seatsRemaining)}</span>}
+    </>
+  )
+}
 
 export interface EventCardProps {
   event: EventSummary
