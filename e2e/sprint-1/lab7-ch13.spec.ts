@@ -8,6 +8,8 @@ import { EMAIL, bangkokLocal, resetSeed, signIn } from './helpers'
 // code (L7_SIDE=after: the green run, right column). Every step saves a screenshot and a JSON record (Lab 7 §4.2:
 // evidence ID, action, expected, actual, time, tested commit) under docs/labs/lab07/evidence/.
 const SIDE = process.env.L7_SIDE === 'before' ? 'before' : 'after'
+// Files are written only when L7_SIDE is set, so a plain E2E run leaves the Lab 7 evidence alone (AGENTS.md §5).
+const WRITE = process.env.L7_SIDE !== undefined
 const DIR = 'docs/labs/lab07/evidence'
 const MSG = 'The start must be at least 60 minutes from now.'
 
@@ -19,6 +21,7 @@ function commit(): string {
 
 /** Screenshot + record for one evidence step. `actual` is read from the page, never typed in. */
 async function evidence(page: Page, id: string, action: string, expected: string, focus?: Locator) {
+  if (!WRITE) return
   mkdirSync(DIR, { recursive: true })
   const file = `${id}-${SIDE}.png`
   if (focus) await focus.scrollIntoViewIfNeeded()
