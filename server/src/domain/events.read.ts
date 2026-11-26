@@ -1,6 +1,8 @@
 import type { EventFormat, EventStatus, EventType, Prisma, PrismaClient } from '@prisma/client'
 import type { Actor } from './actor.js'
 import { bangkokDayRange, escapeLikeWildcards, type SearchQuery } from './search-query.js'
+import { effectiveDeadline, isRegistrationOpen } from './deadline.js'
+import { now } from '../clock.js'
 import { hasStarted, upcomingWhere } from './time.js'
 
 export type ViewerAction =
@@ -26,6 +28,8 @@ export type EventSummary = {
   registeredCount: number
   seatsRemaining: number
   status: EventStatus
+  /** Sprint 2 Feature-M: the EFFECTIVE deadline, the stored one or startAt (contracts §0.1, BR-08). */
+  registrationDeadline: string
 }
 
 export type EventDetail = EventSummary & {
@@ -116,6 +120,7 @@ export const summarySelect = {
   feeLabel: true,
   capacity: true,
   status: true,
+  registrationDeadline: true,
   _count: { select: { registrations: { where: { status: ACTIVE_STATUSES } } } },
 } as const
 
@@ -138,6 +143,7 @@ export function toSummary(e: SummaryRow): EventSummary {
     registeredCount,
     seatsRemaining: Math.max(0, e.capacity - registeredCount),
     status: e.status,
+    registrationDeadline: effectiveDeadline(e).toISOString(),
   }
 }
 
@@ -179,6 +185,7 @@ export async function getEventDetail(
       contact: true,
       description: true,
       status: true,
+      registrationDeadline: true,
       organizer: {
         select: {
           displayName: true,
@@ -225,7 +232,8 @@ export async function getEventDetail(
     action = 'ORGANIZER_CANNOT_REGISTER'
   } else if (activeRegistrationId !== null) {
     action = 'REGISTERED'
-  } else if (started || event.status !== 'PUBLISHED') {
+  } else if (!isRegistrationOpen(event, now())) {
+    // Sprint 2 §0.2: not published, started, or at or after the deadline (the start is never before the deadline).
     action = 'CLOSED'
   } else if (seatsRemaining === 0) {
     action = 'FULL'
@@ -249,6 +257,7 @@ export async function getEventDetail(
     registeredCount,
     seatsRemaining,
     status: event.status,
+    registrationDeadline: effectiveDeadline(event).toISOString(),
     feeLabel: event.feeLabel,
     structureNote: event.structureNote,
     contact: event.contact,

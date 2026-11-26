@@ -3,12 +3,13 @@ import { z } from 'zod'
 import { now } from '../clock.js'
 import type { Actor } from './actor.js'
 import { recordEventChange } from './changes.js'
+import { decideDeadline } from './deadline.js'
 import { validateEventTimes } from './event-rules.js'
 import { getEventDetail, type EventDetail } from './events.read.js'
 
 export class EventTimeError extends Error {
-  readonly field: 'startAt' | 'endAt'
-  constructor(field: 'startAt' | 'endAt', message: string) {
+  readonly field: 'startAt' | 'endAt' | 'registrationDeadline'
+  constructor(field: 'startAt' | 'endAt' | 'registrationDeadline', message: string) {
     super(message)
     this.name = 'EventTimeError'
     this.field = field
@@ -87,6 +88,8 @@ export const createEventInputSchema = z
     structureNote: optionalTrimmedString(80, 'Use up to 80 characters.'),
     contact: optionalTrimmedString(120, 'Use up to 120 characters.'),
     description: optionalTrimmedString(2000, 'Use up to 2,000 characters.'),
+    // Sprint 2 Feature-M (BR-08): optional; null or absent = registration closes at the start.
+    registrationDeadline: isoDateTimeWithOffset('Enter a date and time.').nullable().optional(),
     // Sprint 2 Feature-K (D-18): true saves a draft that only the owner can see. The client never sends `status`.
     saveAsDraft: z.boolean({ message: 'Use true or false.' }).optional(),
   })
@@ -127,6 +130,9 @@ export async function createEvent(
   }
 
   const currentTime = now()
+  const registrationDeadline = input.registrationDeadline ? new Date(input.registrationDeadline) : null
+  const deadlineCheck = decideDeadline(registrationDeadline, start, currentTime)
+  if (deadlineCheck) throw new EventTimeError(deadlineCheck.field, deadlineCheck.message)
   const status = input.saveAsDraft ? 'DRAFT' : 'PUBLISHED'
 
   const event = await prisma.$transaction(async (tx) => {
@@ -141,6 +147,7 @@ export async function createEvent(
         city: input.city,
         startAt: start,
         endAt: end,
+        registrationDeadline,
         capacity: input.capacity,
         feeLabel: input.feeLabel,
         structureNote: input.structureNote,

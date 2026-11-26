@@ -1,5 +1,6 @@
 import type { EventStatus } from '@prisma/client'
-import { hasStarted } from './time.js'
+import { now } from '../clock.js'
+import { isRegistrationOpen } from './deadline.js'
 
 export type RegistrationDecision = 'OK' | 'REGISTRATION_CLOSED' | 'ALREADY_REGISTERED' | 'EVENT_FULL'
 
@@ -16,11 +17,13 @@ export type RegistrationFacts = {
 }
 
 /**
- * The registration rules in the order of contracts §10: closed (BR-04: started, or not published) →
+ * The registration rules in the order of contracts §10: closed (BR-04 + BR-08: not published, or at or after the
+ * effective deadline, which is the start when none is set; Sprint 2 §0.3) →
  * already registered (BR-06) → full (BR-05) → OK. The time comes from the server clock (SR-03).
  */
 export function decideRegistration(facts: RegistrationFacts): RegistrationDecision {
-  if (facts.status !== 'PUBLISHED' || hasStarted(facts.startAt)) return 'REGISTRATION_CLOSED'
+  const open = isRegistrationOpen({ ...facts, registrationDeadline: facts.registrationDeadline ?? null }, now())
+  if (!open) return 'REGISTRATION_CLOSED'
   if (facts.alreadyRegistered) return 'ALREADY_REGISTERED'
   if (facts.active >= facts.capacity) return 'EVENT_FULL'
   return 'OK'
