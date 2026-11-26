@@ -1,6 +1,6 @@
 # Sprint 2 Feature Engineering Contracts
 
-Project: **TCG Event Hub** · Sprint 2 (9–29 Nov 2026) · Document version: v0.8 — **draft for team review** (changes in §13; v0.6 = Lab 7 CH-13, Issue #77; v0.7 = S2-02; v0.8 = S2-03)
+Project: **TCG Event Hub** · Sprint 2 (9–29 Nov 2026) · Document version: v0.8 — **draft for team review** (changes in §13; v0.6 = Lab 7 CH-13, Issue #77; v0.7 = S2-02; v0.8 = S2-04)
 Inputs: [`../../srs.md`](../../srs.md) v0.6 · [`../../features.md`](../../features.md) v0.4 ·
 [`../../traceability.md`](../../traceability.md) · [`../../system-sds.md`](../../system-sds.md) ·
 [`../plan.md`](../plan.md) §3 · [`../../ui/design-direction.md`](../../ui/design-direction.md) ·
@@ -229,8 +229,8 @@ changed capacity from 24 to 30". The registration list (Feature-I) shows cancell
    **PUBLISH EVENT**. Both send E-06. SAVE DRAFT adds `"saveAsDraft": true` (D-18).
 2. The server validates exactly as Feature-D does (all fields, BR-01 … BR-03). A draft is stored with
    `status DRAFT` and `publishedAt null`, and an `EventChange` row is written (`status` null → `DRAFT`). The UI goes
-   to the draft's own page (`/events/:id`) with the toast "Draft saved. Only you can see it." (v0.7: the edit page
-   arrives with Feature-L in S2-04, which then sends a new draft there)
+   to the draft's edit page (`/organizer/events/:id/edit`) with the toast "Draft saved. Only you can see it."; the
+   edit page shows the draft banner and **PUBLISH EVENT** (v0.8; from v0.7 until S2-04 it went to `/events/:id`)
 3. The draft appears on the dashboard (E-07) with a **Draft** chip and a **Publish** button. Only its owner can
    open its detail page, which shows the banner "Draft — only you can see this event." and **PUBLISH EVENT**.
 4. **PUBLISH EVENT** calls E-14. It checks BR-02 and BR-08 again (D-21), then sets `status PUBLISHED`,
@@ -253,8 +253,8 @@ changed capacity from 24 to 30". The registration list (Feature-I) shows cancell
 **UI**
 - Create page: **PUBLISH EVENT** (primary) and **SAVE DRAFT** (secondary). Both show a busy state, and both keep
   the input when there is an error.
-- Dashboard: Draft chip (muted) · **Publish** button · no **Registrations** link for drafts. The **Edit** button comes
-  with the edit page (Feature-L, S2-04).
+- Dashboard: Draft chip (muted) · **Publish** and **Edit** buttons · no **Registrations** link for drafts (Edit since
+  S2-04, v0.8).
 - Detail page (owner, draft): amber banner and **PUBLISH EVENT**. Organizer actions are not shown to anyone else.
 
 **API**
@@ -269,7 +269,7 @@ changed capacity from 24 to 30". The registration list (Feature-I) shows cancell
 
 | AC | Given | When | Then |
 |---|---|---|---|
-| **AC-K-01** | Quantum Cards signed in; clock fixed | E-06 with a valid body and `saveAsDraft: true`; then E-07 and E-05 as the owner; UI: fill the form and press SAVE DRAFT | `201`; the row has `status DRAFT`, `publishedAt null`, owner = Quantum Cards; one `EventChange` null → `DRAFT`; E-07 lists it as Draft; E-05 gives `MANAGE`; the UI lands on the draft's page with "Draft saved. Only you can see it." and the draft banner |
+| **AC-K-01** | Quantum Cards signed in; clock fixed | E-06 with a valid body and `saveAsDraft: true`; then E-07 and E-05 as the owner; UI: fill the form and press SAVE DRAFT | `201`; the row has `status DRAFT`, `publishedAt null`, owner = Quantum Cards; one `EventChange` null → `DRAFT`; E-07 lists it as Draft; E-05 gives `MANAGE`; the UI lands on the draft's edit page with "Draft saved. Only you can see it." and the draft banner |
 | **AC-K-02** | the draft from AC-K-01 | E-04 (no filter, and with `include=past,cancelled` and `q` = its title) as a visitor, Nok and Dragon's Den; E-05 for it as a visitor, Nok and Dragon's Den; E-09 for it by Nok | the draft is in no list; every E-05 is `404 EVENT_NOT_FOUND`, byte-identical to id 999999; E-09 is `404` and no row is stored |
 | **AC-K-03** | the draft; clock T | the owner calls E-14; then E-04 as a visitor; UI: press PUBLISH EVENT on the dashboard | `200`, `status PUBLISHED`, `publishedAt = T`; `EventChange` `DRAFT → PUBLISHED`; the event is now in E-04; toast "Your event is live." |
 | **AC-K-04** | a draft whose start is now in the past (clock moved); a draft starting in 30 min; a draft starting in exactly 60 min; a published event; a cancelled event | the owner calls E-14 on each | `422 EVENT_TIME_INVALID` (field `startAt`) and the event stays `DRAFT` for the first two (CH-13); `200` for the 60-min draft; `409 ALREADY_PUBLISHED`; `409 ALREADY_CANCELLED`; nothing is changed and no change row is written |
@@ -292,7 +292,10 @@ event) is delivered here · Depends on: Feature-D, Feature-G, SR-08 · Issue S2-
    below, saves, writes one `EventChange` row per kind of change (`details`, `capacity`, `deadline`), and
    responds with the fresh `EventDetail`. Toast: "Changes saved."
 3. The page also contains the **Registrations** link, the **History** panel (SR-08) and the **Cancel event**
-   section (Feature-O).
+   section (Feature-O, added by S2-05). For a draft it also has the draft banner and **PUBLISH EVENT** (Feature-K).
+4. A 409 refusal lists its reason in `details` too: `EVENT_STARTED` names each frozen field in the order the body sent
+   them, and `CAPACITY_BELOW_REGISTERED` says "{n} players are registered, so capacity can't go below {n}." on
+   `capacity` (v0.8).
 
 **Rules, validation, boundaries** (shape errors are reported together, then rule errors)
 
@@ -334,7 +337,7 @@ event) is delivered here · Depends on: Feature-D, Feature-G, SR-08 · Issue S2-
 | **AC-L-01** | Quantum Cards owns an upcoming event with 3 registrations; clock fixed | E-13 with a new `title`, `venueName` and `description`; then E-05; UI: change the title on the edit page and press SAVE CHANGES | `200` with the new values; E-05 shows them; the 3 registrations are unchanged; one `EventChange` row with `field details`, `newValue` "title, venueName, description"; the UI shows "Changes saved." |
 | **AC-L-02** | the same event: capacity 24, 3 active | E-13 `capacity` = 3, 2, 256, 257, 0, 1.5, then 30 | 3 → `200`; 2 → `409 CAPACITY_BELOW_REGISTERED` ("3 players are registered…"); 256 → `200`; 257, 0 and 1.5 → `400`; 30 → `200` with `seatsRemaining 27` (checked by an independent count); one `capacity` change row per accepted value; no registration is touched |
 | **AC-L-03** | an event with capacity 10 and 8 active; 5 more participants signed in | E-13 `capacity 8` and the 5 E-09 calls are sent at the same time; repeated for 20 rounds | in every round, active ≤ capacity at the end; either the capacity change wins (`200`, and all 5 registrations get `409 EVENT_FULL`) or some registrations win first (the change then gets `409 CAPACITY_BELOW_REGISTERED`) |
-| **AC-L-04** | an upcoming event starting at T + 2 days, 4 hours long; clock T | E-13 with `startAt` = T − 1 min; `startAt` = T + 59 min; `startAt` = T + 60 min; `endAt` only = start + 25 h; `endAt` only = start + 24 h; `startAt` = T + 3 days together with `endAt` = T + 3 days + 4 h | `422` on `startAt` ×2 (CH-13); `200`; `422` on `endAt`; `200`; `200`, and the event moves later in E-04 order |
+| **AC-L-04** | an upcoming event starting at T + 2 days, 4 hours long; clock T | E-13 with `startAt` = T − 1 min; `startAt` = T + 59 min; `startAt` = T + 60 min **with `endAt` = T + 5 h** (v0.8: a start alone would make a 51-hour event, which the end rule refuses); `endAt` only = start + 25 h; `endAt` only = start + 24 h; `startAt` = T + 3 days together with `endAt` = T + 3 days + 4 h | `422` on `startAt` ×2 (CH-13); `200`; `422` on `endAt`; `200`; `200`, and the event moves later in E-04 order |
 | **AC-L-05** | an event that started 1 h ago (clock fixed), with 2 registrations | E-13 with `description` + `feeLabel`; then with `capacity`; then with `startAt` + `title`; UI: open its edit page | `200` for the first; `409 EVENT_STARTED` with `details` for `capacity`, then for `startAt` and `title`; nothing frozen changes; the page shows those fields read-only with the started note |
 | **AC-L-06** | an event owned by Quantum Cards; a cancelled event owned by Quantum Cards | E-13 by Dragon's Den, Mint, a visitor, with a foreign Origin, with `{}`, with `organizerId`; E-13 on the cancelled event | `404`, `403`, `401`, `403`, `400` "Change at least one field.", `400`; `409 ALREADY_CANCELLED`; nothing is stored or changed |
 
@@ -762,3 +765,4 @@ that fails blocks the merge. Nothing in Sprint 1's AC-C-01 … 06 or AC-SR5-01 m
 | v0.6 | 25 Nov 2026 | Lab 7 change CH-13 (Issue #77): D-21, E-14 check order and the E-13 time rule use the 60-minute lead time (only when the body sets `startAt`); AC-K-04 and AC-L-04 gain the boundary cases | Team (AI-assisted) |
 | v0.7 | 25 Nov 2026 | S2-02 (team decision 25 Nov): SAVE DRAFT lands on the draft's own page, which shows the owner's banner and PUBLISH EVENT, because the edit page is built in S2-04; the dashboard **Edit** button moves to S2-04 too (Behaviour 2, UI, AC-K-01). §8: TEST-G-04's draft case changes to 404, which the Feature-G row had missed | Team (AI-assisted) |
 | v0.8 | 26 Nov 2026 | S2-03 (review of PR #94): D-39 records the `include=cancelled` rule (cancelled events that have not started; `past` adds started ones), `seatsAvailable=false` and the literal `%` and `_` in `q`; AC-J-04 expected sets say so | Team (AI-assisted) |
+| v0.9 | 26 Nov 2026 | S2-04: a new draft now lands on its edit page, which has the draft banner and PUBLISH EVENT; the dashboard gets **Edit** (Feature-K Behaviour 2, UI, AC-K-01); Feature-L Behaviour 3 notes that the Cancel event section comes with S2-05, and Behaviour 4 the 409 `details`; AC-L-04's 60-minute case sends its own end, because the resulting-end rule refuses a 51-hour event | Team (AI-assisted) |

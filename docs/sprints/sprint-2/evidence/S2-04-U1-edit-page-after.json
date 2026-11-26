@@ -1,0 +1,23 @@
+{
+  "id": "S2-04-U1-edit-page",
+  "side": "after",
+  "action": "Quantum Cards: MANAGE EVENT on /events/1, then /organizer/events/1/edit",
+  "expected": "After: MANAGE EVENT opens /organizer/events/1/edit; the form holds EV-1, the capacity hint says \"At least 3\"; History says \"No changes yet.\" (the seed writes no history rows)",
+  "actual": {
+    "manageHref": "/organizer/events/1/edit",
+    "heading": "Edit event",
+    "hint": [
+      "(at least 1 hour from now)",
+      "(1–256)",
+      "At least 3: that's how many players are registered.",
+      "(optional, max 40)",
+      "(optional, max 80)",
+      "(optional, max 120)",
+      "(optional)"
+    ],
+    "history": []
+  },
+  "time": "2026-11-25T16:07:51.733Z",
+  "commit": "b5cf763",
+  "screenshot": "S2-04-U1-edit-page-after.png"
+}

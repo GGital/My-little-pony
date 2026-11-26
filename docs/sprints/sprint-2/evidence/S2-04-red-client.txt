@@ -1,0 +1,868 @@
+Sprint 2 · S2-04 (Issue #81) · RED, client component tests
+Commit: 0906f89
+Time: 2026-11-25T15:48:41Z
+Command: cd client; npx vitest run
+
+
+ RUN  v4.0.18 <repo>/client
+
+ ✓ tests/sprint-1/Registrations.test.tsx (5 tests) 598ms
+     ✓ shows event title, seat counts chip, and table with players in order with Bangkok time and status  396ms
+ ✓ tests/sprint-1/SignInPage.test.tsx (8 tests) 751ms
+ ✓ tests/sprint-1/EventDetail.test.tsx (3 tests) 491ms
+ ✓ tests/lab6/TitleOverflow.test.tsx (2 tests) 413ms
+ ✓ tests/lab6/SessionEnded.test.tsx (4 tests) 717ms
+     ✓ REGISTER answered with 401 on /events/26: shows the session-ended message on /login?returnTo=%2Fevents%2F26  471ms
+ ✓ tests/sprint-1/AppRoutes.test.tsx (5 tests) 439ms
+ ✓ tests/sprint-1/MyEvents.test.tsx (3 tests) 585ms
+     ✓ shows each registration as a card in the order E-10 gives, with a REGISTERED chip, linking to its event  402ms
+ ✓ tests/sprint-1/CreateEvent.test.tsx (4 tests) 1030ms
+     ✓ renders all required form controls in order with character counter  353ms
+     ✓ shows Publishing… with aria-busy while submitting and navigates to detail with toast on success  400ms
+ ✓ tests/sprint-1/Dashboard.test.tsx (3 tests) 661ms
+     ✓ shows each owned event in start order with title, date, status, seat count, and links to Registrations and View  469ms
+ ✓ tests/sprint-1/AppShell.test.tsx (7 tests) 851ms
+ ✓ tests/sprint-2/Drafts.test.tsx (4 tests) 791ms
+     ✓ shows "Draft — only you can see this event." and PUBLISH EVENT; publishing calls E-14 and says "Your event is live."  394ms
+ ✓ tests/lab6/TabAccountSync.test.tsx (4 tests) 933ms
+     ✓ another tab signed in as Boss: when this tab is shown again the header says Boss and the event reloads for Boss  499ms
+ ✓ tests/sprint-1/Registration.test.tsx (2 tests) 781ms
+     ✓ holds the seat while sending, ignores extra presses, then flips, updates counts and announces  605ms
+ ❯ tests/sprint-2/CreateEvent.draft.test.tsx (4 tests | 2 failed) 1954ms
+     ✓ shows SAVE DRAFT next to PUBLISH EVENT  310ms
+     × SAVE DRAFT posts E-06 with saveAsDraft: true and lands on its edit page with "Draft saved. Only you can see it." 283ms
+     ✓ PUBLISH EVENT does not send saveAsDraft and still says "Your event is live." 181ms
+     × while a draft is saving, both buttons are disabled and SAVE DRAFT reads "Saving…" 1176ms
+ ✓ tests/sprint-1/unit/api.unit.test.ts (4 tests) 21ms
+ ✓ tests/sprint-1/unit/formatEventTime.unit.test.ts (3 tests) 36ms
+ ✓ tests/lab6/SafeReturnTo.test.tsx (9 tests) 175ms
+ ✓ tests/sprint-1/States.test.tsx (5 tests) 186ms
+stderr | tests/lab5/EventListSubtitle.test.tsx > TEST-L5-08 (E) — the Find an Event page explains what is listed > shows one line under the title about the events and the time zone
+An update to EventList inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to EventList inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ tests/lab5/EventListSubtitle.test.tsx (1 test) 120ms
+ ✓ tests/lab6/SignedInLogin.test.tsx (5 tests) 159ms
+ ✓ tests/sprint-1/RouteGuards.test.tsx (4 tests) 104ms
+ ❯ tests/sprint-1/ActionButton.test.tsx (7 tests | 1 failed) 197ms
+     ✓ renders SIGN IN TO REGISTER as enabled link/button pointing to login with returnTo 115ms
+     ✓ renders REGISTER as an enabled primary button 20ms
+     ✓ renders REGISTERED as disabled with a link to My Events 14ms
+     ✓ renders ORGANIZER_CANNOT_REGISTER without a button and shows the note 4ms
+     × renders MANAGE as MANAGE EVENT linking to the edit page 13ms
+     ✓ renders FULL as a disabled button 18ms
+     ✓ renders CLOSED as a disabled REGISTRATION CLOSED button 10ms
+ ✓ tests/sprint-1/EventList.test.tsx (1 test) 116ms
+ ✓ tests/lab5/BuildFooter.test.tsx (2 tests) 134ms
+ ❯ tests/sprint-2/EditEvent.test.tsx (10 tests | 10 failed) 9327ms
+     × fills the form with the current values; SAVE CHANGES is disabled until a change; the capacity hint names the count 1051ms
+     × PATCH carries the changed title only; "Changes saved." is shown and the button is disabled again 1018ms
+     × a new start is sent as Bangkok time with its offset, and nothing else 1025ms
+     × a 409 shows the server's message above the form and keeps the input 1014ms
+     × shows the started note; title, venue, times and capacity are read-only; only the description is sent 1016ms
+     × lists the history newest first in Bangkok time 1008ms
+     × asks "Leave without saving?" before following a link with unsaved changes, and stays when told to 1015ms
+     × follows a link straight away when nothing has changed 1012ms
+     × shows the toast it was sent with, the draft banner, and publishes with E-14 1013ms
+     × every event except a cancelled one has Edit, opening /organizer/events/:id/edit 150ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 13 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/sprint-1/ActionButton.test.tsx > TEST-F-02 (C) — ActionButton states (AC-F-02, FR-12) > renders MANAGE as MANAGE EVENT linking to the edit page
+Error: expect(element).toHaveAttribute("href", "/organizer/events/1/edit") // element.getAttribute("href") === "/organizer/events/1/edit"
+
+Expected the element to have attribute:
+  href="/organizer/events/1/edit"
+Received:
+  href="/organizer/events/1/registrations"
+ ❯ tests/sprint-1/ActionButton.test.tsx:48:17
+     46|     const btn = screen.getByRole('link', { name: /MANAGE EVENT/i })
+     47|     expect(btn).toBeInTheDocument()
+     48|     expect(btn).toHaveAttribute('href', '/organizer/events/1/edit')
+       |                 ^
+     49|   })
+     50| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/13]⎯
+
+ FAIL  tests/sprint-2/CreateEvent.draft.test.tsx > TEST-K-01 (C) SAVE DRAFT on the create page (AC-K-01, UX-05) > SAVE DRAFT posts E-06 with saveAsDraft: true and lands on its edit page with "Draft saved. Only you can see it."
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  /organizer/events/42/edit
+Received:
+  /events/42
+ ❯ tests/sprint-2/CreateEvent.draft.test.tsx:48:47
+     46|     fireEvent.click(screen.getByRole('button', { name: 'SAVE DRAFT' }))
+     47| 
+     48|     expect(await screen.findByTestId('path')).toHaveTextContent('/orga…
+       |                                               ^
+     49|     expect(screen.getByTestId('toast')).toHaveTextContent('Draft saved…
+     50|     expect(spy.mock.calls[0][0]).toBe('/api/events')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/13]⎯
+
+ FAIL  tests/sprint-2/CreateEvent.draft.test.tsx > TEST-K-01 (C) SAVE DRAFT on the create page (AC-K-01, UX-05) > while a draft is saving, both buttons are disabled and SAVE DRAFT reads "Saving…"
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  /organizer/events/44/edit
+Received:
+  /events/44
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div>
+      <div
+        data-testid="path"
+      >
+        /events/44
+      </div>
+      <div
+        data-testid="toast"
+      >
+        Draft saved. Only you can see it.
+      </div>
+    </div>
+  </body>
+</html>
+ ❯ tests/sprint-2/CreateEvent.draft.test.tsx:72:60
+     70|     expect(screen.getByRole('button', { name: /PUBLISH EVENT/ })).toBe…
+     71|     resolve(json(201, { id: 44, status: 'DRAFT' }))
+     72|     await waitFor(() => expect(screen.getByTestId('path')).toHaveTextC…
+       |                                                            ^
+     73|   })
+     74| })
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/13]⎯
+
+ FAIL  tests/sprint-2/EditEvent.test.tsx > TEST-L-01 (C) the edit page sends only what changed (AC-L-01, UX-06, UX-07) > fills the form with the current values; SAVE CHANGES is disabled until a change; the capacity hint names the count
+TestingLibraryElementError: Unable to find an element with the display value: Friday Night Constructed.
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/sprint-2/EditEvent.test.tsx:79:25
+     77|     stubApi(EVENT)
+     78|     renderEdit()
+     79|     expect(await screen.findByDisplayValue('Friday Night Constructed')…
+       |                         ^
+     80|     expect(screen.getByLabelText(/Start Date & Time/)).toHaveValue('20…
+     81|     expect(screen.getByLabelText(/Capacity/)).toHaveValue(24)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/13]⎯
+
+ FAIL  tests/sprint-2/EditEvent.test.tsx > TEST-L-01 (C) the edit page sends only what changed (AC-L-01, UX-06, UX-07) > PATCH carries the changed title only; "Changes saved." is shown and the button is disabled again
+TestingLibraryElementError: Unable to find a label with the text of: /Title/
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/sprint-2/EditEvent.test.tsx:89:35
+     87|     const calls = stubApi(EVENT)
+     88|     renderEdit()
+     89|     fireEvent.change(await screen.findByLabelText(/Title/), { target: …
+       |                                   ^
+     90|     expect(saveButton()).toBeEnabled()
+     91|     fireEvent.click(saveButton())
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/13]⎯
+
+ FAIL  tests/sprint-2/EditEvent.test.tsx > TEST-L-01 (C) the edit page sends only what changed (AC-L-01, UX-06, UX-07) > a new start is sent as Bangkok time with its offset, and nothing else
+TestingLibraryElementError: Unable to find a label with the text of: /Start Date & Time/
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/sprint-2/EditEvent.test.tsx:102:35
+    100|     const calls = stubApi(EVENT)
+    101|     renderEdit()
+    102|     fireEvent.change(await screen.findByLabelText(/Start Date & Time/)…
+       |                                   ^
+    103|     fireEvent.click(saveButton())
+    104|     await screen.findByText('Changes saved.')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/13]⎯
+
+ FAIL  tests/sprint-2/EditEvent.test.tsx > TEST-L-01 (C) the edit page sends only what changed (AC-L-01, UX-06, UX-07) > a 409 shows the server's message above the form and keeps the input
+TestingLibraryElementError: Unable to find a label with the text of: /Capacity/
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/sprint-2/EditEvent.test.tsx:119:35
+    117|     )
+    118|     renderEdit()
+    119|     fireEvent.change(await screen.findByLabelText(/Capacity/), { targe…
+       |                                   ^
+    120|     fireEvent.click(saveButton())
+    121| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/13]⎯
+
+ FAIL  tests/sprint-2/EditEvent.test.tsx > TEST-L-05 (C) a started event: frozen fields are read-only with a note (AC-L-05, UX-08) > shows the started note; title, venue, times and capacity are read-only; only the description is sent
+TestingLibraryElementError: Unable to find an element with the text: This event has started. Only the description, structure, contact and fee can change.. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/sprint-2/EditEvent.test.tsx:131:25
+    129|     const calls = stubApi({ ...EVENT, hasStarted: true })
+    130|     renderEdit()
+    131|     expect(await screen.findByText('This event has started. Only the d…
+       |                         ^
+    132|     for (const name of [/Title/, /Venue Name/, /Start Date & Time/, /E…
+    133|       expect(screen.getByLabelText(name)).toHaveAttribute('readonly')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/13]⎯
+
+ FAIL  tests/sprint-2/EditEvent.test.tsx > UX-09 and UX-14 (C) the leave guard and the History panel (SR-08, AC-SR8-01) > lists the history newest first in Bangkok time
+TestingLibraryElementError: Unable to find role="region" and name "History"
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/sprint-2/EditEvent.test.tsx:148:34
+    146|     stubApi(EVENT)
+    147|     renderEdit()
+    148|     const history = await screen.findByRole('region', { name: 'History…
+       |                                  ^
+    149|     expect(await within(history).findAllByRole('listitem')).toHaveLeng…
+    150|     expect(within(history).getAllByRole('listitem').map((li) => li.tex…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/13]⎯
+
+ FAIL  tests/sprint-2/EditEvent.test.tsx > UX-09 and UX-14 (C) the leave guard and the History panel (SR-08, AC-SR8-01) > asks "Leave without saving?" before following a link with unsaved changes, and stays when told to
+TestingLibraryElementError: Unable to find a label with the text of: /Title/
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/sprint-2/EditEvent.test.tsx:160:35
+    158|     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false)
+    159|     renderEdit()
+    160|     fireEvent.change(await screen.findByLabelText(/Title/), { target: …
+       |                                   ^
+    161|     fireEvent.click(screen.getByRole('link', { name: 'Registrations' }…
+    162| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/13]⎯
+
+ FAIL  tests/sprint-2/EditEvent.test.tsx > UX-09 and UX-14 (C) the leave guard and the History panel (SR-08, AC-SR8-01) > follows a link straight away when nothing has changed
+TestingLibraryElementError: Unable to find an element with the display value: Friday Night Constructed.
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/sprint-2/EditEvent.test.tsx:172:18
+    170|     const confirm = vi.spyOn(window, 'confirm')
+    171|     renderEdit()
+    172|     await screen.findByDisplayValue('Friday Night Constructed')
+       |                  ^
+    173|     fireEvent.click(screen.getByRole('link', { name: 'Registrations' }…
+    174|     expect(await screen.findByText('Registrations page')).toBeInTheDoc…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/13]⎯
+
+ FAIL  tests/sprint-2/EditEvent.test.tsx > TEST-K-01 follow-up (C) a new draft lands here: banner, toast and PUBLISH EVENT (AC-K-01, contracts v0.8) > shows the toast it was sent with, the draft banner, and publishes with E-14
+TestingLibraryElementError: Unable to find an element with the text: Draft saved. Only you can see it.. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/sprint-2/EditEvent.test.tsx:183:25
+    181|     const calls = stubApi({ ...EVENT, status: 'DRAFT' })
+    182|     renderEdit({ toast: 'Draft saved. Only you can see it.' })
+    183|     expect(await screen.findByText('Draft saved. Only you can see it.'…
+       |                         ^
+    184|     expect(screen.getByText('Draft — only you can see this event.')).t…
+    185| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/13]⎯
+
+ FAIL  tests/sprint-2/EditEvent.test.tsx > UX-15 (C) the dashboard Edit link (contracts §2 UI, §3 Behaviour 1) > every event except a cancelled one has Edit, opening /organizer/events/:id/edit
+TestingLibraryElementError: Unable to find an accessible element with the role "link" and name "Edit Published One"
+
+Here are the accessible roles:
+
+  heading:
+
+  Name "Dashboard":
+  <h1 />
+
+  Name "Published One":
+  <h3
+    class="event-card__title"
+  />
+
+  Name "Draft Seven":
+  <h3
+    class="event-card__title"
+  />
+
+  Name "Cancelled Eight":
+  <h3
+    class="event-card__title"
+  />
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  <p
+    class="host"
+  />
+
+  --------------------------------------------------
+  link:
+
+  Name "Create event":
+  <a
+    class="btn-big"
+    data-discover="true"
+    href="/organizer/events/new"
+  />
+
+  Name "Registrations for Published One":
+  <a
+    aria-label="Registrations for Published One"
+    class="btn-soft btn-soft--primary"
+    data-discover="true"
+    href="/organizer/events/1/registrations"
+  />
+
+  Name "View Published One":
+  <a
+    aria-label="View Published One"
+    class="btn-soft"
+    data-discover="true"
+    href="/events/1"
+  />
+
+  Name "View Draft Seven":
+  <a
+    aria-label="View Draft Seven"
+    class="btn-soft"
+    data-discover="true"
+    href="/events/7"
+  />
+
+  Name "Registrations for Cancelled Eight":
+  <a
+    aria-label="Registrations for Cancelled Eight"
+    class="btn-soft btn-soft--primary"
+    data-discover="true"
+    href="/organizer/events/8/registrations"
+  />
+
+  Name "View Cancelled Eight":
+  <a
+    aria-label="View Cancelled Eight"
+    class="btn-soft"
+    data-discover="true"
+    href="/events/8"
+  />
+
+  --------------------------------------------------
+  article:
+
+  Name "":
+  <article
+    class="event-card"
+  />
+
+  Name "":
+  <article
+    class="event-card"
+  />
+
+  Name "":
+  <article
+    class="event-card"
+  />
+
+  --------------------------------------------------
+  button:
+
+  Name "Publish Draft Seven":
+  <button
+    aria-busy="false"
+    aria-label="Publish Draft Seven"
+    class="btn-soft btn-soft--primary"
+    type="button"
+  />
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="ptop"
+    >
+      <div
+        class="ptop__row"
+      >
+        <div>
+          <h1>
+            Dashboard
+          </h1>
+          <p
+            class="host"
+          >
+            Your events, earliest first, with live seat counts.
+          </p>
+        </div>
+        <a
+          class="btn-big"
+          data-discover="true"
+          href="/organizer/events/new"
+        >
+          <svg
+            aria-hidden="true"
+            class="i"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M12 5v14M5 12h14"
+            />
+          </svg>
+          Create event
+        </a>
+      </div>
+    </div>
+    <div
+      class="pbody"
+    >
+      <div
+        class="stack"
+      >
+        <article
+          class="event-card"
+        >
+          <div
+            aria-hidden="true"
+            class="date-badge"
+          >
+            <span
+              class="date-badge__month"
+            >
+              MAR
+            </span>
+            <span
+              class="date-badge__day"
+            >
+              10
+            </span>
+          </div>
+          <div>
+            <div
+              class="event-card__when"
+            >
+              Sun 10 Mar 2030 · 17:00
+            </div>
+            <h3
+              class="event-card__title"
+            >
+              Published One
+            </h3>
+            <div
+              class="event-card__sub"
+            >
+              Casual
+               · 
+              Constructed
+            </div>
+            <div
+              class="event-card__venue"
+            >
+              Quantum Cards
+               · 
+              Bangkok
+            </div>
+          </div>
+          <div
+            class="event-card__aside"
+          >
+            <div
+              class="chips"
+            >
+              <span
+                class="chip chip--muted"
+              >
+                Published
+              </span>
+              <span
+                class="chip chip--seats"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="i i--sm"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    cx="9"
+                    cy="8.5"
+                    r="3.2"
+                  />
+                  <path
+                    d="M3.5 19.5a5.5 5.5 0 0 1 11 0M15.5 5.6a3.2 3.2 0 0 1 0 5.8M17.5 14.3a5.5 5.5 0 0 1 3 5.2"
+                  />
+                </svg>
+                0 / 24
+              </span>
+            </div>
+            <span
+              class="event-card__note tabular-nums"
+            >
+              24 seats left
+            </span>
+            <div
+              class="event-card__actions"
+            >
+              <a
+                aria-label="Registrations for Published One"
+                class="btn-soft btn-soft--primary"
+                data-discover="true"
+                href="/organizer/events/1/registrations"
+              >
+                Registrations
+              </a>
+              <a
+                aria-label="View Published One"
+                class="btn-soft"
+                data-discover="true"
+                href="/events/1"
+              >
+                View
+              </a>
+            </div>
+          </div>
+        </article>
+        <article
+          class="event-card"
+        >
+          <div
+            aria-hidden="true"
+            class="date-badge"
+          >
+            <span
+              class="date-badge__month"
+            >
+              MAR
+            </span>
+            <span
+              class="date-badge__day"
+            >
+              10
+            </span>
+          </div>
+          <div>
+            <div
+              class="event-card__when"
+            >
+              Sun 10 Mar 2030 · 17:00
+            </div>
+            <h3
+              class="event-card__title"
+            >
+              Draft Seven
+            </h3>
+            <div
+              class="event-card__sub"
+            >
+              Casual
+               · 
+              Constructed
+            </div>
+            <div
+              class="event-card__venue"
+            >
+              Quantum Cards
+               · 
+              Bangkok
+            </div>
+          </div>
+          <div
+            class="event-card__aside"
+          >
+            <div
+              class="chips"
+            >
+              <span
+                class="chip chip--muted"
+              >
+                Draft
+              </span>
+              <span
+                class="chip chip--seats"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="i i--sm"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    cx="9"
+                    cy="8.5"
+                    r="3.2"
+                  />
+                  <path
+                    d="M3.5 19.5a5.5 5.5 0 0 1 11 0M15.5 5.6a3.2 3.2 0 0 1 0 5.8M17.5 14.3a5.5 5.5 0 0 1 3 5.2"
+                  />
+                </svg>
+                0 / 24
+              </span>
+            </div>
+            <span
+              class="event-card__note tabular-nums"
+            >
+              24 seats left
+            </span>
+            <div
+              class="event-card__actions"
+            >
+              <button
+                aria-busy="false"
+                aria-label="Publish Draft Seven"
+                class="btn-soft btn-soft--primary"
+                type="button"
+              >
+                Publish
+              </button>
+              <a
+                aria-label="View Draft Seven"
+                class="btn-soft"
+                data-discover="true"
+                href="/events/7"
+              >
+                View
+              </a>
+            </div>
+          </div>
+        </article>
+        <article
+          class="event-card"
+        >
+          <div
+            aria-hidden="true"
+            class="date-badge"
+          >
+            <span
+              class="date-badge__month"
+            >
+              MAR
+            </span>
+            <span
+              class="date-badge__day"
+            >
+              10
+            </span>
+          </div>
+          <div>
+            <div
+              class="event-card__when"
+            >
+              Sun 10 Mar 2030 · 17:00
+            </div>
+            <h3
+              class="event-card__title"
+            >
+              Cancelled Eight
+            </h3>
+            <div
+              class="event-card__sub"
+            >
+              Casual
+               · 
+              Constructed
+            </div>
+            <div
+              class="event-card__venue"
+            >
+              Quantum Cards
+               · 
+              Bangkok
+            </div>
+          </div>
+          <div
+            class="event-card__aside"
+          >
+            <div
+              class="chips"
+            >
+              <span
+                class="chip chip--muted"
+              >
+                Cancelled
+              </span>
+              <span
+                class="chip chip--seats"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="i i--sm"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    cx="9"
+                    cy="8.5"
+                    r="3.2"
+                  />
+                  <path
+                    d="M3.5 19.5a5.5 5.5 0 0 1 11 0M15.5 5.6a3.2 3.2 0 0 1 0 5.8M17.5 14.3a5.5 5.5 0 0 1 3 5.2"
+                  />
+                </svg>
+                0 / 24
+              </span>
+            </div>
+            <span
+              class="event-card__note tabular-nums"
+            >
+              24 seats left
+            </span>
+            <div
+              class="event-card__actions"
+            >
+              <a
+                aria-label="Registrations for Cancelled Eight"
+                class="btn-soft btn-soft--primary"
+                data-discover="true"
+                href="/organizer/events/8/registrations"
+              >
+                Registrations
+              </a>
+              <a
+                aria-label="View Cancelled Eight"
+                class="btn-soft"
+                data-discover="true"
+                href="/events/8"
+              >
+                View
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</body>
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/sprint-2/EditEvent.test.tsx:209:19
+    207|     )
+    208|     await screen.findByText('Published One')
+    209|     expect(screen.getByRole('link', { name: 'Edit Published One' })).t…
+       |                   ^
+    210|     expect(screen.getByRole('link', { name: 'Edit Draft Seven' })).toH…
+    211|     expect(screen.queryByRole('link', { name: 'Edit Cancelled Eight' }…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/13]⎯
+
+
+ Test Files  3 failed | 22 passed (25)
+      Tests  13 failed | 96 passed (109)
+   Start at  22:48:43
+   Duration  14.88s (transform 2.44s, setup 18.85s, import 17.52s, tests 21.57s, environment 72.18s)
+

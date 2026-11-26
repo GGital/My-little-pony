@@ -1,0 +1,34 @@
+Sprint 2 · S2-04 (Issue #81) · TEST-L-03 mutation check (Sprint 2 STS §1.4)
+Code: the implementation later committed as 9f71b81, with `FOR UPDATE` removed from the lock in updateEvent()
+      (src/domain/event-lifecycle.ts); the change was never committed and was reverted straight after this run
+Time: 2026-11-25T15:58Z
+Command: cd server; npx vitest run tests/sprint-2/lifecycle.concurrency.api.test.ts
+Result: FAILED in round 1 (10 active registrations on an event whose capacity was cut to 8), so the lock is what
+        keeps TEST-L-03 green. With the lock (9f71b81) the same test passes 20 / 20 rounds (S2-04-green-server.txt).
+
+
+ RUN  v4.0.18 <repo>/server
+
+ ❯ tests/sprint-2/lifecycle.concurrency.api.test.ts (1 test | 1 failed) 818ms
+     × 20 rounds: active ≤ capacity, and the outcome is one of the two allowed ones 132ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/sprint-2/lifecycle.concurrency.api.test.ts > TEST-L-03 — a capacity cut and registrations racing for the last seats (AC-L-03, BR-09, NFR-05) > 20 rounds: active ≤ capacity, and the outcome is one of the two allowed ones
+AssertionError: round 1: expected 10 to be less than or equal to 8
+ ❯ tests/sprint-2/lifecycle.concurrency.api.test.ts:59:40
+     57|       const active = await prisma.registration.count({ where: { eventI…
+     58| 
+     59|       expect(active, `round ${round}`).toBeLessThanOrEqual(stored.capa…
+       |                                        ^
+     60|       expect(active, `round ${round}`).toBe(8 + won)
+     61|       if (cut.status === 200) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  22:58:59
+   Duration  2.04s (transform 292ms, setup 0ms, import 952ms, tests 818ms, environment 0ms)
+

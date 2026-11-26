@@ -9,6 +9,7 @@ import { EventList } from '../pages/EventList';
 import { EventDetail } from '../pages/EventDetail';
 import { MyEvents } from '../pages/MyEvents';
 import { CreateEvent } from '../pages/organizer/CreateEvent';
+import { EditEvent } from '../pages/organizer/EditEvent';
 import { Dashboard as OrganizerDashboard } from '../pages/organizer/Dashboard';
 import { Registrations } from '../pages/organizer/Registrations';
 
@@ -47,6 +48,14 @@ export const AppRoutes: React.FC = () => {
           element={
             <RequireRole role="ORGANIZER">
               <CreateEvent />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/organizer/events/:id/edit"
+          element={
+            <RequireRole role="ORGANIZER">
+              <EditEvent />
             </RequireRole>
           }
         />

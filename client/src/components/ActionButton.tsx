@@ -68,7 +68,8 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
 
     case 'MANAGE':
       return (
-        <Link to={`/organizer/events/${eventId}/registrations`} className={cls(' btn-big--outline')}>
+        // Sprint 2 (contracts §0.2, §3): MANAGE opens the edit page, which links to the registrations.
+        <Link to={`/organizer/events/${eventId}/edit`} className={cls(' btn-big--outline')}>
           MANAGE EVENT
         </Link>
       )

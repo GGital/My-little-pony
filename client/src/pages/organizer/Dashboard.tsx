@@ -122,6 +122,11 @@ export const Dashboard: React.FC = () => {
                           Registrations
                         </Link>
                       )}
+                      {event.status !== 'CANCELLED' && (
+                        <Link to={`/organizer/events/${event.id}/edit`} className="btn-soft" aria-label={`Edit ${event.title}`}>
+                          Edit
+                        </Link>
+                      )}
                       <Link to={`/events/${event.id}`} className="btn-soft" aria-label={`View ${event.title}`}>
                         View
                       </Link>

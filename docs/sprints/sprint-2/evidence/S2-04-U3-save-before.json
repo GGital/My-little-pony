@@ -1,0 +1,14 @@
+{
+  "id": "S2-04-U3-save",
+  "side": "before",
+  "action": "Quantum Cards edits EV-1: title \"Friday Night Modern\" → SAVE CHANGES; then capacity 2 → SAVE CHANGES",
+  "expected": "After: \"Changes saved.\" and a History line \"changed title\"; then the alert \"3 players are registered, so capacity can't go below 3.\" with 2 kept in the field",
+  "actual": {
+    "hasForm": false,
+    "saved": null,
+    "refused": null
+  },
+  "time": "2026-11-25T15:50:08.636Z",
+  "commit": "0906f89",
+  "screenshot": "S2-04-U3-capacity-refused-before.png"
+}

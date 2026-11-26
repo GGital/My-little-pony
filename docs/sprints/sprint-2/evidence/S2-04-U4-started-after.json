@@ -1,0 +1,23 @@
+{
+  "id": "S2-04-U4-started",
+  "side": "after",
+  "action": "Dragon's Den opens /organizer/events/4/edit (EV-4 started 1 h before the seed)",
+  "expected": "After: the note \"This event has started. Only the description, structure, contact and fee can change.\" and the frozen fields read-only",
+  "actual": {
+    "notes": [
+      "This event has started. Only the description, structure, contact and fee can change."
+    ],
+    "readOnly": [
+      "title",
+      "venueName",
+      "venueAddress",
+      "city",
+      "startAt",
+      "endAt",
+      "capacity"
+    ]
+  },
+  "time": "2026-11-25T16:08:04.138Z",
+  "commit": "b5cf763",
+  "screenshot": "S2-04-U4-started-after.png"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "S2-04-U1-edit-page",
+  "side": "before",
+  "action": "Quantum Cards: MANAGE EVENT on /events/1, then /organizer/events/1/edit",
+  "expected": "After: MANAGE EVENT opens /organizer/events/1/edit; the form holds EV-1, the capacity hint says \"At least 3\", the History panel lists the creation",
+  "actual": {
+    "manageHref": "/organizer/events/1/registrations",
+    "heading": "We couldn't find that page",
+    "hint": [],
+    "history": []
+  },
+  "time": "2026-11-25T15:50:00.967Z",
+  "commit": "0906f89",
+  "screenshot": "S2-04-U1-edit-page-before.png"
+}
