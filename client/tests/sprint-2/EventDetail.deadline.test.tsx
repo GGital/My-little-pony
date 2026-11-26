@@ -112,3 +112,26 @@ describe('TEST-M-01 (C) the create and edit forms send a deadline only when one 
     expect(Object.keys(calls.find((c) => c.method === 'PATCH')!.body!)).toEqual(['startAt', 'endAt'])
   })
 })
+
+// Review of #111 (Praewa): the same instant written two ways, the hidden line, and the frozen field after the start.
+describe('Review of #111 (C) deadline edge cases (AC-M-01, AC-M-02, BR-15)', () => {
+  it('edit: a deadline equal to the start but written with +07:00 still shows as the default (empty)', async () => {
+    stubApi({ ...EVENT, registrationDeadline: '2026-11-07T17:00:00.000+07:00', viewer: { action: 'MANAGE', registrationId: null } })
+    renderAt('/organizer/events/9/edit', <EditEvent />, '/organizer/events/:id/edit')
+    expect(await screen.findByLabelText(/Registration closes/)).toHaveValue('')
+  })
+
+  it('the event page shows no "Registration closes" line when the response has no deadline', async () => {
+    const { registrationDeadline: _omit, ...withoutDeadline } = EVENT
+    stubApi(withoutDeadline as EventDetailType)
+    renderAt('/events/9', <EventDetail />, '/events/:id')
+    expect(await screen.findByRole('heading', { name: 'Early Deadline Sealed' })).toBeInTheDocument()
+    expect(screen.queryByText(/Registration closes/)).not.toBeInTheDocument()
+  })
+
+  it('edit: once the event has started, the deadline field is read-only with the other frozen fields', async () => {
+    stubApi({ ...EVENT, hasStarted: true, viewer: { action: 'MANAGE', registrationId: null } })
+    renderAt('/organizer/events/9/edit', <EditEvent />, '/organizer/events/:id/edit')
+    expect(await screen.findByLabelText(/Registration closes/)).toHaveAttribute('readonly')
+  })
+})

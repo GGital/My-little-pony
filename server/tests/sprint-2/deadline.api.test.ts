@@ -160,3 +160,18 @@ describe('TEST-M-03 (I) registration closes at the deadline (AC-M-03, BR-08, BR-
     expect(list.body.items.map((e: { id: number }) => e.id)).toContain(ids[1])
   })
 })
+
+describe('Review of #111 (I) the deadline is frozen once the event has started (BR-15, contracts §4)', () => {
+  it('E-13 with a registrationDeadline on a started event is 409 EVENT_STARTED naming registrationDeadline; nothing changes', async () => {
+    setNow(T)
+    const event = (await create(2 * HOUR, { registrationDeadline: iso(HOUR) })).body
+    setNow(at(3 * HOUR)) // the event started an hour ago
+    const before = await prisma.event.findUniqueOrThrow({ where: { id: event.id } })
+    const res = await patch(event.id, { registrationDeadline: null })
+    expect([res.status, res.body.error.code, res.body.error.details?.map((d: { field: string }) => d.field)]).toEqual([
+      409, 'EVENT_STARTED', ['registrationDeadline'],
+    ])
+    expect(await prisma.event.findUniqueOrThrow({ where: { id: event.id } })).toEqual(before)
+    setNow(T)
+  })
+})
