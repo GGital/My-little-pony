@@ -4,6 +4,7 @@ import { ApiError } from '../../api/errors'
 import type { ApiErrorDetail, Game, StoreContact } from '../../api/types'
 import { ErrorState } from '../../components/ErrorState'
 import { FormFieldError, fieldErrorProps } from '../../components/FormFieldError'
+import { Icon } from '../../components/Icon'
 import { Loading } from '../../components/Loading'
 import { Notice } from '../../components/Notice'
 import { PageTop } from '../../components/PageTop'
@@ -115,11 +116,12 @@ export const StoreProfile: React.FC = () => {
                 <button
                   key={g}
                   type="button"
-                  className={games.includes(g) ? 'chip chip--game store-profile__chip is-on' : 'chip store-profile__chip'}
+                  className={games.includes(g) ? 'chip store-profile__chip is-on' : 'chip store-profile__chip'}
                   aria-pressed={games.includes(g)}
                   onClick={() => toggle(g)}
                   disabled={busy}
                 >
+                  {games.includes(g) && <Icon name="check" size="sm" />}
                   {GAME_LABELS[g]}
                 </button>
               ))}

@@ -60,8 +60,8 @@ describe('CreateEvent page (contracts §7 UI, Feature-D)', () => {
   })
 
   it('displays validation errors from server 400 details under matching fields', async () => {
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      json(400, {
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async (url) =>
+      String(url).includes('/api/organizer/store') ? json(200, { games: [] }) : json(400, {
         error: {
           code: 'VALIDATION_FAILED',
           message: 'Invalid input.',
@@ -91,7 +91,7 @@ describe('CreateEvent page (contracts §7 UI, Feature-D)', () => {
       resolvePost = resolve
     })
 
-    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(() => pendingPromise)
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation((url) => (String(url).includes('/api/organizer/store') ? Promise.resolve(json(200, { games: [] })) : pendingPromise))
 
     renderCreateEvent()
 
@@ -135,7 +135,7 @@ describe('CreateEvent page (contracts §7 UI, Feature-D)', () => {
     )
 
     // S2: Times must be sent with +07:00 Bangkok offset, not UTC 'Z'
-    const sentBody = JSON.parse(fetchSpy.mock.calls[0][1]?.body as string)
+    const sentBody = JSON.parse(fetchSpy.mock.calls.find((c) => c[0] === '/api/events')![1]?.body as string)
     expect(sentBody).toMatchObject({
       title: 'Epic Saturday Sealed',
       startAt: '2026-11-07T10:00:00.000+07:00',

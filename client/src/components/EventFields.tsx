@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { api } from '../api/client'
 import type { ApiErrorDetail, Game } from '../api/types'
 import { label } from '../utils/eventDisplay'
 import { GAME_LABELS, GAME_VALUES } from '../utils/games'
@@ -23,6 +24,22 @@ export type EventFormValues = {
   description: string
   /** Feature-U: empty until chosen; the UI requires one (the API defaults to OTHER). */
   game: Game | ''
+}
+
+/** The signed-in store's own games (E-23), so the Game select can list them first. Any failure: no groups. */
+function useStoreGames(): Game[] {
+  const [games, setGames] = useState<Game[]>([])
+  useEffect(() => {
+    let current = true
+    api
+      .get<{ games?: Game[] }>('/api/organizer/store')
+      .then((s) => current && setGames(Array.isArray(s?.games) ? s.games : []))
+      .catch(() => undefined)
+    return () => {
+      current = false
+    }
+  }, [])
+  return games
 }
 
 export const EMPTY_EVENT_FORM: EventFormValues = {
@@ -61,6 +78,13 @@ type Props = {
  * field errors under each one. The parent owns the values and sends them.
  */
 export const EventFields: React.FC<Props> = ({ values, onChange, details, disabled, readOnly, startHint, capacityNote }) => {
+  const storeGames = useStoreGames()
+  const otherGames = GAME_VALUES.filter((g) => !storeGames.includes(g))
+  const gameOption = (g: Game) => (
+    <option key={g} value={g}>
+      {GAME_LABELS[g]}
+    </option>
+  )
   type TextKey = Exclude<keyof EventFormValues, 'type' | 'format' | 'description'>
   const field = (o: { id: TextKey; label: string; required?: boolean; hint?: string; type?: string; placeholder?: string; maxLength?: number }) => {
     const { id, label: text, required, hint, type = 'text', placeholder, maxLength } = o
@@ -137,11 +161,14 @@ export const EventFields: React.FC<Props> = ({ values, onChange, details, disabl
             {...fieldErrorProps('game', details)}
           >
             <option value="">Choose a game</option>
-            {GAME_VALUES.map((g) => (
-              <option key={g} value={g}>
-                {GAME_LABELS[g]}
-              </option>
-            ))}
+            {storeGames.length > 0 ? (
+              <>
+                <optgroup label="Your games">{GAME_VALUES.filter((g) => storeGames.includes(g)).map(gameOption)}</optgroup>
+                {otherGames.length > 0 && <optgroup label="Other games">{otherGames.map(gameOption)}</optgroup>}
+              </>
+            ) : (
+              GAME_VALUES.map(gameOption)
+            )}
           </select>
           <FormFieldError field="game" details={details} />
         </div>

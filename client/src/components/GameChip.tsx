@@ -1,6 +1,11 @@
 import React from 'react'
 import { gameLabel } from '../utils/games'
-import './GameChip.css'
+import { Icon } from './Icon'
 
-/** A teal chip naming the game, shown on every card and on the event page (Feature-U, UX-16). */
-export const GameChip: React.FC<{ game: string }> = ({ game }) => <span className="chip chip--game">{gameLabel(game)}</span>
+/** A neutral chip (white, with a card icon) naming the game. Teal stays for seats and "registered" (UX-16, D-41). */
+export const GameChip: React.FC<{ game: string }> = ({ game }) => (
+  <span className="chip chip--game">
+    <Icon name="card" size="sm" />
+    {gameLabel(game)}
+  </span>
+)
