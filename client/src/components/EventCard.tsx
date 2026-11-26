@@ -35,10 +35,12 @@ export interface EventCardProps {
   to?: string
   /** Right-hand column; the fee and seats chips by default. */
   aside?: React.ReactNode
+  /** Search results only (Feature-J): dims a past or cancelled event and names why. */
+  endedChip?: 'Past' | 'Cancelled'
 }
 
 /** One event in a list: date badge, weekday · time, title, type · format, venue · city, chips. */
-export const EventCard: React.FC<EventCardProps> = ({ event, to, aside }) => {
+export const EventCard: React.FC<EventCardProps> = ({ event, to, aside, endedChip }) => {
   const badge = dateBadge(event.startAt)
   const body = (
     <>
@@ -47,7 +49,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event, to, aside }) => {
         <span className="date-badge__day">{badge.day}</span>
       </div>
       <div>
-        <div className="event-card__when">{formatEventTime(event.startAt)}</div>
+        <div className="event-card__when">
+          {formatEventTime(event.startAt)}
+          {endedChip && <span className="chip chip--muted">{endedChip}</span>}
+        </div>
         <h3 className="event-card__title">{event.title}</h3>
         <div className="event-card__sub">
           {label(event.type)} · {label(event.format)}
@@ -60,10 +65,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event, to, aside }) => {
     </>
   )
   return to ? (
-    <Link to={to} className="event-card">
+    <Link to={to} className={endedChip ? 'event-card event-card--ended' : 'event-card'}>
       {body}
     </Link>
   ) : (
-    <article className="event-card">{body}</article>
+    <article className={endedChip ? 'event-card event-card--ended' : 'event-card'}>{body}</article>
   )
 }

@@ -3,7 +3,8 @@ import type { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 import type { Config } from '../config.js'
 import { createEvent, createEventInputSchema, EventTimeError } from '../domain/events.create.js'
-import { getEventDetail, listUpcomingEvents } from '../domain/events.read.js'
+import { getEventDetail, searchEvents } from '../domain/events.read.js'
+import { searchQuerySchema } from '../domain/search-query.js'
 import { register } from '../domain/registrations.js'
 import { sendError } from './errors.js'
 import { requireAuth, requireRole } from './guards.js'
@@ -16,10 +17,9 @@ const emptyBody = z.object({}).strict()
 export function eventsRouter(prisma: PrismaClient, config: Config): Router {
   const router = express.Router()
 
-  // E-04: GET /api/events (public)
-  router.get('/events', async (_req: Request, res: Response) => {
-    const list = await listUpcomingEvents(prisma)
-    return res.status(200).json(list)
+  // E-04: GET /api/events (public; search, filters and paging, Feature-J contracts §7)
+  router.get('/events', validate({ query: searchQuerySchema }), async (_req: Request, res: Response) => {
+    return res.status(200).json(await searchEvents(prisma, res.locals.query))
   })
 
   // E-05: GET /api/events/:id (public, viewer-aware)

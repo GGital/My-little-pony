@@ -82,6 +82,7 @@ UAT findings from Team 1 KitLoop are Issues #56–#64; the triage is Part 4 of t
 | CH-13 merged into the Sprint 2 line; Sprint 2 contracts v0.6 and STS v0.5 use the 60-minute lead time | [#77](https://github.com/GGital/My-little-pony/issues/77) | `chore/s2-sync-ch13` · (PR to be opened) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (requested when the PR opens) | In progress |
 | S2-01 SR-08 data foundation: migrations `0003`, `0004`, change history, E-17, seed EV-7 … EV-9 | [#78](https://github.com/GGital/My-little-pony/issues/78) | `feature/s2-01-data-foundation` · (PR to be opened) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (requested when the PR opens) | In review: red `7c3ad62`, green `dc987f9` + fixtures `dfa124f` |
 | S2-02 Feature-K: save a draft and publish it (E-06 `saveAsDraft`, E-14, owner-only drafts) | [#79](https://github.com/GGital/My-little-pony/issues/79) | `feature/s2-02-drafts` · (PR to be opened) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (requested when the PR opens) | In review: red `47b3838`, green `40f5687` |
+| S2-03 Feature-J: search, filters and paging (E-04 query and meta, live search bar, filter chips) | [#80](https://github.com/GGital/My-little-pony/issues/80) | `feature/s2-03-search` · [#94](https://github.com/GGital/My-little-pony/pull/94) | MeldyRose (drafted with Claude Code, see `ai-use.md`) | GGital (review on the real database: literal `%` and `_`, TEST-J-05 steps, theme tokens) | In review: red `82b7aa9`, green `2c5e075`, review fixes `18564ab`, `a0a86f3`, `23d5526` |
 
 ## 6. Lab 7: Sprint 1 maintenance (CH-13)
 
@@ -136,3 +137,4 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.30 | 25 Nov 2026 | §5: CH-13 sync row | Team (AI-assisted) |
 | v0.31 | 25 Nov 2026 | §5: S2-01 row | Team (AI-assisted) |
 | v0.33 | 25 Nov 2026 | §5: S2-02 row (v0.32 is the Sprint 3 Issues row on `docs/s3-contracts-d2`) | Team (AI-assisted) |
+| v0.34 | 26 Nov 2026 | §5: S2-03 row (rebased onto #95 and #107) | Team (AI-assisted) |
