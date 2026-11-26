@@ -1,0 +1,172 @@
+Sprint 2 · S2-06 (Issue #83) · GREEN, whole E2E suite (evidence after side: only the S2-06 spec writes, AGENTS.md §5)
+Commit: 3886e35
+Time: 2026-11-26T03:09:55Z
+Command: S2_SIDE=after npx playwright test --reporter=line
+
+[WebServer] Environment variables loaded from .env
+
+
+[WebServer] (node:17064) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[WebServer] (Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 86 tests using 1 worker
+
+[1/86] [chromium] › e2e\sprint-1\auth.spec.ts:7:5 › TEST-A-04 (E2E) — after signing out, Back shows no registration data and asks to sign in (AC-A-04)
+[chromium] › e2e\sprint-1\auth.spec.ts:7:5 › TEST-A-04 (E2E) — after signing out, Back shows no registration data and asks to sign in (AC-A-04)
+(node:22376) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[2/86] [chromium] › e2e\sprint-1\contact-overflow.spec.ts:38:9 › TEST-L6-59 (E2E) — a 120-character contact stays inside the event page (AC-F-02, NFR-08) › /events/:id at 390px as the owner: contact wraps, Seats and Your event stay inside the panel
+[3/86] [chromium] › e2e\sprint-1\contact-overflow.spec.ts:38:9 › TEST-L6-59 (E2E) — a 120-character contact stays inside the event page (AC-F-02, NFR-08) › /events/:id at 768px as the owner: contact wraps, Seats and Your event stay inside the panel
+[4/86] [chromium] › e2e\sprint-1\contact-overflow.spec.ts:38:9 › TEST-L6-59 (E2E) — a 120-character contact stays inside the event page (AC-F-02, NFR-08) › /events/:id at 1440px as the owner: contact wraps, Seats and Your event stay inside the panel
+[5/86] [chromium] › e2e\sprint-1\events.spec.ts:8:5 › TEST-F-01 (E2E) — /events lists EV-1, 9, 2, 3, 5, 6 in start order; EV-3 shows FULL 2 / 2 (AC-F-01)
+[6/86] [chromium] › e2e\sprint-1\events.spec.ts:24:5 › TEST-F-03 (E2E) — /events/999999 shows the not-found page (AC-F-03)
+[7/86] [chromium] › e2e\sprint-1\events.spec.ts:29:5 › TEST-F-04 (E2E) — the started EV-4 shows a disabled REGISTRATION CLOSED (AC-F-04)
+[8/86] [chromium] › e2e\sprint-1\events.spec.ts:36:5 › TEST-C-06 (E2E) — a description with <script> and <b> is shown as text and never runs (AC-C-06)
+[9/86] [chromium] › e2e\sprint-1\journey.spec.ts:7:5 › JRN-01 — publish → register → My Events → registration list (FR-06, FR-15, FR-17, FR-18)
+[10/86] [chromium] › e2e\sprint-1\journey.spec.ts:46:5 › JRN-02 — Nok and Fern press REGISTER on the last seat of EV-2 together (BR-05, BR-07)
+[11/86] [chromium] › e2e\sprint-1\lab7-ch13.spec.ts:67:7 › changed behaviour (CH-13) › TEST-L7-01 (E2E) — a start 30 minutes away is rejected on the start field, nothing published (AC-D-03 v2)
+[chromium] › e2e\sprint-1\lab7-ch13.spec.ts:67:7 › changed behaviour (CH-13) › TEST-L7-01 (E2E) — a start 30 minutes away is rejected on the start field, nothing published (AC-D-03 v2)
+warning: unable to find all commit-graph files
+
+warning: unable to find all commit-graph files
+
+[12/86] [chromium] › e2e\sprint-1\lab7-ch13.spec.ts:82:7 › changed behaviour (CH-13) › TEST-L7-02 (E2E) — a start 62 minutes away is accepted: "Your event is live." (AC-D-03 v2 boundary side)
+[chromium] › e2e\sprint-1\lab7-ch13.spec.ts:82:7 › changed behaviour (CH-13) › TEST-L7-02 (E2E) — a start 62 minutes away is accepted: "Your event is live." (AC-D-03 v2 boundary side)
+warning: unable to find all commit-graph files
+
+[13/86] [chromium] › e2e\sprint-1\lab7-ch13.spec.ts:94:7 › preserved Sprint 1 behaviour › TEST-L7-03 (E2E) — an event longer than 24 hours is still rejected on the end field (BR-02 end rule)
+[chromium] › e2e\sprint-1\lab7-ch13.spec.ts:94:7 › preserved Sprint 1 behaviour › TEST-L7-03 (E2E) — an event longer than 24 hours is still rejected on the end field (BR-02 end rule)
+warning: unable to find all commit-graph files
+
+[14/86] [chromium] › e2e\sprint-1\lab7-ch13.spec.ts:106:7 › preserved Sprint 1 behaviour › TEST-L7-04 (E2E) — a participant still cannot open the create page (BR-13 access)
+[chromium] › e2e\sprint-1\lab7-ch13.spec.ts:106:7 › preserved Sprint 1 behaviour › TEST-L7-04 (E2E) — a participant still cannot open the create page (BR-13 access)
+warning: unable to find all commit-graph files
+
+[15/86] [chromium] › e2e\sprint-1\my-events.spec.ts:8:5 › TEST-H-01 (E2E) — Mint sees four cards, soonest first, that open their events (AC-H-01)
+[16/86] [chromium] › e2e\sprint-1\my-events.spec.ts:24:5 › TEST-H-01 (E2E) — Nok sees the empty state with Find an Event (AC-H-01)
+[17/86] [chromium] › e2e\sprint-1\navigation.spec.ts:8:7 › TEST-C-02 (E2E) — guarded routes (AC-C-02, FR-05) › signed out, /me/registrations goes to the sign-in page with returnTo
+[18/86] [chromium] › e2e\sprint-1\navigation.spec.ts:14:7 › TEST-C-02 (E2E) — guarded routes (AC-C-02, FR-05) › as Mint, /organizer shows "not available" and calls no organizer endpoint
+[19/86] [chromium] › e2e\sprint-1\navigation.spec.ts:27:7 › TEST-C-03 — back to the event after signing in; unsafe returnTo ignored (AC-C-03, FR-26) › SIGN IN TO REGISTER on EV-1, sign in as Nok: back on EV-1 with REGISTER
+[20/86] [chromium] › e2e\sprint-1\navigation.spec.ts:38:9 › TEST-C-03 — back to the event after signing in; unsafe returnTo ignored (AC-C-03, FR-26) › returnTo=https://evil.example lands on /events
+[21/86] [chromium] › e2e\sprint-1\navigation.spec.ts:38:9 › TEST-C-03 — back to the event after signing in; unsafe returnTo ignored (AC-C-03, FR-26) › returnTo=//evil.example lands on /events
+[22/86] [chromium] › e2e\sprint-1\organizer.spec.ts:8:5 › TEST-E-01 (E2E) — /organizer lists exactly Quantum Cards' events in start order (AC-E-01)
+[23/86] [chromium] › e2e\sprint-1\organizer.spec.ts:21:5 › TEST-I-01 (E2E) — EV-1 lists Mint, Ploy, Boss; EV-6 says "No registrations yet." (AC-I-01)
+[24/86] [chromium] › e2e\sprint-1\organizer.spec.ts:37:5 › TEST-D-01 (E2E) — fill the form and publish: the detail page says "Your event is live." (AC-D-01)
+[25/86] [chromium] › e2e\sprint-1\register.spec.ts:7:5 › TEST-G-01 (E2E) — Nok registers for EV-1: "You're in.", REGISTERED, live-region text (AC-G-01)
+[26/86] [chromium] › e2e\sprint-1\register.spec.ts:20:5 › TEST-G-02 (E2E) — the last seat goes while the page is open: red alert, no flip, FULL 4 / 4 (AC-G-02)
+[27/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /events (AC-SR5-01, NFR-08) › 390 px: no horizontal scroll
+[28/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /events (AC-SR5-01, NFR-08) › 768 px: no horizontal scroll
+[29/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /events (AC-SR5-01, NFR-08) › 1440 px: no horizontal scroll
+[30/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /events/1 (AC-SR5-01, NFR-08) › 390 px: no horizontal scroll
+[31/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /events/1 (AC-SR5-01, NFR-08) › 768 px: no horizontal scroll
+[32/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /events/1 (AC-SR5-01, NFR-08) › 1440 px: no horizontal scroll
+[33/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /login (AC-SR5-01, NFR-08) › 390 px: no horizontal scroll
+[34/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /login (AC-SR5-01, NFR-08) › 768 px: no horizontal scroll
+[35/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /login (AC-SR5-01, NFR-08) › 1440 px: no horizontal scroll
+[36/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /me/registrations (AC-SR5-01, NFR-08) › 390 px: no horizontal scroll
+[37/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /me/registrations (AC-SR5-01, NFR-08) › 768 px: no horizontal scroll
+[38/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /me/registrations (AC-SR5-01, NFR-08) › 1440 px: no horizontal scroll
+[39/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /organizer (AC-SR5-01, NFR-08) › 390 px: no horizontal scroll
+[40/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /organizer (AC-SR5-01, NFR-08) › 768 px: no horizontal scroll
+[41/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /organizer (AC-SR5-01, NFR-08) › 1440 px: no horizontal scroll
+[42/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /organizer/events/new (AC-SR5-01, NFR-08) › 390 px: no horizontal scroll
+[43/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /organizer/events/new (AC-SR5-01, NFR-08) › 768 px: no horizontal scroll
+[44/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /organizer/events/new (AC-SR5-01, NFR-08) › 1440 px: no horizontal scroll
+[45/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /organizer/events/1/registrations (AC-SR5-01, NFR-08) › 390 px: no horizontal scroll
+[46/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /organizer/events/1/registrations (AC-SR5-01, NFR-08) › 768 px: no horizontal scroll
+[47/86] [chromium] › e2e\sprint-1\responsive.spec.ts:32:11 › TEST-SR5-01 — /organizer/events/1/registrations (AC-SR5-01, NFR-08) › 1440 px: no horizontal scroll
+[48/86] [chromium] › e2e\sprint-1\title-overflow.spec.ts:38:9 › TEST-L6-56 (E2E) — 100-character title layout and seat info visibility (AC-F-01, AC-F-02, NFR-08) › /events at 390px: no horizontal scroll and card and seat info stay within panel
+[49/86] [chromium] › e2e\sprint-1\title-overflow.spec.ts:70:9 › TEST-L6-56 (E2E) — 100-character title layout and seat info visibility (AC-F-01, AC-F-02, NFR-08) › /events/:id at 390px: no horizontal scroll and title wraps within container
+[50/86] [chromium] › e2e\sprint-1\title-overflow.spec.ts:38:9 › TEST-L6-56 (E2E) — 100-character title layout and seat info visibility (AC-F-01, AC-F-02, NFR-08) › /events at 768px: no horizontal scroll and card and seat info stay within panel
+[51/86] [chromium] › e2e\sprint-1\title-overflow.spec.ts:70:9 › TEST-L6-56 (E2E) — 100-character title layout and seat info visibility (AC-F-01, AC-F-02, NFR-08) › /events/:id at 768px: no horizontal scroll and title wraps within container
+[52/86] [chromium] › e2e\sprint-1\title-overflow.spec.ts:38:9 › TEST-L6-56 (E2E) — 100-character title layout and seat info visibility (AC-F-01, AC-F-02, NFR-08) › /events at 1440px: no horizontal scroll and card and seat info stay within panel
+[53/86] [chromium] › e2e\sprint-1\title-overflow.spec.ts:70:9 › TEST-L6-56 (E2E) — 100-character title layout and seat info visibility (AC-F-01, AC-F-02, NFR-08) › /events/:id at 1440px: no horizontal scroll and title wraps within container
+[54/86] [chromium] › e2e\sprint-2\deadline.spec.ts:9:5 › TEST-M-03 (E2E) — EV-9 as Nok: "Registration closes …" and a disabled REGISTRATION CLOSED (AC-M-03)
+[55/86] [chromium] › e2e\sprint-2\drafts.spec.ts:8:5 › TEST-K-03 (E2E) — dashboard → Publish on EV-7: "Your event is live." and EV-7 is on /events (AC-K-03)
+[56/86] [chromium] › e2e\sprint-2\edit.spec.ts:8:5 › TEST-L-01 (E2E) — dashboard → Edit EV-1, change the title: "Changes saved.", public page and History agree (AC-L-01)
+[57/86] [chromium] › e2e\sprint-2\s2-01-evidence.spec.ts:37:5 › S2-01-U1 /events as a visitor: the published seed events (EV-9 added, EV-7 draft and EV-8 cancelled hidden)
+[chromium] › e2e\sprint-2\s2-01-evidence.spec.ts:37:5 › S2-01-U1 /events as a visitor: the published seed events (EV-9 added, EV-7 draft and EV-8 cancelled hidden)
+warning: unable to find all commit-graph files
+
+[58/86] [chromium] › e2e\sprint-2\s2-01-evidence.spec.ts:42:5 › S2-01-U2 /organizer as Quantum Cards: the draft EV-7 and EV-9 are listed
+[chromium] › e2e\sprint-2\s2-01-evidence.spec.ts:42:5 › S2-01-U2 /organizer as Quantum Cards: the draft EV-7 and EV-9 are listed
+warning: unable to find all commit-graph files
+
+[59/86] [chromium] › e2e\sprint-2\s2-01-evidence.spec.ts:48:5 › S2-01-U3 /me/registrations as Mint: the EV-9 registration is listed
+[chromium] › e2e\sprint-2\s2-01-evidence.spec.ts:48:5 › S2-01-U3 /me/registrations as Mint: the EV-9 registration is listed
+warning: unable to find all commit-graph files
+
+[60/86] [chromium] › e2e\sprint-2\s2-01-evidence.spec.ts:54:5 › S2-01-A1 E-17 change history of EV-1 for the owner, another organizer, a participant and a visitor
+[chromium] › e2e\sprint-2\s2-01-evidence.spec.ts:54:5 › S2-01-A1 E-17 change history of EV-1 for the owner, another organizer, a participant and a visitor
+warning: unable to find all commit-graph files
+
+[61/86] [chromium] › e2e\sprint-2\s2-01-evidence.spec.ts:74:5 › S2-01-A2 creating an event through E-06 writes its first history row, read back with E-17
+[chromium] › e2e\sprint-2\s2-01-evidence.spec.ts:74:5 › S2-01-A2 creating an event through E-06 writes its first history row, read back with E-17
+warning: unable to find all commit-graph files
+
+[62/86] [chromium] › e2e\sprint-2\s2-02-evidence.spec.ts:39:5 › S2-02-U1 the create form: SAVE DRAFT next to PUBLISH EVENT
+[chromium] › e2e\sprint-2\s2-02-evidence.spec.ts:39:5 › S2-02-U1 the create form: SAVE DRAFT next to PUBLISH EVENT
+warning: unable to find all commit-graph files
+
+[63/86] [chromium] › e2e\sprint-2\s2-02-evidence.spec.ts:49:5 › S2-02-U2 saving a draft from the form lands on the draft with the owner-only banner
+[chromium] › e2e\sprint-2\s2-02-evidence.spec.ts:49:5 › S2-02-U2 saving a draft from the form lands on the draft with the owner-only banner
+warning: unable to find all commit-graph files
+
+[64/86] [chromium] › e2e\sprint-2\s2-02-evidence.spec.ts:74:5 › S2-02-U3 the dashboard publishes EV-7, which then appears on /events
+[chromium] › e2e\sprint-2\s2-02-evidence.spec.ts:74:5 › S2-02-U3 the dashboard publishes EV-7, which then appears on /events
+warning: unable to find all commit-graph files
+
+[65/86] [chromium] › e2e\sprint-2\s2-02-evidence.spec.ts:99:5 › S2-02-A1 the API on the seeded draft EV-7: E-05 for the owner and a visitor, E-09 by Nok, E-14 for each role
+[chromium] › e2e\sprint-2\s2-02-evidence.spec.ts:99:5 › S2-02-A1 the API on the seeded draft EV-7: E-05 for the owner and a visitor, E-09 by Nok, E-14 for each role
+warning: unable to find all commit-graph files
+
+[66/86] [chromium] › e2e\sprint-2\s2-04-evidence.spec.ts:38:5 › S2-04-U1 Quantum Cards opens the edit page of EV-1 from the event page
+[chromium] › e2e\sprint-2\s2-04-evidence.spec.ts:38:5 › S2-04-U1 Quantum Cards opens the edit page of EV-1 from the event page
+warning: unable to find all commit-graph files
+
+[67/86] [chromium] › e2e\sprint-2\s2-04-evidence.spec.ts:52:5 › S2-04-U2 the dashboard rows offer Edit
+[chromium] › e2e\sprint-2\s2-04-evidence.spec.ts:52:5 › S2-04-U2 the dashboard rows offer Edit
+warning: unable to find all commit-graph files
+
+[68/86] [chromium] › e2e\sprint-2\s2-04-evidence.spec.ts:62:5 › S2-04-U3 saving a title change, then a capacity below the registrations
+[chromium] › e2e\sprint-2\s2-04-evidence.spec.ts:62:5 › S2-04-U3 saving a title change, then a capacity below the registrations
+warning: unable to find all commit-graph files
+
+[69/86] [chromium] › e2e\sprint-2\s2-04-evidence.spec.ts:87:5 › S2-04-U4 Dragon's Den opens the edit page of its started event EV-4
+[chromium] › e2e\sprint-2\s2-04-evidence.spec.ts:87:5 › S2-04-U4 Dragon's Den opens the edit page of its started event EV-4
+warning: unable to find all commit-graph files
+
+[70/86] [chromium] › e2e\sprint-2\s2-04-evidence.spec.ts:98:5 › S2-04-A1 E-13 on EV-1 for each role, a capacity below the registrations, and the history it leaves
+[chromium] › e2e\sprint-2\s2-04-evidence.spec.ts:98:5 › S2-04-A1 E-13 on EV-1 for each role, a capacity below the registrations, and the history it leaves
+
+warning: unable to find all commit-graph files
+[71/86] [chromium] › e2e\sprint-2\s2-06-evidence.spec.ts:36:5 › S2-06-U1 Nok opens EV-9, whose registration deadline has passed
+[chromium] › e2e\sprint-2\s2-06-evidence.spec.ts:36:5 › S2-06-U1 Nok opens EV-9, whose registration deadline has passed
+warning: unable to find all commit-graph files
+
+[72/86] [chromium] › e2e\sprint-2\s2-06-evidence.spec.ts:46:5 › S2-06-U2 the create form has a "Registration closes" field
+[chromium] › e2e\sprint-2\s2-06-evidence.spec.ts:46:5 › S2-06-U2 the create form has a "Registration closes" field
+warning: unable to find all commit-graph files
+
+[73/86] [chromium] › e2e\sprint-2\s2-06-evidence.spec.ts:56:5 › S2-06-U3 Quantum Cards sets a deadline on EV-1 from the edit page
+[chromium] › e2e\sprint-2\s2-06-evidence.spec.ts:56:5 › S2-06-U3 Quantum Cards sets a deadline on EV-1 from the edit page
+warning: unable to find all commit-graph files
+
+[74/86] [chromium] › e2e\sprint-2\s2-06-evidence.spec.ts:75:5 › S2-06-A1 the API on EV-9: its effective deadline, and Nok registering after it
+[chromium] › e2e\sprint-2\s2-06-evidence.spec.ts:75:5 › S2-06-A1 the API on EV-9: its effective deadline, and Nok registering after it
+warning: unable to find all commit-graph files
+
+[75/86] [chromium] › e2e\sprint-2\search.spec.ts:18:5 › TEST-J-05 (E2E) — Search, filters, URL synchronization and back/forward navigation (AC-J-05, JRN-04)
+[76/86] [chromium] › e2e\sprint-2\search.spec.ts:109:5 › TEST-J-05 (E2E) — the filtered list passes the axe colour-contrast scan (AC-C-08)
+[77/86] [chromium] › e2e\sprint-2\theme.spec.ts:19:7 › TEST-C-07 fonts (AC-C-07) › body is Inter, figures are Manrope with tabular digits, Thai title loads IBM Plex Sans Thai, no Google Fonts
+[78/86] [chromium] › e2e\sprint-2\theme.spec.ts:66:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: events
+[79/86] [chromium] › e2e\sprint-2\theme.spec.ts:66:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: event-open
+[80/86] [chromium] › e2e\sprint-2\theme.spec.ts:66:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: event-registered
+[81/86] [chromium] › e2e\sprint-2\theme.spec.ts:66:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: sign-in
+[82/86] [chromium] › e2e\sprint-2\theme.spec.ts:66:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: my-events
+[83/86] [chromium] › e2e\sprint-2\theme.spec.ts:66:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: dashboard
+[84/86] [chromium] › e2e\sprint-2\theme.spec.ts:66:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: create-event
+[85/86] [chromium] › e2e\sprint-2\theme.spec.ts:66:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: registrations
+[86/86] [chromium] › e2e\sprint-2\theme.spec.ts:75:7 › TEST-C-08 contrast and colours (AC-C-08) › seat chip, PLAYER badge and REGISTERED are green; primary button and date badge are teal
+  86 passed (4.8m)

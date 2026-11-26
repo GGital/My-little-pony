@@ -1,0 +1,19 @@
+{
+  "id": "S2-06-A1-api",
+  "side": "after",
+  "action": "GET /api/events/9 as a visitor; POST /api/events/9/registrations as Nok",
+  "expected": "After: registrationDeadline = the stored deadline (1 h before the seed); E-09 409 REGISTRATION_CLOSED",
+  "actual": {
+    "e05": {
+      "startAt": "2026-11-28T03:14:10.915Z",
+      "registrationDeadline": "2026-11-26T02:14:10.915Z",
+      "action": "CLOSED"
+    },
+    "e09": {
+      "status": 409,
+      "code": "REGISTRATION_CLOSED"
+    }
+  },
+  "time": "2026-11-26T03:14:11.982Z",
+  "commit": "3886e35"
+}

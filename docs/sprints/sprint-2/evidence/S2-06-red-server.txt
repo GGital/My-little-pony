@@ -1,0 +1,408 @@
+Sprint 2 · S2-06 (Issue #83) · RED, server unit + API (test database)
+Commit: d348686 (tests only, with stubs; the code is sprint-2-staging cd1d5b0)
+Time: 2026-11-26T03:03:39Z
+Command: cd server; npx vitest run
+
+
+ RUN  v4.0.18 <repo>/server
+
+ ✓ tests/sprint-2/search.api.test.ts (6 tests) 1051ms
+ ✓ tests/sprint-1/events.create.api.test.ts (24 tests) 1247ms
+ ✓ tests/sprint-1/authorization.api.test.ts (78 tests) 2336ms
+ ✓ tests/sprint-2/edit.api.test.ts (9 tests) 1543ms
+ ✓ tests/sprint-2/drafts.api.test.ts (13 tests) 1645ms
+ ✓ tests/sprint-1/organizer.api.test.ts (10 tests) 1571ms
+ ✓ tests/sprint-1/auth.api.test.ts (21 tests) 6356ms
+     ✓ wrong password and unknown email: identical 401 INVALID_CREDENTIALS, no Session row, no cookie  368ms
+     ✓ an unknown email takes as long as a wrong password (dummy hash): mean difference < 50 ms over 20 tries  3903ms
+ ✓ tests/sprint-1/events.read.api.test.ts (11 tests) 1535ms
+     ✓ returns matching viewer.action and all public fields across visitor, player, owner, other organizer  431ms
+ ✓ tests/sprint-1/validation.api.test.ts (20 tests) 1676ms
+ ✓ tests/sprint-1/registrations.api.test.ts (15 tests) 1006ms
+ ❯ tests/sprint-2/deadline.api.test.ts (7 tests | 7 failed) 1023ms
+     × E-06 without a deadline answers the start; with start − 2 h answers that; E-13 sets one and writes a deadline row 38ms
+     × E-04 and E-07 carry the effective deadline on every summary 28ms
+     × E-06 refuses a deadline that is not an ISO time with an offset (400 "Enter a date and time.") 12ms
+     × start + 1 min, now and 1 min ago are 422; the start itself and null are 200 (null gives back the start) 28ms
+     × a new start earlier than the stored deadline is 422 on registrationDeadline (D-23); with a new deadline in the same body it is fine 18ms
+     × E-06 refuses a deadline after the start, and one in the past 15ms
+     × E-09 one minute before D is 201; at D and one minute after are 409 REGISTRATION_CLOSED; E-05 says CLOSED at D; E-04 still lists it 47ms
+ ❯ tests/sprint-2/changes.api.test.ts (6 tests | 2 failed) 1163ms
+     ✓ E-06 writes status null → PUBLISHED in the same request; E-17 returns it with only the display name 48ms
+     ✓ S2-04 step: at T + 1 h, E-13 capacity 24 → 30 writes a capacity row; E-17 lists it first 53ms
+     × S2-06 step (completes AC-SR8-01): T + 1 h capacity 24 → 30, T + 2 h a deadline; E-17 has 3 rows, newest first 50ms
+     × lists the newest change first (changedAt desc, then id desc) 33ms
+     ✓ another organizer gets 404, byte-identical to a missing id 17ms
+     ✓ a participant gets 403, a visitor 401, and a malformed id 400 17ms
+ ✓ tests/sprint-1/seed.api.test.ts (7 tests) 874ms
+     ✓ creates 2 organizers, 4 participants, the 6 events of contracts §0.3 and the 3 of Sprint 2 §0.4  582ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts (21 tests) 5ms
+ ✓ tests/sprint-1/me.api.test.ts (6 tests) 913ms
+ ✓ tests/sprint-2/unit/search-query.unit.test.ts (13 tests) 14ms
+ ✓ tests/sprint-1/time.api.test.ts (9 tests) 580ms
+ ✓ tests/sprint-1/errors.api.test.ts (10 tests) 483ms
+ ✓ tests/sprint-2/constraints.api.test.ts (6 tests) 178ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts (16 tests) 11ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts (11 tests) 6ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts (28 tests) 3037ms
+     ✓ refuses an unknown code at compile time, and accepts a known one  3029ms
+ ✓ tests/sprint-1/constraints.api.test.ts (12 tests) 176ms
+ ✓ tests/sprint-1/persistence.api.test.ts (2 tests) 789ms
+     ✓ an event published with E-06 and a registration made with E-09 read back identically after a "restart"  627ms
+ ✓ tests/sprint-2/lifecycle.concurrency.api.test.ts (1 test) 2927ms
+     ✓ 20 rounds: active ≤ capacity, and the outcome is one of the two allowed ones  2151ms
+ ✓ tests/lab6/nul-character.api.test.ts (3 tests) 1001ms
+ ✓ tests/sprint-1/registrations.concurrency.api.test.ts (1 test) 6645ms
+     ✓ 20 rounds: 20 racers for 1 seat → one 201, 19 × 409 EVENT_FULL; 5 calls by one participant → one 201, four 409 ALREADY_REGISTERED  4480ms
+ ✓ tests/sprint-1/unit/config.unit.test.ts (6 tests) 594ms
+     ✓ the real server refuses to start without DATABASE_URL and says why  571ms
+ ✓ tests/lab6/calendar-date.api.test.ts (6 tests) 928ms
+ ❯ tests/sprint-2/unit/deadline.unit.test.ts (9 tests | 7 failed) 16ms
+     ✓ accepts no deadline, one before the start, and one exactly at the start 1ms
+     × refuses a deadline 1 minute after the start 6ms
+     × refuses a deadline now 1ms
+     × refuses a deadline 1 minute ago 1ms
+     × the effective deadline is the stored one, or the start when none is set 3ms
+     × is open before the deadline and closed at and after it (D-17); never open unless PUBLISHED 1ms
+     ✓ at deadline 59 min → OK 0ms
+     × at deadline 60 min → REGISTRATION_CLOSED 1ms
+     × at deadline 61 min → REGISTRATION_CLOSED 0ms
+ ✓ tests/sprint-1/unit/registration-rules.unit.test.ts (8 tests) 4ms
+ ✓ tests/lab5/static.api.test.ts (4 tests) 60ms
+ ✓ tests/lab5/ready.api.test.ts (2 tests) 2081ms
+     ✓ answers 503 {status:"not_ready"} when the database cannot be reached, without leaking why  2027ms
+ ✓ tests/sprint-1/health.api.test.ts (2 tests) 2071ms
+     ✓ answers 503 {status:"unavailable"} when the database cannot be reached, and logs why  2013ms
+ ✓ tests/lab5/version.api.test.ts (2 tests) 40ms
+ ✓ tests/lab5/origin.api.test.ts (6 tests) 51ms
+ ✓ tests/sprint-1/unit/password.unit.test.ts (2 tests) 369ms
+ ✓ tests/lab5/unit/config.unit.test.ts (5 tests) 9ms
+ ✓ tests/lab5/unit/version-config.unit.test.ts (5 tests) 9ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 16 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/sprint-2/changes.api.test.ts > TEST-SR8-01 (S2-01 + S2-04 parts) creating and editing an event records who and when, and E-17 shows it (AC-SR8-01, FR-28) > S2-06 step (completes AC-SR8-01): T + 1 h capacity 24 → 30, T + 2 h a deadline; E-17 has 3 rows, newest first
+AssertionError: expected 400 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 400
+
+ ❯ tests/sprint-2/changes.api.test.ts:121:69
+    119|     expect((await edit({ capacity: 30 })).status).toBe(200)
+    120|     setNow(plusTwo)
+    121|     expect((await edit({ registrationDeadline: deadline })).status).to…
+       |                                                                     ^
+    122| 
+    123|     const res = await request(app).get(E17(created.body.id)).set('Cook…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/16]⎯
+
+ FAIL  tests/sprint-2/changes.api.test.ts > TEST-SR8-01 (S2-01 + S2-04 parts) creating and editing an event records who and when, and E-17 shows it (AC-SR8-01, FR-28) > lists the newest change first (changedAt desc, then id desc)
+AssertionError: expected [ 'status', 'details', 'capacity' ] to deeply equal [ 'details', 'capacity', 'status' ]
+
+- Expected
++ Received
+
+  [
++   "status",
+    "details",
+    "capacity",
+-   "status",
+  ]
+
+ ❯ tests/sprint-2/changes.api.test.ts:147:67
+    145|     const res = await request(app).get(E17(created.body.id)).set('Cook…
+    146|     expect(res.status).toBe(200)
+    147|     expect(res.body.items.map((c: { field: string }) => c.field)).toEq…
+       |                                                                   ^
+    148|   })
+    149| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/16]⎯
+
+ FAIL  tests/sprint-2/deadline.api.test.ts > TEST-M-01 (I) setting a deadline, and the effective deadline everywhere (AC-M-01, BR-08) > E-06 without a deadline answers the start; with start − 2 h answers that; E-13 sets one and writes a deadline row
+AssertionError: expected undefined to be '2030-03-02T08:00:00.000Z' // Object.is equality
+
+- Expected: 
+"2030-03-02T08:00:00.000Z"
+
++ Received: 
+undefined
+
+ ❯ tests/sprint-2/deadline.api.test.ts:63:45
+     61|     const plain = await create(24 * HOUR)
+     62|     expect(plain.status).toBe(201)
+     63|     expect(plain.body.registrationDeadline).toBe(iso(24 * HOUR))
+       |                                             ^
+     64|     expect((await prisma.event.findUniqueOrThrow({ where: { id: plain.…
+     65| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/16]⎯
+
+ FAIL  tests/sprint-2/deadline.api.test.ts > TEST-M-01 (I) setting a deadline, and the effective deadline everywhere (AC-M-01, BR-08) > E-04 and E-07 carry the effective deadline on every summary
+TypeError: Cannot read properties of undefined (reading 'registrationDeadline')
+ ❯ tests/sprint-2/deadline.api.test.ts:86:19
+     84|     const list = await request(app).get(`/api/events?q=${encodeURIComp…
+     85|     const listed = list.body.items.find((e: { id: number }) => e.id ==…
+     86|     expect(listed.registrationDeadline).toBe(iso(29 * HOUR))
+       |                   ^
+     87|     const mine = await request(app).get('/api/organizer/events').set('…
+     88|     for (const item of mine.body.items) expect(item.registrationDeadli…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/16]⎯
+
+ FAIL  tests/sprint-2/deadline.api.test.ts > TEST-M-01 (I) setting a deadline, and the effective deadline everywhere (AC-M-01, BR-08) > E-06 refuses a deadline that is not an ISO time with an offset (400 "Enter a date and time.")
+AssertionError: expected [ 400, [ { …(2) } ] ] to deeply equal [ 400, [ { …(2) } ] ]
+
+- Expected
++ Received
+
+  [
+    400,
+    [
+      {
+        "field": "registrationDeadline",
+-       "message": "Enter a date and time.",
++       "message": "This value cannot be set.",
+      },
+    ],
+  ]
+
+ ❯ tests/sprint-2/deadline.api.test.ts:94:50
+     92|     setNow(T)
+     93|     const res = await create(24 * HOUR, { registrationDeadline: 'tomor…
+     94|     expect([res.status, res.body.error.details]).toEqual([400, [{ fiel…
+       |                                                  ^
+     95|   })
+     96| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/16]⎯
+
+ FAIL  tests/sprint-2/deadline.api.test.ts > TEST-M-02 (I) the deadline rules on E-13 and E-06 (AC-M-02, BR-08, D-23) > start + 1 min, now and 1 min ago are 422; the start itself and null are 200 (null gives back the start)
+AssertionError: 2030-03-02T08:01:00.000Z: expected [ 400, [ { …(2) } ] ] to deeply equal [ 422, [ { …(2) } ] ]
+
+- Expected
++ Received
+
+  [
+-   422,
++   400,
+    [
+      {
+        "field": "registrationDeadline",
+-       "message": "Registration must close at or before the start.",
++       "message": "This value cannot be set.",
+      },
+    ],
+  ]
+
+ ❯ tests/sprint-2/deadline.api.test.ts:109:63
+    107|     for (const [deadline, message] of refused) {
+    108|       const res = await patch(event.id, { registrationDeadline: deadli…
+    109|       expect([res.status, res.body.error?.details], deadline).toEqual(…
+       |                                                               ^
+    110|     }
+    111|     const atStart = await patch(event.id, { registrationDeadline: iso(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/16]⎯
+
+ FAIL  tests/sprint-2/deadline.api.test.ts > TEST-M-02 (I) the deadline rules on E-13 and E-06 (AC-M-02, BR-08, D-23) > a new start earlier than the stored deadline is 422 on registrationDeadline (D-23); with a new deadline in the same body it is fine
+AssertionError: expected [ 400, undefined ] to deeply equal [ 422, 'registrationDeadline' ]
+
+- Expected
++ Received
+
+  [
+-   422,
+-   "registrationDeadline",
++   400,
++   undefined,
+  ]
+
+ ❯ tests/sprint-2/deadline.api.test.ts:122:71
+    120|     const event = (await create(24 * HOUR, { registrationDeadline: iso…
+    121|     const earlier = await patch(event.id, { startAt: iso(2 * HOUR), en…
+    122|     expect([earlier.status, earlier.body.error?.details?.[0]?.field]).…
+       |                                                                       ^
+    123|     const both = await patch(event.id, { startAt: iso(3 * HOUR), endAt…
+    124|     expect([both.status, both.body.registrationDeadline]).toEqual([200…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/16]⎯
+
+ FAIL  tests/sprint-2/deadline.api.test.ts > TEST-M-02 (I) the deadline rules on E-13 and E-06 (AC-M-02, BR-08, D-23) > E-06 refuses a deadline after the start, and one in the past
+AssertionError: expected [ 400, { …(2) } ] to deeply equal [ 422, { …(2) } ]
+
+- Expected
++ Received
+
+  [
+-   422,
++   400,
+    {
+      "field": "registrationDeadline",
+-     "message": "Registration must close at or before the start.",
++     "message": "This value cannot be set.",
+    },
+  ]
+
+ ❯ tests/sprint-2/deadline.api.test.ts:131:55
+    129|     const late = await create(24 * HOUR, { registrationDeadline: iso(2…
+    130|     const past = await create(24 * HOUR, { registrationDeadline: iso(-…
+    131|     expect([late.status, late.body.error.details[0]]).toEqual([422, { …
+       |                                                       ^
+    132|     expect([past.status, past.body.error.details[0]]).toEqual([422, { …
+    133|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/16]⎯
+
+ FAIL  tests/sprint-2/deadline.api.test.ts > TEST-M-03 (I) registration closes at the deadline (AC-M-03, BR-08, BR-04, D-17) > E-09 one minute before D is 201; at D and one minute after are 409 REGISTRATION_CLOSED; E-05 says CLOSED at D; E-04 still lists it
+AssertionError: expected [ …(3) ] to deeply equal [ [ 201, null ], …(2) ]
+
+- Expected
++ Received
+
+  [
+    [
+-     201,
+-     null,
++     400,
++     "INVALID_PATH_PARAMETER",
+    ],
+    [
+-     409,
+-     "REGISTRATION_CLOSED",
++     400,
++     "INVALID_PATH_PARAMETER",
+    ],
+    [
+-     409,
+-     "REGISTRATION_CLOSED",
++     400,
++     "INVALID_PATH_PARAMETER",
+    ],
+  ]
+
+ ❯ tests/sprint-2/deadline.api.test.ts:149:72
+    147|       results.push(await register(ids[i]!))
+    148|     }
+    149|     expect(results.map((r) => [r.status, r.body.error?.code ?? null]))…
+       |                                                                        ^
+    150|       [201, null],
+    151|       [409, 'REGISTRATION_CLOSED'],
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/16]⎯
+
+ FAIL  tests/sprint-2/unit/deadline.unit.test.ts > TEST-M-02 (U) decideDeadline: at or before the start, and still in the future (AC-M-02, BR-08) > refuses a deadline 1 minute after the start
+AssertionError: expected null to deeply equal { field: 'registrationDeadline', …(1) }
+
+- Expected: 
+{
+  "field": "registrationDeadline",
+  "message": "Registration must close at or before the start.",
+}
+
++ Received: 
+null
+
+ ❯ tests/sprint-2/unit/deadline.unit.test.ts:26:50
+     24|     ['1 minute ago', min(-1), 'The deadline must be in the future.'],
+     25|   ])('refuses a deadline %s', (_label, deadline, message) => {
+     26|     expect(decideDeadline(deadline, START, NOW)).toEqual({ field: 'reg…
+       |                                                  ^
+     27|   })
+     28| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/16]⎯
+
+ FAIL  tests/sprint-2/unit/deadline.unit.test.ts > TEST-M-02 (U) decideDeadline: at or before the start, and still in the future (AC-M-02, BR-08) > refuses a deadline now
+ FAIL  tests/sprint-2/unit/deadline.unit.test.ts > TEST-M-02 (U) decideDeadline: at or before the start, and still in the future (AC-M-02, BR-08) > refuses a deadline 1 minute ago
+AssertionError: expected null to deeply equal { field: 'registrationDeadline', …(1) }
+
+- Expected: 
+{
+  "field": "registrationDeadline",
+  "message": "The deadline must be in the future.",
+}
+
++ Received: 
+null
+
+ ❯ tests/sprint-2/unit/deadline.unit.test.ts:26:50
+     24|     ['1 minute ago', min(-1), 'The deadline must be in the future.'],
+     25|   ])('refuses a deadline %s', (_label, deadline, message) => {
+     26|     expect(decideDeadline(deadline, START, NOW)).toEqual({ field: 'reg…
+       |                                                  ^
+     27|   })
+     28| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/16]⎯
+
+ FAIL  tests/sprint-2/unit/deadline.unit.test.ts > §0.3 effectiveDeadline and isRegistrationOpen (BR-04 + BR-08, D-17) > the effective deadline is the stored one, or the start when none is set
+AssertionError: expected 2030-03-02T08:00:00.000Z to deeply equal 2030-03-01T09:00:00.000Z
+
+- Expected
++ Received
+
+- 2030-03-01T09:00:00.000Z
++ 2030-03-02T08:00:00.000Z
+
+ ❯ tests/sprint-2/unit/deadline.unit.test.ts:38:47
+     36| 
+     37|   it('the effective deadline is the stored one, or the start when none…
+     38|     expect(effectiveDeadline(event(min(60)))).toEqual(min(60))
+       |                                               ^
+     39|     expect(effectiveDeadline(event(null))).toEqual(START)
+     40|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/16]⎯
+
+ FAIL  tests/sprint-2/unit/deadline.unit.test.ts > §0.3 effectiveDeadline and isRegistrationOpen (BR-04 + BR-08, D-17) > is open before the deadline and closed at and after it (D-17); never open unless PUBLISHED
+AssertionError: expected [ true, true, true ] to deeply equal [ true, false, false ]
+
+- Expected
++ Received
+
+  [
+    true,
+-   false,
+-   false,
++   true,
++   true,
+  ]
+
+ ❯ tests/sprint-2/unit/deadline.unit.test.ts:44:81
+     42|   it('is open before the deadline and closed at and after it (D-17); n…
+     43|     const d = min(60)
+     44|     expect([min(59), d, min(61)].map((at) => isRegistrationOpen(event(…
+       |                                                                                 ^
+     45|     expect(isRegistrationOpen(event(null), new Date(START.getTime() - …
+     46|     expect(isRegistrationOpen(event(null), START)).toBe(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/16]⎯
+
+ FAIL  tests/sprint-2/unit/deadline.unit.test.ts > TEST-M-03 (U) decideRegistration closes at the deadline (AC-M-03, BR-08, D-17) > at deadline 60 min → REGISTRATION_CLOSED
+ FAIL  tests/sprint-2/unit/deadline.unit.test.ts > TEST-M-03 (U) decideRegistration closes at the deadline (AC-M-03, BR-08, D-17) > at deadline 61 min → REGISTRATION_CLOSED
+AssertionError: expected 'OK' to be 'REGISTRATION_CLOSED' // Object.is equality
+
+Expected: "REGISTRATION_CLOSED"
+Received: "OK"
+
+ ❯ tests/sprint-2/unit/deadline.unit.test.ts:61:39
+     59|   ])('at deadline %s min → %s', (at, expected) => {
+     60|     setNow(min(at as number))
+     61|     expect(decideRegistration(facts)).toBe(expected)
+       |                                       ^
+     62|   })
+     63| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/16]⎯
+
+
+ Test Files  3 failed | 36 passed (39)
+      Tests  16 failed | 407 passed (423)
+   Start at  10:03:42
+   Duration  78.38s (transform 1.08s, setup 0ms, import 21.07s, tests 46.02s, environment 5ms)
+
