@@ -1,6 +1,6 @@
 # Requirements-to-Features Traceability
 
-Project: **TCG Event Hub** · Document version: v0.9 — Sprint 2 line with Lab 7 CH-13 merged in (v0.8 reviewed in PR #76: Sprint 2 and 3 contracts, CH-11, CH-12); v0.1 approved in PR #1; CH-10 in PR 2; Sprint 1 results in I-12
+Project: **TCG Event Hub** · Document version: v0.10 — Sprint 2 line with Lab 7 CH-13 merged in (v0.8 reviewed in PR #76: Sprint 2 and 3 contracts, CH-11, CH-12); v0.1 approved in PR #1; CH-10 in PR 2; Sprint 1 results in I-12
 Inputs: [`docs/srs.md`](srs.md) v0.7 · [`docs/features.md`](features.md) v0.5 · Diagrams: [`docs/diagrams/`](diagrams/README.md)
 
 This is step 3 of the course design process. Every requirement is followed through four links, so anyone can
@@ -59,8 +59,8 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | FR-10 | Cancel event with reason, cascade | Feature-O | Sprint 2 | AC-O-01 … 03 · I, C, E → **Planned**: TEST-O-01 … 03 (Sprint 2 STS) | 3 |
 | FR-11 | Public list of upcoming events with counts | Feature-F | Sprint 1 | AC-F-01 · I, E → **Pass**: TEST-F-01 | 2 (with filters) |
 | FR-12 | Event detail with server-decided action; not found | Feature-F | Sprint 1 | AC-F-02, AC-F-03 · I, E → **Pass**: TEST-F-02, TEST-F-03 | 2, 3 |
-| FR-13 | Search, filters, paging | Feature-J | Sprint 2 | AC-J-01 … 03, AC-J-05 · U, I, C, E → **Planned**: TEST-J-01 … 03, TEST-J-05 (Sprint 2 STS) | 3 (NFR-12) |
-| FR-14 | Past/cancelled only on request, never registrable | Feature-J | Sprint 2 | AC-J-04, AC-O-02 · I, E → **Planned**: TEST-J-04, TEST-O-02 (Sprint 2 STS) | 3 |
+| FR-13 | Search, filters, paging | Feature-J | Sprint 2 | AC-J-01 … 03, AC-J-05 · U, I, C, E → **Pass**: TEST-J-01 … 03, TEST-J-05 (red `82b7aa9`, green `2c5e075`) | 3 (NFR-12) |
+| FR-14 | Past/cancelled only on request, never registrable | Feature-J | Sprint 2 | AC-J-04, AC-O-02 · I, E → TEST-J-04 **Pass** (`2c5e075`); TEST-O-02 **Planned** (Sprint 2 STS) | 3 |
 | FR-15 | Register → `REGISTERED` record returned | Feature-G | Sprint 1 | AC-G-01 · I, E → **Pass**: TEST-G-01, JRN-01 | 2, 3 |
 | FR-16 | Rejections store nothing and give a reason | Feature-G, SR-02 | Sprint 1 | AC-G-02 … AC-G-05 · I, E → **Pass**: TEST-G-02, TEST-G-03, TEST-G-04, TEST-G-05 | 2 (deadline) |
 | FR-17 | My Events: own registrations | Feature-H | Sprint 1 | AC-H-01 · I, E → **Pass**: TEST-H-01, JRN-01 | 2 (statuses) |
@@ -300,3 +300,4 @@ in the Sprint 2 contracts PR (S2-00), and the course's approved-scope rule for D
 | v0.4.1 | 23 Nov 2026 | Lab 7 change CH-13 (Issue #77): BR-02 and AC-D-03 rows describe the 60-minute lead time; TEST-D-03 (v2) and TEST-L7-01 … 04 Planned until the CH-13 run | Team (AI-assisted) |
 | v0.4.2 | 24 Nov 2026 | Lab 7 CH-13: BR-02 row Pass (red `f41f52f`, green `72ae022`) | Team (AI-assisted) |
 | v0.9 | 25 Nov 2026 | Lab 7 CH-13 rows (v0.4.1, v0.4.2, Sprint 1 line) merged into the Sprint 2 line: BR-02 Pass with red `f41f52f`, green `72ae022`; Sprint 2 rows unchanged | Team (AI-assisted) |
+| v0.10 | 26 Nov 2026 | S2-03: FR-13 Pass (TEST-J-01 … 03, 05) and FR-14 TEST-J-04 Pass; TEST-O-02 stays Planned | Team (AI-assisted) |

@@ -98,3 +98,15 @@ export interface ApiErrorPayload {
 export interface ApiErrorEnvelope {
   error: ApiErrorPayload;
 }
+
+export interface EventSearchMeta {
+  page: number;
+  pageSize: number;
+  totalItems: number;
+}
+
+/** E-04 response (Feature-J). */
+export interface EventSearchResponse {
+  items: EventSummary[];
+  meta: EventSearchMeta;
+}
