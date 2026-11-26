@@ -14,7 +14,7 @@ const T = new Date('2030-03-01T08:00:00.000Z')
 const HOUR = 3_600_000
 const E16 = (id: number | string) => `/api/me/registrations/${id}/cancel`
 
-const cookies = { quantum: '', mint: '', nok: '', ploy: '', boss: '' }
+const cookies = { quantum: '', dragon: '', mint: '', nok: '', ploy: '', boss: '' }
 const ids = { quantum: 0, mint: 0, nok: 0, ploy: 0, boss: 0 }
 
 async function sessionFor(email: string) {
@@ -75,6 +75,7 @@ beforeAll(async () => {
   await seed(prisma, SEED_PASSWORD)
   setNow(T)
   cookies.quantum = await sessionFor('quantum@organizer.example')
+  cookies.dragon = await sessionFor('dragon@organizer.example')
   cookies.mint = await sessionFor('mint@player.example')
   cookies.nok = await sessionFor('nok@player.example')
   cookies.ploy = await sessionFor('ploy@player.example')
@@ -264,5 +265,20 @@ describe('TEST-N-05 · AC-N-05, BR-11, BR-16, BR-17, NFR-02: who may cancel', ()
     const event2 = await makeEvent()
     const reg2 = await register(event2.id, ids.mint)
     expect((await cancel(reg2.id, cookies.mint, {})).status).toBe(200)
+  })
+})
+
+// TEST-B-03 rows (E-16), SDS §7.1: the permission-matrix cells of the new endpoint. TEST-SR2-03 has its route row in
+// helpers/routes.ts.
+describe('TEST-B-03 rows (E-16) POST /api/me/registrations/:id/cancel', () => {
+  it('visitor 401; owner 403; another organizer (Dragon Den) 403; another player 404; the registered player 200', async () => {
+    const event = await makeEvent()
+    const reg = await register(event.id, ids.mint)
+    expect((await cancel(reg.id, undefined)).status).toBe(401)
+    expect((await cancel(reg.id, cookies.quantum)).status).toBe(403)
+    expect((await cancel(reg.id, cookies.dragon)).status).toBe(403)
+    expect((await cancel(reg.id, cookies.ploy)).status).toBe(404)
+    expect((await storedRegs(event.id))[0]!.status).toBe('REGISTERED')
+    expect((await cancel(reg.id, cookies.mint)).status).toBe(200)
   })
 })

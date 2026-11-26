@@ -218,6 +218,11 @@ describe('Feature-I — Event Registration List (E-08, contracts §12)', () => {
     const r2 = await prisma.registration.create({
       data: { eventId: ev1.id, participantId: ploy.id, createdAt: new Date(T.getTime() + 2000) },
     })
+    // An EVENT_CANCELLED row must be neither listed nor counted (S2-07 review: guards the E-08 status filter).
+    const kai = await makeParticipant('Kai')
+    await prisma.registration.create({
+      data: { eventId: ev1.id, participantId: kai.id, status: 'EVENT_CANCELLED', cancelledAt: T, createdAt: new Date(T.getTime() + 700) },
+    })
     regTimes = [r1.createdAt.toISOString(), r2.createdAt.toISOString(), r3.createdAt.toISOString()]
   })
 
@@ -235,6 +240,7 @@ describe('Feature-I — Event Registration List (E-08, contracts §12)', () => {
       })
 
       expect(res.body.items).toHaveLength(4)
+      expect(res.body.items.map((i: { participant: { displayName: string } }) => i.participant.displayName)).not.toContain('Kai')
       expect(res.body.items[0]).toMatchObject({
         participant: { displayName: 'Fern' },
         status: 'CANCELLED',

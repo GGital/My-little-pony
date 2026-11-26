@@ -87,7 +87,7 @@ export const EventDetail: React.FC = () => {
     try {
       const registration = await api.post<ParticipantRegistration>(`/api/events/${event.id}/registrations`)
       const { registeredCount, seatsRemaining } = registration.event
-      setEvent({ ...event, registeredCount, seatsRemaining, viewer: { action: 'REGISTERED', registrationId: registration.id } })
+      setEvent({ ...event, registeredCount, seatsRemaining, viewer: { action: 'REGISTERED', registrationId: registration.id, canCancel: registration.canCancel } })
       setSecured(true)
       setAnnouncement(
         `You're registered for ${event.title}. ${seatsRemaining} seat${seatsRemaining === 1 ? '' : 's'} left.`

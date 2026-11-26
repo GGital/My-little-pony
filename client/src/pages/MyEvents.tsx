@@ -10,6 +10,7 @@ import { Icon } from '../components/Icon'
 import { Notice } from '../components/Notice'
 import { EVENT_TABS, PageTop } from '../components/PageTop'
 import { formatEventTime } from '../utils/formatEventTime'
+import './MyEvents.css'
 
 /** `/me/registrations` (contracts §11): the participant's own registrations, soonest first, as event cards. */
 export const MyEvents: React.FC = () => {

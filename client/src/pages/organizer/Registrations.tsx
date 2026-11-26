@@ -94,7 +94,8 @@ export const Registrations: React.FC = () => {
               <tbody>
                 {items.map((row, i) => (
                   <tr key={row.id}>
-                    <td>{i + 1}</td>
+                    {/* Numbered among active rows only, so the last number matches the count above. */}
+                    <td>{row.status === 'CANCELLED' ? '' : items.slice(0, i + 1).filter((r) => r.status !== 'CANCELLED').length}</td>
                     <td>
                       <strong>{row.participant.displayName}</strong>
                     </td>
