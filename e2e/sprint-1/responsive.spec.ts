@@ -2,9 +2,10 @@ import { expect, test, type Page } from '@playwright/test'
 import { EMAIL, EV, resetSeed, signIn } from './helpers'
 
 // SR-05 (contracts §13, AC-SR5-01): the 7 Sprint 1 screens at 390, 768 and 1440 px never scroll sideways.
-// Screenshots for the PDF go to docs/sprints/sprint-1/evidence/responsive/.
+// Screenshots for the PDF go to docs/sprints/sprint-1/evidence/responsive/, only when EVIDENCE=1 (AGENTS.md §5).
 const WIDTHS = [390, 768, 1440] as const
 const SHOTS = 'docs/sprints/sprint-1/evidence/responsive'
+const WRITE = process.env.EVIDENCE === '1'
 
 type Screen = { name: string; path: string; as?: string; ready: (p: Page) => Promise<void> }
 const heading = (name: string) => async (p: Page) => {
@@ -37,7 +38,7 @@ for (const screen of SCREENS) {
           scrollWidth: document.documentElement.scrollWidth,
           innerWidth: window.innerWidth,
         }))
-        await page.screenshot({ path: `${SHOTS}/${width}-${screen.name}.png`, fullPage: true })
+        if (WRITE) await page.screenshot({ path: `${SHOTS}/${width}-${screen.name}.png`, fullPage: true })
         expect(scrollWidth, `${screen.path} at ${width} px`).toBeLessThanOrEqual(innerWidth)
       })
     }
