@@ -7,6 +7,17 @@ export interface AuthUser {
   role: UserRole;
 }
 
+/** Feature-U (Sprint 2 CH-11): the trading card game of an event or a store. Shown by name only (X-14). */
+export type Game = 'POKEMON' | 'MAGIC' | 'ONE_PIECE' | 'YUGIOH' | 'DIGIMON' | 'LORCANA' | 'OTHER';
+
+/** A store's public contact details, null per empty field (D-37). Never the sign-in email. */
+export interface StoreContact {
+  phone: string | null;
+  email: string | null;
+  website: string | null;
+  line: string | null;
+}
+
 export type ViewerAction =
   | 'MANAGE'
   | 'ORGANIZER_CANNOT_REGISTER'
@@ -32,6 +43,9 @@ export interface EventSummary {
   status: 'PUBLISHED' | 'DRAFT' | 'CANCELLED';
   /** Sprint 2 Feature-M: the EFFECTIVE deadline (the stored one, or startAt). Optional so older fixtures still compile. */
   registrationDeadline?: string;
+  /** Feature-U. Optional so older fixtures still compile. */
+  game?: Game;
+  store?: { displayName: string; logoUrl: string | null; games?: Game[]; contact?: StoreContact };
 }
 
 export interface EventDetail extends EventSummary {
