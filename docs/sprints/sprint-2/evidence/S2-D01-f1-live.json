@@ -1,0 +1,13 @@
+{
+  "id": "S2-D01-f1",
+  "action": "Nok cancels the registration in My Events",
+  "expected": "\"Your registration is cancelled.\" and a Cancelled chip",
+  "actual": {
+    "toast": "Your registration is cancelled.",
+    "row": "DEC\n1\nTUE 1 DEC 2026 · 18:00\nS2-D01 live check 11-27 18:15\nCasual · Constructed\nMagic: The Gathering\nQuantum Cards · Bangkok\nCancelled\nFri 27 Nov 2026 · 18:15"
+  },
+  "url": "https://tcg-event-hub-932557875237.asia-southeast1.run.app/me/registrations",
+  "time": "2026-11-27T11:15:58.321Z",
+  "deployedCommit": "a32b3ba2773bfbc6e080a4153342d3d0c72d74ed",
+  "screenshot": "S2-D01-f1-live.png"
+}
