@@ -1,0 +1,24 @@
+{
+  "id": "S2-D01-h1",
+  "action": "Nok opens My Events",
+  "expected": "\"Event cancelled\" on the event",
+  "actual": {
+    "cards": [
+      {
+        "title": "S2-D01 live check 11-27 18:15",
+        "chip": "Cancelled",
+        "note": "Fri 27 Nov 2026 · 18:15 (the registration Nok cancelled in step f1)"
+      },
+      {
+        "title": "S2-D01 live check 11-27 18:15",
+        "chip": "Event cancelled",
+        "note": "the registration from step f2, cancelled with the event in step g"
+      }
+    ],
+    "correction": "The script stored only the first matching card (the f1 row); its check for \"Event cancelled\" passed on the second card. Both cards were copied from the screenshot on 27 Nov 2026."
+  },
+  "url": "https://tcg-event-hub-932557875237.asia-southeast1.run.app/me/registrations",
+  "time": "2026-11-27T11:16:00.501Z",
+  "deployedCommit": "a32b3ba2773bfbc6e080a4153342d3d0c72d74ed",
+  "screenshot": "S2-D01-h1-live.png"
+}

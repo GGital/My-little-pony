@@ -1,0 +1,70 @@
+Evidence ID: S2-REL
+Action:     Merge release PR #115 (sprint-2-staging -> main, approved by Praewa / MeldyRose 27 Nov 2026 09:55 UTC);
+            the merge commit starts the Lab 5 pipeline (.github/workflows/deploy.yml, "Deploy demo").
+Commit:     a32b3ba2773bfbc6e080a4153342d3d0c72d74ed (main, annotated tag v0.2.0, tag object fb746d7)
+Run:        https://github.com/GGital/My-little-pony/actions/runs/45986583748 (push to main, 27 Nov 2026 10:58-11:06 UTC)
+Expected:   test job green; image tagged with the merge SHA; migration job applies 0003 and 0004 and the seed;
+            Cloud Run serves the new revision at 100%; smoke test passes with /api/version = merge SHA.
+Actual:     test job green (server 549/0/0, client 225/0/0, E2E 109/0/0, Sprint 1 STS 59 Pass, secret scan 0 findings);
+            image tcg-event-hub:a32b3ba...; migration execution tcg-event-hub-migrate-dp8n7 completed;
+            revision tcg-event-hub-00019-vgc serving 100% (replaces tcg-event-hub-00018-s6f, Lab 7 main dff72b6);
+            smoke 5 PASS, login check SKIP (optional smoke credentials are not configured).
+            Checked by hand right after the run: GET /api/version -> {"commit":"a32b3ba2773bfbc6e080a4153342d3d0c72d74ed"}.
+Source:     job logs downloaded with `gh run view --log` and `gh api repos/GGital/My-little-pony/actions/jobs/<id>/logs`;
+            timestamps, colour codes and environment blocks removed; lines below are copied, not retyped.
+
+=== Job "test / test-and-docker" (selected lines, in log order: secret scan, sts:check, server Vitest, client Vitest, Playwright E2E, Docker build) ===
+Secret shapes checked: private key, AWS access key, Google API key, GitHub token, Slack token.
+0 findings.
+ACs in the contracts: 47; with a test and a recorded result: 47
+STS §2 rows: 59 (Pass 59, Fail 0, other 0)
+BRs in STS §4: 12, each with a rejection test: 12
+TEST-SR7-01: every AC has a test with a recorded result, and every BR has a rejection test.
+ Test Files  47 passed (47)
+      Tests  549 passed (549)
+ Test Files  38 passed (38)
+      Tests  225 passed (225)
+  109 passed (2.6m)
+#21 writing image sha256:6f94d4e63746c0987cb379d4eca520864d33150edca221edde6104b690fc3c2a done
+#21 naming to docker.io/library/tcg-event-hub:ci done
+#21 DONE 0.7s
+
+=== Job "deploy": bash deploy/release.sh ===
+Updating Cloud Run job [tcg-event-hub-migrate] in project [cpe334-en007] region [asia-southeast1]
+Updating job...
+Done.
+Job [tcg-event-hub-migrate] has successfully been updated.
+
+To execute this job, use:
+gcloud run jobs execute tcg-event-hub-migrate
+Creating execution...
+Provisioning resources...............................................................................................done
+Starting execution......................................................................done
+Running execution............................................................................................................................done
+Done.
+Execution [tcg-event-hub-migrate-dp8n7] has successfully completed.
+
+View details about this execution by running:
+gcloud run jobs executions describe tcg-event-hub-migrate-dp8n7
+
+Or visit https://console.cloud.google.com/run/jobs/executions/details/asia-southeast1/tcg-event-hub-migrate-dp8n7?project=932557875237
+Deploying...
+Creating Revision..........................................................................................done
+Routing traffic.....done
+Done.
+Service [tcg-event-hub] revision [tcg-event-hub-00019-vgc] has been deployed and is serving 100 percent of traffic.
+Service URL: https://tcg-event-hub-932557875237.asia-southeast1.run.app
+Updating traffic...
+Done.
+URL: https://tcg-event-hub-kwdr2zue6a-as.a.run.app
+Traffic:
+  100% LATEST (currently tcg-event-hub-00019-vgc)
+Service URL: https://tcg-event-hub-kwdr2zue6a-as.a.run.app
+
+=== Job "deploy": python3 deploy/smoke_test.py "$SERVICE_URL" ===
+PASS /api/health
+PASS /api/ready
+PASS /
+PASS /api/events
+PASS /api/version
+SKIP login: optional smoke credentials not configured

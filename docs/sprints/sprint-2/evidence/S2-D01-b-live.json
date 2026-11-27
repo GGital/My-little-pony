@@ -1,0 +1,13 @@
+{
+  "id": "S2-D01-b",
+  "action": "Nok opens /events/54 (the draft)",
+  "expected": "The not-found page; E-05 404",
+  "actual": {
+    "page": "The page you requested could not be found.",
+    "apiStatus": 404
+  },
+  "url": "https://tcg-event-hub-932557875237.asia-southeast1.run.app/events/54",
+  "time": "2026-11-27T11:15:53.793Z",
+  "deployedCommit": "a32b3ba2773bfbc6e080a4153342d3d0c72d74ed",
+  "screenshot": "S2-D01-b-live.png"
+}

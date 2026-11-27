@@ -1,0 +1,13 @@
+{
+  "id": "S2-D01-d",
+  "action": "Nok presses REGISTER",
+  "expected": "\"You're in.\" and 1 / 8 seats",
+  "actual": {
+    "heading": "You're in.",
+    "seats": "SEATS\n1 / 8\n\n7 seats left\n\nPlayer names are private. Only the organizer of this event can see who registered.\n\nYou're in.\n\nYour seat at S2-D01 live check 11-27 18:15 is held. See you at the table.\n\nWHEN\nTue 1 Dec 2026 · 18:00\nWHERE\nQuantum Cards, Bangkok\nSEATS\n1 / 8 taken · 7 left\n\nCheck in at the counter when you arrive.\n\nSee it in My Events"
+  },
+  "url": "https://tcg-event-hub-932557875237.asia-southeast1.run.app/events/54",
+  "time": "2026-11-27T11:15:54.909Z",
+  "deployedCommit": "a32b3ba2773bfbc6e080a4153342d3d0c72d74ed",
+  "screenshot": "S2-D01-d-live.png"
+}
