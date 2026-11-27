@@ -1,0 +1,38 @@
+
+ RUN  v4.0.18 <repo>/client
+
+ ❯ tests/sprint-3/EditEvent.attendance.test.tsx (1 test | 1 failed) 147ms
+     × lists "checked a player in" and "undid a check-in", not "published the event" 146ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/sprint-3/EditEvent.attendance.test.tsx > Feature-P × SR-08 (C): the History panel names check-ins and undos (FR-28, UX-14) > lists "checked a player in" and "undid a check-in", not "published the event"
+AssertionError: expected [ …(3) ] to deeply equal [ …(3) ]
+
+- Expected
++ Received
+
+  [
+-   "10 Mar · 16:05 — Quantum Cards undid a check-in",
+-   "10 Mar · 16:02 — Quantum Cards checked a player in",
++   "10 Mar · 16:05 — Quantum Cards published the event",
++   "10 Mar · 16:02 — Quantum Cards published the event",
+    "1 Mar · 10:00 — Quantum Cards published the event",
+  ]
+
+
+ ❯ tests/sprint-3/EditEvent.attendance.test.tsx:52:82
+     50|     const history = await screen.findByRole('region', { name: 'History…
+     51|     expect(await within(history).findAllByRole('listitem')).toHaveLeng…
+     52|     expect(within(history).getAllByRole('listitem').map((li) => li.tex…
+       |                                                                                  ^
+     53|       '10 Mar · 16:05 — Quantum Cards undid a check-in',
+     54|       '10 Mar · 16:02 — Quantum Cards checked a player in',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  00:32:13
+   Duration  2.40s (transform 177ms, setup 300ms, import 403ms, tests 147ms, environment 1.25s)
+
