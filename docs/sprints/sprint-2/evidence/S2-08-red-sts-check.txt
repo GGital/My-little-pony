@@ -1,0 +1,39 @@
+S2-08 red coverage run
+Commit: 6af9641 + uncommitted red tests (committed next as the red commit)
+Command: npm run sts:check -- sprint-2
+Date: 27 Nov 2026 07:07 UTC
+
+ACs in the contracts: 44; with a test and a recorded result: 19
+STS §2 rows: 55 (Pass 42, Fail 0, other 13)
+BRs in STS §4: 5, each with a rejection test: 5
+Failed rows (reported in STS §6): none
+29 problem(s):
+- AC-SR8-01: TEST-SR8-01 has no recorded result (S2-01 part Pass (`dfa124f`); S2-04 capacity step Pass (`9f71b81`); S2-06 deadline step Pass (`3886e35`); AC-SR8-01 is now fully covered)
+- AC-SR8-01: JRN-03 has no recorded result (Pending)
+- AC-SR8-04: TEST-B-03 has no recorded result (E-13 rows Pass (`9f71b81`), E-14 rows Pass (`40f5687`), E-17 rows Pass (`dfa124f`); E-15, E-16 Pending)
+- AC-K-01: JRN-03 has no recorded result (Pending)
+- AC-K-02: JRN-03 has no recorded result (Pending)
+- AC-K-03: JRN-03 has no recorded result (Pending)
+- AC-K-05: TEST-B-03 has no recorded result (E-13 rows Pass (`9f71b81`), E-14 rows Pass (`40f5687`), E-17 rows Pass (`dfa124f`); E-15, E-16 Pending)
+- AC-L-01: JRN-03 has no recorded result (Pending)
+- AC-L-02: JRN-03 has no recorded result (Pending)
+- AC-L-06: TEST-B-03 has no recorded result (E-13 rows Pass (`9f71b81`), E-14 rows Pass (`40f5687`), E-17 rows Pass (`dfa124f`); E-15, E-16 Pending)
+- AC-M-01: JRN-03 has no recorded result (Pending)
+- AC-M-04: TEST-M-04 has no recorded result (Done in S2-07 (#84), in `cancel-registration.api.test.ts`, where `canCancel` and E-16 are built (decision 26 Nov 2026))
+- AC-N-01: TEST-N-01 has no recorded result (Pending)
+- AC-N-01: JRN-03 has no recorded result (Pending)
+- AC-N-02: TEST-N-02 has no recorded result (Pending)
+- AC-N-02: JRN-03 has no recorded result (Pending)
+- AC-N-03: TEST-N-03 has no recorded result (Pending)
+- AC-N-04: TEST-N-04 has no recorded result (Pending)
+- AC-N-05: TEST-N-05 has no recorded result (Pending)
+- AC-N-05: TEST-B-03 has no recorded result (E-13 rows Pass (`9f71b81`), E-14 rows Pass (`40f5687`), E-17 rows Pass (`dfa124f`); E-15, E-16 Pending)
+- AC-N-06: TEST-N-06 has no recorded result (Pending)
+- AC-O-01: JRN-03 has no recorded result (Pending)
+- AC-O-02: JRN-03 has no recorded result (Pending)
+- AC-O-05: TEST-B-03 has no recorded result (E-13 rows Pass (`9f71b81`), E-14 rows Pass (`40f5687`), E-17 rows Pass (`dfa124f`); E-15, E-16 Pending)
+- AC-J-01: JRN-04 has no recorded result (Pending)
+- AC-J-03: JRN-04 has no recorded result (Pending)
+- AC-J-05: JRN-04 has no recorded result (Pending)
+- AC-U-02: JRN-04 has no recorded result (Pending)
+- AC-U-03: TEST-B-03 has no recorded result (E-13 rows Pass (`9f71b81`), E-14 rows Pass (`40f5687`), E-17 rows Pass (`dfa124f`); E-15, E-16 Pending)

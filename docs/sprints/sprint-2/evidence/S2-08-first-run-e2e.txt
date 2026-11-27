@@ -1,0 +1,76 @@
+S2-08 first E2E run of the new specs (one spec mistake, fixed in the spec)
+Commit: 6af9641 + uncommitted red tests (committed next as the red commit)
+Command: npx playwright test e2e/sprint-2/journey.spec.ts e2e/sprint-2/responsive.spec.ts e2e/sprint-2/theme.spec.ts e2e/sprint-2/s2-09-store-profile-style.spec.ts e2e/sprint-1/journey.spec.ts
+Date: 27 Nov 2026 07:07 UTC
+
+PASS (25) FAIL (3)
+
+1. JRN-03 — draft → hidden → publish → register → capacity and deadline → cancel → register again → event cancelled (K, L, M, N, O, SR-08)
+   Error: expect(locator).toBeVisible() failed
+   
+   Locator: getByText('This event could not be found.')
+   Expected: visible
+   Timeout: 5000ms
+   Error: element(s) not found
+   
+   Call log:
+     - Expect "toBeVisible" with timeout 5000ms
+     - waiting for getByText('This event could not be found.')
+   
+   
+     39 |   await expect(nok.getByText('No events match your search.')).toBeVisible()
+     40 |   await nok.goto(`/events/${id}`)
+   > 41 |   await expect(nok.getByText('This event could not be found.')).toBeVisible()
+        |                                                                 ^
+     42 |
+     43 |   // K: Quantum Cards publishes it from the edit page.
+     44 |   await quantum.getByRole('button', { name: 'PUBLISH EVENT' }).click()
+       at <repo>\e2e\sprint-2\journey.spec.ts:41:65
+2. TEST-U-08 (E2E) — feature CSS comes after theme.css, so a one-class feature rule wins
+   Error: expect(received).toBeGreaterThan(expected)
+   
+   Expected: > 1275
+   Received:   7
+   
+     35 |   })
+     36 |   expect(order.theme).toBeGreaterThanOrEqual(0)
+   > 37 |   expect(order.feature).toBeGreaterThan(order.theme)
+        |                         ^
+     38 | })
+     39 |
+       at <repo>\e2e\sprint-2\s2-09-store-profile-style.spec.ts:37:25
+3. axe color-contrast: events-ended
+   Error: expect(received).toEqual(expected) // deep equality
+   
+   - Expected  -  1
+   + Received  + 16
+   
+   - Array []
+   + Array [
+   +   Array [
+   +     "a[href$=\"events/4\"] > .date-badge[aria-hidden=\"true\"] > .date-badge__month",
+   +     "a[href$=\"events/4\"] > .date-badge[aria-hidden=\"true\"] > .date-badge__day",
+   +     "a[href$=\"events/4\"] > div:nth-child(2) > .event-card__when",
+   +     "a[href$=\"events/4\"] > div:nth-child(2) > .event-card__when > .chip--muted.chip",
+   +     "a[href$=\"events/4\"] > div:nth-child(2) > .event-card__sub",
+   +     "a[href$=\"events/4\"] > .event-card__aside > .chips > .chip--seats.chip",
+   +     "a[href$=\"events/4\"] > .event-card__aside > .event-card__note.tabular-nums",
+   +     "a[href$=\"events/8\"] > .date-badge[aria-hidden=\"true\"] > .date-badge__month",
+   +     "a[href$=\"events/8\"] > div:nth-child(2) > .event-card__when",
+   +     "a[href$=\"events/8\"] > div:nth-child(2) > .event-card__when > .chip--muted.chip",
+   +     "a[href$=\"events/8\"] > div:nth-child(2) > .event-card__sub",
+   +     ".chip--cancelled",
+   +   ],
+   + ]
+   
+     74 |       await expect(page.getByRole('heading', { name: s.ready, exact: true }).first()).toBeVisible()
+     75 |       const result = await new AxeBuilder({ page }).withRules(['color-contrast']).analyze()
+   > 76 |       expect(result.violations.map((v) => v.nodes.map((n) => n.target.join(' ')))).toEqual([])
+        |                                                                                    ^
+     77 |     })
+     78 |   }
+     79 |
+       at <repo>\e2e\sprint-2\theme.spec.ts:76:84
+
+Time: 99926ms
+[full output: ~/AppData\Local\rtk\tee\1795763072_playwright.log]

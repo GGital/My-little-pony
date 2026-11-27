@@ -76,6 +76,7 @@ If two PRs still pick the same number, the PR that merges second renumbers.
   | `e2e/sprint-1/responsive.spec.ts` | `docs/sprints/sprint-1/evidence/responsive/` | `EVIDENCE=1` |
   | `e2e/sprint-1/lab7-ch13.spec.ts` | `docs/labs/lab07/evidence/` | `L7_SIDE=before` or `after` |
   | `e2e/sprint-2/s2-NN-evidence.spec.ts` | `docs/sprints/sprint-2/evidence/S2-NN-*` | `S2_SIDE=before` or `after` |
+  | `e2e/sprint-2/responsive.spec.ts` | `docs/sprints/sprint-2/evidence/responsive/` | `EVIDENCE=1` |
 
   Run only the spec you mean, for example `S2_SIDE=after npx playwright test e2e/sprint-2/s2-06-evidence.spec.ts`.
   A new evidence spec follows the same pattern and adds its row here.

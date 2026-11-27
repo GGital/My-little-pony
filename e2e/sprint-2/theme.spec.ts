@@ -59,6 +59,11 @@ const SCREENS: Screen[] = [
   { name: 'dashboard', path: '/organizer', as: EMAIL.quantum, ready: 'Dashboard' },
   { name: 'create-event', path: '/organizer/events/new', as: EMAIL.quantum, ready: 'Create an event' },
   { name: 'registrations', path: `/organizer/events/${EV[1]}/registrations`, as: EMAIL.quantum, ready: 'Friday Night Constructed' },
+  // S2-08: the rest of AC-C-08's list (edit event, store profile), and search results with past and cancelled
+  // (dimmed) cards, which TEST-J-05's "quantum" scan does not reach.
+  { name: 'edit-event', path: `/organizer/events/${EV[1]}/edit`, as: EMAIL.quantum, ready: 'Edit event' },
+  { name: 'store-profile', path: '/organizer/store', as: EMAIL.quantum, ready: 'Store profile' },
+  { name: 'events-ended', path: '/events?include=past,cancelled', ready: 'Find an Event' },
 ]
 
 test.describe('TEST-C-08 contrast and colours (AC-C-08)', () => {
