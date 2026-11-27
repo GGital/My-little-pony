@@ -1,7 +1,8 @@
 /* Feature-U (UX-17, UX-19): the store profile page. */
 .store-profile__chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
-.store-profile__chip { cursor: pointer; font: inherit; }
-/* Two classes on purpose: main.tsx loads component CSS before theme.css, so a one-class rule loses to .chip. */
+/* No font reset: the toggles keep .chip's type, as reviewed in #113 (it only applied once main.tsx loaded this file
+   after theme.css, S2-08). */
+.store-profile__chip { cursor: pointer; }
 .store-profile__chip.is-on {
   background: var(--accent-ink);
   border-color: var(--accent-ink);
