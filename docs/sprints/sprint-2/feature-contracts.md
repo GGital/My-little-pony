@@ -1,6 +1,6 @@
 # Sprint 2 Feature Engineering Contracts
 
-Project: **TCG Event Hub** · Sprint 2 (9–29 Nov 2026) · Document version: v0.6 — **draft for team review** (changes in §13; v0.6 = Lab 7 CH-13, Issue #77)
+Project: **TCG Event Hub** · Sprint 2 (9–29 Nov 2026) · Document version: v0.10 — released with `v0.2.0` (changes in §13; v0.6 = Lab 7 CH-13, Issue #77; v0.7 = S2-02; v0.8 = S2-03; v0.9 = S2-04; v0.10 = S2-08)
 Inputs: [`../../srs.md`](../../srs.md) v0.6 · [`../../features.md`](../../features.md) v0.4 ·
 [`../../traceability.md`](../../traceability.md) · [`../../system-sds.md`](../../system-sds.md) ·
 [`../plan.md`](../plan.md) §3 · [`../../ui/design-direction.md`](../../ui/design-direction.md) ·
@@ -148,6 +148,8 @@ TEST-SR2-04 (every catalogue code) gains the two new codes. SDS §6.2 gets a ver
 | D-25 | `game` is optional in the API and defaults to `OTHER`; the UI requires it. The server does not tie an event's game to the store's game list | Sprint 1 request bodies and tests stay valid; the store list only orders the choices in the form |
 | D-37 | The store profile holds the store's **public contact details** (phone, email, website, LINE). Every event shows them in its host section. The event's own `contact` field (Sprint 1, FR-06) stays as an optional "Contact for this event" shown above them. The store email is a separate public field, never the organizer's sign-in email (D-14 is unchanged) | Organizers stop retyping contact details on every event, and players always find a way to reach the store |
 | D-38 | Sprint 2 re-themes the client: **Deep Lagoon** colours, **Inter** for text, **Manrope** for figures, IBM Plex Sans Thai kept for Thai (design-direction v0.6). Token names stay; seats move to green | The team chose the palette and fonts from the trials on 21 Nov 2026; keeping token names limits the change to one file and the font imports |
+| D-40 | `include=cancelled` adds cancelled events that **have not started yet**; `include=past` adds started events; both together show every cancelled event. The time rule (`past`) and the status rule (`cancelled`) are independent. `seatsAvailable=false` is accepted and is the same as leaving it out. `%` and `_` in `q` match themselves | The AC-J-04 sentence "plus cancelled" had no time rule, and the review of S2-03 asked for one rule that S2-08 (Feature-O) and the traceability rows share |
+| D-41 | Review of #113. The **Game** control on the create and edit forms stays a required select ("Choose a game"), listing the store's games first ("Your games", then "Other games"). The game chip is **neutral** (white, card icon); teal stays reserved for seats and "registered". A list filtered to one game hides the chip and names the game in the heading. "Store profile" is in the organizer account menu, and the Dashboard keeps its button | A select with groups is shorter than seven radios and still shows the store's games first; the neutral chip keeps teal meaning "seats" | Reviewer GGital, 26 Nov 2026 |
 
 ### 0.7 Contract template
 
@@ -173,7 +175,7 @@ not change, the contract says *No change in this layer*.
 | Event published (E-14) | `Event.publishedAt` + `EventChange status DRAFT → PUBLISHED` | owner | both |
 | Details edited (E-13) | `EventChange field = details`, `newValue` = changed field names (D-20) | owner | `changedAt` |
 | Capacity changed (E-13) | `EventChange field = capacity`, old → new | owner | `changedAt` |
-| Deadline changed (E-13) | `EventChange field = deadline`, old effective → new effective (ISO) | owner | `changedAt` |
+| Deadline changed (E-13) | `EventChange field = deadline`, old effective → new effective (ISO). Only when the body sets a **different** `registrationDeadline`; a start move with no stored deadline is recorded by its `details` row (S2-06, team decision 26 Nov) | owner | `changedAt` |
 | Event cancelled (E-15) | `Event.cancelledAt`, `cancelledById`, `cancelReason` + `EventChange status PUBLISHED → CANCELLED` | owner | both |
 | Registration created (E-09) | `Registration.participantId`, `createdAt` (Sprint 1) | participant | `createdAt` |
 | Registration cancelled (E-16) | `Registration.status = CANCELLED`, `cancelledAt` | the participant (the only one allowed, BR-11) | `cancelledAt` |
@@ -228,7 +230,8 @@ changed capacity from 24 to 30". The registration list (Feature-I) shows cancell
    **PUBLISH EVENT**. Both send E-06. SAVE DRAFT adds `"saveAsDraft": true` (D-18).
 2. The server validates exactly as Feature-D does (all fields, BR-01 … BR-03). A draft is stored with
    `status DRAFT` and `publishedAt null`, and an `EventChange` row is written (`status` null → `DRAFT`). The UI goes
-   to the edit page with the toast "Draft saved. Only you can see it."
+   to the draft's edit page (`/organizer/events/:id/edit`) with the toast "Draft saved. Only you can see it."; the
+   edit page shows the draft banner and **PUBLISH EVENT** (v0.8; from v0.7 until S2-04 it went to `/events/:id`)
 3. The draft appears on the dashboard (E-07) with a **Draft** chip and a **Publish** button. Only its owner can
    open its detail page, which shows the banner "Draft — only you can see this event." and **PUBLISH EVENT**.
 4. **PUBLISH EVENT** calls E-14. It checks BR-02 and BR-08 again (D-21), then sets `status PUBLISHED`,
@@ -251,7 +254,8 @@ changed capacity from 24 to 30". The registration list (Feature-I) shows cancell
 **UI**
 - Create page: **PUBLISH EVENT** (primary) and **SAVE DRAFT** (secondary). Both show a busy state, and both keep
   the input when there is an error.
-- Dashboard: Draft chip (muted) · **Publish** and **Edit** buttons · no **Registrations** link for drafts.
+- Dashboard: Draft chip (muted) · **Publish** and **Edit** buttons · no **Registrations** link for drafts (Edit since
+  S2-04, v0.8).
 - Detail page (owner, draft): amber banner and **PUBLISH EVENT**. Organizer actions are not shown to anyone else.
 
 **API**
@@ -266,7 +270,7 @@ changed capacity from 24 to 30". The registration list (Feature-I) shows cancell
 
 | AC | Given | When | Then |
 |---|---|---|---|
-| **AC-K-01** | Quantum Cards signed in; clock fixed | E-06 with a valid body and `saveAsDraft: true`; then E-07 and E-05 as the owner; UI: fill the form and press SAVE DRAFT | `201`; the row has `status DRAFT`, `publishedAt null`, owner = Quantum Cards; one `EventChange` null → `DRAFT`; E-07 lists it as Draft; E-05 gives `MANAGE`; the UI lands on the edit page with "Draft saved. Only you can see it." |
+| **AC-K-01** | Quantum Cards signed in; clock fixed | E-06 with a valid body and `saveAsDraft: true`; then E-07 and E-05 as the owner; UI: fill the form and press SAVE DRAFT | `201`; the row has `status DRAFT`, `publishedAt null`, owner = Quantum Cards; one `EventChange` null → `DRAFT`; E-07 lists it as Draft; E-05 gives `MANAGE`; the UI lands on the draft's edit page with "Draft saved. Only you can see it." and the draft banner |
 | **AC-K-02** | the draft from AC-K-01 | E-04 (no filter, and with `include=past,cancelled` and `q` = its title) as a visitor, Nok and Dragon's Den; E-05 for it as a visitor, Nok and Dragon's Den; E-09 for it by Nok | the draft is in no list; every E-05 is `404 EVENT_NOT_FOUND`, byte-identical to id 999999; E-09 is `404` and no row is stored |
 | **AC-K-03** | the draft; clock T | the owner calls E-14; then E-04 as a visitor; UI: press PUBLISH EVENT on the dashboard | `200`, `status PUBLISHED`, `publishedAt = T`; `EventChange` `DRAFT → PUBLISHED`; the event is now in E-04; toast "Your event is live." |
 | **AC-K-04** | a draft whose start is now in the past (clock moved); a draft starting in 30 min; a draft starting in exactly 60 min; a published event; a cancelled event | the owner calls E-14 on each | `422 EVENT_TIME_INVALID` (field `startAt`) and the event stays `DRAFT` for the first two (CH-13); `200` for the 60-min draft; `409 ALREADY_PUBLISHED`; `409 ALREADY_CANCELLED`; nothing is changed and no change row is written |
@@ -289,7 +293,10 @@ event) is delivered here · Depends on: Feature-D, Feature-G, SR-08 · Issue S2-
    below, saves, writes one `EventChange` row per kind of change (`details`, `capacity`, `deadline`), and
    responds with the fresh `EventDetail`. Toast: "Changes saved."
 3. The page also contains the **Registrations** link, the **History** panel (SR-08) and the **Cancel event**
-   section (Feature-O).
+   section (Feature-O, added by S2-05). For a draft it also has the draft banner and **PUBLISH EVENT** (Feature-K).
+4. A 409 refusal lists its reason in `details` too: `EVENT_STARTED` names each frozen field in the order the body sent
+   them, and `CAPACITY_BELOW_REGISTERED` says "{n} players are registered, so capacity can't go below {n}." on
+   `capacity` (v0.8).
 
 **Rules, validation, boundaries** (shape errors are reported together, then rule errors)
 
@@ -331,7 +338,7 @@ event) is delivered here · Depends on: Feature-D, Feature-G, SR-08 · Issue S2-
 | **AC-L-01** | Quantum Cards owns an upcoming event with 3 registrations; clock fixed | E-13 with a new `title`, `venueName` and `description`; then E-05; UI: change the title on the edit page and press SAVE CHANGES | `200` with the new values; E-05 shows them; the 3 registrations are unchanged; one `EventChange` row with `field details`, `newValue` "title, venueName, description"; the UI shows "Changes saved." |
 | **AC-L-02** | the same event: capacity 24, 3 active | E-13 `capacity` = 3, 2, 256, 257, 0, 1.5, then 30 | 3 → `200`; 2 → `409 CAPACITY_BELOW_REGISTERED` ("3 players are registered…"); 256 → `200`; 257, 0 and 1.5 → `400`; 30 → `200` with `seatsRemaining 27` (checked by an independent count); one `capacity` change row per accepted value; no registration is touched |
 | **AC-L-03** | an event with capacity 10 and 8 active; 5 more participants signed in | E-13 `capacity 8` and the 5 E-09 calls are sent at the same time; repeated for 20 rounds | in every round, active ≤ capacity at the end; either the capacity change wins (`200`, and all 5 registrations get `409 EVENT_FULL`) or some registrations win first (the change then gets `409 CAPACITY_BELOW_REGISTERED`) |
-| **AC-L-04** | an upcoming event starting at T + 2 days, 4 hours long; clock T | E-13 with `startAt` = T − 1 min; `startAt` = T + 59 min; `startAt` = T + 60 min; `endAt` only = start + 25 h; `endAt` only = start + 24 h; `startAt` = T + 3 days together with `endAt` = T + 3 days + 4 h | `422` on `startAt` ×2 (CH-13); `200`; `422` on `endAt`; `200`; `200`, and the event moves later in E-04 order |
+| **AC-L-04** | an upcoming event starting at T + 2 days, 4 hours long; clock T | E-13 with `startAt` = T − 1 min; `startAt` = T + 59 min; `startAt` = T + 60 min **with `endAt` = T + 5 h** (v0.8: a start alone would make a 51-hour event, which the end rule refuses); `endAt` only = start + 25 h; `endAt` only = start + 24 h; `startAt` = T + 3 days together with `endAt` = T + 3 days + 4 h | `422` on `startAt` ×2 (CH-13); `200`; `422` on `endAt`; `200`; `200`, and the event moves later in E-04 order |
 | **AC-L-05** | an event that started 1 h ago (clock fixed), with 2 registrations | E-13 with `description` + `feeLabel`; then with `capacity`; then with `startAt` + `title`; UI: open its edit page | `200` for the first; `409 EVENT_STARTED` with `details` for `capacity`, then for `startAt` and `title`; nothing frozen changes; the page shows those fields read-only with the started note |
 | **AC-L-06** | an event owned by Quantum Cards; a cancelled event owned by Quantum Cards | E-13 by Dragon's Den, Mint, a visitor, with a foreign Origin, with `{}`, with `organizerId`; E-13 on the cancelled event | `404`, `403`, `401`, `403`, `400` "Change at least one field.", `400`; `409 ALREADY_CANCELLED`; nothing is stored or changed |
 
@@ -379,7 +386,7 @@ Errors appear under the field.
 | **AC-M-03** | an open event with deadline D (before start) and seats left; Nok | E-09 with the clock at D − 1 min, at D, and at D + 1 min (on separate events); E-05 at D | `201`; `409 REGISTRATION_CLOSED`; `409 REGISTRATION_CLOSED`; E-05 action `CLOSED`, and the page shows a disabled **REGISTRATION CLOSED**; the event is still in E-04 because it has not started |
 | **AC-M-04** | Mint is registered on an event with deadline D | E-10, E-11 and E-05 at D − 1 min and at D; E-16 at D | `canCancel true`, then `false` in all three; E-16 at D gives `409 REGISTRATION_CLOSED` and the registration stays `REGISTERED` |
 
-**Planned tests:** TEST-M-01 … 04 (U, I, C, E2E).
+**Planned tests:** TEST-M-01 … 04 (U, I, C, E2E). TEST-M-04 runs in S2-07 (#84), where `canCancel` and E-16 are built (S2-06).
 
 ---
 
@@ -426,7 +433,7 @@ what allows one new active row after a cancel, and never two.
 | **AC-N-03** | a full event (2 / 2: Ploy, Boss); Nok | Ploy cancels; Nok registers; Ploy registers again | `200`; `201`; `409 EVENT_FULL`; active = 2 = capacity |
 | **AC-N-04** | Mint's registrations: one `CANCELLED`, one `EVENT_CANCELLED`, one `CHECKED_IN` (set by SQL), one on an event whose deadline has passed | E-16 on each | `409 ALREADY_CANCELLED` ×2, `409 ALREADY_CHECKED_IN`, `409 REGISTRATION_CLOSED`; no row changes |
 | **AC-N-05** | Mint's active registration | E-16 by Ploy, by Quantum Cards (the event owner), by a visitor, with a foreign Origin, with body `{ "participantId": … }`; and for id 999999 by Mint | `404` (byte-identical to 999999), `403`, `401`, `403`, `400`; `404 REGISTRATION_NOT_FOUND`; nothing changes |
-| **AC-N-06** | a full event (capacity 2) where P1 holds a seat; 10 other participants; separately, Mint with one active registration | P1's E-16 and 10 E-09 calls are sent at the same time; separately, Mint sends 2 E-16 calls at the same time; 20 rounds | each round: exactly one of the 10 gets `201`, active = 2; Mint gets one `200` and one `409 ALREADY_CANCELLED` |
+| **AC-N-06** | a full event (capacity 2) where P1 holds a seat; 10 other participants; separately, Mint with one active registration | P1's E-16 and 10 E-09 calls are sent at the same time; separately, Mint sends 2 E-16 calls at the same time; 20 rounds | each round: at most one of the 10 gets `201` (exactly one when the cancel takes the lock first; if all 10 take it first, each gets `EVENT_FULL`), active = 1 + the number of `201`s and never above 2; across the 20 rounds at least one round has a winner; Mint gets one `200` and one `409 ALREADY_CANCELLED` |
 
 **Planned tests:** TEST-N-01 … 06 (U, I, C, E2E). TEST-N-06 is a concurrency test.
 
@@ -540,7 +547,7 @@ show a **Past** or **Cancelled** chip.
 | **AC-J-01** | the seed (9 events) | E-04 with `q` = "quantum", "BANGKOK", "draft night", "เปิดกล่อง", "50%_off", 101 characters | the Quantum Cards upcoming events; every upcoming published event; EV-5; EV-6; `[]`; `400` on `q` |
 | **AC-J-02** | built data: types, formats, dates across a Bangkok midnight, one full event | E-04 with `type`, `format`, `from`/`to` (an event at 23:30 Bangkok on `to` is included, one at 00:30 the next day is not), `seatsAvailable=true`, and all of them combined; then `type=PARTY`, `from=2026-02-30`, `from` after `to` | exactly the matching ids each time (AND); `400` ×3 naming the key |
 | **AC-J-03** | 45 upcoming published events that match | pages 1, 2, 3 and 4; page `0` and `abc` | 20 + 20 + 5 items with `meta.totalItems 45`, no id twice and none missing, `startAt` then `id` order; page 4 `[]` with `totalItems 45`; `400` ×2 |
-| **AC-J-04** | upcoming, started, cancelled and draft events | E-04 with no `include`, `include=past`, `include=cancelled`, `include=past,cancelled`, `include=drafts` | upcoming published only; plus started; plus cancelled; plus both; `400`; a draft never appears in any of them |
+| **AC-J-04** | upcoming, started, cancelled and draft events | E-04 with no `include`, `include=past`, `include=cancelled`, `include=past,cancelled`, `include=drafts` | upcoming published only; plus started; plus cancelled that have not started (D-40); plus both; `400`; a draft never appears in any of them |
 | **AC-J-05** | the seed, in the browser | type "quantum", choose Constructed, press Search; go to page 2 of a long list; press Back; remove a chip; search for "zzz" | the URL holds the filters and the list matches E-04; Previous/Next and "21–40 of N" are correct; Back restores the earlier list; removing a chip searches again; "No events match your search." with **Clear filters** |
 | **AC-J-06** | registrations exist | E-04 with `organizerId=1` and with `participantId=3`; stringify the bodies of every AC-J call | `400` ×2; no body contains a participant id, display name, email or a `registrations` key |
 
@@ -553,11 +560,11 @@ show a **Past** or **Cancelled** chip.
 | Sprint 1 item | Sprint 2 change | How it is re-tested |
 |---|---|---|
 | Feature-B, TEST-B-03 | The permission matrix gains E-13 … E-17 (SDS §7.1 rows) | TEST-B-03 gains rows; every cell is checked |
-| Feature-D, E-06 | Optional `saveAsDraft` and `registrationDeadline`; creation writes an `EventChange`; the `contact` field's hint now points at the store contact (D-37), with no rule change | TEST-D-01 … 05 unchanged and still green; TEST-K-01, TEST-M-01, TEST-U-04 |
+| Feature-D, E-06 | Optional `saveAsDraft` and `registrationDeadline`; creation writes an `EventChange`; the `contact` field's hint now points at the store contact (D-37), with no rule change | TEST-D-02 … 05 unchanged and still green; TEST-D-01 (C) and its E2E choose a game before publishing, because the UI requires one (Feature-U, S2-09); TEST-K-01, TEST-M-01, TEST-U-04 |
 | Feature-E, E-07 | Shows drafts and cancelled events with their chips; Edit and Publish buttons | TEST-E-01 gains a draft and a cancelled row |
 | Feature-F, E-04 / E-05 | Query, paging and `meta` (J); drafts are 404 (K); the new `CLOSED` rule (M); cancel fields (O) | TEST-F-01 … 05 unchanged and still green with no query; TEST-J-*, K-02, M-03, O-02 |
-| Feature-G, E-09 | Draft → 404; deadline → closed; cancelled → closed | TEST-G-01 … 06 still green; TEST-K-02, M-03, O-02 |
-| Feature-H / I, E-08, E-10, E-11 | `cancelledAt`, `canCancel` | TEST-H-*, I-* still green; TEST-N-01, M-04 |
+| Feature-G, E-09 | Draft → 404; deadline → closed; cancelled → closed | TEST-G-01 … 06 still green, except TEST-G-04's draft case, which now expects `404 EVENT_NOT_FOUND` (v0.7, Sprint 1 STS v1.16); TEST-K-02, M-03, O-02 |
+| Feature-H / I, E-08, E-10, E-11 | `cancelledAt`, `canCancel` | TEST-H-* still green; TEST-I-01 changes (lists `CANCELLED` rows, not counted); TEST-N-01, M-04 |
 | SR-01, AC-SR1-02 | The seed has 9 events (§0.4) | TEST-SR1-02 is updated in S2-01, and the change is recorded in Sprint 1 STS §8 |
 | SR-02, TEST-SR2-03 / 04 | Route table + new codes | rows added |
 | Feature-C, AC-C-01 … 06; SR-05, AC-SR5-01 | Theme values and fonts change (D-38, §12) | TEST-C-01 … 06 and TEST-SR5-01 still green; TEST-C-07, C-08 |
@@ -656,11 +663,12 @@ Decision D-37 (contact added in v0.4)
 6. UI (as in the prototype):
    - **Game** dropdown in the search bar, and a **neutral** game chip (white with a card icon) on event cards
      and the detail page. Teal stays reserved for seats and "registered". A list filtered to one game hides the
-     chip and names the game in the list heading;
-   - a required **Game** radio group on the create and edit forms;
-   - `/organizer/store` with "Games played here" toggle chips (`aria-pressed`), a **Contact** card (Phone, Email,
+     chip and names the game in the list heading ("Pokémon TCG events") (D-41);
+   - a required **Game** select on the create and edit forms (first option "Choose a game"; the store's games under
+     "Your games", the rest under "Other games"; one plain list if the store cannot be read) (D-41);
+   - `/organizer/store` with "Games played here" toggle chips (`aria-pressed`, a filled chip with a check icon when on), a **Contact** card (Phone, Email,
      Website, LINE ID, each with a visible label and an example hint) and **SAVE PROFILE**, linked from the
-     organizer menu;
+     organizer account menu and from a button on the Dashboard (D-41);
    - a host section on the detail page with the store's games and its contact details.
    The logo and banner parts of the prototype wait for Feature-V. Until then, the initials and the playmat pattern
    are shown.
@@ -689,7 +697,7 @@ are reported together):
 | AC | Given | When | Then |
 |---|---|---|---|
 | **AC-U-01** | Quantum Cards signed in | E-06 with `game: "POKEMON"`; E-06 with no `game`; E-06 with `game: "CHESS"`; E-13 `game: "MAGIC"`; UI: create an event without choosing a game | `201` with `game POKEMON`; `201` with `OTHER`; `400` on `game`; `200` and a `details` change row naming `game`; the form shows "Choose a game." and sends nothing |
-| **AC-U-02** | events with different games | E-04 `game=POKEMON`, with `q`, and `game=chess`; UI: choose Pokémon TCG in the search bar | only Pokémon events; the AND of both filters; `400` on `game`; the URL holds `game=POKEMON`, a "Game: Pokémon TCG" chip is shown, and every card shows the Pokémon TCG chip |
+| **AC-U-02** | events with different games | E-04 `game=POKEMON`, with `q`, and `game=chess`; UI: choose Pokémon TCG in the search bar | only Pokémon events; the AND of both filters; `400` on `game`; the URL holds `game=POKEMON`, a "Game: Pokémon TCG" chip is shown, the heading reads "Pokémon TCG events" and the cards show no game chip (an unfiltered list shows each card's chip) |
 | **AC-U-03** | Quantum Cards | E-23 `{ games: ["POKEMON","MAGIC"] }`, then `{ games: [] }`, `{ games: ["POKEMON","POKEMON"] }`, `{ games: ["X"] }`; E-23 by Mint and by a visitor | `200` and E-05 of a Quantum Cards event shows both games; `200` with none; `400` (duplicate); `400`; `403`; `401` |
 | **AC-U-04** | Quantum Cards owns event A (its own `contact` empty) and event B (`contact` "Ask for Ken at the counter") | E-23 with phone `02 555 0101`, email ` Hello@QuantumCards.example `, website `https://quantumcards.example/events`, LINE `@quantumcards`; E-05 A and B as a visitor; then E-23 `{ contactLine: "" }`; UI: open A and B | `200`; the email is stored trimmed and lower-case; E-05 A and B carry the same `store.contact`; after clearing, `line` is `null`; A's page shows the phone as a `tel:` link, the email as a `mailto:` link and the website as "quantumcards.example"; B's page shows "Contact for this event: Ask for Ken at the counter" above them; the organizer's sign-in email appears in neither response |
 | **AC-U-05** | Quantum Cards | E-23 with phone `abc`, email `hello@`, website `javascript:alert(1)`, website `ftp://store.example`, a 201-character website, LINE `my line id`, and `{}`; UI: the website link and a contact containing `<b>bold</b>` | `400` listing **every** failing field with the table's messages, and nothing stored; `{}` is `400` "Change at least one field."; the link has `target="_blank"` and `rel="noopener noreferrer nofollow"`; `<b>bold</b>` is shown as text (NFR-15) |
@@ -757,3 +765,12 @@ that fails blocks the merge. Nothing in Sprint 1's AC-C-01 … 06 or AC-SR5-01 m
 | v0.4 | 21 Nov 2026 | D-37: store contact details (phone, email, website, LINE) on the Feature-U store profile, shown on every event, with the event's own `contact` kept as "Contact for this event"; validation table; AC-U-04, AC-U-05; seed contacts; §10 total 40 → 42 | Team (AI-assisted) |
 | v0.5 | 21 Nov 2026 | D-38: §12 Feature-C Deep Lagoon theme and type (Inter text, Manrope figures, Thai fallback), AC-C-07 and AC-C-08; re-verification row; version history becomes §13; 44 ACs | Team (AI-assisted) |
 | v0.6 | 25 Nov 2026 | Lab 7 change CH-13 (Issue #77): D-21, E-14 check order and the E-13 time rule use the 60-minute lead time (only when the body sets `startAt`); AC-K-04 and AC-L-04 gain the boundary cases | Team (AI-assisted) |
+| v0.7 | 25 Nov 2026 | S2-02 (team decision 25 Nov): SAVE DRAFT lands on the draft's own page, which shows the owner's banner and PUBLISH EVENT, because the edit page is built in S2-04; the dashboard **Edit** button moves to S2-04 too (Behaviour 2, UI, AC-K-01). §8: TEST-G-04's draft case changes to 404, which the Feature-G row had missed | Team (AI-assisted) |
+| v0.8 | 26 Nov 2026 | S2-03 (review of PR #94): D-39 records the `include=cancelled` rule (cancelled events that have not started; `past` adds started ones), `seatsAvailable=false` and the literal `%` and `_` in `q`; AC-J-04 expected sets say so | Team (AI-assisted) |
+| v0.9 | 26 Nov 2026 | S2-04: a new draft now lands on its edit page, which has the draft banner and PUBLISH EVENT; the dashboard gets **Edit** (Feature-K Behaviour 2, UI, AC-K-01); Feature-L Behaviour 3 notes that the Cancel event section comes with S2-05, and Behaviour 4 the 409 `details`; AC-L-04's 60-minute case sends its own end, because the resulting-end rule refuses a 51-hour event | Team (AI-assisted) |
+| #110 | 26 Nov 2026 | D-39 was used twice: the SRS's D-39 is CH-13 (Lab 7), so the `include=cancelled` decision of S2-03 becomes **D-40** (§0.6, AC-J-04) and is added to SRS §10.1. Nothing else changes | Team (AI-assisted) |
+| S2-06 | 26 Nov 2026 | §4: TEST-M-04 runs with Feature-N in S2-07, because `canCancel` and E-16 are built there (decision 26 Nov). §1 (review of #111): a `deadline` row is written only for an explicit, different deadline; a deadline sent again unchanged is not checked again | Team (AI-assisted) |
+| S2-07 | 26 Nov 2026 | §5 (review of #112): AC-N-06 says at most one of the 10 registrations wins the freed seat (exactly one when the cancel takes the lock first), because all 10 can take the lock before the cancel and each then correctly gets `EVENT_FULL`; active never exceeds 2. §8: Feature-H / I row names TEST-I-01 (lists `CANCELLED` rows, not counted) | Team (AI-assisted) |
+| S2-09 | 26 Nov 2026 | §8 (review of [#113](https://github.com/GGital/My-little-pony/pull/113)): the Feature-D row names the one Sprint 1 test that changes with Feature-U (TEST-D-01 chooses a game). No behaviour changed | Team (AI-assisted) |
+| S2-09 | 26 Nov 2026 | §0.6 D-41 and §11.1 (review of [#113](https://github.com/GGital/My-little-pony/pull/113)): the Game control stays a select with the store's games first; neutral chip hidden on a list filtered to one game; Store profile in the account menu; AC-U-02 now checks the heading and no card chips | Team (AI-assisted) |
+| v0.10 | 27 Nov 2026 | S2-08 release records: covers the #110, S2-06, S2-07 and S2-09 rows above. §9 journeys JRN-03 and JRN-04 run as written. No contract change in S2-08 | Team (AI-assisted) |

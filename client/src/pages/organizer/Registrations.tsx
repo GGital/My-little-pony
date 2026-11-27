@@ -94,7 +94,8 @@ export const Registrations: React.FC = () => {
               <tbody>
                 {items.map((row, i) => (
                   <tr key={row.id}>
-                    <td>{i + 1}</td>
+                    {/* Numbered among active rows only, so the last number matches the count above. */}
+                    <td>{row.status === 'CANCELLED' ? '' : items.slice(0, i + 1).filter((r) => r.status !== 'CANCELLED').length}</td>
                     <td>
                       <strong>{row.participant.displayName}</strong>
                     </td>
@@ -102,10 +103,17 @@ export const Registrations: React.FC = () => {
                       <time dateTime={row.createdAt}>{formatEventTime(row.createdAt)}</time>
                     </td>
                     <td>
-                      <span className="chip chip--seats">
-                        <Icon name="check" size="sm" />
-                        {row.status}
-                      </span>
+                      {row.status === 'CANCELLED' ? (
+                        <>
+                          <span className="chip chip--muted">Cancelled</span>{' '}
+                          {row.cancelledAt && <time dateTime={row.cancelledAt}>{formatEventTime(row.cancelledAt)}</time>}
+                        </>
+                      ) : (
+                        <span className="chip chip--seats">
+                          <Icon name="check" size="sm" />
+                          {row.status}
+                        </span>
+                      )}
                     </td>
                   </tr>
                 ))}

@@ -1,7 +1,7 @@
 import type { PrismaClient, RegistrationStatus } from '@prisma/client'
 import type { Actor } from './actor.js'
 import { ownedEventWhere } from './actor.js'
-import { ACTIVE_STATUSES, summarySelect, toSummary, type EventSummary } from './events.read.js'
+import { summarySelect, toSummary, type EventSummary } from './events.read.js'
 
 export type OrganizerRegistrationRow = {
   id: number
@@ -10,6 +10,8 @@ export type OrganizerRegistrationRow = {
   }
   status: RegistrationStatus
   createdAt: string
+  /** Set when the player cancelled the seat (Feature-N, AC-N-01). */
+  cancelledAt: string | null
 }
 
 export type EventRegistrationsResult = {
@@ -55,12 +57,14 @@ export async function getOrganizerEventRegistrations(
       title: true,
       capacity: true,
       registrations: {
-        where: { status: ACTIVE_STATUSES },
+        // Active rows and rows the player cancelled (Feature-N); only the active ones count against capacity.
+        where: { status: { in: ['REGISTERED', 'CHECKED_IN', 'CANCELLED'] } },
         orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
         select: {
           id: true,
           status: true,
           createdAt: true,
+          cancelledAt: true,
           participant: {
             select: {
               displayName: true,
@@ -73,7 +77,7 @@ export async function getOrganizerEventRegistrations(
 
   if (!event) return null
 
-  const registeredCount = event.registrations.length
+  const registeredCount = event.registrations.filter((r) => r.status !== 'CANCELLED').length
   const seatsRemaining = Math.max(0, event.capacity - registeredCount)
 
   return {
@@ -91,6 +95,7 @@ export async function getOrganizerEventRegistrations(
       },
       status: r.status,
       createdAt: r.createdAt.toISOString(),
+      cancelledAt: r.cancelledAt?.toISOString() ?? null,
     })),
   }
 }

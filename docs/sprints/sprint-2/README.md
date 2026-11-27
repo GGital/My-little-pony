@@ -1,6 +1,6 @@
 # Sprint 2: engineering contracts, tests and Definition of Done
 
-Project: **TCG Event Hub** · Sprint 2 (9–29 Nov 2026) · Version v0.4 — **draft for team review** (changes in §6)
+Project: **TCG Event Hub** · Sprint 2 (9–29 Nov 2026) · Version v0.5 — released with `v0.2.0` (changes in §6)
 
 | Document | What it is |
 |---|---|
@@ -37,7 +37,7 @@ The contracts PR (`docs/s2-contracts`) is merged into `sprint-2-staging` **befor
 | S2-07 | Feature-N: cancel a registration and register again | §5 | TEST-N-01 … 06 | S2-01, S2-06 | 2 | Wed 25 Nov |
 | S2-09 | Feature-U: game per event, store profile (games, contact), game filter (CH-11, D-37) | §11.1 | TEST-U-01 … 05 | S2-01, S2-03, S2-04 | 2 | Wed 25 Nov |
 | S2-10 | Deep Lagoon theme and type: tokens, Inter + Manrope, Thai fallback (D-38) | §12 | TEST-C-07, C-08 | S2-00 | 2 | Mon 23 Nov |
-| S2-08 | Integration, journeys, regression, release `v0.2.0` | §8, §9 | JRN-03, JRN-04, TEST-SR5-02 and the regression rows | all | both | Thu 26 Nov |
+| S2-08 | Integration, journeys, regression, release `v0.2.0` | §8, §9 | JRN-03, JRN-04, TEST-SR5-05 and the regression rows | all | both | Thu 26 Nov |
 
 S2-01's migration adds the `game` enum column and `User.games` too, so S2-09 needs no schema change of its own.
 Each Issue that adds an endpoint also adds its rows to TEST-B-03 (DoD-6).
@@ -83,7 +83,7 @@ extras.
 | UX-13 | Red "Cancelled by the organizer: {reason}" banner; **Event cancelled** chip in My Events | O · AC-O-02 |
 | UX-14 | Change-history panel on the edit page ("Quantum Cards changed capacity from 24 to 30") | SR-08 · AC-SR8-01 |
 | UX-15 | Dashboard status chips (Draft / Published / Cancelled) with Edit and Publish actions | K, E · TEST-E-01 |
-| UX-16 | **Game** dropdown in the search bar; a teal game chip on cards and the detail page | U · AC-U-02 |
+| UX-16 | **Game** dropdown in the search bar; a neutral game chip (white, card icon) on cards and the detail page; a list filtered to one game hides it and names the game in the heading (D-41) | U · AC-U-02 |
 | UX-17 | Store profile page with "Games played here" toggle chips; a host section on the event page | U · AC-U-03 |
 | UX-19 | Store contact card on the profile; tap-to-call, tap-to-email and a short website link on every event, with "Contact for this event" when the event has its own | U · AC-U-04 |
 | UX-20 | Deep Lagoon theme: navy header, teal actions, green seats; Inter text and Manrope figures with tabular digits | C · AC-C-07, C-08 |
@@ -119,3 +119,5 @@ Sprint 1 README §4 (DoD-1 … DoD-10) applies to every Sprint 2 Issue. The Spri
 | v0.2 | 21 Nov 2026 | CH-11 split (D-24): Issue S2-09 Feature-U; UX-16, UX-17 in Sprint 2, UX-18 in Sprint 3 (Feature-V); 40 ACs | Team (AI-assisted) |
 | v0.3 | 21 Nov 2026 | D-37: store contact in S2-09 (TEST-U-04, U-05), UX-19; 42 ACs | Team (AI-assisted) |
 | v0.4 | 21 Nov 2026 | D-38: Issue S2-10 (theme first, on 23 Nov, so later UI Issues are built on the new tokens), UX-20; 44 ACs | Team (AI-assisted) |
+| S2-09 | 26 Nov 2026 | UX-16: the game chip is neutral, not teal (D-41, review of [#113](https://github.com/GGital/My-little-pony/pull/113)) | Team (AI-assisted) |
+| v0.5 | 27 Nov 2026 | S2-08: covers the S2-09 row above; the S2-08 Issue plan row names TEST-SR5-05 (renumbered from TEST-SR5-02, which is Sprint 3's axe scan, team decision 27 Nov) | Team (AI-assisted) |

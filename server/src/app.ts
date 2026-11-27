@@ -12,6 +12,7 @@ import { healthRouter } from './http/health.js'
 import { meRouter } from './http/me.routes.js'
 import { loadSession } from './http/session.js'
 import { organizerRouter } from './http/organizer.routes.js'
+import { storeRouter } from './http/store.routes.js'
 import { createLogger, type Logger } from './log.js'
 
 export type AppDeps = {
@@ -43,9 +44,10 @@ export function createApp({
   api.use(healthRouter(prisma, log, config.GIT_SHA))
   api.use(loadSession(prisma)) // SDS §2.3 step 2: every route after health knows its caller
   api.use('/auth', authRouter(prisma, config))
-  api.use(organizerRouter(prisma))
+  api.use(organizerRouter(prisma, config))
+  api.use(storeRouter(prisma, config))
   api.use(eventsRouter(prisma, config))
-  api.use(meRouter(prisma))
+  api.use(meRouter(prisma, config))
   extraRoutes?.(api)
   api.use((_req, res) => sendError(res, 'NOT_FOUND'))
   api.use(errorHandler(log))

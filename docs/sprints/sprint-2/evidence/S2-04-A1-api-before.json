@@ -1,0 +1,56 @@
+{
+  "id": "S2-04-A1-api",
+  "side": "before",
+  "action": "PATCH /api/organizer/events/1 as a visitor, Mint, Dragon's Den, then Quantum Cards with {}, capacity 2 and capacity 30; GET its changes",
+  "expected": "After: 401, 403, 404 EVENT_NOT_FOUND; 400 \"Change at least one field.\"; 409 CAPACITY_BELOW_REGISTERED; 200 capacity 30; history capacity 24 → 30",
+  "actual": {
+    "visitor": {
+      "status": 404,
+      "code": "NOT_FOUND",
+      "details": null,
+      "title": null,
+      "capacity": null
+    },
+    "participant": {
+      "status": 404,
+      "code": "NOT_FOUND",
+      "details": null,
+      "title": null,
+      "capacity": null
+    },
+    "otherOrganizer": {
+      "status": 404,
+      "code": "NOT_FOUND",
+      "details": null,
+      "title": null,
+      "capacity": null
+    },
+    "empty": {
+      "status": 404,
+      "code": "NOT_FOUND",
+      "details": null,
+      "title": null,
+      "capacity": null
+    },
+    "belowRegistered": {
+      "status": 404,
+      "code": "NOT_FOUND",
+      "details": null,
+      "title": null,
+      "capacity": null
+    },
+    "capacity": {
+      "status": 404,
+      "code": "NOT_FOUND",
+      "details": null,
+      "title": null,
+      "capacity": null
+    },
+    "history": {
+      "status": 200,
+      "items": []
+    }
+  },
+  "time": "2026-11-25T15:50:17.230Z",
+  "commit": "0906f89"
+}

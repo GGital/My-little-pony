@@ -1,0 +1,14 @@
+{
+  "id": "S2-02-U1-create-form",
+  "side": "before",
+  "action": "Quantum Cards opens /organizer/events/new",
+  "expected": "After: PUBLISH EVENT and SAVE DRAFT",
+  "actual": {
+    "buttons": [
+      "PUBLISH EVENT"
+    ]
+  },
+  "time": "2026-11-25T14:27:42.711Z",
+  "commit": "47b3838",
+  "screenshot": "S2-02-U1-create-form-before.png"
+}

@@ -1,0 +1,48 @@
+{
+  "id": "S2-04-U2-dashboard",
+  "side": "before",
+  "action": "Quantum Cards opens /organizer",
+  "expected": "After: every row has Edit (the draft EV-7 has Publish, Edit and View)",
+  "actual": {
+    "actions": [
+      [
+        "Friday Night Constructed",
+        [
+          "Registrations",
+          "View"
+        ]
+      ],
+      [
+        "Early Deadline Sealed",
+        [
+          "Registrations",
+          "View"
+        ]
+      ],
+      [
+        "Last Seat Sealed",
+        [
+          "Registrations",
+          "View"
+        ]
+      ],
+      [
+        "Release Weekend Sealed · เปิดกล่องสุดสัปดาห์",
+        [
+          "Registrations",
+          "View"
+        ]
+      ],
+      [
+        "Prerelease Planning Night",
+        [
+          "Publish",
+          "View"
+        ]
+      ]
+    ]
+  },
+  "time": "2026-11-25T15:50:04.934Z",
+  "commit": "0906f89",
+  "screenshot": "S2-04-U2-dashboard-before.png"
+}

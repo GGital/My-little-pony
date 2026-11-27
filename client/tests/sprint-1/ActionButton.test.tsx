@@ -40,11 +40,12 @@ describe('TEST-F-02 (C) — ActionButton states (AC-F-02, FR-12)', () => {
     expect(screen.getByText(/Organizer accounts can't register for events/i)).toBeInTheDocument()
   })
 
-  it('renders MANAGE as MANAGE EVENT linking to event registrations', () => {
+  // Revised in Sprint 2 (S2-04, Sprint 1 STS v1.17): MANAGE now opens the edit page (Sprint 2 contracts §0.2, §3).
+  it('renders MANAGE as MANAGE EVENT linking to the edit page', () => {
     renderButton(<ActionButton action="MANAGE" eventId={1} />)
     const btn = screen.getByRole('link', { name: /MANAGE EVENT/i })
     expect(btn).toBeInTheDocument()
-    expect(btn).toHaveAttribute('href', '/organizer/events/1/registrations')
+    expect(btn).toHaveAttribute('href', '/organizer/events/1/edit')
   })
 
   it('renders FULL as a disabled button', () => {
