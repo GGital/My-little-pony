@@ -57,8 +57,11 @@ const makeEvent = (over: { status?: 'DRAFT' | 'PUBLISHED' | 'CANCELLED'; startAt
     },
   })
 }
+// Sprint 3 (BR-19, registration_checkin_fields): a CHECKED_IN row carries who checked it in and when.
 const register = (eventId: number, participantId: number, status: 'REGISTERED' | 'CHECKED_IN' | 'CANCELLED' = 'REGISTERED') =>
-  prisma.registration.create({ data: { eventId, participantId, status } })
+  prisma.registration.create({
+    data: { eventId, participantId, status, ...(status === 'CHECKED_IN' ? { checkedInAt: T, checkedInById: ids.quantum } : {}) },
+  })
 
 /** Read straight from the tables, independently of the endpoints (STS §1.1 rule 2). */
 const storedEvent = (id: number) => prisma.event.findUniqueOrThrow({ where: { id } })

@@ -256,6 +256,34 @@ describe('TEST-P-05 (I) · AC-P-05, BR-14, NFR-02: who may check in, and the ord
   })
 })
 
+// Cross-feature (Sprint 3 contracts §12, Feature-O re-verified): check-in opens 60 minutes before the start and E-15
+// may cancel until the start, so an event can be cancelled with players already checked in.
+describe('Cross-feature · Feature-O E-15 after a check-in (BR-12, BR-19, FR-28)', () => {
+  it('200; the checked-in row becomes EVENT_CANCELLED with its check-in fields cleared; the attendance history stays', async () => {
+    setNow(T)
+    const event = await makeEvent(new Date(T.getTime() + 30 * MIN))
+    const mint = await register(event.id, ids.mint)
+    expect((await checkIn(mint.id, { cookie: cookies.quantum, body: {} })).status).toBe(200)
+
+    const res = await request(app)
+      .post(`/api/organizer/events/${event.id}/cancel`)
+      .set('Origin', TEST_ORIGIN)
+      .set('Cookie', cookies.quantum)
+      .send({ reason: 'Store closed for repairs.' })
+    expect(res.status).toBe(200)
+
+    const stored = await storedReg(mint.id)
+    expect([stored.status, stored.cancelledAt?.toISOString(), stored.checkedInAt, stored.checkedInById]).toEqual([
+      'EVENT_CANCELLED', T.toISOString(), null, null,
+    ])
+    const history = await prisma.eventChange.findMany({ where: { eventId: event.id }, orderBy: { id: 'asc' } })
+    expect(history.map((c) => [c.field, c.oldValue, c.newValue])).toEqual([
+      ['attendance', 'REGISTERED', 'CHECKED_IN'],
+      ['status', 'PUBLISHED', 'CANCELLED'],
+    ])
+  })
+})
+
 // TEST-B-03 rows (E-18, E-19), SDS §7.1: the permission-matrix cells of the new endpoints. TEST-SR2-03 has their route
 // rows in helpers/routes.ts.
 describe('TEST-B-03 rows (E-18, E-19) POST and DELETE /api/organizer/registrations/:id/check-in', () => {
