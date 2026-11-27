@@ -169,7 +169,7 @@ output**, with the commit id in §6.
 | TEST-SR2-03 (rows added) | I | AC-SR2-03 | E-13 … E-17 in the route table; GET on the POST/PATCH-only paths → 404, no writes | `server/tests/sprint-1/validation.api.test.ts` | E-13 row **Pass** (`9f71b81`), E-14 row **Pass** (`40f5687`), E-17 row **Pass** (`dfa124f`); E-15, E-16 Pending |
 | TEST-SR2-04 (codes added) | U | NFR-07 | `ALREADY_PUBLISHED`, `NOT_PUBLISHED` map to 409 | `server/tests/sprint-1/unit/errors.unit.test.ts` | **Pass** (`dfa124f`) |
 | TEST-E-01 (rows added) | I | AC-E-01 | E-07 includes the owner's draft and cancelled event with their status | `server/tests/sprint-1/organizer.api.test.ts` | **Pass** (`40f5687`; it also passed on the red run, because E-07 already listed every status) |
-| TEST-SR5-02 | E2E | NFR-08 | the 3 new screens (edit, search with filters open, cancelled detail) at 390 / 768 / 1440 px, no horizontal scroll | `e2e/sprint-2/responsive.spec.ts` | Pending |
+| TEST-SR5-05 | E2E | NFR-08 | the 3 new screens (edit, search with filters open, cancelled detail) at 390 / 768 / 1440 px, no horizontal scroll | `e2e/sprint-2/responsive.spec.ts` | Pending |
 | JRN-03 | E2E | K, L, M, N, O, SR-08 | contracts §9 | `e2e/sprint-2/journey.spec.ts` | Pending |
 | JRN-04 | E2E | J, FR-26 | contracts §9 | `e2e/sprint-2/journey.spec.ts` | Pending |
 | JRN-01, JRN-02 | E2E | Sprint 1 | unchanged; must stay green (Deliverable 2 Part A continuity) | `e2e/sprint-1/journey.spec.ts` | Pending |
@@ -241,7 +241,7 @@ Fill this table from the real runs (README §3). The commit ids are the evidence
 | S2-07 Feature-N cancel / re-register | TEST-N-01 … 06, TEST-M-04, TEST-B-03 (E-16 row) | `95d8e69` | server 15 / 490 failed; client 5 / 5 failed (new file); E2E not run red | `62db165` | server 490 / 490; client 192 / 192; E2E 90 / 90; both builds OK; TEST-N-06 3 full runs of 20 rounds green; `FOR UPDATE` mutation check recorded below |
 | S2-09 Feature-U game and store profile | TEST-U-01 … 05, TEST-B-03 (E-23 rows) | `9f3b967`; review 2: `0ed888b`, `48e3ab1` | server 53 / 549 failed (4 new tests pass on Sprint 1 behaviour: unknown `game` key and query key give 400, and Dragon's store is untouched); client 22 / 215 failed; E2E not run red | `19bd097` (implementation `9e282b5`; the client suite is green only from `19bd097`, which makes the earlier create-form tests choose a game; test fix `36057bd`); review 2 (D-41): `7af6773` | server 549 / 549, client 215 / 215, E2E 91 / 91 (incl. TEST-U-02), both builds OK; review 2: client 225 / 225, E2E 92 / 92, build OK |
 | S2-10 Deep Lagoon theme and type | TEST-C-07, TEST-C-08 | `ec3e8a0` | unit 23 / 51 failed; E2E 2 / 10 failed (axe rows pass on the old palette) | `e671f38` | client 142 / 142; E2E 59 / 59 (incl. 21 / 21 TEST-SR5-01) |
-| S2-08 Integration and release `v0.2.0` | JRN-03, JRN-04, TEST-SR5-02, TEST-E-01 (rows), TEST-SR2-03 (rows) | | | | |
+| S2-08 Integration and release `v0.2.0` | JRN-03, JRN-04, TEST-SR5-05, TEST-E-01 (rows), TEST-SR2-03 (rows) | | | | |
 
 For the Deliverable 2 PDF excerpts, keep red and green output for **TEST-L-03** or **TEST-N-03** (domain rule) and
 **TEST-N-05** (access restriction).

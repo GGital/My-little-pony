@@ -125,7 +125,7 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | NFR-05 | 20 simultaneous requests → exactly 1 wins | Feature-G | Sprint 1 | AC-G-06 · I → **Pass**: TEST-G-06, JRN-02. Sprint 2 re-verification (S2-07) **Pass**: TEST-N-06 (20 rounds) | 2 (with cancel) |
 | NFR-06 | Data survives restart; migrations only; seed reproducible | SR-01 | Sprint 1 | AC-SR1-01, AC-SR1-02 · I, M → **Pass**: TEST-SR1-01, TEST-SR1-02 | 2, 3, Lab 5 |
 | NFR-07 | One safe error shape | SR-02 | Sprint 1 | AC-SR2-01 · I → **Pass**: TEST-SR2-01, TEST-SR2-04 | 2, 3 |
-| NFR-08 | No horizontal scroll at 390 / 768 / 1440 px | SR-05, Feature-C | Sprint 1 (Sprint 1 screens) | AC-SR5-01 · E → **Pass**: TEST-SR5-01 | 2 (TEST-SR5-02 and the theme check TEST-C-08, Sprint 2 STS §2.9–2.10), 3 (all screens: AC-SR5-03 → TEST-SR5-03) |
+| NFR-08 | No horizontal scroll at 390 / 768 / 1440 px | SR-05, Feature-C | Sprint 1 (Sprint 1 screens) | AC-SR5-01 · E → **Pass**: TEST-SR5-01 | 2 (TEST-SR5-05 and the theme check TEST-C-08, Sprint 2 STS §2.9–2.10), 3 (all screens: AC-SR5-03 → TEST-SR5-03) |
 | NFR-09 | Loading, empty, error, field-validation states | Feature-C | Sprint 1 | AC-C-05 · E → **Pass**: TEST-C-05 | 2, 3 |
 | NFR-10 | Keyboard, labels, contrast, 0 serious axe issues | SR-05 | Sprint 3 | AC-SR5-02, AC-SR5-04, AC-Q-05, AC-R-05 · E (axe), M (keyboard) → **Planned**: TEST-SR5-02, TEST-SR5-04, TEST-Q-05, TEST-R-05 (Sprint 3 STS) | 2 (theme contrast: AC-C-08 → **Planned**: TEST-C-08, Sprint 2 STS) |
 | NFR-11 | UTC storage, Bangkok display, server clock | SR-03 | Sprint 1 | AC-SR3-01 · U → **Pass**: TEST-SR3-01, TEST-SR3-02 | 2, 3 |

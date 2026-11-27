@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 import { EMAIL, EV, resetSeed, signIn } from '../sprint-1/helpers'
 
-// TEST-SR5-02 (STS §2.10, NFR-08): the 3 new Sprint 2 screens at 390, 768 and 1440 px never scroll sideways.
+// TEST-SR5-05 (STS §2.10, NFR-08): the 3 new Sprint 2 screens at 390, 768 and 1440 px never scroll sideways.
 // TEST-SR5-01 (e2e/sprint-1/responsive.spec.ts) still checks the 7 Sprint 1 screens. Screenshots for the PDF go to
 // docs/sprints/sprint-2/evidence/responsive/, only when EVIDENCE=1 (AGENTS.md §5).
 const WIDTHS = [390, 768, 1440] as const
@@ -40,7 +40,7 @@ const SCREENS: Screen[] = [
 test.beforeAll(resetSeed)
 
 for (const screen of SCREENS) {
-  test.describe(`TEST-SR5-02 — ${screen.name} (NFR-08)`, () => {
+  test.describe(`TEST-SR5-05 — ${screen.name} (NFR-08)`, () => {
     test.beforeEach(async ({ page }) => {
       if (screen.as) await signIn(page, screen.as)
     })
