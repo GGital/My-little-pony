@@ -1,0 +1,53 @@
+[WebServer] Environment variables loaded from .env
+
+
+[WebServer] (node:32104) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[WebServer] (Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+[1/1] [chromium] › e2e\sprint-3\journey.spec.ts:10:5 › TEST-P-01 (E2E) — Dragon's Den checks Mint in at the door on EV-4, undoes it, and checks her in again
+[chromium] › e2e\sprint-3\journey.spec.ts:10:5 › TEST-P-01 (E2E) — Dragon's Den checks Mint in at the door on EV-4, undoes it, and checks her in again
+
+(node:32152) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  1) [chromium] › e2e\sprint-3\journey.spec.ts:10:5 › TEST-P-01 (E2E) — Dragon's Den checks Mint in at the door on EV-4, undoes it, and checks her in again 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Door check-in')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText('Door check-in')
+
+
+      11 |   await signIn(page, EMAIL.dragon)
+      12 |   await page.goto(`/organizer/events/${EV[4]}/registrations`)
+    > 13 |   await expect(page.getByText('Door check-in')).toBeVisible()
+         |                                                 ^
+      14 |   await expect(page.getByText('Checked in 0 / 1')).toBeVisible()
+      15 |
+      16 |   const mint = page.getByRole('row', { name: /Mint/ })
+        at <repo>\e2e\sprint-3\journey.spec.ts:13:49
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\sprint-3-journey-TEST-P-01-46647--it-and-checks-her-in-again-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\sprint-3-journey-TEST-P-01-46647--it-and-checks-her-in-again-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\sprint-3-journey-TEST-P-01-46647--it-and-checks-her-in-again-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\sprint-3-journey-TEST-P-01-46647--it-and-checks-her-in-again-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › e2e\sprint-3\journey.spec.ts:10:5 › TEST-P-01 (E2E) — Dragon's Den checks Mint in at the door on EV-4, undoes it, and checks her in again 

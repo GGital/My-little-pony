@@ -1,0 +1,539 @@
+
+ RUN  v4.0.18 <repo>/server
+
+ × tests/sprint-3/checkin.api.test.ts > TEST-P-01 (I) · AC-P-01, FR-21, FR-28: the owner checks Mint in > 200 CHECKED_IN at T by Quantum Cards; the row and one attendance change row are stored; E-08 counts it; seats unchanged 27ms
+   → expected 404 to be 200 // Object.is equality
+ × tests/sprint-3/checkin.api.test.ts > TEST-P-01 (I) · AC-P-01, FR-21, FR-28: the owner checks Mint in > accepts no body at all as well as {} 12ms
+   → expected 404 to be 200 // Object.is equality
+ × tests/sprint-3/checkin.api.test.ts > TEST-P-02 (I) · AC-P-02, BR-18, NFR-11: the window boundaries on the server clock > S − 61 → 409; S − 60 → 200; E − 1 → 200; E → 409; the undo at E → 409; E-08 open false/true/true/false 46ms
+   → expected [ 404, 'NOT_FOUND', undefined ] to deeply equal [ Array(3) ]
+ × tests/sprint-3/checkin.api.test.ts > TEST-P-03 (I) · AC-P-03, FR-22, BR-19: the owner undoes a check-in > 200 REGISTERED with both check-in fields null; a second attendance row CHECKED_IN → REGISTERED; the count goes back 18ms
+   → expected 404 to be 200 // Object.is equality
+ × tests/sprint-3/checkin.api.test.ts > TEST-P-04 (I) · AC-P-04, BR-18, BR-19: statuses that cannot be checked in or undone > Mint ALREADY_CHECKED_IN; Ploy and Boss REGISTRATION_NOT_ACTIVE; undo of Nok NOT_CHECKED_IN; nothing changes 18ms
+   → expected 404 to be 200 // Object.is equality
+ × tests/sprint-3/checkin.api.test.ts > TEST-P-05 (I) · AC-P-05, BR-14, NFR-02: who may check in, and the order of the checks > E-18: another organizer 404 byte-identical to 999999; participant 403; visitor 401; foreign Origin 403; abc 400 35ms
+   → expected [ 404, 'NOT_FOUND' ] to deeply equal [ 404, 'REGISTRATION_NOT_FOUND' ]
+ × tests/sprint-3/checkin.api.test.ts > TEST-P-05 (I) · AC-P-05, BR-14, NFR-02: who may check in, and the order of the checks > E-19: another organizer 404 byte-identical to 999999; participant 403; visitor 401; foreign Origin 403; abc 400 23ms
+   → expected [ 404, 'NOT_FOUND' ] to deeply equal [ 404, 'REGISTRATION_NOT_FOUND' ]
+ × tests/sprint-3/checkin.api.test.ts > TEST-P-05 (I) · AC-P-05, BR-14, NFR-02: who may check in, and the order of the checks > E-18 takes no input: a body with a field is 400 before any lookup 11ms
+   → expected [ 404, 'NOT_FOUND' ] to deeply equal [ 400, 'VALIDATION_FAILED' ]
+ × tests/sprint-3/checkin.api.test.ts > TEST-B-03 rows (E-18, E-19) POST and DELETE /api/organizer/registrations/:id/check-in > visitor 401; participant 403; another organizer 404; the owner 200 for both 8ms
+   → expected 404 to be 401 // Object.is equality
+ × tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > creates 2 organizers, 4 participants, the 6 events of contracts §0.3, the 3 of Sprint 2 §0.4 and EV-10 595ms
+   → expected { users: 6, events: 9, …(1) } to deeply equal { users: 6, events: 10, …(1) }
+ ✓ tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > gives EV-3 no free seat, EV-2 exactly one, and EV-4 a start in the past and an end in the future 12ms
+ ✓ tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > adds EV-7 as a DRAFT, EV-8 CANCELLED with Boss EVENT_CANCELLED, EV-9 with a passed deadline and Mint (§0.4) 8ms
+ × tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > gives each event its game and each store its games and public contact (§0.4, Feature-U) 4ms
+   → expected { 'EV-1': 'MAGIC', …(8) } to deeply equal { 'EV-1': 'MAGIC', …(9) }
+ × tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > adds EV-10, ended a week ago, with a check-in by Quantum Cards, a no-show and a cancellation (Sprint 3 §0.3) 6ms
+   → 
+Invalid `prisma.event.findUniqueOrThrow()` invocation in
+<repo>/server/tests/sprint-1/seed.api.test.ts:128:37
+
+  125 
+  126 it('adds EV-10, ended a week ago, with a check-in by Quantum Cards, a no-show and a cancellation (Sprint 3 §0.3)', async () => {
+  127   const now = Date.now()
+→ 128   const ev10 = await prisma.event.findUniqueOrThrow({
+          where: {
+            seedKey: "EV-10"
+          },
+          include: {
+            organizer: true,
+            registrations: {
+              include: {
+                participant: true,
+                checkedInBy: true,
+                ~~~~~~~~~~~
+        ?       event?: true
+              },
+              orderBy: {
+                id: "asc"
+              }
+            }
+          }
+        })
+
+Unknown field `checkedInBy` for include statement on model `Registration`. Available options are marked with ?.
+ ✓ tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > stores scrypt hashes that verify with the seed password 192ms
+ ✓ tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > adds nothing when it runs a second time 62ms
+ ✓ tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > refuses to run without a password of at least 12 characters 2ms
+ × tests/sprint-3/checkin.concurrency.api.test.ts > TEST-P-06a — two check-ins of the same registration at once (AC-P-06, BR-19, NFR-05) > 20 rounds: one 200, one 409 ALREADY_CHECKED_IN, one change row 47ms
+   → round 1: expected [ '404 NOT_FOUND', '404 NOT_FOUND' ] to deeply equal [ '200 CHECKED_IN', …(1) ]
+ × tests/sprint-3/checkin.concurrency.api.test.ts > TEST-P-06b — the owner checks in while the player cancels (AC-P-06, BR-19, NFR-05) > 20 rounds: exactly CHECKED_IN or CANCELLED, never both timestamps, and the loser got the matching 409 49ms
+   → round 1: both timestamps: expected true to be false // Object.is equality
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-02 (U) isCheckInOpen at the window boundaries (AC-P-02, BR-18, D-26) > S − 61 min → Fri Mar 01 2030 14:59:00 GMT+0700 (เวลาอินโดจีน) 1ms
+ × tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-02 (U) isCheckInOpen at the window boundaries (AC-P-02, BR-18, D-26) > S − 60 min (opens exactly here) → Fri Mar 01 2030 15:00:00 GMT+0700 (เวลาอินโดจีน) 5ms
+   → expected false to be true // Object.is equality
+ × tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-02 (U) isCheckInOpen at the window boundaries (AC-P-02, BR-18, D-26) > S − 59 min → Fri Mar 01 2030 15:01:00 GMT+0700 (เวลาอินโดจีน) 1ms
+   → expected false to be true // Object.is equality
+ × tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-02 (U) isCheckInOpen at the window boundaries (AC-P-02, BR-18, D-26) > E − 1 min → Fri Mar 01 2030 20:59:00 GMT+0700 (เวลาอินโดจีน) 1ms
+   → expected false to be true // Object.is equality
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-02 (U) isCheckInOpen at the window boundaries (AC-P-02, BR-18, D-26) > E (closed exactly here) → Fri Mar 01 2030 21:00:00 GMT+0700 (เวลาอินโดจีน) 0ms
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-02 (U) isCheckInOpen at the window boundaries (AC-P-02, BR-18, D-26) > E + 1 min → Fri Mar 01 2030 21:01:00 GMT+0700 (เวลาอินโดจีน) 0ms
+ × tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-02 (U) isCheckInOpen at the window boundaries (AC-P-02, BR-18, D-26) > checkInWindow gives the state and both edges, so the page never compares times itself 2ms
+   → expected { open: false, state: 'CLOSED', …(2) } to deeply equal { open: false, state: 'NOT_YET', …(2) }
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > check in a REGISTERED registration inside the window → OK 0ms
+ × tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > check in a CHECKED_IN registration inside the window → ALREADY_CHECKED_IN 1ms
+   → expected 'OK' to be 'ALREADY_CHECKED_IN' // Object.is equality
+ × tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > check in a CANCELLED registration inside the window → REGISTRATION_NOT_ACTIVE 1ms
+   → expected 'OK' to be 'REGISTRATION_NOT_ACTIVE' // Object.is equality
+ × tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > check in a EVENT_CANCELLED registration inside the window → REGISTRATION_NOT_ACTIVE 0ms
+   → expected 'OK' to be 'REGISTRATION_NOT_ACTIVE' // Object.is equality
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > undo a CHECKED_IN registration inside the window → OK 0ms
+ × tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > undo a REGISTERED registration inside the window → NOT_CHECKED_IN 0ms
+   → expected 'OK' to be 'NOT_CHECKED_IN' // Object.is equality
+ × tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > undo a CANCELLED registration inside the window → NOT_CHECKED_IN 1ms
+   → expected 'OK' to be 'NOT_CHECKED_IN' // Object.is equality
+ × tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > undo a EVENT_CANCELLED registration inside the window → NOT_CHECKED_IN 0ms
+   → expected 'OK' to be 'NOT_CHECKED_IN' // Object.is equality
+ × tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > outside the window both answer NOT_IN_CHECK_IN_WINDOW first, whatever the status (contract check order) 0ms
+   → REGISTERED: expected 'OK' to be 'NOT_IN_CHECK_IN_WINDOW' // Object.is equality
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-02 — zod .strict() reports every failing field (AC-SR2-02, NFR-15) > wrong types, a bad date and an unknown field → 400 with one details entry per field 76ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-02 — zod .strict() reports every failing field (AC-SR2-02, NFR-15) > a valid body passes through as the parsed value 6ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-02 — zod .strict() reports every failing field (AC-SR2-02, NFR-15) > real E-06 with organizer session, wrong types, bad date and unknown field → 400 VALIDATION_FAILED 113ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > the route table lists exactly E-01 … E-12, and no test file calls an access probe 28ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > calling every Sprint 1 and Sprint 2 route with GET leaves every table unchanged 116ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > with a signed-in participant, GET on every Sprint 1 and Sprint 2 route leaves every table unchanged 265ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > with a signed-in organizer, GET on every Sprint 1 and Sprint 2 route leaves every table unchanged 251ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > GET on POST-only /api/auth/login → 404 NOT_FOUND 4ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > GET on POST-only /api/auth/logout → 404 NOT_FOUND 3ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > GET on POST-only /api/events/1/registrations → 404 NOT_FOUND 3ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > GET on POST-only /api/organizer/events/1/publish → 404 NOT_FOUND 3ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > GET on POST-only /api/organizer/events/1/cancel → 404 NOT_FOUND 3ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > GET on POST-only /api/me/registrations/1/cancel → 404 NOT_FOUND 3ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > GET on POST-only /api/organizer/registrations/1/check-in → 404 NOT_FOUND 4ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > GET on POST-only /api/__test/echo → 404 NOT_FOUND 3ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > a text/plain body → 415 UNSUPPORTED_MEDIA_TYPE 4ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > a 101 kB body → 413 PAYLOAD_TOO_LARGE 5ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > a foreign Origin → 403 FORBIDDEN 4ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > no Origin at all → 403 FORBIDDEN 4ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > malformed JSON → 400 VALIDATION_FAILED, not a 500 5ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > a POST with no body is not a 415 (E-09 sends none); it reaches validation 5ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > real E-09: text/plain → 415, foreign Origin → 403, both storing nothing; no body → 201 138ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > none of the rejected requests stored anything 10ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 25 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > creates 2 organizers, 4 participants, the 6 events of contracts §0.3, the 3 of Sprint 2 §0.4 and EV-10
+AssertionError: expected { users: 6, events: 9, …(1) } to deeply equal { users: 6, events: 10, …(1) }
+
+- Expected
++ Received
+
+  {
+-   "events": 10,
+-   "registrations": 14,
++   "events": 9,
++   "registrations": 11,
+    "users": 6,
+  }
+
+ ❯ tests/sprint-1/seed.api.test.ts:59:28
+     57|     // Sprint 2 adds EV-7 (no registrations), EV-8 (Boss) and EV-9 (Mi…
+     58|     // 10 events, 14 registrations.
+     59|     expect(await counts()).toEqual({ users: 6, events: 10, registratio…
+       |                            ^
+     60|   })
+     61| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/25]⎯
+
+ FAIL  tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > gives each event its game and each store its games and public contact (§0.4, Feature-U)
+AssertionError: expected { 'EV-1': 'MAGIC', …(8) } to deeply equal { 'EV-1': 'MAGIC', …(9) }
+
+- Expected
++ Received
+
+@@ -1,8 +1,7 @@
+  {
+    "EV-1": "MAGIC",
+-   "EV-10": "MAGIC",
+    "EV-2": "MAGIC",
+    "EV-3": "YUGIOH",
+    "EV-4": "LORCANA",
+    "EV-5": "MAGIC",
+    "EV-6": "POKEMON",
+
+ ❯ tests/sprint-1/seed.api.test.ts:107:72
+    105|   it('gives each event its game and each store its games and public co…
+    106|     const events = await prisma.event.findMany({ select: { seedKey: tr…
+    107|     expect(Object.fromEntries(events.map((e) => [e.seedKey, e.game])))…
+       |                                                                        ^
+    108|       'EV-1': 'MAGIC', 'EV-2': 'MAGIC', 'EV-3': 'YUGIOH', 'EV-4': 'LOR…
+    109|       'EV-6': 'POKEMON', 'EV-7': 'ONE_PIECE', 'EV-8': 'YUGIOH', 'EV-9'…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/25]⎯
+
+ FAIL  tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > adds EV-10, ended a week ago, with a check-in by Quantum Cards, a no-show and a cancellation (Sprint 3 §0.3)
+PrismaClientValidationError: 
+Invalid `prisma.event.findUniqueOrThrow()` invocation in
+<repo>/server/tests/sprint-1/seed.api.test.ts:128:37
+
+  125 
+  126 it('adds EV-10, ended a week ago, with a check-in by Quantum Cards, a no-show and a cancellation (Sprint 3 §0.3)', async () => {
+  127   const now = Date.now()
+→ 128   const ev10 = await prisma.event.findUniqueOrThrow({
+          where: {
+            seedKey: "EV-10"
+          },
+          include: {
+            organizer: true,
+            registrations: {
+              include: {
+                participant: true,
+                checkedInBy: true,
+                ~~~~~~~~~~~
+        ?       event?: true
+              },
+              orderBy: {
+                id: "asc"
+              }
+            }
+          }
+        })
+
+Unknown field `checkedInBy` for include statement on model `Registration`. Available options are marked with ?.
+ ❯ Nn node_modules/@prisma/client/runtime/library.js:29:1363
+ ❯ ei.handleRequestError node_modules/@prisma/client/runtime/library.js:121:6911
+ ❯ ei.handleAndLogRequestError node_modules/@prisma/client/runtime/library.js:121:6593
+ ❯ ei.request node_modules/@prisma/client/runtime/library.js:121:6300
+ ❯ a node_modules/@prisma/client/runtime/library.js:130:9551
+ ❯ tests/sprint-1/seed.api.test.ts:128:18
+    126|   it('adds EV-10, ended a week ago, with a check-in by Quantum Cards, …
+    127|     const now = Date.now()
+    128|     const ev10 = await prisma.event.findUniqueOrThrow({
+       |                  ^
+    129|       where: { seedKey: 'EV-10' },
+    130|       include: { organizer: true, registrations: { include: { particip…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { clientVersion: '6.19.3' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/25]⎯
+
+ FAIL  tests/sprint-3/checkin.api.test.ts > TEST-P-01 (I) · AC-P-01, FR-21, FR-28: the owner checks Mint in > 200 CHECKED_IN at T by Quantum Cards; the row and one attendance change row are stored; E-08 counts it; seats unchanged
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ tests/sprint-3/checkin.api.test.ts:99:24
+     97| 
+     98|     const res = await checkIn(mint.id, { cookie: cookies.quantum, body…
+     99|     expect(res.status).toBe(200)
+       |                        ^
+    100|     expect(res.body).toEqual({
+    101|       id: mint.id,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/25]⎯
+
+ FAIL  tests/sprint-3/checkin.api.test.ts > TEST-P-01 (I) · AC-P-01, FR-21, FR-28: the owner checks Mint in > accepts no body at all as well as {}
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ tests/sprint-3/checkin.api.test.ts:136:74
+    134|     const event = await makeEvent(new Date(T.getTime() + 30 * MIN))
+    135|     const mint = await register(event.id, ids.mint)
+    136|     expect((await checkIn(mint.id, { cookie: cookies.quantum })).statu…
+       |                                                                          ^
+    137|   })
+    138| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/25]⎯
+
+ FAIL  tests/sprint-3/checkin.api.test.ts > TEST-P-02 (I) · AC-P-02, BR-18, NFR-11: the window boundaries on the server clock > S − 61 → 409; S − 60 → 200; E − 1 → 200; E → 409; the undo at E → 409; E-08 open false/true/true/false
+AssertionError: expected [ 404, 'NOT_FOUND', undefined ] to deeply equal [ Array(3) ]
+
+- Expected
++ Received
+
+  [
+-   409,
+-   "NOT_IN_CHECK_IN_WINDOW",
+-   false,
++   404,
++   "NOT_FOUND",
++   undefined,
+  ]
+
+ ❯ tests/sprint-3/checkin.api.test.ts:153:68
+    151|       return [res.status, res.body.error?.code ?? res.body.status, lis…
+    152|     }
+    153|     expect(await step(new Date(S.getTime() - 61 * MIN), mint!.id)).toE…
+       |                                                                    ^
+    154|     expect(await step(new Date(S.getTime() - 60 * MIN), ploy!.id)).toE…
+    155|     expect(await step(new Date(E.getTime() - 1 * MIN), boss!.id)).toEq…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/25]⎯
+
+ FAIL  tests/sprint-3/checkin.api.test.ts > TEST-P-03 (I) · AC-P-03, FR-22, BR-19: the owner undoes a check-in > 200 REGISTERED with both check-in fields null; a second attendance row CHECKED_IN → REGISTERED; the count goes back
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ tests/sprint-3/checkin.api.test.ts:171:84
+    169|     const event = await makeEvent(new Date(T.getTime() + 30 * MIN))
+    170|     const mint = await register(event.id, ids.mint)
+    171|     expect((await checkIn(mint.id, { cookie: cookies.quantum, body: {}…
+       |                                                                                    ^
+    172| 
+    173|     const later = new Date(T.getTime() + 5 * MIN)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/25]⎯
+
+ FAIL  tests/sprint-3/checkin.api.test.ts > TEST-P-04 (I) · AC-P-04, BR-18, BR-19: statuses that cannot be checked in or undone > Mint ALREADY_CHECKED_IN; Ploy and Boss REGISTRATION_NOT_ACTIVE; undo of Nok NOT_CHECKED_IN; nothing changes
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ tests/sprint-3/checkin.api.test.ts:197:84
+    195|     const cancelledEvent = await makeEvent(start, { cancelled: true })
+    196|     const mint = await register(event.id, ids.mint)
+    197|     expect((await checkIn(mint.id, { cookie: cookies.quantum, body: {}…
+       |                                                                                    ^
+    198|     const ploy = await register(event.id, ids.ploy, 'CANCELLED')
+    199|     const nok = await register(event.id, ids.nok)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/25]⎯
+
+ FAIL  tests/sprint-3/checkin.api.test.ts > TEST-P-05 (I) · AC-P-05, BR-14, NFR-02: who may check in, and the order of the checks > E-18: another organizer 404 byte-identical to 999999; participant 403; visitor 401; foreign Origin 403; abc 400
+ FAIL  tests/sprint-3/checkin.api.test.ts > TEST-P-05 (I) · AC-P-05, BR-14, NFR-02: who may check in, and the order of the checks > E-19: another organizer 404 byte-identical to 999999; participant 403; visitor 401; foreign Origin 403; abc 400
+AssertionError: expected [ 404, 'NOT_FOUND' ] to deeply equal [ 404, 'REGISTRATION_NOT_FOUND' ]
+
+- Expected
++ Received
+
+  [
+    404,
+-   "REGISTRATION_NOT_FOUND",
++   "NOT_FOUND",
+  ]
+
+ ❯ tests/sprint-3/checkin.api.test.ts:231:56
+    229| 
+    230|     const missing = await call(999999, { cookie: cookies.quantum, body…
+    231|     expect([missing.status, missing.body.error?.code]).toEqual([404, '…
+       |                                                        ^
+    232|     const other = await call(mint.id, { cookie: cookies.dragon, body: …
+    233|     expect(other.status).toBe(404)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/25]⎯
+
+ FAIL  tests/sprint-3/checkin.api.test.ts > TEST-P-05 (I) · AC-P-05, BR-14, NFR-02: who may check in, and the order of the checks > E-18 takes no input: a body with a field is 400 before any lookup
+AssertionError: expected [ 404, 'NOT_FOUND' ] to deeply equal [ 400, 'VALIDATION_FAILED' ]
+
+- Expected
++ Received
+
+  [
+-   400,
+-   "VALIDATION_FAILED",
++   404,
++   "NOT_FOUND",
+  ]
+
+ ❯ tests/sprint-3/checkin.api.test.ts:252:48
+    250|     const mint = await register(event.id, ids.mint)
+    251|     const res = await checkIn(mint.id, { cookie: cookies.quantum, body…
+    252|     expect([res.status, res.body.error?.code]).toEqual([400, 'VALIDATI…
+       |                                                ^
+    253|     expect((await storedReg(mint.id)).status).toBe('REGISTERED')
+    254|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/25]⎯
+
+ FAIL  tests/sprint-3/checkin.api.test.ts > TEST-B-03 rows (E-18, E-19) POST and DELETE /api/organizer/registrations/:id/check-in > visitor 401; participant 403; another organizer 404; the owner 200 for both
+AssertionError: expected 404 to be 401 // Object.is equality
+
+- Expected
++ Received
+
+- 401
++ 404
+
+ ❯ tests/sprint-3/checkin.api.test.ts:264:49
+    262|     const event = await makeEvent(new Date(T.getTime() + 30 * MIN))
+    263|     const mint = await register(event.id, ids.mint)
+    264|     expect((await checkIn(mint.id, {})).status).toBe(401)
+       |                                                 ^
+    265|     expect((await checkIn(mint.id, { cookie: cookies.mint })).status).…
+    266|     expect((await checkIn(mint.id, { cookie: cookies.dragon })).status…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/25]⎯
+
+ FAIL  tests/sprint-3/checkin.concurrency.api.test.ts > TEST-P-06a — two check-ins of the same registration at once (AC-P-06, BR-19, NFR-05) > 20 rounds: one 200, one 409 ALREADY_CHECKED_IN, one change row
+AssertionError: round 1: expected [ '404 NOT_FOUND', '404 NOT_FOUND' ] to deeply equal [ '200 CHECKED_IN', …(1) ]
+
+- Expected
++ Received
+
+  [
+-   "200 CHECKED_IN",
+-   "409 ALREADY_CHECKED_IN",
++   "404 NOT_FOUND",
++   "404 NOT_FOUND",
+  ]
+
+ ❯ tests/sprint-3/checkin.concurrency.api.test.ts:52:41
+     50|       const results = await Promise.all([checkIn(reg.id), checkIn(reg.…
+     51|       const outcome = results.map((r) => `${r.status} ${r.body.error?.…
+     52|       expect(outcome, `round ${round}`).toEqual(['200 CHECKED_IN', '40…
+       |                                         ^
+     53|       const changes = await prisma.eventChange.count({ where: { eventI…
+     54|       expect(changes, `round ${round}`).toBe(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/25]⎯
+
+ FAIL  tests/sprint-3/checkin.concurrency.api.test.ts > TEST-P-06b — the owner checks in while the player cancels (AC-P-06, BR-19, NFR-05) > 20 rounds: exactly CHECKED_IN or CANCELLED, never both timestamps, and the loser got the matching 409
+AssertionError: round 1: both timestamps: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/sprint-3/checkin.concurrency.api.test.ts:69:109
+     67|       ])
+     68|       const stored = await prisma.registration.findUniqueOrThrow({ whe…
+     69|       expect(stored.checkedInAt !== null && stored.cancelledAt !== nul…
+       |                                                                                                             ^
+     70|       if (stored.status === 'CHECKED_IN') {
+     71|         expect([ownerRes.status, playerRes.status, playerRes.body.erro…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/25]⎯
+
+ FAIL  tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-02 (U) isCheckInOpen at the window boundaries (AC-P-02, BR-18, D-26) > S − 60 min (opens exactly here) → Fri Mar 01 2030 15:00:00 GMT+0700 (เวลาอินโดจีน)
+ FAIL  tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-02 (U) isCheckInOpen at the window boundaries (AC-P-02, BR-18, D-26) > S − 59 min → Fri Mar 01 2030 15:01:00 GMT+0700 (เวลาอินโดจีน)
+ FAIL  tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-02 (U) isCheckInOpen at the window boundaries (AC-P-02, BR-18, D-26) > E − 1 min → Fri Mar 01 2030 20:59:00 GMT+0700 (เวลาอินโดจีน)
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/sprint-3/unit/attendance-rules.unit.test.ts:21:39
+     19|     ['E + 1 min', at(E, 1), false],
+     20|   ])('%s → %s', (_label, now, open) => {
+     21|     expect(isCheckInOpen(event, now)).toBe(open)
+       |                                       ^
+     22|   })
+     23| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/25]⎯
+
+ FAIL  tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-02 (U) isCheckInOpen at the window boundaries (AC-P-02, BR-18, D-26) > checkInWindow gives the state and both edges, so the page never compares times itself
+AssertionError: expected { open: false, state: 'CLOSED', …(2) } to deeply equal { open: false, state: 'NOT_YET', …(2) }
+
+- Expected
++ Received
+
+  {
+    "closesAt": "2030-03-01T14:00:00.000Z",
+    "open": false,
+-   "opensAt": "2030-03-01T08:00:00.000Z",
+-   "state": "NOT_YET",
++   "opensAt": "2030-03-01T09:00:00.000Z",
++   "state": "CLOSED",
+  }
+
+ ❯ tests/sprint-3/unit/attendance-rules.unit.test.ts:25:46
+     23| 
+     24|   it('checkInWindow gives the state and both edges, so the page never …
+     25|     expect(checkInWindow(event, at(S, -61))).toEqual({ open: false, st…
+       |                                              ^
+     26|     expect(checkInWindow(event, at(S, -60))).toEqual({ open: true, sta…
+     27|     expect(checkInWindow(event, E)).toEqual({ open: false, state: 'CLO…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/25]⎯
+
+ FAIL  tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > check in a CHECKED_IN registration inside the window → ALREADY_CHECKED_IN
+AssertionError: expected 'OK' to be 'ALREADY_CHECKED_IN' // Object.is equality
+
+Expected: "ALREADY_CHECKED_IN"
+Received: "OK"
+
+ ❯ tests/sprint-3/unit/attendance-rules.unit.test.ts:41:79
+     39|     ['EVENT_CANCELLED', 'REGISTRATION_NOT_ACTIVE'],
+     40|   ] as const)('check in a %s registration inside the window → %s', (st…
+     41|     expect(decideCheckIn({ registrationStatus: status, ...event }, inW…
+       |                                                                               ^
+     42|   })
+     43| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/25]⎯
+
+ FAIL  tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > check in a CANCELLED registration inside the window → REGISTRATION_NOT_ACTIVE
+ FAIL  tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > check in a EVENT_CANCELLED registration inside the window → REGISTRATION_NOT_ACTIVE
+AssertionError: expected 'OK' to be 'REGISTRATION_NOT_ACTIVE' // Object.is equality
+
+Expected: "REGISTRATION_NOT_ACTIVE"
+Received: "OK"
+
+ ❯ tests/sprint-3/unit/attendance-rules.unit.test.ts:41:79
+     39|     ['EVENT_CANCELLED', 'REGISTRATION_NOT_ACTIVE'],
+     40|   ] as const)('check in a %s registration inside the window → %s', (st…
+     41|     expect(decideCheckIn({ registrationStatus: status, ...event }, inW…
+       |                                                                               ^
+     42|   })
+     43| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/25]⎯
+
+ FAIL  tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > undo a REGISTERED registration inside the window → NOT_CHECKED_IN
+ FAIL  tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > undo a CANCELLED registration inside the window → NOT_CHECKED_IN
+ FAIL  tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > undo a EVENT_CANCELLED registration inside the window → NOT_CHECKED_IN
+AssertionError: expected 'OK' to be 'NOT_CHECKED_IN' // Object.is equality
+
+Expected: "NOT_CHECKED_IN"
+Received: "OK"
+
+ ❯ tests/sprint-3/unit/attendance-rules.unit.test.ts:50:76
+     48|     ['EVENT_CANCELLED', 'NOT_CHECKED_IN'],
+     49|   ] as const)('undo a %s registration inside the window → %s', (status…
+     50|     expect(decideUndo({ registrationStatus: status, ...event }, inWind…
+       |                                                                            ^
+     51|   })
+     52| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/25]⎯
+
+ FAIL  tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > outside the window both answer NOT_IN_CHECK_IN_WINDOW first, whatever the status (contract check order)
+AssertionError: REGISTERED: expected 'OK' to be 'NOT_IN_CHECK_IN_WINDOW' // Object.is equality
+
+Expected: "NOT_IN_CHECK_IN_WINDOW"
+Received: "OK"
+
+ ❯ tests/sprint-3/unit/attendance-rules.unit.test.ts:55:88
+     53|   it('outside the window both answer NOT_IN_CHECK_IN_WINDOW first, wha…
+     54|     for (const status of ['REGISTERED', 'CHECKED_IN', 'CANCELLED', 'EV…
+     55|       expect(decideCheckIn({ registrationStatus: status, ...event }, o…
+       |                                                                                        ^
+     56|       expect(decideUndo({ registrationStatus: status, ...event }, E), …
+     57|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/25]⎯
+
+
+ Test Files  4 failed | 1 passed (5)
+      Tests  25 failed | 33 passed (58)
+   Start at  00:04:36
+   Duration  7.99s (transform 416ms, setup 0ms, import 2.50s, tests 4.15s, environment 1ms)
+

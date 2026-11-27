@@ -4,7 +4,8 @@ import { verifyPassword } from '../../src/domain/password.js'
 import { prisma, resetDb } from '../helpers/db.js'
 
 // TEST-SR1-02 · AC-SR1-02 · NFR-06 (STS §2.1). Expected data: Sprint 1 contracts §0.3, plus Sprint 2 contracts §0.4
-// (revised in S2-01: EV-7 … EV-9, games and store contact; Sprint 2 STS §2.10).
+// (revised in S2-01: EV-7 … EV-9, games and store contact; Sprint 2 STS §2.10), plus Sprint 3 contracts §0.3 (revised in
+// S3-01: EV-10; EV-11 comes with S3-10).
 const PASSWORD = 'local-test-only-seed-password'
 
 const USERS = [
@@ -36,7 +37,7 @@ describe('TEST-SR1-02 the seed creates the contract data once and only once', ()
   beforeAll(resetDb)
   afterAll(() => prisma.$disconnect())
 
-  it('creates 2 organizers, 4 participants, the 6 events of contracts §0.3 and the 3 of Sprint 2 §0.4', async () => {
+  it('creates 2 organizers, 4 participants, the 6 events of contracts §0.3, the 3 of Sprint 2 §0.4 and EV-10', async () => {
     await seed(prisma, PASSWORD)
 
     const users = await prisma.user.findMany({ orderBy: { id: 'asc' } })
@@ -53,8 +54,9 @@ describe('TEST-SR1-02 the seed creates the contract data once and only once', ()
       expect(event.registrations.map((r) => r.participant.displayName).sort(), key).toEqual([...names].sort())
       expect(event.registrations.every((r) => r.status === 'REGISTERED'), key).toBe(true)
     }
-    // Sprint 2 adds EV-7 (no registrations), EV-8 (Boss) and EV-9 (Mint): 9 events, 11 registrations.
-    expect(await counts()).toEqual({ users: 6, events: 9, registrations: 11 })
+    // Sprint 2 adds EV-7 (no registrations), EV-8 (Boss) and EV-9 (Mint); Sprint 3 adds EV-10 (Ploy, Boss, Mint):
+    // 10 events, 14 registrations.
+    expect(await counts()).toEqual({ users: 6, events: 10, registrations: 14 })
   })
 
   it('gives EV-3 no free seat, EV-2 exactly one, and EV-4 a start in the past and an end in the future', async () => {
@@ -104,7 +106,7 @@ describe('TEST-SR1-02 the seed creates the contract data once and only once', ()
     const events = await prisma.event.findMany({ select: { seedKey: true, game: true }, orderBy: { seedKey: 'asc' } })
     expect(Object.fromEntries(events.map((e) => [e.seedKey, e.game]))).toEqual({
       'EV-1': 'MAGIC', 'EV-2': 'MAGIC', 'EV-3': 'YUGIOH', 'EV-4': 'LORCANA', 'EV-5': 'MAGIC',
-      'EV-6': 'POKEMON', 'EV-7': 'ONE_PIECE', 'EV-8': 'YUGIOH', 'EV-9': 'POKEMON',
+      'EV-6': 'POKEMON', 'EV-7': 'ONE_PIECE', 'EV-8': 'YUGIOH', 'EV-9': 'POKEMON', 'EV-10': 'MAGIC',
     })
     const store = (email: string) => prisma.user.findUniqueOrThrow({ where: { email } })
     const [quantum, dragon, mint] = await Promise.all([
@@ -119,6 +121,31 @@ describe('TEST-SR1-02 the seed creates the contract data once and only once', ()
       '02 555 0202', 'play@dragonsden.example', null, null,
     ])
     expect([mint.games, mint.contactPhone]).toEqual([[], null])
+  })
+
+  it('adds EV-10, ended a week ago, with a check-in by Quantum Cards, a no-show and a cancellation (Sprint 3 §0.3)', async () => {
+    const now = Date.now()
+    const ev10 = await prisma.event.findUniqueOrThrow({
+      where: { seedKey: 'EV-10' },
+      include: { organizer: true, registrations: { include: { participant: true, checkedInBy: true }, orderBy: { id: 'asc' } } },
+    })
+    expect([ev10.title, ev10.organizer.displayName, ev10.status, ev10.capacity, ev10.game]).toEqual([
+      "Last Week's League Night", 'Quantum Cards', 'PUBLISHED', 8, 'MAGIC',
+    ])
+    expect(ev10.endAt.getTime() - ev10.startAt.getTime()).toBe(4 * 3_600_000)
+    expect(now - ev10.startAt.getTime()).toBeGreaterThan(6.9 * 86_400_000) // started S − 7 days
+    expect(now - ev10.startAt.getTime()).toBeLessThan(7.1 * 86_400_000)
+    expect(ev10.endAt.getTime()).toBeLessThan(now)
+    expect(
+      ev10.registrations.map((r) => [r.participant.displayName, r.status, r.checkedInBy?.displayName ?? null, r.checkedInAt !== null, r.cancelledAt !== null]),
+    ).toEqual([
+      ['Ploy', 'CHECKED_IN', 'Quantum Cards', true, false],
+      ['Boss', 'REGISTERED', null, false, false],
+      ['Mint', 'CANCELLED', null, false, true],
+    ])
+    const ploy = ev10.registrations[0]!
+    expect(ploy.checkedInAt!.getTime()).toBeGreaterThanOrEqual(ev10.startAt.getTime() - 3_600_000) // inside its window
+    expect(ploy.checkedInAt!.getTime()).toBeLessThan(ev10.endAt.getTime())
   })
 
   it('stores scrypt hashes that verify with the seed password', async () => {
