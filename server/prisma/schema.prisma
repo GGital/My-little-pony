@@ -155,3 +155,14 @@ model EventChange {
 
   @@index([eventId, changedAt])
 }
+
+/// One sign-in attempt, kept for throttling (Sprint 3, NFR-16). `email` is normalised and has no foreign key, so
+/// unknown emails are throttled too (D-27). Never returned by any endpoint. Rows older than 24 hours are deleted at sign-in.
+model LoginAttempt {
+  id          Int      @id @default(autoincrement())
+  email       String
+  succeeded   Boolean
+  attemptedAt DateTime @db.Timestamptz(3)
+
+  @@index([email, attemptedAt])
+}
