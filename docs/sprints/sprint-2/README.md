@@ -1,6 +1,6 @@
 # Sprint 2: engineering contracts, tests and Definition of Done
 
-Project: **TCG Event Hub** · Sprint 2 (9–29 Nov 2026) · Version v0.4 — **draft for team review** (changes in §6)
+Project: **TCG Event Hub** · Sprint 2 (9–29 Nov 2026) · Version v0.5 — released with `v0.2.0` (changes in §6)
 
 | Document | What it is |
 |---|---|
@@ -120,3 +120,4 @@ Sprint 1 README §4 (DoD-1 … DoD-10) applies to every Sprint 2 Issue. The Spri
 | v0.3 | 21 Nov 2026 | D-37: store contact in S2-09 (TEST-U-04, U-05), UX-19; 42 ACs | Team (AI-assisted) |
 | v0.4 | 21 Nov 2026 | D-38: Issue S2-10 (theme first, on 23 Nov, so later UI Issues are built on the new tokens), UX-20; 44 ACs | Team (AI-assisted) |
 | S2-09 | 26 Nov 2026 | UX-16: the game chip is neutral, not teal (D-41, review of [#113](https://github.com/GGital/My-little-pony/pull/113)) | Team (AI-assisted) |
+| v0.5 | 27 Nov 2026 | S2-08: covers the S2-09 row above; the S2-08 Issue plan row names TEST-SR5-05 (renumbered from TEST-SR5-02, which is Sprint 3's axe scan, team decision 27 Nov) | Team (AI-assisted) |

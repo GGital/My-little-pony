@@ -4,7 +4,7 @@ Project: **TCG Event Hub** — Event Registration and Attendance System
 Course: CPE 334, Semester 1/2026 — Theme 3 (Event Registration and Attendance System)
 Team: Phattaratorn Mahatkeerati (67070503433, [@GGital](https://github.com/GGital)) ·
 Praewa Thuwatharanimitkul (67070503432, [@MeldyRose](https://github.com/MeldyRose))
-Document version: v0.8 — Sprint 2 line with Lab 7 CH-13 merged in (v0.7 reviewed in PR #76: CH-11, CH-12, D-16 … D-38; v0.5.1 CH-13 in PR #88); v0.5 approved in PR #2
+Document version: v0.9 — Sprint 2 release (S2-08), with Lab 7 CH-13 merged in (v0.7 reviewed in PR #76: CH-11, CH-12, D-16 … D-38; v0.5.1 CH-13 in PR #88); v0.5 approved in PR #2
 Companion documents: [`docs/features.md`](features.md), [`docs/traceability.md`](traceability.md),
 [`docs/diagrams/`](diagrams/README.md), [`docs/ui/design-direction.md`](ui/design-direction.md), [`docs/system-sds.md`](system-sds.md), [`docs/sprints/plan.md`](sprints/plan.md),
 [`docs/sprints/sprint-1/`](sprints/sprint-1/README.md), [`docs/sprints/sprint-2/`](sprints/sprint-2/README.md),
@@ -524,3 +524,4 @@ Later sprints rerun earlier checks as regression tests.
 | v0.8 | 25 Nov 2026 | Lab 7 CH-13 (v0.5.1, Sprint 1 line, PR #88) merged into the Sprint 2 line: BR-02 60-minute lead time and D-39. Nothing else changes | Team (AI-assisted) |
 | #110 | 26 Nov 2026 | §10.1 gains D-40 (the `include=cancelled` rule of S2-03, first written as a second D-39 in the Sprint 2 contracts) | Team (AI-assisted) |
 | S2-09 | 26 Nov 2026 | §10.1 gains D-41 (the game control, the neutral game chip and the account-menu link decided in the review of [#113](https://github.com/GGital/My-little-pony/pull/113)) | Team (AI-assisted) |
+| v0.9 | 27 Nov 2026 | S2-08 release records: covers the #110 (D-40) and S2-09 (D-41) rows above. No requirement changes in S2-08 | Team (AI-assisted) |

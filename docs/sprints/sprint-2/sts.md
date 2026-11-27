@@ -1,8 +1,8 @@
 # Sprint 2 Software Test Specification (STS)
 
-Project: **TCG Event Hub** · Sprint 2 · Document version: v0.8 — **draft for team review** (changes in §8)
-Contracts: [`feature-contracts.md`](feature-contracts.md) v0.8 · Issues and Definition of Done: [`README.md`](README.md) ·
-Sprint 1 STS: [`../sprint-1/sts.md`](../sprint-1/sts.md) v1.13
+Project: **TCG Event Hub** · Sprint 2 · Document version: v0.11 — results of the Sprint 2 release candidate (changes in §8)
+Contracts: [`feature-contracts.md`](feature-contracts.md) v0.10 · Issues and Definition of Done: [`README.md`](README.md) ·
+Sprint 1 STS: [`../sprint-1/sts.md`](../sprint-1/sts.md) v1.18
 
 This document turns every Sprint 2 acceptance criterion into planned tests, **before** the code exists. It uses the
 same method as Sprint 1: Spec DD → Test DD → TDD.
@@ -72,7 +72,7 @@ output**, with the commit id in §6.
 
 | Test ID | Level | AC / Req | Precondition / input | Action | Expected result | File | Result |
 |---|---|---|---|---|---|---|---|
-| TEST-SR8-01 | I | AC-SR8-01, FR-28 | O1 signed in; clock T | E-06 (capacity 24); clock T + 1 h, E-13 capacity 30; clock T + 2 h, E-13 deadline; E-17 | 3 items newest first: `deadline` (old = start ISO, new = deadline ISO), `capacity` 24 → 30, `status` null → `PUBLISHED`; `changedBy.displayName` "Quantum Cards"; `changedAt` = clock times; the body has no `email`, `changedById` or user id | `server/tests/sprint-2/changes.api.test.ts` | S2-01 part **Pass** (`dfa124f`); S2-04 capacity step **Pass** (`9f71b81`); S2-06 deadline step **Pass** (`3886e35`); AC-SR8-01 is now fully covered |
+| TEST-SR8-01 | I | AC-SR8-01, FR-28 | O1 signed in; clock T | E-06 (capacity 24); clock T + 1 h, E-13 capacity 30; clock T + 2 h, E-13 deadline; E-17 | 3 items newest first: `deadline` (old = start ISO, new = deadline ISO), `capacity` 24 → 30, `status` null → `PUBLISHED`; `changedBy.displayName` "Quantum Cards"; `changedAt` = clock times; the body has no `email`, `changedById` or user id | `server/tests/sprint-2/changes.api.test.ts` | **Pass** (`2075544`, release candidate): S2-01 part `dfa124f`, S2-04 capacity step `9f71b81`, S2-06 deadline step `3886e35`; AC-SR8-01 fully covered |
 | TEST-SR8-02 | I | AC-SR8-02, X-11 | 2 change rows | `UPDATE "EventChange" SET "newValue" = 'x'`; `DELETE FROM "EventChange"` | both throw, naming `event_change_append_only`; the rows are unchanged (read back) | `server/tests/sprint-2/constraints.api.test.ts` | **Pass** (`dfa124f`) |
 | TEST-SR8-03 | I | AC-SR8-03, BR-08, BR-12 | — | SQL: deadline = start + 1 min; `status = 'CANCELLED'` with null `cancelReason`; a registration `CANCELLED` with null `cancelledAt`; also `PUBLISHED` with `cancelledAt` set | each is rejected with SQLSTATE 23514 and the constraint name (`event_deadline_before_start`, `event_cancel_fields`, `registration_cancel_fields`) | `server/tests/sprint-2/constraints.api.test.ts` | **Pass** (`dfa124f`) |
 | TEST-SR8-04 | I | AC-SR8-04, NFR-02 | event X owned by O1 | E-17 for X as O2, P, visitor; E-17 for 999999 as O1; `/abc` | `404` (body equal to the 999999 body), `403`, `401`, `404`, `400` | `server/tests/sprint-2/changes.api.test.ts` | **Pass** (`dfa124f`) |
@@ -105,18 +105,18 @@ output**, with the commit id in §6.
 | TEST-M-01 | I, C | AC-M-01, BR-08 | O1; clock T | E-06 without a deadline; E-06 with start − 2 h; E-13 a deadline on the first; E-05. (C) the detail page with `registrationDeadline` | `registrationDeadline` = `startAt`; = start − 2 h; `200` + a `deadline` change row; (C) "Registration closes Thu 5 Nov · 15:00" (Bangkok) | `server/tests/sprint-2/deadline.api.test.ts`, `client/tests/sprint-2/EventDetail.deadline.test.tsx` | **Pass** (`3886e35`) |
 | TEST-M-02 | U, I | AC-M-02, BR-08, D-23 | event at T + 1 d; clock T | E-13 deadline = start + 1 min; = T; = T − 1 min; = start; `null`; then (deadline T + 20 h stored) `startAt` = T + 2 h | `422` ×3 on `registrationDeadline` with the contract messages; `200`; `200` and the response deadline = `startAt`; `422` on `registrationDeadline` | `server/tests/sprint-2/unit/deadline.unit.test.ts`, `server/tests/sprint-2/deadline.api.test.ts` | **Pass** (`3886e35`) |
 | TEST-M-03 | U, I, E2E | AC-M-03, BR-08, BR-04, D-17 | open events with deadline D < start, seats left; Nok | (U) `decideRegistration` at D − 1 min, D, D + 1 min; (I) E-09 at the same times; E-05 at D; E-04 at D. (E2E) EV-9 as Nok | (U) OK, `REGISTRATION_CLOSED` ×2. (I) `201`, `409` ×2, 0 extra rows; E-05 `CLOSED`; the event is still in E-04. (E2E) disabled **REGISTRATION CLOSED** | `server/tests/sprint-2/unit/deadline.unit.test.ts`, `server/tests/sprint-2/deadline.api.test.ts`, `e2e/sprint-2/deadline.spec.ts` | **Pass** (`3886e35`) |
-| TEST-M-04 | I | AC-M-04, BR-08, BR-11 | Mint registered; deadline D | E-10, E-11, E-05 at D − 1 min and at D; E-16 at D | `canCancel` true → false in all three; E-16 `409 REGISTRATION_CLOSED`, still `REGISTERED` | `server/tests/sprint-2/deadline.api.test.ts` | Done in S2-07 (#84), in `cancel-registration.api.test.ts`, where `canCancel` and E-16 are built (decision 26 Nov 2026) |
+| TEST-M-04 | I | AC-M-04, BR-08, BR-11 | Mint registered; deadline D | E-10, E-11, E-05 at D − 1 min and at D; E-16 at D | `canCancel` true → false in all three; E-16 `409 REGISTRATION_CLOSED`, still `REGISTERED` | `server/tests/sprint-2/deadline.api.test.ts` | **Pass** (`2075544`): built in S2-07 (#84, green `62db165`), in `cancel-registration.api.test.ts`, where `canCancel` and E-16 are (decision 26 Nov 2026) |
 
 ### 2.5 Feature-N — cancel and re-register
 
 | Test ID | Level | AC / Req | Precondition / input | Action | Expected result | File | Result |
 |---|---|---|---|---|---|---|---|
-| TEST-N-01 | I, C, E2E | AC-N-01, FR-19, FR-28 | Mint registered, event 3 / 24; clock T | E-16; E-10; E-08 as owner; E-05 as Mint. (C) My Events: Cancel → dialog → confirm; busy state. (E2E, JRN-03) | `200 CANCELLED`, `cancelledAt T`, counts 2 / 24 / 22 by independent count; the row still exists; E-08 row Cancelled + time; E-05 `REGISTER`. (C) dialog text, "Cancelling…" with `aria-busy`, chip, toast | `server/tests/sprint-2/cancel-registration.api.test.ts`, `client/tests/sprint-2/MyEvents.cancel.test.tsx` | Pending |
-| TEST-N-02 | I | AC-N-02, FR-20, BR-06 | after N-01 | E-09 by Mint twice | first `201` with a new id; rows for (event, Mint) = 2 (1 `CANCELLED`, 1 `REGISTERED`); E-05 `REGISTERED` + the new id; second `409 ALREADY_REGISTERED` | `server/tests/sprint-2/cancel-registration.api.test.ts` | Pending |
-| TEST-N-03 | I | AC-N-03, BR-05 | full event 2 / 2 (Ploy, Boss) | Ploy E-16; Nok E-09; Ploy E-09 | `200`; `201`; `409 EVENT_FULL`; active = 2 | `server/tests/sprint-2/cancel-registration.api.test.ts` | Pending |
-| TEST-N-04 | U, I | AC-N-04, BR-11 | Mint's rows: `CANCELLED`, `EVENT_CANCELLED`, `CHECKED_IN` (SQL), and `REGISTERED` past the deadline | (U) `decideCancellation` per state; (I) E-16 on each | `409 ALREADY_CANCELLED` ×2, `409 ALREADY_CHECKED_IN`, `409 REGISTRATION_CLOSED`; all rows unchanged | `server/tests/sprint-2/unit/registration-rules.unit.test.ts`, `server/tests/sprint-2/cancel-registration.api.test.ts` | Pending |
-| TEST-N-05 | I | AC-N-05, BR-11, BR-16, BR-17, NFR-02 | Mint's active registration R | E-16 R by Ploy, O1 (owner), visitor, foreign Origin; by Mint with `{participantId}`; E-16 999999 by Mint; `/abc` | `404` (equal to the 999999 body), `403`, `401`, `403`, `400`; `404 REGISTRATION_NOT_FOUND`; `400`; R unchanged | `server/tests/sprint-2/cancel-registration.api.test.ts` | Pending |
-| TEST-N-06 | I | AC-N-06, NFR-05, BR-06 | §1.4 | §1.4, 20 rounds | §1.4 invariant every round | `server/tests/sprint-2/lifecycle.concurrency.api.test.ts` | Pending |
+| TEST-N-01 | I, C, E2E | AC-N-01, FR-19, FR-28 | Mint registered, event 3 / 24; clock T | E-16; E-10; E-08 as owner; E-05 as Mint. (C) My Events: Cancel → dialog → confirm; busy state. (E2E, JRN-03) | `200 CANCELLED`, `cancelledAt T`, counts 2 / 24 / 22 by independent count; the row still exists; E-08 row Cancelled + time; E-05 `REGISTER`. (C) dialog text, "Cancelling…" with `aria-busy`, chip, toast | `server/tests/sprint-2/cancel-registration.api.test.ts`, `client/tests/sprint-2/MyEvents.cancel.test.tsx` | **Pass** (S2-07 green `62db165`; `2075544`) |
+| TEST-N-02 | I | AC-N-02, FR-20, BR-06 | after N-01 | E-09 by Mint twice | first `201` with a new id; rows for (event, Mint) = 2 (1 `CANCELLED`, 1 `REGISTERED`); E-05 `REGISTERED` + the new id; second `409 ALREADY_REGISTERED` | `server/tests/sprint-2/cancel-registration.api.test.ts` | **Pass** (S2-07 green `62db165`; `2075544`) |
+| TEST-N-03 | I | AC-N-03, BR-05 | full event 2 / 2 (Ploy, Boss) | Ploy E-16; Nok E-09; Ploy E-09 | `200`; `201`; `409 EVENT_FULL`; active = 2 | `server/tests/sprint-2/cancel-registration.api.test.ts` | **Pass** (S2-07 green `62db165`; `2075544`) |
+| TEST-N-04 | U, I | AC-N-04, BR-11 | Mint's rows: `CANCELLED`, `EVENT_CANCELLED`, `CHECKED_IN` (SQL), and `REGISTERED` past the deadline | (U) `decideCancellation` per state; (I) E-16 on each | `409 ALREADY_CANCELLED` ×2, `409 ALREADY_CHECKED_IN`, `409 REGISTRATION_CLOSED`; all rows unchanged | `server/tests/sprint-2/unit/registration-rules.unit.test.ts`, `server/tests/sprint-2/cancel-registration.api.test.ts` | **Pass** (S2-07 green `62db165`; `2075544`) |
+| TEST-N-05 | I | AC-N-05, BR-11, BR-16, BR-17, NFR-02 | Mint's active registration R | E-16 R by Ploy, O1 (owner), visitor, foreign Origin; by Mint with `{participantId}`; E-16 999999 by Mint; `/abc` | `404` (equal to the 999999 body), `403`, `401`, `403`, `400`; `404 REGISTRATION_NOT_FOUND`; `400`; R unchanged | `server/tests/sprint-2/cancel-registration.api.test.ts` | **Pass** (S2-07 green `62db165`; `2075544`) |
+| TEST-N-06 | I | AC-N-06, NFR-05, BR-06 | §1.4 | §1.4, 20 rounds | §1.4 invariant every round | `server/tests/sprint-2/lifecycle.concurrency.api.test.ts` | **Pass** (S2-07 green `62db165`; `2075544`): 20 / 20 rounds, and 20 rounds of the double cancel |
 
 ### 2.6 Feature-O — event cancellation
 
@@ -164,15 +164,15 @@ output**, with the commit id in §6.
 
 | Test ID | Level | AC / Req | Change in Sprint 2 | File | Result |
 |---|---|---|---|---|---|
-| TEST-B-03 (rows added) | I | AC-B-03, NFR-02 | rows for E-13 … E-17 from SDS §7.1, including byte-identical 404s for another owner's event and another participant's registration | `server/tests/sprint-1/authorization.api.test.ts` | E-13 rows **Pass** (`9f71b81`), E-14 rows **Pass** (`40f5687`), E-17 rows **Pass** (`dfa124f`); E-15, E-16 Pending |
+| TEST-B-03 (rows added) | I | AC-B-03, NFR-02 | rows for E-13 … E-17 from SDS §7.1, including byte-identical 404s for another owner's event and another participant's registration | `server/tests/sprint-1/authorization.api.test.ts` | **Pass** (`2075544`): E-13 (`9f71b81`), E-14 (`40f5687`), E-15 in TEST-O-05 (`c2e0238`), E-16 in `cancel-registration.api.test.ts` (`62db165`), E-17 (`dfa124f`), E-23 in `games.api.test.ts` (`19bd097`) |
 | TEST-SR1-02 (revised) | I | AC-SR1-02 | 9 events; EV-7 `DRAFT`, EV-8 `CANCELLED` with Boss `EVENT_CANCELLED`, EV-9 with a past deadline and Mint `REGISTERED`; a second run adds 0 rows | `server/tests/sprint-1/seed.api.test.ts` | **Pass** (`dfa124f`) |
-| TEST-SR2-03 (rows added) | I | AC-SR2-03 | E-13 … E-17 in the route table; GET on the POST/PATCH-only paths → 404, no writes | `server/tests/sprint-1/validation.api.test.ts` | E-13 row **Pass** (`9f71b81`), E-14 row **Pass** (`40f5687`), E-17 row **Pass** (`dfa124f`); E-15, E-16 Pending |
+| TEST-SR2-03 (rows added) | I | AC-SR2-03 | E-13 … E-17 in the route table; GET on the POST/PATCH-only paths → 404, no writes | `server/tests/sprint-1/validation.api.test.ts` | **Pass** (`2075544`): E-13 … E-17 and E-23 in `server/tests/helpers/routes.ts` |
 | TEST-SR2-04 (codes added) | U | NFR-07 | `ALREADY_PUBLISHED`, `NOT_PUBLISHED` map to 409 | `server/tests/sprint-1/unit/errors.unit.test.ts` | **Pass** (`dfa124f`) |
 | TEST-E-01 (rows added) | I | AC-E-01 | E-07 includes the owner's draft and cancelled event with their status | `server/tests/sprint-1/organizer.api.test.ts` | **Pass** (`40f5687`; it also passed on the red run, because E-07 already listed every status) |
-| TEST-SR5-05 | E2E | NFR-08 | the 3 new screens (edit, search with filters open, cancelled detail) at 390 / 768 / 1440 px, no horizontal scroll | `e2e/sprint-2/responsive.spec.ts` | Pending |
-| JRN-03 | E2E | K, L, M, N, O, SR-08 | contracts §9 | `e2e/sprint-2/journey.spec.ts` | Pending |
-| JRN-04 | E2E | J, FR-26 | contracts §9 | `e2e/sprint-2/journey.spec.ts` | Pending |
-| JRN-01, JRN-02 | E2E | Sprint 1 | unchanged; must stay green (Deliverable 2 Part A continuity) | `e2e/sprint-1/journey.spec.ts` | Pending |
+| TEST-SR5-05 | E2E | NFR-08 | the 3 new screens (edit, search with filters open, cancelled detail) at 390 / 768 / 1440 px, no horizontal scroll | `e2e/sprint-2/responsive.spec.ts` | **Pass** (`2075544`): 9 / 9; screenshots in `evidence/responsive/` |
+| JRN-03 | E2E | K, L, M, N, O, SR-08 | contracts §9 | `e2e/sprint-2/journey.spec.ts` | **Pass** (`2075544`) |
+| JRN-04 | E2E | J, FR-26 | contracts §9 | `e2e/sprint-2/journey.spec.ts` | **Pass** (`2075544`) |
+| JRN-01, JRN-02 | E2E | Sprint 1 | unchanged; must stay green (Deliverable 2 Part A continuity) | `e2e/sprint-1/journey.spec.ts` | **Pass** (`2075544`): unchanged |
 
 **Totals:** 44 planned test rows that carry an AC number (37 + TEST-U-01 … 05 + TEST-C-07, C-08), plus 6 regression rows and 2 new
 journeys. TEST-B-03 and TEST-SR2-03 also gain E-23. The Sprint 1
@@ -234,14 +234,14 @@ Fill this table from the real runs (README §3). The commit ids are the evidence
 |---|---|---|---|---|---|
 | S2-01 SR-08 data foundation | TEST-SR8-01 (S2-01 part) … 04, TEST-SR1-02 (revised), TEST-SR2-04 (codes), TEST-B-02/B-03 and TEST-SR2-03 (E-17 rows); TEST-F-01, H-01, E-01 E2E lists (A1 `8694d76`) | `7c3ad62` | server 22 / 328 failed; E2E 3 / 9 failed (the three revised lists) | `dc987f9`, fixtures `dfa124f` | `dc987f9`: 322 passed, 1 failed, 5 skipped / 328 (2 Sprint 1 fixtures stored `CANCELLED` without `cancelledAt`); `dfa124f`: server 328 / 328, client 91 / 91, E2E 58 / 58 |
 | S2-02 Feature-K drafts | TEST-K-01 … 05, TEST-B-02/B-03 and TEST-SR2-03 (E-14 rows), TEST-E-01 (rows); TEST-G-04 draft case revised (`1730bc8`) | `47b3838` (+ setup fix `c1dc85b`) | server 17 failed, 6 skipped / 356 (the K-02 and K-05 setups get 400 for `saveAsDraft`); client 6 / 99; E2E TEST-K-03 1 / 1 | `40f5687` (+ client test type fix `e4c8940`) | server 356 / 356, client 99 / 99, build OK, E2E 63 / 63 |
-| S2-03 Feature-J search | TEST-J-01 … 06 | | | | |
+| S2-03 Feature-J search | TEST-J-01 … 06 | `82b7aa9` | server search files 16 failed / 18 (the 2 that passed are the stub's trivial cases), from [#94](https://github.com/GGital/My-little-pony/pull/94) | `2c5e075`; review fixes `18564ab` (literal `%` and `_`), `a0a86f3`, `23d5526` | server 375 / 375, client 152 / 152, E2E 75 / 75 at the approved head (review of #94); filled by S2-08 from the #94 record |
 | S2-04 Feature-L edit | TEST-L-01 … 06, TEST-SR8-01 (capacity step), TEST-B-02/B-03 and TEST-SR2-03 (E-13 rows); MANAGE and SAVE DRAFT tests revised (`5a26d7e`) | `0906f89` | server 25 / 387; client 13 / 109; E2E TEST-L-01 1 / 1 | `9f71b81` (+ test fixes `c475497`, `326e084`, `b5cf763`) | server 387 / 387 (TEST-L-03 20 rounds; mutation check fails without the lock), client 109 / 109, build OK, E2E 69 / 69 |
 | S2-05 Feature-O cancel event | TEST-O-01 … 06, TEST-B-03 (E-15 rows) | `47e1cee` | server 33 / 45 failed, 9 skipped (suites that failed in set-up); client 13 / 14 failed | `c2e0238` | server 455 / 455 (full suite, rebased on S2-04 and S2-06); client 179 / 179; E2E 84 / 84 |
 | S2-06 Feature-M deadline | TEST-M-01 … 03 (TEST-M-04 moved to S2-07), TEST-SR8-01 (deadline step) | `d348686` (+ clock reset `26a6e4e`) | server 16 / 423 (one of them a clock cascade, fixed in `26a6e4e`); client 4 / 167; E2E TEST-M-03 1 / 1 | `3886e35` | server 423 / 423, client 167 / 167, build OK, E2E 86 / 86 |
 | S2-07 Feature-N cancel / re-register | TEST-N-01 … 06, TEST-M-04, TEST-B-03 (E-16 row) | `95d8e69` | server 15 / 490 failed; client 5 / 5 failed (new file); E2E not run red | `62db165` | server 490 / 490; client 192 / 192; E2E 90 / 90; both builds OK; TEST-N-06 3 full runs of 20 rounds green; `FOR UPDATE` mutation check recorded below |
 | S2-09 Feature-U game and store profile | TEST-U-01 … 05, TEST-B-03 (E-23 rows) | `9f3b967`; review 2: `0ed888b`, `48e3ab1` | server 53 / 549 failed (4 new tests pass on Sprint 1 behaviour: unknown `game` key and query key give 400, and Dragon's store is untouched); client 22 / 215 failed; E2E not run red | `19bd097` (implementation `9e282b5`; the client suite is green only from `19bd097`, which makes the earlier create-form tests choose a game; test fix `36057bd`); review 2 (D-41): `7af6773` | server 549 / 549, client 215 / 215, E2E 91 / 91 (incl. TEST-U-02), both builds OK; review 2: client 225 / 225, E2E 92 / 92, build OK |
 | S2-10 Deep Lagoon theme and type | TEST-C-07, TEST-C-08 | `ec3e8a0` | unit 23 / 51 failed; E2E 2 / 10 failed (axe rows pass on the old palette) | `e671f38` | client 142 / 142; E2E 59 / 59 (incl. 21 / 21 TEST-SR5-01) |
-| S2-08 Integration and release `v0.2.0` | JRN-03, JRN-04, TEST-SR5-05, TEST-E-01 (rows), TEST-SR2-03 (rows) | | | | |
+| S2-08 Integration and release `v0.2.0` | JRN-03, JRN-04, TEST-SR5-05, TEST-C-08 (edit, store profile, past and cancelled cards), TEST-U-08 (feature CSS after theme.css); the Sprint 2 coverage check (`sts:check -- sprint-2`) | `7f4a1b3` | E2E 2 failed / 28 (the CSS order and the dimmed-card contrast, 12 nodes at 2.65 … 3.57 : 1); `sts:check -- sprint-2` 32 problems (rows still Pending). The journeys and TEST-SR5-05 pass on their first correct run: they check behaviour built in S2-01 … S2-10. The first run had one spec mistake (the not-found text), fixed in the spec — `evidence/S2-08-*.txt` | `abbc44b`; rename `2075544`; records (this commit) | release candidate `2075544`: see §6 |
 
 For the Deliverable 2 PDF excerpts, keep red and green output for **TEST-L-03** or **TEST-N-03** (domain rule) and
 **TEST-N-05** (access restriction).
@@ -252,18 +252,17 @@ For the Deliverable 2 PDF excerpts, keep red and green output for **TEST-L-03** 
 
 | Item | Value |
 |---|---|
-| Release commit / tag | `v0.2.0` — Pending |
-| Server / client / E2E counts (passed / failed / skipped) | Pending |
-| Concurrency, 20 rounds: TEST-L-03, N-06, O-06 | Pending |
-| Sprint 1 regression (all 55 rows + JRN-01, JRN-02) | Pending |
-| Coverage (`npm run sts:check` against `sprint-2`) | Pending |
-| Failed / skipped tests and known limitations | Pending |
+| Release commit / tag | Release candidate `2075544` on `feature/s2-08-integration-release` (staging `6af9641` + S2-08), 27 Nov 2026. `v0.2.0` is tagged on the `main` merge commit of the release PR `sprint-2-staging` → `main` (DoD-10): Pending |
+| Server / client / E2E counts (passed / failed / skipped) | Server **549 / 0 / 0** (47 files; `typecheck` 0 errors) — `evidence/S2-08-rc-server.txt` · client **225 / 0 / 0** (38 files) and `npm run build` OK — `evidence/S2-08-rc-client.txt` · E2E **109 / 0 / 0** (53 Sprint 1 and Lab 7, 56 Sprint 2) — `evidence/S2-08-rc-e2e.txt` |
+| Concurrency, 20 rounds: TEST-L-03, N-06, O-06 | All pass inside the server run: TEST-L-03 20 rounds; TEST-N-06 20 rounds, plus 20 rounds of two simultaneous cancels; TEST-O-06 20 rounds of 5 simultaneous cancels and 20 rounds of 1 cancel + 10 registrations; Sprint 1 TEST-G-06 20 rounds. The `FOR UPDATE` mutation checks are in §5 (S2-04, S2-05, S2-07) — `evidence/S2-08-rc-server.txt` |
+| Sprint 1 regression (all 55 rows + JRN-01, JRN-02) | Green: 301 Sprint 1 server tests, the Sprint 1 E2E specs with JRN-01 and JRN-02, and `npm run sts:check` (Sprint 1: 47 / 47 ACs, 59 rows Pass including the Lab 7 rows, 12 / 12 BRs). The Sprint 1 tests changed in Sprint 2 are listed in Sprint 1 STS §8 (S2-01, S2-02, S2-07, S2-09); none changed in S2-08 |
+| Coverage (`npm run sts:check` against `sprint-2`) | **44 / 44** ACs with a test and a recorded result; 55 §2 rows, 55 Pass, 0 Fail; 5 / 5 BRs with a rejection test — `evidence/S2-08-green-sts-check.txt`. Red before S2-08: 32 problems — `evidence/S2-08-red-sts-check.txt` |
+| Failed / skipped tests and known limitations | **None failed or skipped.** Known limitations: (1) where focus goes after a confirmed Cancel registration (review of #112) is not yet specified or tested; it moves to S3-07 (#104), the accessibility Issue; (2) JRN-02 and the browser races show the rule but cannot force the timing; the locks are proven by the 20-round server tests; (3) TEST-SR5-02 was planned twice (Sprint 2 and Sprint 3): Sprint 2's is now TEST-SR5-05 (team decision 27 Nov) |
 
 ## 7. Test commands
 
-These are the same as Sprint 1 STS §7. `scripts/sts-coverage.mjs` currently reads `docs/sprints/sprint-1` only.
-S2-08 lets it take the sprint folder as an argument (`npm run sts:check -- sprint-2`), so both sprints can be
-checked.
+These are the same as Sprint 1 STS §7. Since S2-08, `scripts/sts-coverage.mjs` takes the sprint folder as an
+argument: `npm run sts:check` checks Sprint 1, and `npm run sts:check -- sprint-2` checks this sprint.
 
 ## 8. Version history
 
@@ -285,3 +284,4 @@ checked.
 | S2-09 | 26 Nov 2026 | Feature-U: E-23, `game` on E-06/E-13/E-04, store on E-05; TEST-U-01 … 05 done; earlier create-form tests and E2E specs choose a game (own commit) | Team (AI-assisted) |
 | S2-09 | 26 Nov 2026 | Review of [#113](https://github.com/GGital/My-little-pony/pull/113): green run recorded at `19bd097`; TEST-U-01 … 05 Pass; review fixes `61d1341` (red) and `c0052f9` (an empty host section is hidden, focus on the first invalid field, hints inside labels) | Team (AI-assisted) |
 | S2-09 | 26 Nov 2026 | Review 2 of [#113](https://github.com/GGital/My-little-pony/pull/113) (D-41): TEST-U-06 … 08 added (store games first, Store profile in the account menu, toggle styling); TEST-U-02 now checks the heading and no card chips (own commit `48e3ab1`); red `0ed888b`, `48e3ab1`, green `7af6773` | Team (AI-assisted) |
+| v0.11 | 27 Nov 2026 | S2-08 (#87): covers the S2-06, S2-07 and S2-09 rows above. JRN-03, JRN-04 and TEST-SR5-05 (renumbered from TEST-SR5-02, which is Sprint 3's axe scan, team decision 27 Nov) Pass; TEST-C-08 scans edit event, store profile and past and cancelled cards; TEST-U-08 checks that feature CSS comes after theme.css. §2 results from the release candidate `2075544` (the S2-07 rows were still Pending); §5 S2-03 row from the #94 record and the S2-08 row; §6 results; §7 `sts:check -- sprint-2` | Team (AI-assisted) |

@@ -1,6 +1,6 @@
 # Sprint 2 Feature Engineering Contracts
 
-Project: **TCG Event Hub** · Sprint 2 (9–29 Nov 2026) · Document version: v0.8 — **draft for team review** (changes in §13; v0.6 = Lab 7 CH-13, Issue #77; v0.7 = S2-02; v0.8 = S2-04)
+Project: **TCG Event Hub** · Sprint 2 (9–29 Nov 2026) · Document version: v0.10 — released with `v0.2.0` (changes in §13; v0.6 = Lab 7 CH-13, Issue #77; v0.7 = S2-02; v0.8 = S2-03; v0.9 = S2-04; v0.10 = S2-08)
 Inputs: [`../../srs.md`](../../srs.md) v0.6 · [`../../features.md`](../../features.md) v0.4 ·
 [`../../traceability.md`](../../traceability.md) · [`../../system-sds.md`](../../system-sds.md) ·
 [`../plan.md`](../plan.md) §3 · [`../../ui/design-direction.md`](../../ui/design-direction.md) ·
@@ -773,3 +773,4 @@ that fails blocks the merge. Nothing in Sprint 1's AC-C-01 … 06 or AC-SR5-01 m
 | S2-07 | 26 Nov 2026 | §5 (review of #112): AC-N-06 says at most one of the 10 registrations wins the freed seat (exactly one when the cancel takes the lock first), because all 10 can take the lock before the cancel and each then correctly gets `EVENT_FULL`; active never exceeds 2. §8: Feature-H / I row names TEST-I-01 (lists `CANCELLED` rows, not counted) | Team (AI-assisted) |
 | S2-09 | 26 Nov 2026 | §8 (review of [#113](https://github.com/GGital/My-little-pony/pull/113)): the Feature-D row names the one Sprint 1 test that changes with Feature-U (TEST-D-01 chooses a game). No behaviour changed | Team (AI-assisted) |
 | S2-09 | 26 Nov 2026 | §0.6 D-41 and §11.1 (review of [#113](https://github.com/GGital/My-little-pony/pull/113)): the Game control stays a select with the store's games first; neutral chip hidden on a list filtered to one game; Store profile in the account menu; AC-U-02 now checks the heading and no card chips | Team (AI-assisted) |
+| v0.10 | 27 Nov 2026 | S2-08 release records: covers the #110, S2-06, S2-07 and S2-09 rows above. §9 journeys JRN-03 and JRN-04 run as written. No contract change in S2-08 | Team (AI-assisted) |
