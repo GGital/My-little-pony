@@ -48,6 +48,9 @@ These are the same as Sprint 1 STS §1.2, under `server/tests/sprint-3/`, `clien
 
 - Factories from Sprints 1–2, plus `checkIn(reg, at)`, `endEvent(event)` (moves the clock past `endAt`) and
   `failSignIn(email, n)`.
+- Since CH-13 (Lab 7), E-06 accepts only a start at least 60 minutes ahead. Fixtures that need an event starting
+  sooner (check-in window, in progress, ended) are written with `makeEvent()` straight to the database, or created
+  earlier on the fixed clock and then reached by moving the clock (`setNow`).
 - E2E: the seed with EV-4 (check-in window open after seeding) and EV-10 (ended, with a check-in, a no-show and a
   cancellation).
 - Images are generated in the test (`sharp({ create: … })`), so no binary fixtures are committed. The EXIF test
@@ -99,7 +102,8 @@ The suite passes when:
 ## 2. Planned tests
 
 Legend for **Result**: `Pending` = planned and not yet run. It changes to `Pass` or `Fail` **only from real
-output**, with the commit id in §6.
+output**, with the commit id in §6. The work status of each feature (planned, in progress, implemented, tested,
+accepted) is kept in the README §3 table, so a test result is never used as a feature status.
 
 ### 2.1 Feature-P — check-in and undo
 
@@ -194,7 +198,7 @@ output**, with the commit id in §6.
 |---|---|---|---|---|---|---|---|
 | TEST-SR5-02 | E2E | AC-SR5-02, NFR-10 | the seed; three sessions | axe on the 14 screens | 0 serious and 0 critical; moderate ones listed in §6 | `e2e/sprint-3/a11y.spec.ts` | Pending |
 | TEST-SR5-03 | E2E | AC-SR5-03, NFR-08 | the seed | the 14 screens × 390 / 768 / 1440 | 42 / 42 without page scroll; screenshots | `e2e/sprint-3/responsive.spec.ts` | Pending |
-| TEST-SR5-04 | M | AC-SR5-04, NFR-10 | keyboard only | the three journeys | each finishes; focus visible; recorded | `docs/sprints/sprint-3/evidence/SR5-04-keyboard-<commit>.md` | Pending |
+| TEST-SR5-04 | M | AC-SR5-04, NFR-10 | keyboard only | the four journeys of AC-SR5-04 | each finishes; focus visible; focus on the cancel notice after Cancel registration; recorded | `docs/sprints/sprint-3/evidence/SR5-04-keyboard-<commit>.md` | Pending |
 | TEST-SR6-01 | M | AC-SR6-01, NFR-12 | the perf database, production build | `node scripts/perf.mjs events report` | p95 < 500 ms for E-04 ×2 and E-20 | `docs/sprints/sprint-3/evidence/perf-<commit>.txt` | Pending |
 | TEST-SR6-02 | M | AC-SR6-02, NFR-12 | the same | `node scripts/perf.mjs summary`; `EXPLAIN ANALYZE` | p95 < 500 ms; plans recorded | `docs/sprints/sprint-3/evidence/perf-<commit>.txt` | Pending |
 | TEST-SR7-02 | M | AC-SR7-02, NFR-14 | the `v1.0.0` candidate | `npm run sts:check -- sprint-1/2/3`; traceability review | all ACs with results; every BR with a rejection; every matrix row with a test and a result | this file §6 | Pending |
@@ -312,3 +316,5 @@ node scripts/perf.mjs events report summary
 |---|---|---|---|
 | v0.1 | 21 Nov 2026 | First draft: strategy additions (independent counts, boundaries, M evidence), tools, concurrency plan, 39 AC tests, 3 regression rows, JRN-05 … 07, AC map, BR rejection map, empty TDD and results tables | Team (AI-assisted) |
 | v0.2 | 21 Nov 2026 | CH-12: §1.3 hand-computed standings fixture, TEST-W-06 race, §2.7 Feature-W and §2.8 Feature-X (14 tests incl. the 1,000-tournament property test and the 256-entry benchmark), JRN-08, AC map, BR-21 … BR-24 rejections, TDD rows S3-10, S3-11; 53 AC tests | Team (AI-assisted) |
+| #118 | 25 Nov 2026 | With the contracts' #118 row. §1.3: fixtures under CH-13 (events starting within 60 minutes are written directly or reached by moving the clock); §2 points the work status to README §3. No test changes | Team (AI-assisted) |
+| #118 | 27 Nov 2026 | TEST-SR5-04 follows AC-SR5-04: four journeys, with focus on the cancel notice after Cancel registration | Team (AI-assisted) |

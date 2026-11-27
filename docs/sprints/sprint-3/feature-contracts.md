@@ -1,10 +1,10 @@
 # Sprint 3 Feature Engineering Contracts
 
 Project: **TCG Event Hub** · Sprint 3 (23 Nov – 13 Dec 2026) · Document version: v0.2 — **draft for team review** (changes in §15)
-Inputs: [`../../srs.md`](../../srs.md) v0.7 · [`../../features.md`](../../features.md) v0.7 ·
-[`../../traceability.md`](../../traceability.md) v0.8 · [`../../system-sds.md`](../../system-sds.md) v0.14 ·
+Inputs: [`../../srs.md`](../../srs.md) v0.9 · [`../../features.md`](../../features.md) v0.7 ·
+[`../../traceability.md`](../../traceability.md) v0.12 · [`../../system-sds.md`](../../system-sds.md) v0.15 ·
 [`../plan.md`](../plan.md) v0.3 §4 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.6 ·
-Sprint 2 contracts: [`../sprint-2/feature-contracts.md`](../sprint-2/feature-contracts.md) v0.5 ·
+Sprint 2 contracts: [`../sprint-2/feature-contracts.md`](../sprint-2/feature-contracts.md) v0.10 (released as `v0.2.0`) ·
 Tests: [`sts.md`](sts.md) · Issues and Definition of Done: [`README.md`](README.md)
 
 This document has one engineering contract per Sprint 3 feature (P, Q, R, S, T, V, and the tournament features W
@@ -15,7 +15,9 @@ and see real attendance, players see their history, store branding is complete, 
 accessibility, performance and sign-in abuse.
 
 The Sprint 1 and Sprint 2 contracts still apply in full: check order, error shape, strict bodies, Origin check,
-server clock, the openness rule (Sprint 2 §0.3), record keeping (SR-08) and the one-lock rule (SDS §4.3a).
+server clock, the openness rule (Sprint 2 §0.3), record keeping (SR-08) and the one-lock rule (SDS §4.3a). The Lab 7
+change CH-13 also applies: E-06 accepts a start only at least 60 minutes ahead (BR-02, D-39). No Sprint 3 endpoint
+creates events, so no Sprint 3 rule changes because of it.
 
 ---
 
@@ -66,8 +68,8 @@ Rates are returned as unrounded numbers from 0 to 1. The UI rounds half up to a 
 
 ### 0.3 Seed additions (SR-01, re-verified)
 
-EV-1 … EV-9 are unchanged. Sprint 3 adds one ended event, so the report, the summary and the history show real
-numbers on a fresh seed. "S" is the seed run time.
+EV-1 … EV-9 are unchanged. Sprint 3 adds two events: EV-10 has ended, so the report, the summary and the history
+show real numbers on a fresh seed; EV-11 is a tournament in progress for the Swiss demonstration (CH-12). "S" is the seed run time.
 
 | Key | Event | Details |
 |---|---|---|
@@ -93,10 +95,11 @@ the live check-in demonstration. After the seed: 6 users, **11** events. AC-SR1-
 | 409 `NOT_ENOUGH_PLAYERS` **new** | E-26, E-27 | "At least 2 checked-in players are needed." |
 | 409 `ROUND_NOT_COMPLETE`, `NO_ROUNDS_LEFT`, `ROUND_LOCKED`, `ALREADY_DROPPED` **new** | E-27 … E-30 | "Enter every result of round {n} first." · "All {n} rounds are paired. Finish the tournament." · "Round {n} is closed: the next round has been paired." · "{name} has already dropped." |
 
-### 0.5 Decisions proposed with these contracts (to be recorded in SRS §10.1)
+### 0.5 Decisions made with these contracts (recorded in SRS §10.1)
 
 D-26 (check-in window boundaries and no-shows counted only after the end) and D-27 (throttling counted per email,
-including unknown emails; a success does not reset the count) are in SRS v0.6. This contract also proposes:
+including unknown emails; a success does not reset the count) are in SRS v0.6. These were proposed with the contracts
+and are recorded in SRS §10.1 as well (D-28 … D-30 in v0.6, D-31 … D-36 in v0.7):
 
 | ID | Decision | Why |
 |---|---|---|
@@ -128,7 +131,8 @@ SR-08 · Issue S3-01
 5. Both endpoints lock the event row (SDS §4.3a). They write the registration fields and an `EventChange` row
    (`field attendance`, with `registrationId`, old → new status) in the same transaction (FR-28).
 
-**Order of checks (E-18 / E-19):** 401 → 403 (role) → 403 (Origin) → 400 (path id; body `{}` or none) → 404
+**Rules, validation, boundaries:** the check-in window and final statuses are defined in §0.1 (D-26). The order of
+checks (E-18 / E-19) is 401 → 403 (role) → 403 (Origin) → 400 (path id; body `{}` or none) → 404
 `REGISTRATION_NOT_FOUND` (missing, or its event is not the caller's) → lock → 409 `NOT_IN_CHECK_IN_WINDOW` → E-18:
 409 `REGISTRATION_NOT_ACTIVE` (`CANCELLED`, `EVENT_CANCELLED`) → 409 `ALREADY_CHECKED_IN` → 200 · E-19: 409
 `NOT_CHECKED_IN` (status is not `CHECKED_IN`) → 200.
@@ -342,6 +346,9 @@ captions; on phones the per-event table scrolls inside its own box, never the pa
 
 **Permissions:** public (E-01). `LoginAttempt` is never returned by any endpoint.
 
+**UI:** no new screen. `/login` shows the 429 message in its existing `role="alert"` box, keeps the email, and
+moves focus to the alert (Behaviour 4). There is no countdown.
+
 **API**
 
 | # | Request | Success | Failures |
@@ -402,6 +409,10 @@ Moved here from Sprint 2 contracts §11.2 (D-24)
 - Removing an image clears a display field; it is not a record deletion (X-11).
 - The Origin check applies to PUT and DELETE.
 
+**UI:** `/organizer/store` (logo) and the "Game and banner" box of the create and edit forms (banner), as in
+Behaviour 1–3 and 5 and the Store Branding prototype: preview with the cropped strips shaded, "Resized from …"
+note, the confirmation before Remove, errors in an alert that names the fix, and 44 px targets.
+
 **API**
 
 | # | Request | Success | Failures |
@@ -460,7 +471,8 @@ Decisions D-31, D-35, D-36 · Design SDS SD-14
      search guarantees no rematch.
    - **Bye:** with an odd count, the bye goes to the lowest entry without one.
 
-**Order of checks (E-26, E-27, E-29):** 401 → 403 → 403 (Origin) → 400 (path, body) → 404 (missing or not owner)
+**Rules, validation, boundaries:** BR-21 (who can be paired, rounds 1 … the maximum) and BR-22 (Swiss pairing, no
+rematch, one bye) as in Behaviour 2, 4 and 6. The order of checks (E-26, E-27, E-29) is 401 → 403 → 403 (Origin) → 400 (path, body) → 404 (missing or not owner)
 → lock → 409 `ALREADY_CANCELLED` → 409 `NOT_A_TOURNAMENT` → E-26: 409 `TOURNAMENT_STARTED`, 409
 `EVENT_NOT_IN_PROGRESS`, 409 `NOT_ENOUGH_PLAYERS`, 422 `rounds` out of range · E-27: 409 `TOURNAMENT_NOT_RUNNING`,
 409 `ROUND_NOT_COMPLETE`, 409 `NO_ROUNDS_LEFT`, 409 `NOT_ENOUGH_PLAYERS` (fewer than 2 active entries) · E-29: 409
@@ -551,6 +563,10 @@ Issue S3-11 · Decisions D-32, D-33, D-34
 - E-32: the participant who owns the registration; another participant 404, organizer 403, visitor 401. A
   registration without an entry: `404 NOT_FOUND`.
 
+**UI:** the result control, standings table and winner line on `/organizer/events/:id/tournament`, and the
+player's view at `/me/registrations/:id/tournament`, as in Behaviour 1, 3 and 4. The standings are a real table
+with a caption; percentages use tabular figures; results are announced in the live region.
+
 **API**
 
 | # | Request | Success | Failures |
@@ -594,14 +610,19 @@ Issue S3-11 · Decisions D-32, D-33, D-34
    - store profile.
 
    The same screens are checked at 390, 768 and 1440 px.
-2. A keyboard-only walk-through of three journeys is recorded (M): register, check in, and cancel an event.
+2. A keyboard-only walk-through of four journeys is recorded (M): register, cancel that registration in My Events,
+   check in, and cancel an event. After a confirmed Cancel registration, focus moves to the "Your registration is cancelled." notice (`tabindex="-1"`), so the result is read out and focus is not lost when
+   the dialog closes. This closes the known limitation of the Sprint 2 release (Sprint 2 `sts.md` §6; team decision
+   27 Nov).
 3. Fixes follow design-direction v0.6: Deep Lagoon tokens, focus ring, `--control-line` and 44 px targets.
+
+**Layers:** UI: fixes only, no new screen. Rules, Permissions, API and Data: no change in this layer.
 
 | AC | Given | When | Then |
 |---|---|---|---|
 | **AC-SR5-02** | the release candidate with seed data | axe scan of the 14 screens (WCAG 2.1 A and AA rules) | **0 serious and 0 critical** violations; moderate ones listed in STS §6 with a decision |
 | **AC-SR5-03** | the same 14 screens | open at 390, 768, 1440 px | `scrollWidth ≤ innerWidth` on all 42; screenshots saved |
-| **AC-SR5-04** | keyboard only, no mouse | register for an event; check a player in and undo; cancel an event | each journey finishes; focus is always visible and never lost; dialogs return focus; recorded with screenshots |
+| **AC-SR5-04** | keyboard only, no mouse | register for an event; cancel that registration in My Events; check a player in and undo; cancel an event | each journey finishes; focus is always visible and never lost; dialogs return focus; after the confirmed Cancel registration, focus is on the "Your registration is cancelled." notice; recorded with screenshots |
 
 **Planned tests:** TEST-SR5-02 … 04 (E2E, M).
 
@@ -617,6 +638,9 @@ Issue S3-11 · Decisions D-32, D-33, D-34
 2. `scripts/perf.mjs` runs autocannon against a production build: 30 s and 10 connections per endpoint. It writes
    p50, p95 and p99 to `docs/sprints/sprint-3/evidence/perf-<commit>.txt`.
 
+**Layers:** Data: a new index only if AC-SR6-02 finds a plan without one (a migration and an SDS §4.1 row).
+Rules, Permissions, UI and API: no change in this layer.
+
 | AC | Given | When | Then |
 |---|---|---|---|
 | **AC-SR6-01** | the perf database and a production build on the developer laptop | autocannon on E-04 (no query; `q=store&game=MAGIC&seatsAvailable=true&page=3`) and E-20 | p95 < 500 ms for each; the results file names the commit and the machine |
@@ -627,6 +651,13 @@ Issue S3-11 · Decisions D-32, D-33, D-34
 ---
 
 ## 11. SR-07 — Verification and Traceability at the final release
+
+**Links:** NFR-14 (SR-07) · Depends on: every Sprint 1–3 feature · Issue S3-09
+
+**Behaviour:** `scripts/sts-coverage.mjs` takes the sprint folder as an argument (S2-08) and is run for all three
+sprints on the `v1.0.0` candidate. The traceability matrix gets each requirement's final result and version.
+
+**Layers:** documents and a script only. Rules, Permissions, UI, API and Data: no change in this layer.
 
 | AC | Given | When | Then |
 |---|---|---|---|
@@ -688,3 +719,6 @@ here. Each one is linked to at least one AC above.
 |---|---|---|---|
 | v0.1 | 21 Nov 2026 | First draft: time words, shapes, seed EV-10 (AC-SR1-02 revised to 10 events), new codes, D-28 … D-30 proposed; Feature-P, Q, R, S, T, V (moved from Sprint 2 §11.2 with AC-V-07 added), SR-05, SR-06, SR-07; 39 ACs; re-verification table; JRN-05 … 07 | Team (AI-assisted) |
 | v0.2 | 21 Nov 2026 | CH-12: §7 Feature-W (Swiss pairings and rounds) and §8 Feature-X (results, standings, winner, player view), 14 ACs; seed EV-11 (AC-SR1-02: 11 events); tournament error codes; D-31 … D-36; re-verification rows; JRN-08; later sections renumbered §9 … §15; 53 ACs | Team (AI-assisted) |
+| #118 | 25 Nov 2026 | Deliverable 2 check (Part C): every contract names each template layer, or says "no change in this layer" (P and W rules labelled; UI lines for T, V and X; layer lines for SR-05 and SR-06; SR-07 gains Links and Behaviour); CH-13 noted in the shared rules; §0.3 says two seed events; inputs SRS v0.8, traceability v0.9, SDS v0.15, Sprint 2 contracts v0.6. No AC changes | Team (AI-assisted) |
+| #118 | 27 Nov 2026 | Deliverable 2 check, 27 Nov: inputs are the current SRS v0.9, traceability v0.12 and the released Sprint 2 contracts v0.10, re-read for Sprint 3 (CH-13, D-40 and D-41 change no Sprint 3 rule); §0.5 says D-28 … D-36 are recorded in the SRS, not only proposed. No AC changes | Team (AI-assisted) |
+| #118 | 27 Nov 2026 | §9 Behaviour 2 and AC-SR5-04 (team decision 27 Nov): a fourth keyboard journey, cancel a registration in My Events, and focus then moves to the "Your registration is cancelled." notice. This specifies the focus gap left by the Sprint 2 release | Team (AI-assisted) |

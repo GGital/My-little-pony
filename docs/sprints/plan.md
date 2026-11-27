@@ -181,7 +181,9 @@ remaining work is compressed into Issues S2-00 … S2-09 ([`sprint-2/README.md`]
       regression suite.
 - [ ] Release `v0.2.0` merged to `main`, tagged, and **deployed through the Lab 5 pipeline**.
 - [ ] Traceability updated: requirement → feature → sprint → AC → actual test → result, with honest status.
-- [ ] Sprint 3 contracts written and some Sprint 3 work in progress, with a remaining-work list.
+- [ ] Sprint 3 contracts written and some Sprint 3 work in progress, with a remaining-work list. *Changed 27 Nov
+      (#118): Deliverable 2 asks for the Sprint 3 specification documents to be complete (contracts, STS, Issue plan,
+      SRS and traceability rows), as for Sprints 1 and 2; Sprint 3 code starts 30 Nov.*
 
 ---
 
@@ -225,6 +227,19 @@ stable screens.
 | 9–11 Dec | S3-07 SR-05 accessibility scan and fixes | S3-08 SR-06 load run | |
 | 12–13 Dec | S3-09 regression, UAT re-tests, release `v1.0.0` | Demo video, final report | Final delivery 13 Dec |
 
+**Revised schedule (27 Nov 2026, #118).** Deliverable 2 now asks for complete Sprint 3 specification documents, as for
+Sprints 1 and 2, and not for Sprint 3 code. So no Sprint 3 feature starts before 30 Nov, and the rows of the table
+above up to 3 Dec become:
+
+| Date | Student 1 | Student 2 | Note |
+|---|---|---|---|
+| 23–29 Nov | Sprint 3 specifications complete (contracts, STS, README, SRS and traceability) | Review them | In Deliverable 2 |
+| 30 Nov – 1 Dec | S3-01 Feature-P | S3-05 Feature-T; S3-06 Feature-V bucket and upload API (30 Nov) | Sprint 3 code starts |
+| 2 Dec | S3-02 Feature-Q | S3-04 Feature-S (to 4 Dec) | **Exam period** |
+| 3 Dec | S3-03 Feature-R | | |
+
+From 5 Dec the table above is unchanged.
+
 **Completion outcome (13 Dec, Final delivery):**
 - [ ] All features A … X and SR-01 … SR-08 done; all ACs passing; regression green in CI.
 - [ ] Accessibility scan has 0 serious or critical issues on the main screens (NFR-10); the load run meets NFR-12.
@@ -264,3 +279,4 @@ established in exactly one sprint and re-verified in later ones.
 | v0.1 | 4 Nov 2026 | First plan: goals, features, dependencies, outcomes per sprint; Sprint 1 scope explained against the Theme 3 example; Gantt diagram D9 | Team (AI-assisted) |
 | v0.2 | 21 Nov 2026 | CH-11: Feature-U in Sprint 2, Feature-V in Sprint 3 (D-24); revised schedules for Sprints 2 and 3 added below the original tables (Sprint 2 code starts 21 Nov after Labs 5–6; P and T move into the Deliverable 2 week); coverage 68 requirements. FR-30 is established in Sprint 2 (games) and completed in Sprint 3 (logo) | Team (AI-assisted) |
 | v0.3 | 21 Nov 2026 | CH-12: Feature-W and Feature-X in Sprint 3 (D-36); exam-week schedule rows; tournament risk note with a fallback decision date (8 Dec); coverage 79 requirements (Sprint 3: 24) | Team (AI-assisted) |
+| #118 | 27 Nov 2026 | Revised Sprint 3 schedule: Deliverable 2 asks for complete Sprint 3 specifications instead of Sprint 3 code, so features start 30 Nov (S3-01, S3-05 to 1 Dec; S3-02 2 Dec; S3-03 3 Dec); §3 outcome note | Team (AI-assisted) |
