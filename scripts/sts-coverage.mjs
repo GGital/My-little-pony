@@ -1,5 +1,6 @@
 // TEST-SR7-01 (STS §2.12, AC-SR7-01, NFR-14): the coverage script named in STS §3.
-//   npm run sts:check
+//   npm run sts:check               (Sprint 1)
+//   npm run sts:check -- sprint-2   (another folder under docs/sprints; Sprint 2 STS §7)
 // Checks, from the documents themselves:
 //   1. every AC defined in feature-contracts.md appears in STS §3 with at least one test;
 //   2. every test named in §3 is a row of §2 whose Result is recorded (Pass or Fail, never Pending);
@@ -7,7 +8,7 @@
 // then lists the failed rows, so they are reported and not hidden. Exit code 1 when any check fails.
 import { readFileSync } from 'node:fs'
 
-const dir = 'docs/sprints/sprint-1'
+const dir = `docs/sprints/${process.argv[2] ?? 'sprint-1'}`
 const contracts = readFileSync(`${dir}/feature-contracts.md`, 'utf8')
 const sts = readFileSync(`${dir}/sts.md`, 'utf8')
 const section = (n) => sts.slice(sts.indexOf(`\n## ${n}.`), sts.indexOf(`\n## ${n + 1}.`))
@@ -17,11 +18,17 @@ const problems = []
 // AC ids are defined in bold in the contract tables: | **AC-X-nn** | …
 const acs = [...new Set([...contracts.matchAll(/\|\s*\*\*(AC-[A-Z0-9]+-\d\d)\*\*/g)].map((m) => m[1]))]
 
-// §2: one row per planned test, Result in the last column.
+// §2: one row per planned test, Result in the last column. A row may add a note to its id ("TEST-B-03 (rows
+// added)") and mark the result in bold ("**Pass** (`sha`)"). When one test has several rows, an unrecorded one wins,
+// so no row can hide behind another.
 const results = new Map()
+const recorded = (r) => /^(Pass|Fail)\b/.test(r)
 for (const line of section(2).split('\n')) {
   const c = cells(line)
-  if (/^(TEST-[A-Z0-9]+-\d\d|JRN-\d\d)$/.test(c[0] ?? '')) results.set(c[0], c.at(-1))
+  const id = (c[0] ?? '').match(/^(TEST-[A-Z0-9]+-\d\d|JRN-\d\d)(?: \([^)]*\))?$/)?.[1]
+  if (!id) continue
+  const r = c.at(-1).replace(/\*\*/g, '')
+  if (!results.has(id) || recorded(results.get(id))) results.set(id, r)
 }
 
 // "TEST-SR2-01, SR2-04" → TEST-SR2-01, TEST-SR2-04

@@ -1,0 +1,20 @@
+{
+  "id": "S2-08-U1-ended-cards",
+  "side": "after",
+  "action": "A visitor opens /events?include=past,cancelled (EV-4 started, EV-8 cancelled)",
+  "expected": "After: the Past and Cancelled cards are dimmed by a grey surface, and axe finds 0 colour-contrast failures on them",
+  "actual": {
+    "cards": [
+      "Live Now Casual",
+      "Rainy Day Casual"
+    ],
+    "look": {
+      "opacity": "1",
+      "background": "rgb(238, 238, 238)"
+    },
+    "contrastFailures": []
+  },
+  "time": "2026-11-27T07:13:17.942Z",
+  "commit": "5bd6f4f",
+  "screenshot": "S2-08-U1-ended-cards-after.png"
+}

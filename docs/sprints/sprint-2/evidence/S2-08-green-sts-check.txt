@@ -1,0 +1,19 @@
+S2-08 coverage after the records commit
+Command: npm run sts:check -- sprint-2 ; npm run sts:check
+Date: 27 Nov 2026 07:29 UTC
+
+--- sprint-2
+ACs in the contracts: 44; with a test and a recorded result: 44
+STS §2 rows: 55 (Pass 55, Fail 0, other 0)
+BRs in STS §4: 5, each with a rejection test: 5
+Failed rows (reported in STS §6): none
+TEST-SR7-01: every AC has a test with a recorded result, and every BR has a rejection test.
+exit 0
+
+--- sprint-1
+ACs in the contracts: 47; with a test and a recorded result: 47
+STS §2 rows: 59 (Pass 59, Fail 0, other 0)
+BRs in STS §4: 12, each with a rejection test: 12
+Failed rows (reported in STS §6): none
+TEST-SR7-01: every AC has a test with a recorded result, and every BR has a rejection test.
+exit 0

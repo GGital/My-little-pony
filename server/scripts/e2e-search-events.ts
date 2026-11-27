@@ -1,5 +1,6 @@
 // Run with DATABASE_URL set to the TEST database, after e2e-seed.ts: add 25 upcoming CASUAL / CONSTRUCTED events
 // titled "PagingTest Event NN" so a search for "PagingTest" has 25 results and page 2 exists (AC-J-05, 20 a page).
+// An optional argument names the venue (JRN-04 uses "Quantum Cards", so a search for "quantum" has a page 2 too).
 import { PrismaClient } from '@prisma/client'
 
 const test = process.env.DATABASE_URL_TEST
@@ -20,7 +21,7 @@ try {
         title: `PagingTest Event ${String(i + 1).padStart(2, '0')}`,
         type: 'CASUAL' as const,
         format: 'CONSTRUCTED' as const,
-        venueName: 'Paging Venue',
+        venueName: process.argv[2] ?? 'Paging Venue',
         venueAddress: 'Paging Address',
         city: 'Bangkok',
         startAt,

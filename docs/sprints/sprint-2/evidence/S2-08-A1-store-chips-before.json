@@ -1,0 +1,13 @@
+{
+  "id": "S2-08-A1-store-chips",
+  "side": "before",
+  "action": "Quantum Cards opens /organizer/store; read the position of the theme .chip rule and the feature .store-profile__chip rule",
+  "expected": "After: the feature rule comes after the theme rule; the toggles look the same as before",
+  "actual": {
+    "themeChipRule": 1275,
+    "featureChipRule": 7
+  },
+  "time": "2026-11-27T07:12:55.747Z",
+  "commit": "7f4a1b3 (red commit: main.tsx, StoreProfile.css, theme.css)",
+  "screenshot": "S2-08-A1-store-chips-before.png"
+}
