@@ -96,6 +96,17 @@ export interface OrganizerRegistrationRow {
   status: 'REGISTERED' | 'CHECKED_IN' | 'CANCELLED';
   createdAt: string;
   cancelledAt?: string | null;
+  /** Sprint 3 Feature-P: set when checked in, with the organizer's display name only. */
+  checkedInAt?: string | null;
+  checkedInBy?: { displayName: string } | null;
+}
+
+/** Sprint 3 §0.2: E-08 says whether check-in is open, so the page never compares times itself. */
+export interface CheckInWindow {
+  open: boolean;
+  state: 'NOT_YET' | 'OPEN' | 'CLOSED';
+  opensAt: string;
+  closesAt: string;
 }
 
 export interface EventRegistrationsResponse {
@@ -107,6 +118,9 @@ export interface EventRegistrationsResponse {
     seatsRemaining: number;
   };
   items: OrganizerRegistrationRow[];
+  /** Sprint 3 Feature-P (absent from a Sprint 1 server). */
+  checkIn?: CheckInWindow;
+  counts?: { active: number; checkedIn: number };
 }
 
 export interface ApiErrorDetail {

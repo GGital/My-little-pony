@@ -1,0 +1,290 @@
+
+> tcg-event-hub-client@0.1.0 test
+> vitest run --reporter=verbose --no-color
+
+
+ RUN  v4.0.18 <repo>/client
+
+stderr | tests/sprint-2/CreateEvent.game.test.tsx > TEST-U-01 (C) the game on the create form (AC-U-01, FR-29) > has a required Game select that starts on "Choose a game"
+An update to EventFields inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ tests/sprint-1/SignInPage.test.tsx > Sign-in page (contracts §4 UI) > posts E-01 with the typed email and password, then follows a safe returnTo 403ms
+ ✓ tests/sprint-2/MyEvents.cancel.test.tsx > TEST-N-01 (C) Cancel registration in My Events (AC-N-01, UX-11) > shows the button only when canCancel is true 337ms
+ ✓ tests/sprint-2/StoreProfile.test.tsx > TEST-U-03 (C) the store profile games (AC-U-03, UX-17) > loads E-23 and shows "Games played here" with the saved games pressed 318ms
+ ✓ tests/sprint-1/CreateEvent.test.tsx > CreateEvent page (contracts §7 UI, Feature-D) > renders all required form controls in order with character counter 536ms
+ ✓ tests/sprint-1/SignInPage.test.tsx > Sign-in page (contracts §4 UI) > a participant with no returnTo lands on the role home 95ms
+ ✓ tests/sprint-2/EventDetail.cancelled.test.tsx > TEST-O-02 (C) the cancelled event page (AC-O-02, UX-13) > shows the red banner with the reason and REGISTRATION CLOSED to a player; no Cancel event button 385ms
+ ✓ tests/sprint-2/MyEvents.cancel.test.tsx > TEST-N-01 (C) Cancel registration in My Events (AC-N-01, UX-11) > opens a dialog with the contract text, Keep my seat and Cancel registration 122ms
+ ✓ tests/sprint-2/EditEvent.test.tsx > TEST-L-01 (C) the edit page sends only what changed (AC-L-01, UX-06, UX-07) > fills the form with the current values; SAVE CHANGES is disabled until a change; the capacity hint names the count 488ms
+ ✓ tests/sprint-2/EventDetail.contact.test.tsx > TEST-U-04 (C) the store contact on the event page (AC-U-04, UX-19, D-37) > shows the phone as a tel: link, the email as a mailto: link and the website as its host name 480ms
+ ✓ tests/sprint-2/EventDetail.contact.test.tsx > TEST-U-04 (C) the store contact on the event page (AC-U-04, UX-19, D-37) > shows the game chip and the store’s games in the host section 54ms
+ ✓ tests/sprint-2/Drafts.test.tsx > TEST-K-03 (C) the owner publishes a draft from its page (AC-K-01, AC-K-03, UX-05) > shows "Draft — only you can see this event." and PUBLISH EVENT; publishing calls E-14 and says "Your event is live." 451ms
+ ✓ tests/sprint-2/CreateEvent.game.test.tsx > TEST-U-01 (C) the game on the create form (AC-U-01, FR-29) > has a required Game select that starts on "Choose a game" 493ms
+ ✓ tests/sprint-1/SignInPage.test.tsx > Sign-in page (contracts §4 UI) > an organizer with no returnTo lands on the role home 120ms
+ ✓ tests/sprint-2/MyEvents.cancel.test.tsx > TEST-N-01 (C) Cancel registration in My Events (AC-N-01, UX-11) > Keep my seat closes the dialog and sends nothing 108ms
+ ✓ tests/sprint-2/StoreProfile.test.tsx > TEST-U-03 (C) the store profile games (AC-U-03, UX-17) > toggling a chip and pressing Save profile sends PATCH E-23 with the chosen games 234ms
+ ✓ tests/sprint-2/CreateEvent.draft.test.tsx > TEST-K-01 (C) SAVE DRAFT on the create page (AC-K-01, UX-05) > shows SAVE DRAFT next to PUBLISH EVENT 427ms
+ ✓ tests/sprint-2/EventDetail.contact.test.tsx > TEST-U-04 (C) the store contact on the event page (AC-U-04, UX-19, D-37) > an event with its own contact shows "Contact for this event: …" above the store’s contact 62ms
+ ✓ tests/sprint-2/EventDetail.cancelled.test.tsx > TEST-O-02 (C) the cancelled event page (AC-O-02, UX-13) > shows the same banner to the owner, with REGISTRATION CLOSED and no Cancel event button 126ms
+ ✓ tests/sprint-2/EventDetail.cancelled.test.tsx > TEST-O-02 (C) the cancelled event page (AC-O-02, UX-13) > shows no seat count or "seats left" on a cancelled event (seats are not on offer, S2-05 review) 61ms
+ ✓ tests/sprint-2/Drafts.test.tsx > TEST-K-03 (C) the owner publishes a draft from its page (AC-K-01, AC-K-03, UX-05) > shows the server's reason when publishing is refused, and keeps the draft banner 166ms
+ ✓ tests/sprint-1/AppShell.test.tsx > AppShell navigation (TEST-C-01) > renders links exactly for Visitor (signed out): Events only, and Sign in button 283ms
+ ✓ tests/sprint-1/AppShell.test.tsx > AppShell navigation (TEST-C-01) > renders links exactly for Participant: Events, My Events, PLAYER badge, display name 49ms
+ ✓ tests/sprint-1/SignInPage.test.tsx > Sign-in page (contracts §4 UI) > an absolute returnTo lands on the role home 104ms
+ ✓ tests/sprint-2/CreateEvent.game.test.tsx > TEST-U-01 (C) the game on the create form (AC-U-01, FR-29) > PUBLISH EVENT with no game shows "Choose a game." and sends no POST 250ms
+ ✓ tests/sprint-2/EventDetail.contact.test.tsx > TEST-U-04 (C) the store contact on the event page (AC-U-04, UX-19, D-37) > an event with no contact of its own does not show "Contact for this event" 104ms
+ ✓ tests/sprint-2/EventDetail.deadline.test.tsx > TEST-M-01 / M-03 (C) the event page shows the deadline and a closed button (AC-M-01, AC-M-03, UX-10) > shows "Registration closes Thu 5 Nov · 15:00" and a disabled REGISTRATION CLOSED when the server says CLOSED 399ms
+ ✓ tests/sprint-1/CreateEvent.test.tsx > CreateEvent page (contracts §7 UI, Feature-D) > updates the description character counter as user types 92ms
+ ✓ tests/sprint-2/MyEvents.cancel.test.tsx > TEST-N-01 (C) Cancel registration in My Events (AC-N-01, UX-11) > confirming posts to E-16, shows "Cancelling…" with aria-busy, ignores extra presses, then the Cancelled chip and the toast 137ms
+ ✓ tests/sprint-1/AppShell.test.tsx > AppShell navigation (TEST-C-01) > renders links exactly for Organizer: Events, Dashboard, + Create event, ORGANIZER badge 51ms
+ ✓ tests/sprint-1/SignInPage.test.tsx > Sign-in page (contracts §4 UI) > a protocol-relative returnTo lands on the role home 118ms
+ ✓ tests/lab6/SessionEnded.test.tsx > TEST-L6-62 (C) — a 401 from a protected call ends the session and goes to sign-in (#62, Feature-C Behaviour 4) > REGISTER answered with 401 on /events/26: shows the session-ended message on /login?returnTo=%2Fevents%2F26 472ms
+ ✓ tests/sprint-2/MyEvents.cancel.test.tsx > TEST-N-01 (C) Cancel registration in My Events (AC-N-01, UX-11) > on 409 shows the server message in an alert and reloads the rows 184ms
+ ✓ tests/sprint-2/StoreProfile.test.tsx > TEST-U-03 (C) the store profile games (AC-U-03, UX-17) > un-pressing the last chip saves an empty list 173ms
+ ✓ tests/sprint-2/EventDetail.cancelled.test.tsx > TEST-O-02 (C) the cancelled event page (AC-O-02, UX-13) > Escape closes the dialog and focus returns to the Cancel event button (keyboard use) 189ms
+ ✓ tests/sprint-2/EventDetail.contact.test.tsx > TEST-U-04 (C) the store contact on the event page (AC-U-04, UX-19, D-37) > empty store fields are not shown: no empty links 112ms
+ ✓ tests/sprint-2/EditEvent.test.tsx > TEST-L-01 (C) the edit page sends only what changed (AC-L-01, UX-06, UX-07) > PATCH carries the changed title only; "Changes saved." is shown and the button is disabled again 364ms
+ ✓ tests/sprint-2/Drafts.test.tsx > TEST-K-03 (C) the owner publishes a draft from its page (AC-K-01, AC-K-03, UX-05) > a published event shows no draft banner and no PUBLISH EVENT 107ms
+ ✓ tests/sprint-1/AppShell.test.tsx > AppShell session header (TEST-C-04) > on load asks E-03; a 401 shows the Sign in link 118ms
+ ✓ tests/sprint-2/CreateEvent.game.test.tsx > TEST-U-01 (C) the game on the create form (AC-U-01, FR-29) > SAVE DRAFT with no game is blocked the same way 165ms
+ ✓ tests/sprint-2/Drafts.test.tsx > TEST-K-03 (C) the dashboard Publish button (AC-K-03, UX-15) > a draft row has Publish and no Registrations link; Publish calls E-14 and the row becomes Published 229ms
+ ✓ tests/sprint-1/SignInPage.test.tsx > Sign-in page (contracts §4 UI) > a backslash returnTo lands on the role home 94ms
+ ✓ tests/sprint-2/CreateEvent.draft.test.tsx > TEST-K-01 (C) SAVE DRAFT on the create page (AC-K-01, UX-05) > SAVE DRAFT posts E-06 with saveAsDraft: true and lands on its edit page with "Draft saved. Only you can see it." 398ms
+ ✓ tests/lab6/TabAccountSync.test.tsx > TEST-L6-58 (C) — a tab follows a session change made in another tab (#58, FR-27) > another tab signed in as Boss: when this tab is shown again the header says Boss and the event reloads for Boss 538ms
+ ✓ tests/lab6/SessionEnded.test.tsx > TEST-L6-62 (C) — a 401 from a protected call ends the session and goes to sign-in (#62, Feature-C Behaviour 4) > a protected page whose data call answers 401 (/me/registrations) also shows the session-ended message 118ms
+ ✓ tests/lab6/SessionEnded.test.tsx > TEST-L6-62 (C) — a 401 from a protected call ends the session and goes to sign-in (#62, Feature-C Behaviour 4) > an ordinary visit to /login (no ended session) does not show the session-ended message 32ms
+ ✓ tests/sprint-2/EventDetail.deadline.test.tsx > TEST-M-01 (C) the create and edit forms send a deadline only when one is given (AC-M-01, AC-M-02) > create: the field says when it closes by default; a value is sent with +07:00, an empty field sends nothing 418ms
+ ✓ tests/sprint-2/EventDetail.contact.test.tsx > TEST-U-04 (C) the store contact on the event page (AC-U-04, UX-19, D-37) > never shows the organizer’s sign-in email 123ms
+ ✓ tests/sprint-2/EventDetail.contact.test.tsx > TEST-U-05 (C) safe links and plain text (AC-U-05, NFR-15) > the website link opens in a new tab with rel="noopener noreferrer nofollow" 71ms
+ ✓ tests/sprint-2/EventDetail.cancelled.test.tsx > TEST-O-02 (C) the cancelled event page (AC-O-02, UX-13) > a published event has no banner; the owner sees Cancel event 158ms
+ ✓ tests/sprint-2/EventSearch.test.tsx > TEST-J-05 (C) — EventSearch component tests (AC-J-05, FR-13, UX-01 … 04) > submits search, updates query, renders filter chips and handles Clear filters 836ms
+ ✓ tests/lab6/SessionEnded.test.tsx > TEST-L6-62 (C) — a 401 from a protected call ends the session and goes to sign-in (#62, Feature-C Behaviour 4) > a 401 from an optional call (who-am-I on load) is a normal signed-out answer: no redirect and no message 144ms
+ ✓ tests/sprint-1/AppShell.test.tsx > AppShell session header (TEST-C-04) > on load asks E-03; a 200 shows "Mint", the PLAYER badge and a menu with Sign out 97ms
+ ✓ tests/sprint-2/CreateEvent.game.test.tsx > TEST-U-01 (C) the game on the create form (AC-U-01, FR-29) > choosing Pokémon TCG sends game: "POKEMON" in the E-06 body 199ms
+stderr | tests/sprint-2/CreateEvent.game.test.tsx > TEST-U-01 (C) the game on the create form (AC-U-01, FR-29) > the contact field hints that an empty value uses the store's contact details
+An update to EventFields inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ tests/sprint-1/SignInPage.test.tsx > Sign-in page (contracts §4 UI) > a 401 shows the alert, keeps the email, clears the password and focuses it 139ms
+ ✓ tests/sprint-1/SignInPage.test.tsx > Sign-in page (contracts §4 UI) > the SIGN IN button is disabled with aria-busy while the request is in flight 100ms
+ ✓ tests/sprint-2/CreateEvent.game.test.tsx > TEST-U-01 (C) the game on the create form (AC-U-01, FR-29) > the contact field hints that an empty value uses the store's contact details 103ms
+ ✓ tests/sprint-2/StoreProfile.test.tsx > TEST-U-05 (C) contact fields and their server errors (AC-U-05, UX-19) > sends the four contact fields and shows each field error from a 400 under its field 285ms
+ ✓ tests/lab6/TabAccountSync.test.tsx > TEST-L6-58 (C) — a tab follows a session change made in another tab (#58, FR-27) > a sign-in or sign-out broadcast from another tab triggers the same check without waiting for focus 107ms
+ ✓ tests/sprint-2/EventDetail.contact.test.tsx > TEST-U-05 (C) safe links and plain text (AC-U-05, NFR-15) > a contact containing <b>bold</b> is shown as text, not parsed as HTML 57ms
+ ✓ tests/sprint-2/CreateEvent.draft.test.tsx > TEST-K-01 (C) SAVE DRAFT on the create page (AC-K-01, UX-05) > PUBLISH EVENT does not send saveAsDraft and still says "Your event is live." 295ms
+ ✓ tests/sprint-2/EventDetail.deadline.test.tsx > TEST-M-01 (C) the create and edit forms send a deadline only when one is given (AC-M-01, AC-M-02) > create without a deadline: the body has no registrationDeadline 221ms
+ ✓ tests/sprint-2/StoreProfile.test.tsx > TEST-U-05 (C) focus and hints (review of #113) > after a 400 the first invalid field has focus 170ms
+ ✓ tests/sprint-2/StoreProfile.test.tsx > TEST-U-05 (C) focus and hints (review of #113) > each contact hint is inside its input’s label 66ms
+ ✓ tests/sprint-2/EditEvent.test.tsx > TEST-L-01 (C) the edit page sends only what changed (AC-L-01, UX-06, UX-07) > a new start is sent as Bangkok time with its offset, and nothing else 280ms
+ ✓ tests/sprint-2/EventDetail.cancelled.test.tsx > TEST-O-02 (C) the cancelled event page (AC-O-02, UX-13) > a player on a published event sees no Cancel event button 119ms
+ ✓ tests/sprint-2/EventDetail.contact.test.tsx > TEST-U-05 (C) safe links and plain text (AC-U-05, NFR-15) > markup in the store’s contact values is text too 116ms
+ ✓ tests/sprint-2/EventDetail.contact.test.tsx > TEST-U-04 (C) an empty host section is not shown (review of #113) > a store with no games and no contact on an event with no contact shows no "Hosted by" box 43ms
+ ✓ tests/sprint-2/EventDetail.contact.test.tsx > TEST-U-04 (C) an empty host section is not shown (review of #113) > the event’s own contact alone still shows the section 56ms
+ ✓ tests/sprint-2/CreateEvent.draft.test.tsx > TEST-K-01 (C) SAVE DRAFT on the create page (AC-K-01, UX-05) > while a draft is saving, both buttons are disabled and SAVE DRAFT reads "Saving…" 293ms
+ ✓ tests/sprint-2/EventSearch.test.tsx > TEST-J-05 (C) — EventSearch component tests (AC-J-05, FR-13, UX-01 … 04) > displays pagination and live region count 196ms
+ ✓ tests/sprint-1/CreateEvent.test.tsx > CreateEvent page (contracts §7 UI, Feature-D) > displays validation errors from server 400 details under matching fields 298ms
+ ✓ tests/sprint-2/EventDetail.cancelled.test.tsx > TEST-O-02 (C) the cancelled event page (AC-O-02, UX-13) > Cancel event opens the dialog with the registered count; cancelling shows the banner on the same page 201ms
+ ✓ tests/sprint-2/EventDetail.cancelled.test.tsx > TEST-O-02 (C) the chips (AC-O-02, UX-13) > My Events shows "Event cancelled" for an EVENT_CANCELLED registration and the status for others 78ms
+ ✓ tests/lab6/TabAccountSync.test.tsx > TEST-L6-58 (C) — a tab follows a session change made in another tab (#58, FR-27) > another tab signed out: the check answers 401, so this tab shows the session-ended sign-in (#62 path) 237ms
+ ✓ tests/lab6/TabAccountSync.test.tsx > TEST-L6-58 (C) — a tab follows a session change made in another tab (#58, FR-27) > same account on the check: nothing reloads and the header still says Nok 131ms
+ ✓ tests/sprint-1/AppShell.test.tsx > AppShell session header (TEST-C-04) > Sign out calls E-02, then shows the signed-out header and "You are signed out." 119ms
+ ✓ tests/sprint-1/CreateEvent.test.tsx > CreateEvent page (contracts §7 UI, Feature-D) > shows Publishing… with aria-busy while submitting and navigates to detail with toast on success 571ms
+ ✓ tests/sprint-1/AppShell.test.tsx > Sign out from a protected page (TEST-C-04, AC-C-04 with the real route table) > lands on /events with "You are signed out.", not on the sign-in redirect 325ms
+ ✓ tests/sprint-2/EventDetail.deadline.test.tsx > TEST-M-01 (C) the create and edit forms send a deadline only when one is given (AC-M-01, AC-M-02) > edit: an early deadline is filled in; clearing it sends null 267ms
+ ✓ tests/sprint-2/EventSearch.test.tsx > TEST-U-02 (C) the game filter in the search bar (AC-U-02, UX-16) > choosing Pokémon TCG and pressing Search asks E-04 for game=POKEMON and shows the "Game: Pokémon TCG" chip 256ms
+ ✓ tests/sprint-2/EventDetail.cancelled.test.tsx > TEST-O-02 (C) the chips (AC-O-02, UX-13) > a cancelled event card in a list has the red Cancelled chip and no seats chip or "seats left" 16ms
+ ✓ tests/sprint-2/EventDetail.cancelled.test.tsx > TEST-O-02 (C) the chips (AC-O-02, UX-13) > the dashboard row of a cancelled event has the red Cancelled chip and no Edit button 135ms
+ ✓ tests/sprint-2/EventSearch.test.tsx > TEST-U-02 (C) the game filter in the search bar (AC-U-02, UX-16) > a URL holding game=POKEMON is read back: the dropdown, the chip and the request all agree 94ms
+ ✓ tests/sprint-2/EventSearch.test.tsx > TEST-U-02 (C) the game filter in the search bar (AC-U-02, UX-16) > an unfiltered list shows the game chip on every card 70ms
+ ✓ tests/sprint-2/EventDetail.deadline.test.tsx > TEST-M-01 (C) the create and edit forms send a deadline only when one is given (AC-M-01, AC-M-02) > edit: a deadline equal to the start (the default) shows as empty, and moving the start does not send it 248ms
+ ✓ tests/sprint-2/EventDetail.deadline.test.tsx > Review of #111 (C) deadline edge cases (AC-M-01, AC-M-02, BR-15) > edit: a deadline equal to the start but written with +07:00 still shows as the default (empty) 54ms
+ ✓ tests/sprint-2/EventSearch.test.tsx > TEST-U-02 (C) the game filter in the search bar (AC-U-02, UX-16) > a list filtered to one game hides the card chips and names the game in the heading 88ms
+ ✓ tests/sprint-2/EventSearch.test.tsx > TEST-U-02 (C) the game filter in the search bar (AC-U-02, UX-16) > removing the Game chip drops game from the next request 121ms
+ ✓ tests/sprint-2/EditEvent.test.tsx > TEST-L-01 (C) the edit page sends only what changed (AC-L-01, UX-06, UX-07) > a 409 shows the server's message above the form and keeps the input 371ms
+ ✓ tests/sprint-2/EventDetail.deadline.test.tsx > Review of #111 (C) deadline edge cases (AC-M-01, AC-M-02, BR-15) > the event page shows no "Registration closes" line when the response has no deadline 52ms
+ ✓ tests/sprint-2/EventDetail.deadline.test.tsx > Review of #111 (C) deadline edge cases (AC-M-01, AC-M-02, BR-15) > edit: once the event has started, the deadline field is read-only with the other frozen fields 86ms
+ ✓ tests/sprint-2/EditEvent.test.tsx > TEST-L-05 (C) a started event: frozen fields are read-only with a note (AC-L-05, UX-08) > shows the started note; title, venue, times and capacity are read-only; only the description is sent 292ms
+ ✓ tests/sprint-2/EditEvent.test.tsx > UX-09 and UX-14 (C) the leave guard and the History panel (SR-08, AC-SR8-01) > lists the history newest first in Bangkok time 113ms
+ ✓ tests/sprint-2/EditEvent.test.tsx > UX-09 and UX-14 (C) the leave guard and the History panel (SR-08, AC-SR8-01) > asks "Leave without saving?" before following a link with unsaved changes, and stays when told to 116ms
+ ✓ tests/sprint-2/EditEvent.test.tsx > UX-09 and UX-14 (C) the leave guard and the History panel (SR-08, AC-SR8-01) > follows a link straight away when nothing has changed 106ms
+ ✓ tests/sprint-2/EditEvent.test.tsx > TEST-K-01 follow-up (C) a new draft lands here: banner, toast and PUBLISH EVENT (AC-K-01, contracts v0.8) > shows the toast it was sent with, the draft banner, and publishes with E-14 150ms
+ ✓ tests/sprint-2/EditEvent.test.tsx > UX-15 (C) the dashboard Edit link (contracts §2 UI, §3 Behaviour 1) > every event except a cancelled one has Edit, opening /organizer/events/:id/edit 76ms
+ ✓ tests/sprint-2/CancelEventDialog.test.tsx > TEST-O-03 (C) CancelEventDialog (AC-O-03, UX-12) > shows the warning with the number of registered players and a counter starting at 0 / 200 175ms
+ ✓ tests/sprint-2/CancelEventDialog.test.tsx > TEST-O-03 (C) CancelEventDialog (AC-O-03, UX-12) > says "1 registered player" in the singular 11ms
+ ✓ tests/sprint-2/CancelEventDialog.test.tsx > TEST-O-03 (C) CancelEventDialog (AC-O-03, UX-12) > keeps CANCEL EVENT disabled below 5 characters (spaces do not count), and enables it at 5 120ms
+ ✓ tests/sprint-2/CancelEventDialog.test.tsx > TEST-O-03 (C) CancelEventDialog (AC-O-03, UX-12) > stops the reason at 200 characters 18ms
+ ✓ tests/sprint-2/CancelEventDialog.test.tsx > TEST-O-03 (C) CancelEventDialog (AC-O-03, UX-12) > sends the trimmed reason to E-15, shows "Cancelling…" meanwhile, then calls onCancelled with the event 127ms
+ ✓ tests/sprint-2/CancelEventDialog.test.tsx > TEST-O-03 (C) CancelEventDialog (AC-O-03, UX-12) > shows the server's reason when E-15 refuses and keeps the dialog open with the text kept 70ms
+ ✓ tests/sprint-2/CancelEventDialog.test.tsx > TEST-O-03 (C) CancelEventDialog (AC-O-03, UX-12) > Keep event (and Escape) closes without calling the server 29ms
+ ✓ tests/sprint-1/Registration.test.tsx > TEST-G-01 (C) — REGISTER → HOLDING YOUR SEAT… → "You're in." (AC-G-01, FR-15) > holds the seat while sending, ignores extra presses, then flips, updates counts and announces 395ms
+ ✓ tests/sprint-1/Registration.test.tsx > TEST-G-02 (C) — a 409 shows the reason without the flip and refreshes the count (AC-G-02, FR-16) > EVENT_FULL: red alert with the server message, no "You're in.", E-05 called again showing 2 / 2 and FULL 138ms
+ ✓ tests/sprint-2/CreateEvent.storegames.test.tsx > TEST-U-06 (C) the store games come first in the Game select > groups "Your games" (Pokémon TCG, Magic) before "Other games" (the rest) 338ms
+ ✓ tests/sprint-1/MyEvents.test.tsx > TEST-H-01 (C) — My Events cards (AC-H-01, FR-17) > shows each registration as a card in the order E-10 gives, with a REGISTERED chip, linking to its event 322ms
+ ✓ tests/sprint-1/MyEvents.test.tsx > TEST-H-01 (C) — My Events cards (AC-H-01, FR-17) > with no registrations: the empty state with a Find an Event link to /events 38ms
+ ✓ tests/sprint-1/MyEvents.test.tsx > TEST-C-05 (C) — My Events loading and error states (AC-C-05) > shows the loading state first, then on a 500 the server message with Try again, which calls E-10 again 111ms
+ ✓ tests/sprint-2/CreateEvent.storegames.test.tsx > TEST-U-06 (C) the store games come first in the Game select > a store with no games gets one plain list and no groups 111ms
+ ✓ tests/sprint-2/CreateEvent.storegames.test.tsx > TEST-U-06 (C) the store games come first in the Game select > when the store read fails the select is still a single list of every game 137ms
+ ✓ tests/lab6/TitleOverflow.test.tsx > TEST-L6-56 (C) — 100-character event title component smoke tests (AC-F-01, AC-F-02, NFR-08) > renders EventCard with 100-character unbroken title and accessible seat info 235ms
+ ✓ tests/lab6/TitleOverflow.test.tsx > TEST-L6-56 (C) — 100-character event title component smoke tests (AC-F-01, AC-F-02, NFR-08) > renders EventDetail with 100-character unbroken title and action button 136ms
+ ✓ tests/sprint-2/EventDetail.cancel.test.tsx > TEST-N-01 (C, event page) Cancel registration on the event page (AC-N-01, AC-N-02) > shows Cancel registration right after REGISTER, then REGISTER and the new counts after the cancel 557ms
+ ✓ tests/lab6/SafeReturnTo.test.tsx > TEST-L6-60 (U) — safeReturnTo refuses paths the browser would read as another site (#60, AC-C-03) > a tab after the first slash → null 2ms
+ ✓ tests/lab6/SafeReturnTo.test.tsx > TEST-L6-60 (U) — safeReturnTo refuses paths the browser would read as another site (#60, AC-C-03) > a line feed after the first slash → null 1ms
+ ✓ tests/lab6/SafeReturnTo.test.tsx > TEST-L6-60 (U) — safeReturnTo refuses paths the browser would read as another site (#60, AC-C-03) > a carriage return after the first slash → null 0ms
+ ✓ tests/lab6/SafeReturnTo.test.tsx > TEST-L6-60 (U) — safeReturnTo refuses paths the browser would read as another site (#60, AC-C-03) > a tab before a backslash after the first slash → null 0ms
+ ✓ tests/lab6/SafeReturnTo.test.tsx > TEST-L6-60 (U) — safeReturnTo refuses paths the browser would read as another site (#60, AC-C-03) > an ordinary internal path is kept: /events/12 1ms
+ ✓ tests/lab6/SafeReturnTo.test.tsx > TEST-L6-60 (U) — safeReturnTo refuses paths the browser would read as another site (#60, AC-C-03) > an ordinary internal path is kept: /me/registrations 0ms
+ ✓ tests/lab6/SafeReturnTo.test.tsx > TEST-L6-60 (U) — safeReturnTo refuses paths the browser would read as another site (#60, AC-C-03) > an ordinary internal path is kept: /events?when=week 0ms
+ ✓ tests/lab6/SafeReturnTo.test.tsx > TEST-L6-60 (U) — safeReturnTo refuses paths the browser would read as another site (#60, AC-C-03) > an ordinary internal path is kept: /organizer/events/3/registrations 0ms
+ ✓ tests/lab6/SafeReturnTo.test.tsx > TEST-L6-60 (C) — signing in with the UAT link lands on the role home without an error (#60, AC-C-03) > Nok signs in on /login?returnTo=%2F%09%2Fexample.com → /events, no "Something went wrong" 322ms
+ ✓ tests/lab6/SignedInLogin.test.tsx > TEST-L6-61 (C) — /login while signed in goes on instead of showing the form (#61, design-direction §4.3) > a participant (Boss) on /login → /events, no sign-in form 77ms
+ ✓ tests/lab6/SignedInLogin.test.tsx > TEST-L6-61 (C) — /login while signed in goes on instead of showing the form (#61, design-direction §4.3) > an organizer (Quantum Cards) on /login → /organizer, no sign-in form 13ms
+ ✓ tests/sprint-1/ActionButton.test.tsx > TEST-F-02 (C) — ActionButton states (AC-F-02, FR-12) > renders SIGN IN TO REGISTER as enabled link/button pointing to login with returnTo 205ms
+ ✓ tests/sprint-1/ActionButton.test.tsx > TEST-F-02 (C) — ActionButton states (AC-F-02, FR-12) > renders REGISTER as an enabled primary button 32ms
+ ✓ tests/sprint-1/States.test.tsx > Shared UI States (TEST-C-05) > renders loading state with aria-busy and status role 175ms
+ ✓ tests/sprint-1/States.test.tsx > Shared UI States (TEST-C-05) > renders named empty state with primary next action 60ms
+ ✓ tests/sprint-1/States.test.tsx > Shared UI States (TEST-C-05) > renders link when action provides href 24ms
+ ✓ tests/sprint-1/States.test.tsx > Shared UI States (TEST-C-05) > renders error state with server message and Try again button that retries 28ms
+ ✓ tests/sprint-1/States.test.tsx > Shared UI States (TEST-C-05) > renders field errors under matching form inputs and sets submit button aria-busy 45ms
+ ✓ tests/sprint-2/AppShell.storeprofile.test.tsx > TEST-U-07 (C) Store profile in the account menu > an organizer sees a Store profile item that goes to /organizer/store 312ms
+ ✓ tests/sprint-1/Dashboard.test.tsx > TEST-E-01 (C) — Organizer Dashboard events (AC-E-01, FR-07) > shows each owned event in start order with title, date, status, seat count, and links to Registrations and View 458ms
+ ✓ tests/sprint-1/Dashboard.test.tsx > TEST-E-01 (C) — Organizer Dashboard events (AC-E-01, FR-07) > with no events: the empty state "Create your first event" with a "+ Create event" link to /organizer/events/new 53ms
+ ✓ tests/lab6/SignedInLogin.test.tsx > TEST-L6-61 (C) — /login while signed in goes on instead of showing the form (#61, design-direction §4.3) > Boss with a safe returnTo → /me/registrations, no sign-in form 13ms
+ ✓ tests/lab6/SignedInLogin.test.tsx > TEST-L6-61 (C) — /login while signed in goes on instead of showing the form (#61, design-direction §4.3) > Boss with an unsafe returnTo (//evil.example) → /events, no sign-in form 13ms
+ ✓ tests/sprint-2/AppShell.storeprofile.test.tsx > TEST-U-07 (C) Store profile in the account menu > a participant does not 90ms
+ ✓ tests/sprint-1/Dashboard.test.tsx > TEST-C-05 (C) — Organizer Dashboard loading and error states (AC-C-05) > shows the loading state first, then on a 500 the server message with Try again, which calls E-07 again 84ms
+ ✓ tests/sprint-1/ActionButton.test.tsx > TEST-F-02 (C) — ActionButton states (AC-F-02, FR-12) > renders REGISTERED as disabled with a link to My Events 47ms
+ ✓ tests/sprint-1/ActionButton.test.tsx > TEST-F-02 (C) — ActionButton states (AC-F-02, FR-12) > renders ORGANIZER_CANNOT_REGISTER without a button and shows the note 10ms
+ ✓ tests/sprint-1/ActionButton.test.tsx > TEST-F-02 (C) — ActionButton states (AC-F-02, FR-12) > renders MANAGE as MANAGE EVENT linking to the edit page 13ms
+ ✓ tests/sprint-1/ActionButton.test.tsx > TEST-F-02 (C) — ActionButton states (AC-F-02, FR-12) > renders FULL as a disabled button 46ms
+ ✓ tests/lab6/SignedInLogin.test.tsx > TEST-L6-61 (C) — /login while signed in goes on instead of showing the form (#61, design-direction §4.3) > control: signed out, /login still shows the sign-in form 175ms
+ ✓ tests/sprint-1/ActionButton.test.tsx > TEST-F-02 (C) — ActionButton states (AC-F-02, FR-12) > renders CLOSED as a disabled REGISTRATION CLOSED button 36ms
+ ✓ tests/sprint-1/EventDetail.test.tsx > TEST-C-06 (C) — XSS prevention and safe text rendering (AC-C-06, NFR-15) > renders dangerous description text literally, executes no script, and creates no <b> DOM element 216ms
+ ✓ tests/sprint-1/EventDetail.test.tsx > TEST-C-06 (C) — XSS prevention and safe text rendering (AC-C-06, NFR-15) > renders "Your event is live." alert banner when toast is passed in router location state 74ms
+ ✓ tests/sprint-1/EventDetail.test.tsx > TEST-C-06 (C) — XSS prevention and safe text rendering (AC-C-06, NFR-15) > lint check: dangerouslySetInnerHTML count is strictly 0 across client/src 49ms
+ ✓ tests/sprint-1/AppRoutes.test.tsx > AppRoutes route table (M5 / AC-C-02) > redirects signed-out visitor on /me/registrations to /login?returnTo=%2Fme%2Fregistrations 231ms
+ ✓ tests/sprint-1/AppRoutes.test.tsx > AppRoutes route table (M5 / AC-C-02) > shows "This page isn't available for your account" when Mint (participant) accesses /organizer 33ms
+ ✓ tests/sprint-1/AppRoutes.test.tsx > AppRoutes route table (M5 / AC-C-02) > shows "This page isn't available for your account" when Mint (participant) accesses /organizer/events/new 39ms
+ ✓ tests/sprint-1/AppRoutes.test.tsx > AppRoutes route table (M5 / AC-C-02) > shows "This page isn't available for your account" when Quantum Cards (organizer) accesses /me/registrations 22ms
+ ✓ tests/sprint-1/AppRoutes.test.tsx > AppRoutes route table (M5 / AC-C-02) > renders NotFoundPage when navigating to an unknown path /nope 16ms
+ ✓ tests/sprint-3/DoorCheckIn.test.tsx > TEST-P-01 (C) CHECK IN on Door check-in (AC-P-01, FR-21, UX-21) > shows "Door check-in" and the count; CHECK IN is busy, then the row reads "Checked in 17:02" with Undo, the count and the live region update, and focus moves to Undo 506ms
+ ✓ tests/sprint-3/DoorCheckIn.test.tsx > TEST-P-01 (C) CHECK IN on Door check-in (AC-P-01, FR-21, UX-21) > Find a player filters the list by display name in the browser 87ms
+ ✓ tests/sprint-3/DoorCheckIn.test.tsx > TEST-P-01 (C) CHECK IN on Door check-in (AC-P-01, FR-21, UX-21) > a 409 shows the server message and leaves the row as it was 104ms
+ ✓ tests/sprint-3/DoorCheckIn.test.tsx > TEST-P-03 (C) Undo (AC-P-03, FR-22) > Undo calls E-19; the row shows CHECK IN again, the count goes back, and focus moves to CHECK IN 117ms
+ ✓ tests/sprint-3/DoorCheckIn.test.tsx > Feature-P Behaviour 4: outside the window there are no buttons, and the page says when > NOT_YET → "Check-in opens at 16:00 (60 minutes before the start)" 40ms
+ ✓ tests/sprint-3/DoorCheckIn.test.tsx > Feature-P Behaviour 4: outside the window there are no buttons, and the page says when > CLOSED → "Check-in closed at 21:00" 44ms
+ ✓ tests/sprint-1/unit/formatEventTime.unit.test.ts > formatEventTime (TEST-SR3-02) > formats in Bangkok time when the machine is set to UTC 28ms
+ ✓ tests/sprint-1/unit/formatEventTime.unit.test.ts > formatEventTime (TEST-SR3-02) > formats in Bangkok time when the machine is set to America/New_York 1ms
+ ✓ tests/sprint-1/unit/formatEventTime.unit.test.ts > formatEventTime (TEST-SR3-02) > correctly handles date rollover across time zones 1ms
+ ✓ tests/sprint-1/unit/api.unit.test.ts > api client & errors (Feature-C Behaviour 4) > turns error response JSON into ApiError { status, code, message, details } 7ms
+ ✓ tests/sprint-1/unit/api.unit.test.ts > api client & errors (Feature-C Behaviour 4) > calls no handler and does not navigate when auth: "optional" call returns 401 5ms
+ ✓ tests/sprint-1/unit/api.unit.test.ts > api client & errors (Feature-C Behaviour 4) > calls onSessionExpired handler once when default (auth: "required") call returns 401 2ms
+ ✓ tests/sprint-1/unit/api.unit.test.ts > api client & errors (Feature-C Behaviour 4) > sends credentials same-origin and Content-Type application/json on post 5ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > text #071B2B on #FFFFFF is at least 4.5:1 1ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > text #FFFFFF on #071B2B is at least 4.5:1 0ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > text #B9E4E8 on #071B2B is at least 4.5:1 0ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > text #071B2B on #EEEEEE is at least 4.5:1 0ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > text #3C5260 on #FFFFFF is at least 4.5:1 0ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > text #3C5260 on #EEEEEE is at least 4.5:1 0ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > text #FFFFFF on #167D8D is at least 4.5:1 0ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > text #FFFFFF on #0F5F6B is at least 4.5:1 0ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > text #0F5F6B on #FFFFFF is at least 4.5:1 0ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > text #0F5F6B on #EEEEEE is at least 4.5:1 0ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > text #0F5F6B on #B9E4E8 is at least 4.5:1 0ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > text #1F6F43 on #FFFFFF is at least 4.5:1 0ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > text #FFFFFF on #1F6F43 is at least 4.5:1 0ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > text #1F6F43 on #E4F3EA is at least 4.5:1 0ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > text #93400A on #FEF3E2 is at least 4.5:1 0ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > text #C8303F on #FFFFFF is at least 4.5:1 0ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > text #8E1F2B on #FCE8EA is at least 4.5:1 0ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > control border #167D8D on #FFFFFF is at least 3:1 0ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > control border #167D8D on #EEEEEE is at least 3:1 0ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts > TEST-C-08 contrast (AC-C-08) > theme.css holds the colours the pairs were measured with 1ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --ink-900 equals the v0.6 value 1ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --ink-800 equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --ink-text equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --surface equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --surface-muted equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --text equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --text-muted equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --primary equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --primary-hover equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --primary-tint equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --primary-line equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --accent equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --accent-ink equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --accent-tint equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --accent-line equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --warning equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --warning-ink equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --warning-tint equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --warning-line equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --danger equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --danger-ink equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --danger-tint equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --danger-line equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --border equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --control-line equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --shadow-card equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --font-body equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --font-heading equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > --font-figures equals the v0.6 value 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > has no @fontsource/chakra-petch dependency 0ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts > TEST-C-07 theme tokens (AC-C-07) > self-hosts Inter, Manrope and IBM Plex Sans Thai 0ms
+ ✓ tests/sprint-1/Registrations.test.tsx > TEST-I-01 (C) — Event Registration List (AC-I-01, FR-18) > shows event title, seat counts chip, and table with players in order with Bangkok time and status 196ms
+ ✓ tests/sprint-1/Registrations.test.tsx > TEST-I-01 (C) — Event Registration List (AC-I-01, FR-18) > with no registrations: shows empty state "No registrations yet." 24ms
+ ✓ tests/sprint-1/Registrations.test.tsx > TEST-I-02 (C) — another organizer's event or a malformed id shows the not-found page (AC-I-02) > a 404 answer shows the not-found page, with no Try again 16ms
+ ✓ tests/sprint-1/Registrations.test.tsx > TEST-I-02 (C) — another organizer's event or a malformed id shows the not-found page (AC-I-02) > a 400 answer shows the not-found page, with no Try again 14ms
+ ✓ tests/sprint-1/Registrations.test.tsx > TEST-C-05 (C) — Event Registration List loading and error states (AC-C-05) > shows loading state first, then on a 500 error shows the server message and Try again button that retries 49ms
+stderr | tests/lab5/EventListSubtitle.test.tsx > TEST-L5-08 (E) — the Find an Event page explains what is listed > shows one line under the title about the events and the time zone
+An update to EventList inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to EventList inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ tests/sprint-1/EventList.test.tsx > TEST-F-01 (C) — EventList component (AC-F-01) > renders event card with proper dot separators and details 118ms
+ ✓ tests/lab5/EventListSubtitle.test.tsx > TEST-L5-08 (E) — the Find an Event page explains what is listed > shows one line under the title about the events and the time zone 117ms
+ ✓ tests/lab5/BuildFooter.test.tsx > TEST-L5-07 (E) — the page footer shows the commit the build came from > shows the short commit SHA when the pipeline set VITE_GIT_SHA 89ms
+ ✓ tests/lab5/BuildFooter.test.tsx > TEST-L5-07 (E) — the page footer shows the commit the build came from > shows "local" for a build outside the pipeline 10ms
+ ✓ tests/sprint-1/RouteGuards.test.tsx > Route Guards (TEST-C-02) > redirects signed-out visitor from protected route to /login?returnTo=... 42ms
+ ✓ tests/sprint-1/RouteGuards.test.tsx > Route Guards (TEST-C-02) > renders "This page isn't available for your account" and fires NO organizer api call when participant accesses organizer route 18ms
+ ✓ tests/sprint-1/RouteGuards.test.tsx > Route Guards (TEST-C-02) > renders "This page isn't available for your account" when an organizer accesses /me/registrations 5ms
+ ✓ tests/sprint-1/RouteGuards.test.tsx > Route Guards (TEST-C-02) > redirects to /login?returnTo=%2Fme%2Fregistrations when an api call triggers session expiration 38ms
+
+ Test Files  39 passed (39)
+      Tests  231 passed (231)
+   Start at  00:16:05
+   Duration  17.29s (transform 4.97s, setup 27.37s, import 32.28s, tests 27.64s, environment 114.00s)
+
