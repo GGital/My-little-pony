@@ -45,6 +45,26 @@ branch starts before **30 Nov** (team decision 27 Nov; [`../plan.md`](../plan.md
 | S3-08 | [#105](https://github.com/GGital/My-little-pony/issues/105) | SR-06: performance seed and load run | §10 | TEST-SR6-01, 02 | S3-03 | 2 (Praewa) | Thu 10 Dec |
 | S3-09 | [#106](https://github.com/GGital/My-little-pony/issues/106) | Integration, UAT re-tests, release `v1.0.0`, video | §11 … §13 | JRN-05 … 08, TEST-SR7-02, regression | all | both | Sun 13 Dec |
 
+### 2.1 UX enhancements in Sprint 3 scope
+
+As in Sprint 2 (Sprint 2 README §4), these come from the contracts' UI lines, so each one has an AC and a test. No new
+AC was added for them.
+
+| # | Enhancement | Feature / AC |
+|---|---|---|
+| UX-18 | Store logo overlapping the event banner, the upload box with four states, a logo-safe area in the preview; "Resized from …" and a confirmation before Remove (allocated to Sprint 3 in the Sprint 2 README) | V · AC-V-07 |
+| UX-21 | Door check-in: a 44 px CHECK IN pill showing "Checking in…", the result read out ("Mint checked in."), a text Undo, focus kept on the row's new control, the count updated in place | P · AC-P-01, AC-P-03 |
+| UX-22 | Attendance report as a captioned table with row headers and tabular digits, not tiles; "After the event ends" until the end; a link back to Door check-in | Q · AC-Q-02, AC-Q-05 |
+| UX-23 | Organizer summary: labelled native date fields, the last 30 days by default, the range kept in the URL, the per-event table scrolling inside its own box on phones | R · AC-R-05 |
+| UX-24 | History tab: status chips with text as well as colour, "No past events yet" with **Find an Event**, "21–25 of 25" paging | S · AC-S-01, AC-S-05 |
+| UX-25 | Sign-in lock: the 429 message in the existing alert, the email kept, focus on the alert, no countdown | T · AC-T-05 |
+| UX-26 | Pairings table with the table number first in large tabular digits; START and PAIR busy states; "Round 2 paired: 8 tables, 1 bye" read out | W · AC-W-01 (TEST-W-01, C) |
+| UX-27 | Result quick buttons with a busy state, the standings as a captioned table, "Winner: …", and the player's own table and opponent | X · AC-X-05, AC-X-07 |
+| UX-28 | After a confirmed Cancel registration, focus moves to the "Your registration is cancelled." notice (the Sprint 2 known limitation) | SR-05 · AC-SR5-04 |
+
+The ideas UX-P1 … UX-P5 (Sprint 2 README §4) were not approved and are not Sprint 3 work. They stay ideas for after
+`v1.0.0`.
+
 The exam period runs 1–11 Dec. Issues in that window are small and independent, and none of them changes the
 seat or registration rules. The tournament Issues (S3-10, S3-11) are the exception in size: the plan's tournament
 risk note sets 8 Dec as the date to decide on a smaller fallback if S3-10 is late.
@@ -81,8 +101,8 @@ submitted candidate and never says more than the evidence shows.
 
 No defect is open on 27 Nov 2026 (the Lab 6 findings are closed; #64 is delivered by S2-04). One known limitation
 comes from the Sprint 2 release (Sprint 2 `sts.md` §6): where focus goes after a confirmed Cancel registration is not
-yet specified or tested. It belongs to S3-07 ([#104](https://github.com/GGital/My-little-pony/issues/104)), through
-AC-SR5-04. Sprint 2 rows are tracked in the Sprint 2 README and `sts.md` §5; they are not repeated here.
+yet tested. AC-SR5-04 now specifies it (UX-28), and S3-07 ([#104](https://github.com/GGital/My-little-pony/issues/104))
+builds and tests it. Sprint 2 rows are tracked in the Sprint 2 README and `sts.md` §5; they are not repeated here.
 
 ## 4. Test-driven workflow
 
@@ -112,3 +132,4 @@ Issue. Sprint 3 adds:
 | v0.2 | 21 Nov 2026 | CH-12: S3-10 Feature-W and S3-11 Feature-X with targets; remaining-work rows; S3-03 moved to 1 Dec; DoD-6 endpoints; contract section numbers follow contracts v0.2 | Team (AI-assisted) |
 | #118 | 25 Nov 2026 | Deliverable 2 check: §2 links the GitHub Issues #96 … #106 and names the students, says where `sprint-3-staging` was cut and that S3-00 merged in PR #76; §3 uses the Deliverable 2 columns (status words, achieved AC and tested commit, missing work, dependencies, owner by name and date). No defect is open on 25 Nov | Team (AI-assisted) |
 | #118 | 27 Nov 2026 | §2: `sprint-3-staging` took Sprint 2 after `v0.2.0` (PR #117); Deliverable 2 asks for complete Sprint 3 specifications, not code, so no feature starts before 30 Nov (team decision 27 Nov). New targets: S3-01 and S3-05 30 Nov – 1 Dec, S3-02 2 Dec, S3-03 3 Dec; the other dates are unchanged. §3: status as of 27 Nov, the same targets, and the focus limitation carried from Sprint 2 to S3-07 | Team (AI-assisted) |
+| #118 | 27 Nov 2026 | §2.1 UX enhancements in Sprint 3 scope: UX-18 and UX-21 … UX-28, each tied to an existing AC; UX-P1 … P5 not approved. §3: the focus limitation is now specified by AC-SR5-04 (UX-28) | Team (AI-assisted) |

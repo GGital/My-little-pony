@@ -610,7 +610,10 @@ with a caption; percentages use tabular figures; results are announced in the li
    - store profile.
 
    The same screens are checked at 390, 768 and 1440 px.
-2. A keyboard-only walk-through of three journeys is recorded (M): register, check in, and cancel an event.
+2. A keyboard-only walk-through of four journeys is recorded (M): register, cancel that registration in My Events,
+   check in, and cancel an event. After a confirmed Cancel registration, focus moves to the "Your registration is cancelled." notice (`tabindex="-1"`), so the result is read out and focus is not lost when
+   the dialog closes. This closes the known limitation of the Sprint 2 release (Sprint 2 `sts.md` §6; team decision
+   27 Nov).
 3. Fixes follow design-direction v0.6: Deep Lagoon tokens, focus ring, `--control-line` and 44 px targets.
 
 **Layers:** UI: fixes only, no new screen. Rules, Permissions, API and Data: no change in this layer.
@@ -619,7 +622,7 @@ with a caption; percentages use tabular figures; results are announced in the li
 |---|---|---|---|
 | **AC-SR5-02** | the release candidate with seed data | axe scan of the 14 screens (WCAG 2.1 A and AA rules) | **0 serious and 0 critical** violations; moderate ones listed in STS §6 with a decision |
 | **AC-SR5-03** | the same 14 screens | open at 390, 768, 1440 px | `scrollWidth ≤ innerWidth` on all 42; screenshots saved |
-| **AC-SR5-04** | keyboard only, no mouse | register for an event; check a player in and undo; cancel an event | each journey finishes; focus is always visible and never lost; dialogs return focus; recorded with screenshots |
+| **AC-SR5-04** | keyboard only, no mouse | register for an event; cancel that registration in My Events; check a player in and undo; cancel an event | each journey finishes; focus is always visible and never lost; dialogs return focus; after the confirmed Cancel registration, focus is on the "Your registration is cancelled." notice; recorded with screenshots |
 
 **Planned tests:** TEST-SR5-02 … 04 (E2E, M).
 
@@ -718,3 +721,4 @@ here. Each one is linked to at least one AC above.
 | v0.2 | 21 Nov 2026 | CH-12: §7 Feature-W (Swiss pairings and rounds) and §8 Feature-X (results, standings, winner, player view), 14 ACs; seed EV-11 (AC-SR1-02: 11 events); tournament error codes; D-31 … D-36; re-verification rows; JRN-08; later sections renumbered §9 … §15; 53 ACs | Team (AI-assisted) |
 | #118 | 25 Nov 2026 | Deliverable 2 check (Part C): every contract names each template layer, or says "no change in this layer" (P and W rules labelled; UI lines for T, V and X; layer lines for SR-05 and SR-06; SR-07 gains Links and Behaviour); CH-13 noted in the shared rules; §0.3 says two seed events; inputs SRS v0.8, traceability v0.9, SDS v0.15, Sprint 2 contracts v0.6. No AC changes | Team (AI-assisted) |
 | #118 | 27 Nov 2026 | Deliverable 2 check, 27 Nov: inputs are the current SRS v0.9, traceability v0.12 and the released Sprint 2 contracts v0.10, re-read for Sprint 3 (CH-13, D-40 and D-41 change no Sprint 3 rule); §0.5 says D-28 … D-36 are recorded in the SRS, not only proposed. No AC changes | Team (AI-assisted) |
+| #118 | 27 Nov 2026 | §9 Behaviour 2 and AC-SR5-04 (team decision 27 Nov): a fourth keyboard journey, cancel a registration in My Events, and focus then moves to the "Your registration is cancelled." notice. This specifies the focus gap left by the Sprint 2 release | Team (AI-assisted) |
