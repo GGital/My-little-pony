@@ -1,0 +1,70 @@
+{
+  "id": "S2-02-A1-api",
+  "side": "before",
+  "action": "E-05, E-09 and E-14 on the seeded draft EV-7 as each role (fresh seed)",
+  "expected": "After: E-05 owner 200 DRAFT MANAGE, visitor and Dragon 404 EVENT_NOT_FOUND; E-09 Nok 404 EVENT_NOT_FOUND; E-14 visitor 401, Nok 403, Dragon 404, owner 200 PUBLISHED, again 409 ALREADY_PUBLISHED",
+  "actual": {
+    "e05": {
+      "owner": {
+        "status": 404,
+        "code": "EVENT_NOT_FOUND",
+        "status_": null,
+        "action": null
+      },
+      "visitor": {
+        "status": 404,
+        "code": "EVENT_NOT_FOUND",
+        "status_": null,
+        "action": null
+      },
+      "dragon": {
+        "status": 404,
+        "code": "EVENT_NOT_FOUND",
+        "status_": null,
+        "action": null
+      }
+    },
+    "e09": {
+      "nok": {
+        "status": 409,
+        "code": "REGISTRATION_CLOSED",
+        "status_": null,
+        "action": null
+      }
+    },
+    "e14": {
+      "visitor": {
+        "status": 404,
+        "code": "NOT_FOUND",
+        "status_": null,
+        "action": null
+      },
+      "nok": {
+        "status": 404,
+        "code": "NOT_FOUND",
+        "status_": null,
+        "action": null
+      },
+      "dragon": {
+        "status": 404,
+        "code": "NOT_FOUND",
+        "status_": null,
+        "action": null
+      },
+      "owner": {
+        "status": 404,
+        "code": "NOT_FOUND",
+        "status_": null,
+        "action": null
+      },
+      "ownerAgain": {
+        "status": 404,
+        "code": "NOT_FOUND",
+        "status_": null,
+        "action": null
+      }
+    }
+  },
+  "time": "2026-11-25T14:27:50.454Z",
+  "commit": "47b3838"
+}

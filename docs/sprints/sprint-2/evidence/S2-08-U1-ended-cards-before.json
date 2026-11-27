@@ -1,0 +1,33 @@
+{
+  "id": "S2-08-U1-ended-cards",
+  "side": "before",
+  "action": "A visitor opens /events?include=past,cancelled (EV-4 started, EV-8 cancelled)",
+  "expected": "After: the Past and Cancelled cards are dimmed by a grey surface, and axe finds 0 colour-contrast failures on them",
+  "actual": {
+    "cards": [
+      "Live Now Casual",
+      "Rainy Day Casual"
+    ],
+    "look": {
+      "opacity": "0.65",
+      "background": "rgb(255, 255, 255)"
+    },
+    "contrastFailures": [
+      "a[href$=\"events/4\"] > .date-badge[aria-hidden=\"true\"] > .date-badge__month: 2.65:1",
+      "a[href$=\"events/4\"] > .date-badge[aria-hidden=\"true\"] > .date-badge__day: 2.65:1",
+      "a[href$=\"events/4\"] > div:nth-child(2) > .event-card__when: 3.33:1",
+      "a[href$=\"events/4\"] > div:nth-child(2) > .event-card__when > .chip--muted.chip: 3.1:1",
+      "a[href$=\"events/4\"] > div:nth-child(2) > .event-card__sub: 3.42:1",
+      "a[href$=\"events/4\"] > .event-card__aside > .chips > .chip--seats.chip: 2.77:1",
+      "a[href$=\"events/4\"] > .event-card__aside > .event-card__note.tabular-nums: 3.42:1",
+      "a[href$=\"events/8\"] > .date-badge[aria-hidden=\"true\"] > .date-badge__month: 2.65:1",
+      "a[href$=\"events/8\"] > div:nth-child(2) > .event-card__when: 3.33:1",
+      "a[href$=\"events/8\"] > div:nth-child(2) > .event-card__when > .chip--muted.chip: 3.1:1",
+      "a[href$=\"events/8\"] > div:nth-child(2) > .event-card__sub: 3.42:1",
+      ".chip--cancelled: 3.57:1"
+    ]
+  },
+  "time": "2026-11-27T07:12:51.709Z",
+  "commit": "7f4a1b3 (red commit: main.tsx, StoreProfile.css, theme.css)",
+  "screenshot": "S2-08-U1-ended-cards-before.png"
+}

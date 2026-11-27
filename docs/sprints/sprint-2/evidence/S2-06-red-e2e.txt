@@ -1,0 +1,78 @@
+Sprint 2 · S2-06 (Issue #83) · RED, E2E TEST-M-03 and the S2-06 evidence spec (before side)
+Commit: d348686 (tests only)
+Time: 2026-11-26T03:05:18Z
+Command: S2_SIDE=before npx playwright test e2e/sprint-2/deadline.spec.ts e2e/sprint-2/s2-06-evidence.spec.ts --reporter=line
+
+[WebServer] Environment variables loaded from .env
+
+
+[WebServer] (node:3224) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[WebServer] (Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+[1/5] [chromium] › e2e\sprint-2\deadline.spec.ts:9:5 › TEST-M-03 (E2E) — EV-9 as Nok: "Registration closes …" and a disabled REGISTRATION CLOSED (AC-M-03)
+[chromium] › e2e\sprint-2\deadline.spec.ts:9:5 › TEST-M-03 (E2E) — EV-9 as Nok: "Registration closes …" and a disabled REGISTRATION CLOSED (AC-M-03)
+(node:14168) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+  1) [chromium] › e2e\sprint-2\deadline.spec.ts:9:5 › TEST-M-03 (E2E) — EV-9 as Nok: "Registration closes …" and a disabled REGISTRATION CLOSED (AC-M-03) 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText(/^Registration closes \w{3} \d{1,2} \w{3} · \d{2}:\d{2}$/)
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText(/^Registration closes \w{3} \d{1,2} \w{3} · \d{2}:\d{2}$/)
+
+
+      12 |   await page.goto(`/events/${EV9}`)
+      13 |   await expect(page.getByRole('heading', { name: 'Early Deadline Sealed' })).toBeVisible()
+    > 14 |   await expect(page.getByText(/^Registration closes \w{3} \d{1,2} \w{3} · \d{2}:\d{2}$/)).toBeVisible()
+         |                                                                                           ^
+      15 |   await expect(page.getByRole('button', { name: 'REGISTRATION CLOSED' })).toBeDisabled()
+      16 | })
+      17 |
+        at <repo>\e2e\sprint-2\deadline.spec.ts:14:91
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\sprint-2-deadline-TEST-M-0-87deb-EGISTRATION-CLOSED-AC-M-03--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\sprint-2-deadline-TEST-M-0-87deb-EGISTRATION-CLOSED-AC-M-03--chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\sprint-2-deadline-TEST-M-0-87deb-EGISTRATION-CLOSED-AC-M-03--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\sprint-2-deadline-TEST-M-0-87deb-EGISTRATION-CLOSED-AC-M-03--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[2/5] [chromium] › e2e\sprint-2\s2-06-evidence.spec.ts:36:5 › S2-06-U1 Nok opens EV-9, whose registration deadline has passed
+[chromium] › e2e\sprint-2\s2-06-evidence.spec.ts:36:5 › S2-06-U1 Nok opens EV-9, whose registration deadline has passed
+(node:26416) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+warning: unable to find all commit-graph files
+
+[3/5] [chromium] › e2e\sprint-2\s2-06-evidence.spec.ts:46:5 › S2-06-U2 the create form has a "Registration closes" field
+[chromium] › e2e\sprint-2\s2-06-evidence.spec.ts:46:5 › S2-06-U2 the create form has a "Registration closes" field
+warning: unable to find all commit-graph files
+
+[4/5] [chromium] › e2e\sprint-2\s2-06-evidence.spec.ts:56:5 › S2-06-U3 Quantum Cards sets a deadline on EV-1 from the edit page
+[chromium] › e2e\sprint-2\s2-06-evidence.spec.ts:56:5 › S2-06-U3 Quantum Cards sets a deadline on EV-1 from the edit page
+warning: unable to find all commit-graph files
+
+[5/5] [chromium] › e2e\sprint-2\s2-06-evidence.spec.ts:75:5 › S2-06-A1 the API on EV-9: its effective deadline, and Nok registering after it
+[chromium] › e2e\sprint-2\s2-06-evidence.spec.ts:75:5 › S2-06-A1 the API on EV-9: its effective deadline, and Nok registering after it
+warning: unable to find all commit-graph files
+
+  1 failed
+    [chromium] › e2e\sprint-2\deadline.spec.ts:9:5 › TEST-M-03 (E2E) — EV-9 as Nok: "Registration closes …" and a disabled REGISTRATION CLOSED (AC-M-03) 
+  4 passed (44.2s)

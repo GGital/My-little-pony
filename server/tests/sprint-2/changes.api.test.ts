@@ -1,5 +1,5 @@
 import request from 'supertest'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, onTestFinished } from 'vitest'
 import { seed } from '../../prisma/seed.js'
 import { resetNow, setNow } from '../../src/clock.js'
 import { TEST_ORIGIN, makeApp } from '../helpers/app.js'
@@ -56,9 +56,9 @@ afterAll(async () => {
   await prisma.$disconnect()
 })
 
-// Decision 24 Nov 2026 (S2-01 review of the plan): TEST-SR8-01 is split. S2-01 covers the creation row and E-17.
-// The capacity (T + 1 h) and deadline (T + 2 h) steps need E-13, so they are added to this test in S2-04 (#81).
-describe('TEST-SR8-01 (S2-01 part) creating an event records who and when, and E-17 shows it (AC-SR8-01, FR-28)', () => {
+// Decisions 24 and 25 Nov 2026: TEST-SR8-01 is split. S2-01 covers the creation row and E-17; S2-04 (#81) adds the
+// capacity step (T + 1 h, E-13); S2-06 (#83) adds the deadline step (T + 2 h, E-13 registrationDeadline, Feature-M).
+describe('TEST-SR8-01 (S2-01 + S2-04 parts) creating and editing an event records who and when, and E-17 shows it (AC-SR8-01, FR-28)', () => {
   it('E-06 writes status null → PUBLISHED in the same request; E-17 returns it with only the display name', async () => {
     const created = await createAsQuantum()
     expect(created.status).toBe(201)
@@ -84,6 +84,54 @@ describe('TEST-SR8-01 (S2-01 part) creating an event records who and when, and E
     const text = JSON.stringify(res.body)
     expect(text).not.toContain('@')
     expect(text).not.toMatch(/changedById|organizerId|email|"userId"/)
+  })
+
+  it('S2-04 step: at T + 1 h, E-13 capacity 24 → 30 writes a capacity row; E-17 lists it first', async () => {
+    setNow(T)
+    const created = await createAsQuantum()
+    const later = new Date(T.getTime() + 60 * 60 * 1000)
+    setNow(later)
+    const edit = await request(app)
+      .patch(`/api/organizer/events/${created.body.id}`)
+      .set('Origin', TEST_ORIGIN)
+      .set('Cookie', cookies.quantum)
+      .send({ capacity: 30 })
+    expect(edit.status).toBe(200)
+
+    const res = await request(app).get(E17(created.body.id)).set('Cookie', cookies.quantum)
+    expect(res.status).toBe(200)
+    expect(res.body.items.map((c: Record<string, unknown>) => [c.field, c.oldValue, c.newValue, c.changedAt, c.changedBy])).toEqual([
+      ['capacity', '24', '30', later.toISOString(), { displayName: 'Quantum Cards' }],
+      ['status', null, 'PUBLISHED', T.toISOString(), { displayName: 'Quantum Cards' }],
+    ])
+    setNow(T)
+  })
+
+  it('S2-06 step (completes AC-SR8-01): T + 1 h capacity 24 → 30, T + 2 h a deadline; E-17 has 3 rows, newest first', async () => {
+    setNow(T)
+    const created = await createAsQuantum()
+    const edit = (body: object) =>
+      request(app).patch(`/api/organizer/events/${created.body.id}`).set('Origin', TEST_ORIGIN).set('Cookie', cookies.quantum).send(body)
+    const plusOne = new Date(T.getTime() + 60 * 60 * 1000)
+    const plusTwo = new Date(T.getTime() + 2 * 60 * 60 * 1000)
+    const deadline = '2030-03-09T10:00:00.000Z'
+    onTestFinished(() => setNow(T)) // the next test expects the clock at T even if this one fails
+    setNow(plusOne)
+    expect((await edit({ capacity: 30 })).status).toBe(200)
+    setNow(plusTwo)
+    expect((await edit({ registrationDeadline: deadline })).status).toBe(200)
+
+    const res = await request(app).get(E17(created.body.id)).set('Cookie', cookies.quantum)
+    expect(res.status).toBe(200)
+    expect(res.body.items.map((c: Record<string, unknown>) => [c.field, c.oldValue, c.newValue, c.changedAt, c.changedBy])).toEqual([
+      ['deadline', NEW_EVENT.startAt, deadline, plusTwo.toISOString(), { displayName: 'Quantum Cards' }],
+      ['capacity', '24', '30', plusOne.toISOString(), { displayName: 'Quantum Cards' }],
+      ['status', null, 'PUBLISHED', T.toISOString(), { displayName: 'Quantum Cards' }],
+    ])
+    const text = JSON.stringify(res.body)
+    expect(text).not.toContain('@')
+    expect(text).not.toMatch(/changedById|organizerId|email|"userId"/)
+    setNow(T)
   })
 
   it('lists the newest change first (changedAt desc, then id desc)', async () => {

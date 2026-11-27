@@ -1,0 +1,17 @@
+{
+  "id": "S2-02-U3-dashboard",
+  "side": "before",
+  "action": "Quantum Cards opens /organizer, presses Publish on EV-7, then opens /events",
+  "expected": "After: EV-7 row shows Draft, Publish and View (no Registrations); \"Your event is live.\"; EV-7 listed on /events",
+  "actual": {
+    "ev7Actions": [
+      "Registrations",
+      "View"
+    ],
+    "afterPublish": null,
+    "eventsListsEv7": false
+  },
+  "time": "2026-11-25T14:27:45.771Z",
+  "commit": "47b3838",
+  "screenshot": "S2-02-U3-dashboard-before.png, S2-02-U3-events-before.png"
+}

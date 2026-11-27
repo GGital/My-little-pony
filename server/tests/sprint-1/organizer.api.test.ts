@@ -125,6 +125,26 @@ describe('TEST-E-01 — Organizer sees own events in start order with independen
     }
   })
 
+  // Sprint 2 (S2-02, TEST-E-01 rows added): the owner's dashboard also lists a draft and a cancelled event,
+  // each with its status, in the same start order.
+  it("lists the owner's draft and cancelled event with their status (Sprint 2 contracts §2, UX-15)", async () => {
+    const owner = await signedIn('ORGANIZER', 'Draft Store')
+    const draft = await makeEvent(owner.id, { startAt: new Date(T.getTime() + 2 * DAY) })
+    const cancelled = await makeEvent(owner.id, { startAt: new Date(T.getTime() + DAY) })
+    await prisma.event.update({ where: { id: draft.id }, data: { status: 'DRAFT', publishedAt: null } })
+    await prisma.event.update({
+      where: { id: cancelled.id },
+      data: { status: 'CANCELLED', cancelledAt: T, cancelledById: owner.id, cancelReason: 'Store closed.' },
+    })
+
+    const res = await get('/api/organizer/events', owner)
+    expect(res.status).toBe(200)
+    expect(res.body.items.map((e: { id: number; status: string }) => [e.id, e.status])).toEqual([
+      [cancelled.id, 'CANCELLED'],
+      [draft.id, 'DRAFT'],
+    ])
+  })
+
   it('an organizer with no events gets 200 { items: [] }', async () => {
     const res = await get('/api/organizer/events', oEmpty)
     expect(res.status).toBe(200)
@@ -183,8 +203,8 @@ describe('Feature-I — Event Registration List (E-08, contracts §12)', () => {
     })
 
     // Registered Mint, Ploy, Boss (createdAt order), but inserted Boss first, so id order and insert order differ
-    // from createdAt order and the test proves the sort. Fern's CANCELLED registration is the earliest and must
-    // be neither listed nor counted.
+    // from createdAt order and the test proves the sort. Fern's CANCELLED registration is the earliest. Sprint 2
+    // contracts §3 and §5 (Feature-N): it is listed with its cancel time, but not counted.
     const fern = await makeParticipant('Fern')
     const r3 = await prisma.registration.create({
       data: { eventId: ev1.id, participantId: boss.id, createdAt: new Date(T.getTime() + 3000) },
@@ -198,11 +218,16 @@ describe('Feature-I — Event Registration List (E-08, contracts §12)', () => {
     const r2 = await prisma.registration.create({
       data: { eventId: ev1.id, participantId: ploy.id, createdAt: new Date(T.getTime() + 2000) },
     })
+    // An EVENT_CANCELLED row must be neither listed nor counted (S2-07 review: guards the E-08 status filter).
+    const kai = await makeParticipant('Kai')
+    await prisma.registration.create({
+      data: { eventId: ev1.id, participantId: kai.id, status: 'EVENT_CANCELLED', cancelledAt: T, createdAt: new Date(T.getTime() + 700) },
+    })
     regTimes = [r1.createdAt.toISOString(), r2.createdAt.toISOString(), r3.createdAt.toISOString()]
   })
 
   describe('TEST-I-01 — Owner sees who registered in createdAt order with counts; empty list (AC-I-01, FR-18)', () => {
-    it('O1 gets 200 with three rows in registration order, display names, times, REGISTERED, and counts 3/24/21', async () => {
+    it('O1 gets 200 with the cancelled row first, then three REGISTERED rows in registration order, and counts 3/24/21 (cancelled rows are not counted)', async () => {
       const res = await get(`/api/organizer/events/${ev1.id}/registrations`, qc)
 
       expect(res.status).toBe(200)
@@ -214,18 +239,25 @@ describe('Feature-I — Event Registration List (E-08, contracts §12)', () => {
         seatsRemaining: 21,
       })
 
-      expect(res.body.items).toHaveLength(3)
+      expect(res.body.items).toHaveLength(4)
+      expect(res.body.items.map((i: { participant: { displayName: string } }) => i.participant.displayName)).not.toContain('Kai')
       expect(res.body.items[0]).toMatchObject({
+        participant: { displayName: 'Fern' },
+        status: 'CANCELLED',
+        cancelledAt: T.toISOString(),
+      })
+      expect(res.body.items[1]).toMatchObject({
         participant: { displayName: 'Mint' },
         status: 'REGISTERED',
         createdAt: regTimes[0],
+        cancelledAt: null,
       })
-      expect(res.body.items[1]).toMatchObject({
+      expect(res.body.items[2]).toMatchObject({
         participant: { displayName: 'Ploy' },
         status: 'REGISTERED',
         createdAt: regTimes[1],
       })
-      expect(res.body.items[2]).toMatchObject({
+      expect(res.body.items[3]).toMatchObject({
         participant: { displayName: 'Boss' },
         status: 'REGISTERED',
         createdAt: regTimes[2],

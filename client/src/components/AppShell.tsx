@@ -108,6 +108,13 @@ export const AppShell: React.FC<{ children?: React.ReactNode }> = ({ children })
                       {home.label}
                     </Link>
                   </li>
+                  {organizer && (
+                    <li>
+                      <Link to="/organizer/store" onClick={() => setMenuOpen(false)}>
+                        Store profile
+                      </Link>
+                    </li>
+                  )}
                   <li>
                     <button type="button" className="acct-menu__danger" onClick={handleSignOut}>
                       Sign out

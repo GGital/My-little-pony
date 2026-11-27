@@ -8,6 +8,8 @@ import { EMAIL, bangkokLocal, resetSeed, signIn } from './helpers'
 // code (L7_SIDE=after: the green run, right column). Every step saves a screenshot and a JSON record (Lab 7 §4.2:
 // evidence ID, action, expected, actual, time, tested commit) under docs/labs/lab07/evidence/.
 const SIDE = process.env.L7_SIDE === 'before' ? 'before' : 'after'
+// Files are written only when L7_SIDE is set, so a plain E2E run leaves the Lab 7 evidence alone (AGENTS.md §5).
+const WRITE = process.env.L7_SIDE !== undefined
 const DIR = 'docs/labs/lab07/evidence'
 const MSG = 'The start must be at least 60 minutes from now.'
 
@@ -19,6 +21,7 @@ function commit(): string {
 
 /** Screenshot + record for one evidence step. `actual` is read from the page, never typed in. */
 async function evidence(page: Page, id: string, action: string, expected: string, focus?: Locator) {
+  if (!WRITE) return
   mkdirSync(DIR, { recursive: true })
   const file = `${id}-${SIDE}.png`
   if (focus) await focus.scrollIntoViewIfNeeded()
@@ -67,6 +70,7 @@ test.describe('changed behaviour (CH-13)', () => {
   test('TEST-L7-01 (E2E) — a start 30 minutes away is rejected on the start field, nothing published (AC-D-03 v2)', async ({ page }) => {
     await fillEvent(page, 'Lunch Break Casual', bangkokIn(30), bangkokIn(150))
     await evidence(page, 'L7-B01-form', 'Quantum Cards fills the create form with a start 30 minutes from now', 'Start field shows the hint "(at least 1 hour from now)"', page.locator('#startAt'))
+    await page.getByLabel(/^Game/).selectOption('POKEMON')
     await page.getByRole('button', { name: 'PUBLISH EVENT' }).click()
     const b01 = await settled(page)
     await evidence(page, 'L7-B01-result', 'Press PUBLISH EVENT', `Stays on the form; the start field says "${MSG}"; no event is published`, b01)
@@ -81,6 +85,7 @@ test.describe('changed behaviour (CH-13)', () => {
 
   test('TEST-L7-02 (E2E) — a start 62 minutes away is accepted: "Your event is live." (AC-D-03 v2 boundary side)', async ({ page }) => {
     await fillEvent(page, 'Evening Casual', bangkokIn(62), bangkokIn(182))
+    await page.getByLabel(/^Game/).selectOption('POKEMON')
     await page.getByRole('button', { name: 'PUBLISH EVENT' }).click()
     const b02 = await settled(page)
     await evidence(page, 'L7-B02-result', 'Publish an event starting 62 minutes from now', 'Event detail page with "Your event is live."', b02)
@@ -94,6 +99,7 @@ test.describe('preserved Sprint 1 behaviour', () => {
   test('TEST-L7-03 (E2E) — an event longer than 24 hours is still rejected on the end field (BR-02 end rule)', async ({ page }) => {
     await signIn(page, EMAIL.quantum)
     await fillEvent(page, 'Marathon Weekend', bangkokLocal(5, 10), bangkokLocal(6, 11))
+    await page.getByLabel(/^Game/).selectOption('POKEMON')
     await page.getByRole('button', { name: 'PUBLISH EVENT' }).click()
     const p01 = await settled(page)
     await evidence(page, 'L7-P01-result', 'Publish an event 5 days ahead that lasts 25 hours', 'Stays on the form; the end field says "An event can last at most 24 hours."', p01)

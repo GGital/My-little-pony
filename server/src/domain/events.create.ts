@@ -3,12 +3,14 @@ import { z } from 'zod'
 import { now } from '../clock.js'
 import type { Actor } from './actor.js'
 import { recordEventChange } from './changes.js'
+import { decideDeadline } from './deadline.js'
 import { validateEventTimes } from './event-rules.js'
 import { getEventDetail, type EventDetail } from './events.read.js'
+import { GAMES } from './store-contact.js'
 
 export class EventTimeError extends Error {
-  readonly field: 'startAt' | 'endAt'
-  constructor(field: 'startAt' | 'endAt', message: string) {
+  readonly field: 'startAt' | 'endAt' | 'registrationDeadline'
+  constructor(field: 'startAt' | 'endAt' | 'registrationDeadline', message: string) {
     super(message)
     this.name = 'EventTimeError'
     this.field = field
@@ -74,6 +76,8 @@ export const createEventInputSchema = z
     format: z.enum(['CONSTRUCTED', 'SEALED', 'DRAFT'], {
       message: 'Choose a format.',
     }),
+    // Feature-U (FR-29): optional in the API, OTHER when absent, so Sprint 1 bodies stay valid. The UI requires it.
+    game: z.enum(GAMES, { message: 'Choose a game.' }).optional(),
     venueName: requiredTrimmedString(1, 80, 'Enter the venue name.'),
     venueAddress: requiredTrimmedString(1, 200, 'Enter the venue address.'),
     city: requiredTrimmedString(1, 60, 'Enter the city.'),
@@ -87,16 +91,33 @@ export const createEventInputSchema = z
     structureNote: optionalTrimmedString(80, 'Use up to 80 characters.'),
     contact: optionalTrimmedString(120, 'Use up to 120 characters.'),
     description: optionalTrimmedString(2000, 'Use up to 2,000 characters.'),
+    // Sprint 2 Feature-M (BR-08): optional; null or absent = registration closes at the start.
+    registrationDeadline: isoDateTimeWithOffset('Enter a date and time.').nullable().optional(),
+    // Sprint 2 Feature-K (D-18): true saves a draft that only the owner can see. The client never sends `status`.
+    saveAsDraft: z.boolean({ message: 'Use true or false.' }).optional(),
   })
   .strict()
 
 export type CreateEventInput = z.infer<typeof createEventInputSchema>
 
 /**
- * Creates and publishes an event in one step (FR-06, Feature-D, contracts §7).
- * Validates time rules against domain logic, then stores with status PUBLISHED,
- * organizerId = actor.id, publishedAt = now(), and the history row status null → PUBLISHED in the same
- * transaction (Sprint 2 contracts §1 SR-08).
+ * E-13 body (Sprint 2 contracts §3): any E-06 field, each with its Feature-D rule; `saveAsDraft`, `status`,
+ * `organizerId` and `publishedAt` are unknown keys ("This value cannot be set."); `{}` is refused.
+ */
+export const editEventInputSchema = createEventInputSchema
+  .omit({ saveAsDraft: true })
+  .partial()
+  // Only when the shape is otherwise fine, so `{ organizerId: 2 }` reports the unknown key alone.
+  .refine((body) => Object.values(body).some((v) => v !== undefined), {
+    message: 'Change at least one field.',
+    when: (payload) => payload.issues.length === 0,
+  })
+
+/**
+ * Creates an event (FR-06, Feature-D, contracts §7): published at once, or saved as a draft with `saveAsDraft`
+ * (FR-08, Sprint 2 Feature-K). Validates time rules against domain logic, then stores it with organizerId = actor.id,
+ * status PUBLISHED and publishedAt = now() (a draft: DRAFT and null), and the history row status null → that status in
+ * the same transaction (Sprint 2 contracts §1 SR-08).
  */
 export async function createEvent(
   prisma: PrismaClient,
@@ -112,6 +133,10 @@ export async function createEvent(
   }
 
   const currentTime = now()
+  const registrationDeadline = input.registrationDeadline ? new Date(input.registrationDeadline) : null
+  const deadlineCheck = decideDeadline(registrationDeadline, start, currentTime)
+  if (deadlineCheck) throw new EventTimeError(deadlineCheck.field, deadlineCheck.message)
+  const status = input.saveAsDraft ? 'DRAFT' : 'PUBLISHED'
 
   const event = await prisma.$transaction(async (tx) => {
     const created = await tx.event.create({
@@ -120,18 +145,20 @@ export async function createEvent(
         title: input.title,
         type: input.type,
         format: input.format,
+        game: input.game ?? 'OTHER',
         venueName: input.venueName,
         venueAddress: input.venueAddress,
         city: input.city,
         startAt: start,
         endAt: end,
+        registrationDeadline,
         capacity: input.capacity,
         feeLabel: input.feeLabel,
         structureNote: input.structureNote,
         contact: input.contact,
         description: input.description,
-        status: 'PUBLISHED',
-        publishedAt: currentTime,
+        status,
+        publishedAt: status === 'PUBLISHED' ? currentTime : null,
       },
     })
     await recordEventChange(tx, {
@@ -139,7 +166,7 @@ export async function createEvent(
       changedById: actor.id,
       field: 'status',
       oldValue: null,
-      newValue: 'PUBLISHED',
+      newValue: status,
       changedAt: currentTime,
     })
     return created

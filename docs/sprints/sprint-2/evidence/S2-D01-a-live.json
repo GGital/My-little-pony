@@ -1,0 +1,14 @@
+{
+  "id": "S2-D01-a",
+  "action": "Quantum Cards saves a draft \"S2-D01 live check 11-27 18:15\"",
+  "expected": "The edit page with \"Draft saved. Only you can see it.\" and the draft banner",
+  "actual": {
+    "toast": "Draft saved. Only you can see it.",
+    "banner": "Draft — only you can see this event.",
+    "eventId": 54
+  },
+  "url": "https://tcg-event-hub-932557875237.asia-southeast1.run.app/organizer/events/54/edit",
+  "time": "2026-11-27T11:15:53.173Z",
+  "deployedCommit": "a32b3ba2773bfbc6e080a4153342d3d0c72d74ed",
+  "screenshot": "S2-D01-a-live.png"
+}

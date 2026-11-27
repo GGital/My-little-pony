@@ -1,0 +1,17 @@
+{
+  "id": "S2-06-U1-ev9",
+  "side": "after",
+  "action": "Nok opens /events/9 (deadline 1 h before the seed, start 2 days after it)",
+  "expected": "After: \"Registration closes …\" under the seats card and a disabled REGISTRATION CLOSED",
+  "actual": {
+    "action": [
+      "REGISTRATION CLOSED"
+    ],
+    "closes": [
+      "Registration closes Thu 26 Nov · 09:13"
+    ]
+  },
+  "time": "2026-11-26T03:13:49.050Z",
+  "commit": "3886e35",
+  "screenshot": "S2-06-U1-ev9-after.png"
+}

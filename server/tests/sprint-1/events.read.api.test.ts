@@ -95,7 +95,7 @@ describe('TEST-F-02 — event detail E-05 and viewer.action (AC-F-02, FR-12)', (
     // 1. As visitor on EV-1
     const resVisitor = await request(app).get(`/api/events/${ev1.id}`)
     expect(resVisitor.status).toBe(200)
-    expect(resVisitor.body.viewer).toEqual({ action: 'SIGN_IN_TO_REGISTER', registrationId: null })
+    expect(resVisitor.body.viewer).toEqual({ action: 'SIGN_IN_TO_REGISTER', registrationId: null, canCancel: false })
 
     // Check all public fields are present
     const expectedKeys = [
@@ -112,27 +112,27 @@ describe('TEST-F-02 — event detail E-05 and viewer.action (AC-F-02, FR-12)', (
     // 2. As Nok (participant, not registered) on EV-1
     const resNok = await request(app).get(`/api/events/${ev1.id}`).set('Cookie', nokCookie)
     expect(resNok.status).toBe(200)
-    expect(resNok.body.viewer).toEqual({ action: 'REGISTER', registrationId: null })
+    expect(resNok.body.viewer).toEqual({ action: 'REGISTER', registrationId: null, canCancel: false })
 
     // 3. As Mint (participant, registered) on EV-1
     const resMint = await request(app).get(`/api/events/${ev1.id}`).set('Cookie', mintCookie)
     expect(resMint.status).toBe(200)
-    expect(resMint.body.viewer).toEqual({ action: 'REGISTERED', registrationId: mintReg.id })
+    expect(resMint.body.viewer).toEqual({ action: 'REGISTERED', registrationId: mintReg.id, canCancel: true })
 
     // 4. As Dragon\'s Den (other organizer) on EV-1
     const resDragon = await request(app).get(`/api/events/${ev1.id}`).set('Cookie', dragonCookie)
     expect(resDragon.status).toBe(200)
-    expect(resDragon.body.viewer).toEqual({ action: 'ORGANIZER_CANNOT_REGISTER', registrationId: null })
+    expect(resDragon.body.viewer).toEqual({ action: 'ORGANIZER_CANNOT_REGISTER', registrationId: null, canCancel: false })
 
     // 5. As Quantum Cards (owner) on EV-1
     const resQuantum = await request(app).get(`/api/events/${ev1.id}`).set('Cookie', quantumCookie)
     expect(resQuantum.status).toBe(200)
-    expect(resQuantum.body.viewer).toEqual({ action: 'MANAGE', registrationId: null })
+    expect(resQuantum.body.viewer).toEqual({ action: 'MANAGE', registrationId: null, canCancel: false })
 
     // 6. As Nok on EV-3 (full event)
     const resEv3Nok = await request(app).get(`/api/events/${ev3.id}`).set('Cookie', nokCookie)
     expect(resEv3Nok.status).toBe(200)
-    expect(resEv3Nok.body.viewer).toEqual({ action: 'FULL', registrationId: null })
+    expect(resEv3Nok.body.viewer).toEqual({ action: 'FULL', registrationId: null, canCancel: false })
   })
 })
 
@@ -172,7 +172,7 @@ describe('TEST-F-04 — started events hidden from list and closed on detail (AC
     const detailRes = await request(app).get(`/api/events/${ev4.id}`).set('Cookie', nokCookie)
     expect(detailRes.status).toBe(200)
     expect(detailRes.body.hasStarted).toBe(true)
-    expect(detailRes.body.viewer).toEqual({ action: 'CLOSED', registrationId: null })
+    expect(detailRes.body.viewer).toEqual({ action: 'CLOSED', registrationId: null, canCancel: false })
   })
 })
 

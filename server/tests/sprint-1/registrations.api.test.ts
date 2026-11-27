@@ -70,7 +70,7 @@ describe('TEST-G-01 — a participant takes a seat (AC-G-01, FR-15)', () => {
     expect(row).toMatchObject({ eventId: event.id, participantId: p.id, status: 'REGISTERED' })
 
     const detail = await request(app).get(`/api/events/${event.id}`).set('Cookie', p.cookie)
-    expect(detail.body.viewer).toEqual({ action: 'REGISTERED', registrationId: res.body.id })
+    expect(detail.body.viewer).toEqual({ action: 'REGISTERED', registrationId: res.body.id, canCancel: true })
     expect(detail.body.registeredCount).toBe(4)
   })
 
@@ -118,10 +118,12 @@ describe('TEST-G-04 (I) — closed when started or not published (AC-G-04, BR-04
     expect(await activeCount(event.id)).toBe(0)
   })
 
-  it('a draft event → 409 REGISTRATION_CLOSED, no row', async () => {
+  // Revised in Sprint 2 (S2-02, Sprint 1 STS v1.16): a draft does not exist for anyone but its owner, so E-09 answers
+  // 404 EVENT_NOT_FOUND, the same as a missing id (Sprint 2 contracts §2 AC-K-02, §8 "Feature-G: Draft → 404").
+  it('a draft event → 404 EVENT_NOT_FOUND (Sprint 2, AC-K-02), no row', async () => {
     const event = await eventWith(24, 0)
-    await prisma.event.update({ where: { id: event.id }, data: { status: 'DRAFT' } })
-    expect((await register(event.id, p)).body.error.code).toBe('REGISTRATION_CLOSED')
+    await prisma.event.update({ where: { id: event.id }, data: { status: 'DRAFT', publishedAt: null } })
+    expect((await register(event.id, p)).body.error.code).toBe('EVENT_NOT_FOUND')
     expect(await activeCount(event.id)).toBe(0)
   })
 })

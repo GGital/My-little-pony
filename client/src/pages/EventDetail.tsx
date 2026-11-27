@@ -4,13 +4,29 @@ import { api } from '../api/client'
 import { ApiError } from '../api/errors'
 import type { EventDetail as EventDetailType, ParticipantRegistration } from '../api/types'
 import { ActionButton } from '../components/ActionButton'
+import { CancelRegistrationDialog } from '../components/CancelRegistrationDialog'
+import { CancelEventDialog } from '../components/CancelEventDialog'
 import { ErrorState } from '../components/ErrorState'
 import { Loading } from '../components/Loading'
 import { SeatCard } from '../components/SeatCard'
+import { GameChip } from '../components/GameChip'
+import { StoreHost } from '../components/StoreHost'
 import { NotFoundPage } from '../routes/pages/NotFoundPage'
 import { Icon, type IconName } from '../components/Icon'
 import { Notice } from '../components/Notice'
 import { formatDate, formatTimeRange, label } from '../utils/eventDisplay'
+
+/** UX-10: "Thu 5 Nov · 15:00" in Bangkok time (Feature-M). */
+const closesAt = (iso: string) => {
+  const p = (o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Bangkok', ...o }).format(new Date(iso))
+  return `${p({ weekday: 'short' })} ${p({ day: 'numeric' })} ${p({ month: 'short' })} · ${p({ hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })}`
+}
+
+/** The server's message plus each field detail, e.g. "Those event times don't work. The start must be …". */
+const reason = (err: unknown) =>
+  err instanceof ApiError
+    ? [err.message, ...(err.details ?? []).map((d) => d.message)].join(' ')
+    : 'Something went wrong. Please try again.'
 
 export const EventDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -31,6 +47,9 @@ export const EventDetail: React.FC = () => {
   const [secured, setSecured] = useState(false)
   const [alert, setAlert] = useState<string | null>(null)
   const [announcement, setAnnouncement] = useState('')
+  const [publishing, setPublishing] = useState(false)
+  const [showCancel, setShowCancel] = useState(false)
+  const [showCancelSeat, setShowCancelSeat] = useState(false)
 
   /** `silent` refreshes the counts after a 409 without replacing the page by the loading state. */
   const fetchDetail = useCallback(async (silent = false) => {
@@ -70,7 +89,7 @@ export const EventDetail: React.FC = () => {
     try {
       const registration = await api.post<ParticipantRegistration>(`/api/events/${event.id}/registrations`)
       const { registeredCount, seatsRemaining } = registration.event
-      setEvent({ ...event, registeredCount, seatsRemaining, viewer: { action: 'REGISTERED', registrationId: registration.id } })
+      setEvent({ ...event, registeredCount, seatsRemaining, viewer: { action: 'REGISTERED', registrationId: registration.id, canCancel: registration.canCancel } })
       setSecured(true)
       setAnnouncement(
         `You're registered for ${event.title}. ${seatsRemaining} seat${seatsRemaining === 1 ? '' : 's'} left.`
@@ -80,6 +99,21 @@ export const EventDetail: React.FC = () => {
       await fetchDetail(true)
     } finally {
       setRegistering(false)
+    }
+  }
+
+  // Sprint 2 Feature-K: E-14 publishes the owner's draft; the page then shows the published event.
+  const onPublish = async () => {
+    if (!event || publishing) return
+    setPublishing(true)
+    setAlert(null)
+    try {
+      setEvent(await api.post<EventDetailType>(`/api/organizer/events/${event.id}/publish`))
+      setToastMessage('Your event is live.')
+    } catch (err) {
+      setAlert(reason(err))
+    } finally {
+      setPublishing(false)
     }
   }
 
@@ -104,8 +138,62 @@ export const EventDetail: React.FC = () => {
     </div>
   )
 
+  // Only the owner ever receives a draft (E-05 answers 404 to everyone else).
+  const isOwnDraft = event.status === 'DRAFT' && event.viewer.action === 'MANAGE'
+  const isCancelled = event.status === 'CANCELLED'
+  // Only a published event that has not started can be cancelled (E-15); the server checks again.
+  const canCancel = event.viewer.action === 'MANAGE' && event.status === 'PUBLISHED' && !event.hasStarted
+
   return (
     <>
+      {showCancel && (
+        <CancelEventDialog
+          eventId={event.id}
+          registeredCount={event.registeredCount}
+          onClose={() => setShowCancel(false)}
+          onCancelled={(cancelled) => {
+            setEvent(cancelled)
+            setShowCancel(false)
+            setAlert(null)
+          }}
+        />
+      )}
+      {showCancelSeat && event.viewer.registrationId !== null && (
+        <CancelRegistrationDialog
+          registrationId={event.viewer.registrationId}
+          eventTitle={event.title}
+          onClose={() => setShowCancelSeat(false)}
+          onCancelled={(done) => {
+            // The seat is free at once: counts come from the response, and the button goes back to REGISTER.
+            const { registeredCount, seatsRemaining } = done.event
+            setEvent({ ...event, registeredCount, seatsRemaining, viewer: { action: 'REGISTER', registrationId: null, canCancel: false } })
+            setShowCancelSeat(false)
+            setSecured(false)
+            setAlert(null)
+            setToastMessage('Your registration is cancelled.')
+            fetchDetail(true)
+          }}
+          onFailed={(message) => {
+            setShowCancelSeat(false)
+            setAlert(message)
+            fetchDetail(true)
+          }}
+        />
+      )}
+      {isCancelled && (
+        <div className="page-alerts">
+          <Notice tone="error" role="status">
+            Cancelled by the organizer: {event.cancelReason}
+          </Notice>
+        </div>
+      )}
+      {isOwnDraft && (
+        <div className="page-alerts">
+          <Notice tone="warning" role="status">
+            Draft — only you can see this event.
+          </Notice>
+        </div>
+      )}
       <div aria-live="polite" className="visually-hidden-live">
         {announcement}
       </div>
@@ -137,12 +225,21 @@ export const EventDetail: React.FC = () => {
           <div className="dhead__fact tabular-nums">{formatTimeRange(event.startAt, event.endAt)}</div>
         </div>
         <div>
-          <div className="lbl">Players</div>
+          <div className="lbl">{isCancelled ? 'Status' : 'Players'}</div>
           <div className="dhead__fact tabular-nums">
-            {event.registeredCount} / {event.capacity}
+            {isCancelled ? 'Cancelled' : `${event.registeredCount} / ${event.capacity}`}
           </div>
         </div>
         <div className="dhead__action">
+          {isOwnDraft ? (
+            <button type="button" className="btn-big" onClick={onPublish} disabled={publishing} aria-busy={publishing}>
+              {publishing ? 'Publishing…' : 'PUBLISH EVENT'}
+            </button>
+          ) : isCancelled ? (
+            <button type="button" className="btn-big" disabled>
+              REGISTRATION CLOSED
+            </button>
+          ) : (
           <ActionButton
             action={event.viewer.action}
             eventId={event.id}
@@ -152,6 +249,12 @@ export const EventDetail: React.FC = () => {
             onRegister={onRegister}
             busy={registering}
           />
+          )}
+          {!isCancelled && event.viewer.action === 'REGISTERED' && event.viewer.canCancel && (
+            <button type="button" className="btn-soft btn-soft--danger" onClick={() => setShowCancelSeat(true)}>
+              Cancel registration
+            </button>
+          )}
         </div>
       </div>
 
@@ -160,6 +263,7 @@ export const EventDetail: React.FC = () => {
           <section className="box details-box">
             <h2>Event details</h2>
             <span className="pill">{label(event.type)}</span>
+            {event.game && <GameChip game={event.game} />}
             {info(
               'cal',
               <>
@@ -186,17 +290,15 @@ export const EventDetail: React.FC = () => {
             {event.description && <p className="description">{event.description}</p>}
           </section>
 
-          {event.contact && (
-            <section className="box contact-box">
-              <h2>Contact</h2>
-              {info('mail', event.contact)}
-            </section>
-          )}
+          <StoreHost event={event} />
         </div>
 
         <div className="cols__side">
           <SeatCard event={event} secured={secured} />
-          {event.viewer.action === 'MANAGE' && (
+          {event.registrationDeadline && (
+            <p className="sub small deadline-note">Registration closes {closesAt(event.registrationDeadline)}</p>
+          )}
+          {event.viewer.action === 'MANAGE' && !isOwnDraft && (
             <section className="box manage-box">
               <h2>Your event</h2>
               <p className="sub mb-3">You can see who registered. Players only see the seat count.</p>
@@ -204,6 +306,11 @@ export const EventDetail: React.FC = () => {
                 View registrations
                 <Icon name="arrow" size="sm" />
               </Link>
+              {canCancel && (
+                <button type="button" className="btn-soft btn-soft--danger mt-3" onClick={() => setShowCancel(true)}>
+                  Cancel event
+                </button>
+              )}
             </section>
           )}
         </div>

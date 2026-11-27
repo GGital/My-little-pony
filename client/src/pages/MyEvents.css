@@ -1,0 +1,6 @@
+/* My Events (Sprint 2 Feature-N): the Cancel registration button under its event card. */
+.registration-row__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}

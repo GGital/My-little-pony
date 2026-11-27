@@ -44,6 +44,7 @@ test('TEST-D-01 (E2E) — fill the form and publish: the detail page says "Your 
   await page.locator('#startAt').fill(bangkokLocal(9, 13))
   await page.locator('#endAt').fill(bangkokLocal(9, 18))
   await page.locator('#capacity').fill('24')
+  await page.getByLabel(/^Game/).selectOption('POKEMON')
   await page.getByRole('button', { name: 'PUBLISH EVENT' }).click()
 
   await expect(page).toHaveURL(/\/events\/\d+$/)

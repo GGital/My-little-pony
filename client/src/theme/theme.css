@@ -2,24 +2,24 @@
    classes follow docs/ui/mockup.html, which is the approved look. Bootstrap supplies the grid, resets and form
    basics only. */
 :root {
-  --ink-900: #16112b;
-  --ink-800: #2a1f55;
+  --ink-900: #071b2b;
+  --ink-800: #0e2f45;
   --ink-line: rgba(255, 255, 255, 0.08);
-  --ink-text: #cfc8ee;
+  --ink-text: #b9e4e8;
   --surface: #ffffff;
-  --surface-muted: #f5f3fb;
+  --surface-muted: #eeeeee;
   --surface-raised: #faf9fe;
-  --primary: #6c4ce0;
-  --primary-hover: #5838c9;
-  --primary-tint: #efebfc;
-  --primary-line: #c9bef5;
-  --accent: #0e8f80;
-  --accent-ink: #0b6b60;
-  --accent-tint: #e6f6f3;
-  --accent-line: #b9e5de;
-  --text: #1f1a33;
-  --text-muted: #5f5878;
-  --border: #e3dff0;
+  --primary: #167d8d;
+  --primary-hover: #0f5f6b;
+  --primary-tint: #b9e4e8;
+  --primary-line: #8ccbd2;
+  --accent: #1f6f43;
+  --accent-ink: #1f6f43;
+  --accent-tint: #e4f3ea;
+  --accent-line: #b5dcc3;
+  --text: #071b2b;
+  --text-muted: #3c5260;
+  --border: #dcdcdc;
   --warning: #b45309;
   --warning-ink: #93400a;
   --warning-tint: #fef3e2;
@@ -29,8 +29,9 @@
   --danger-tint: #fce8ea;
   --danger-line: #f3bcc2;
   --success-tint: var(--accent-tint);
-  --focus: 0 0 0 3px rgba(108, 76, 224, 0.45);
-  --shadow-card: 0 8px 20px rgba(108, 76, 224, 0.1);
+  --focus: 0 0 0 2px #ffffff, 0 0 0 4px #167d8d;
+  --control-line: #167d8d;
+  --shadow-card: 0 8px 20px rgba(7, 27, 43, 0.1);
   --shadow-soft: 0 6px 18px rgba(31, 26, 51, 0.06);
   --radius-panel: 16px;
   --radius-box: 14px;
@@ -38,40 +39,41 @@
   --radius-control: 10px;
   --radius-pill: 999px;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --font-heading: 'Chakra Petch', 'IBM Plex Sans Thai', sans-serif;
-  --font-body: 'IBM Plex Sans Thai', system-ui, sans-serif;
+  --font-heading: 'Inter', 'IBM Plex Sans Thai', system-ui, sans-serif;
+  --font-body: 'Inter', 'IBM Plex Sans Thai', system-ui, sans-serif;
+  --font-figures: 'Manrope', 'Inter', 'IBM Plex Sans Thai', sans-serif;
 
   /* Bootstrap reads these, so its forms and utilities stay on the palette. */
   --bs-body-font-family: var(--font-body);
   --bs-body-color: var(--text);
   --bs-secondary-color: var(--text-muted);
   --bs-border-color: var(--border);
-  --bs-link-color: var(--primary);
-  --bs-link-color-rgb: 108, 76, 224;
+  --bs-link-color: var(--primary-hover);
+  --bs-link-color-rgb: 15, 95, 107;
   --bs-link-hover-color: var(--primary-hover);
-  --bs-link-hover-color-rgb: 88, 56, 201;
+  --bs-link-hover-color-rgb: 15, 95, 107;
 }
 
 /* ---------- Base ---------- */
 html {
-  scrollbar-color: #4a3a8c var(--ink-900);
+  scrollbar-color: #167d8d var(--ink-900);
 }
 body {
   margin: 0;
   font: 16px/1.55 var(--font-body);
   color: var(--text);
-  caret-color: var(--primary);
-  accent-color: var(--primary);
+  caret-color: var(--primary-hover);
+  accent-color: var(--primary-hover);
   background: linear-gradient(160deg, var(--ink-900) 0%, var(--ink-800) 100%) fixed;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }
 ::selection {
-  background: rgba(108, 76, 224, 0.24);
+  background: rgba(22, 125, 141, 0.24);
   color: inherit;
 }
 a {
-  color: var(--primary);
+  color: var(--primary-hover);
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;
 }
@@ -144,7 +146,7 @@ p {
 .app-header {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 24px;
   padding: 14px 40px;
   background: var(--ink-900);
   color: #fff;
@@ -191,7 +193,7 @@ p {
   color: #fff;
 }
 .app-nav a.active {
-  border-bottom-color: var(--primary);
+  border-bottom-color: var(--primary-hover);
 }
 .app-header__end {
   margin-left: auto;
@@ -357,7 +359,7 @@ p {
 }
 .tabs a.active {
   color: var(--text);
-  border-bottom-color: var(--primary);
+  border-bottom-color: var(--primary-hover);
 }
 .pbody {
   background: var(--surface-muted);
@@ -478,7 +480,7 @@ a.event-card:focus-visible {
 .event-card__when {
   font: 700 13px var(--font-body);
   letter-spacing: 0.06em;
-  color: var(--primary);
+  color: var(--primary-hover);
   text-transform: uppercase;
 }
 .event-card__title {
@@ -491,7 +493,7 @@ a.event-card:focus-visible {
   text-decoration: none;
 }
 .event-card__title a:hover {
-  color: var(--primary);
+  color: var(--primary-hover);
 }
 .event-card__sub {
   color: var(--text-muted);
@@ -556,6 +558,72 @@ a.event-card:focus-visible {
   background: var(--surface-muted);
   color: var(--text-muted);
 }
+/* Cancelled event (Sprint 2 Feature-O, UX-13): the same red as FULL and the error notice. */
+.chip--cancelled {
+  background: var(--danger-tint);
+  border-color: var(--danger-line);
+  color: var(--danger-ink);
+}
+
+/* ---------- Cancel dialog (Sprint 2 Feature-O, UX-12) ---------- */
+.dialog {
+  width: min(520px, calc(100% - 32px));
+  max-height: calc(100% - 32px);
+  margin: auto;
+  overflow: auto;
+  box-shadow: var(--shadow-card);
+}
+.dialog::backdrop {
+  background: rgba(7, 27, 43, 0.55);
+}
+.dialog h2 {
+  margin-bottom: 8px;
+}
+.dialog__label {
+  display: block;
+  margin: 18px 0 6px;
+}
+.dialog__help {
+  margin: 6px 0 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+.btn-soft--danger {
+  border-color: var(--danger-line);
+  color: var(--danger-ink);
+}
+.btn-soft--danger:hover {
+  background: var(--danger-tint);
+}
+.btn-danger {
+  min-height: 44px;
+  padding: 8px 20px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--danger-ink);
+  color: #fff;
+  font: 700 14px var(--font-body);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+.btn-danger:hover:not(:disabled) {
+  filter: brightness(0.9);
+}
+.btn-danger:focus-visible {
+  box-shadow: var(--focus);
+  outline: none;
+}
+.btn-danger:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
 
 /* ---------- Buttons ---------- */
 .btn-big {
@@ -598,7 +666,7 @@ a.event-card:focus-visible {
 .btn-big--outline:hover {
   background: var(--surface);
   box-shadow: inset 0 0 0 2px var(--primary);
-  color: var(--primary);
+  color: var(--primary-hover);
 }
 .btn-big--outline:hover {
   background: var(--primary-tint);
@@ -640,7 +708,7 @@ a.event-card:focus-visible {
 }
 .btn-soft--primary {
   background: var(--primary);
-  border-color: var(--primary);
+  border-color: var(--primary-hover);
   color: #fff;
 }
 .btn-soft--primary:hover {
@@ -730,7 +798,7 @@ a.event-card:focus-visible {
   height: 40px;
   border-radius: var(--radius-control);
   background: var(--surface-muted);
-  color: var(--primary);
+  color: var(--primary-hover);
   display: grid;
   place-items: center;
   flex: none;
@@ -886,6 +954,20 @@ a.event-card:focus-visible {
   background: var(--primary-tint);
   color: var(--primary-hover);
 }
+/* Sprint 2 SR-08 (UX-14): the History panel on the edit page. */
+.history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+/* Sprint 2 Feature-K: the owner's "Draft — only you can see this event." banner (amber, contracts §2 UI). */
+.notice--warning {
+  background: var(--warning-tint);
+  color: var(--warning-ink);
+}
 .notice__close {
   border: 0;
   background: none;
@@ -917,7 +999,7 @@ a.event-card:focus-visible {
 .form-control,
 .form-select {
   min-height: 46px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--control-line);
   border-radius: var(--radius-control);
   background-color: var(--surface-muted);
   color: var(--text);
@@ -930,7 +1012,7 @@ textarea.form-control {
 }
 .form-control:focus,
 .form-select:focus {
-  border-color: var(--primary);
+  border-color: var(--primary-hover);
   background-color: var(--surface);
   box-shadow: var(--focus);
 }
@@ -966,7 +1048,7 @@ textarea.form-control {
   align-items: center;
   min-height: 44px;
   padding: 0 18px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--control-line);
   border-radius: var(--radius-pill);
   background: var(--surface);
   font: 700 13px var(--font-body);
@@ -979,7 +1061,7 @@ textarea.form-control {
 }
 .choice:has(input:checked) {
   background: var(--primary);
-  border-color: var(--primary);
+  border-color: var(--primary-hover);
   color: #fff;
 }
 .choice:has(input:focus-visible) {
@@ -1049,7 +1131,7 @@ textarea.form-control {
 .state h2 .i {
   width: 28px;
   height: 28px;
-  color: var(--primary);
+  color: var(--primary-hover);
 }
 .state .btn-big {
   margin-top: 12px;
@@ -1069,7 +1151,7 @@ textarea.form-control {
   font-weight: 600;
 }
 .loading .i {
-  color: var(--primary);
+  color: var(--primary-hover);
 }
 .skeleton {
   height: 108px;
@@ -1276,4 +1358,129 @@ textarea.form-control {
 }
 .pbody .state {
   margin: 0;
+}
+
+/* ---------- Figures (D-38, contract section 12): text whose main content is a number ---------- */
+.date-badge,
+.date-badge__month,
+.date-badge__day,
+.chip,
+.event-card__when,
+.event-card__note,
+.seat-card__left,
+.pager__range,
+.ticket-facts dd {
+  font-family: var(--font-figures);
+  font-variant-numeric: tabular-nums;
+}
+.date-badge__day {
+  font-weight: 800;
+}
+
+/* ---------- Search form, filter chips, pager (Feature-J) ---------- */
+.searchform {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px 16px;
+  align-items: end;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-box);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-soft);
+}
+.searchform__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.searchform__field--wide {
+  grid-column: span 2;
+}
+.searchform__field input,
+.searchform__field select {
+  font: inherit;
+  min-height: 40px;
+  padding: 6px 10px;
+  border: 1px solid var(--control-line);
+  border-radius: var(--radius-box);
+  background: var(--surface);
+  color: inherit;
+}
+.searchform__check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+}
+.searchform .search__btn {
+  width: auto;
+  min-width: 120px;
+  gap: 8px;
+  grid-auto-flow: column;
+  cursor: pointer;
+}
+.filterchips {
+  margin: 12px 0 0;
+  align-items: center;
+}
+.chip--filter button,
+.linkbtn {
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.chip--filter button {
+  margin-left: 6px;
+  padding: 0 2px;
+}
+.linkbtn {
+  text-decoration: underline;
+  color: var(--primary-hover);
+}
+/* Dimmed with the muted surface, not opacity: opacity took the text below 4.5:1 (AC-C-08, S2-08). */
+.event-card--ended {
+  background: var(--surface-muted);
+}
+.pager {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+.pager__btn {
+  min-height: 40px;
+  padding: 0 18px;
+  border: 1px solid var(--control-line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.pager__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+@media (max-width: 720px) {
+  .searchform__field--wide {
+    grid-column: auto;
+  }
+  .searchform .search__btn {
+    width: 100%;
+  }
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

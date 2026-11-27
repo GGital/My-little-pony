@@ -1,0 +1,12 @@
+{
+  "id": "S2-D01-g",
+  "action": "Quantum Cards cancels the event with a reason",
+  "expected": "The red banner with the reason; REGISTRATION CLOSED",
+  "actual": {
+    "banner": "Cancelled by the organizer: Post-deploy check of v0.2.0; not a real event."
+  },
+  "url": "https://tcg-event-hub-932557875237.asia-southeast1.run.app/events/54",
+  "time": "2026-11-27T11:15:59.949Z",
+  "deployedCommit": "a32b3ba2773bfbc6e080a4153342d3d0c72d74ed",
+  "screenshot": "S2-D01-g-live.png"
+}

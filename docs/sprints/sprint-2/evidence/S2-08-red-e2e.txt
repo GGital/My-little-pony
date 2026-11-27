@@ -1,0 +1,129 @@
+S2-08 red E2E run
+Commit: 6af9641 (staging) + the red tests, committed next
+Command: npx playwright test e2e/sprint-2/journey.spec.ts e2e/sprint-2/responsive.spec.ts e2e/sprint-2/theme.spec.ts e2e/sprint-2/s2-09-store-profile-style.spec.ts e2e/sprint-1/journey.spec.ts
+Date: 27 Nov 2026 07:09 UTC
+Expected: the two bug tests fail (feature CSS order; ended-card contrast); the journeys and TEST-SR5-02 check behaviour built in S2-01 ... S2-10
+
+[WebServer] Environment variables loaded from .env
+[WebServer] (node:34964) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[WebServer] (Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 28 tests using 1 worker
+
+(node:6400) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ok  1 [chromium] › e2e\sprint-1\journey.spec.ts:7:5 › JRN-01 — publish → register → My Events → registration list (FR-06, FR-15, FR-17, FR-18) (8.7s)
+  ok  2 [chromium] › e2e\sprint-1\journey.spec.ts:47:5 › JRN-02 — Nok and Fern press REGISTER on the last seat of EV-2 together (BR-05, BR-07) (5.7s)
+  ok  3 [chromium] › e2e\sprint-2\journey.spec.ts:15:5 › JRN-03 — draft → hidden → publish → register → capacity and deadline → cancel → register again → event cancelled (K, L, M, N, O, SR-08) (11.9s)
+  ok  4 [chromium] › e2e\sprint-2\journey.spec.ts:112:5 › JRN-04 — a visitor searches "quantum", filters Constructed, pages, opens a result, signs in from SIGN IN TO REGISTER and registers (J, FR-26) (6.6s)
+  ok  5 [chromium] › e2e\sprint-2\responsive.spec.ts:49:11 › TEST-SR5-02 — edit-event (NFR-08) › 390 px: no horizontal scroll (911ms)
+  ok  6 [chromium] › e2e\sprint-2\responsive.spec.ts:49:11 › TEST-SR5-02 — edit-event (NFR-08) › 768 px: no horizontal scroll (988ms)
+  ok  7 [chromium] › e2e\sprint-2\responsive.spec.ts:49:11 › TEST-SR5-02 — edit-event (NFR-08) › 1440 px: no horizontal scroll (1.0s)
+  ok  8 [chromium] › e2e\sprint-2\responsive.spec.ts:49:11 › TEST-SR5-02 — search-filters (NFR-08) › 390 px: no horizontal scroll (445ms)
+  ok  9 [chromium] › e2e\sprint-2\responsive.spec.ts:49:11 › TEST-SR5-02 — search-filters (NFR-08) › 768 px: no horizontal scroll (473ms)
+  ok 10 [chromium] › e2e\sprint-2\responsive.spec.ts:49:11 › TEST-SR5-02 — search-filters (NFR-08) › 1440 px: no horizontal scroll (638ms)
+  ok 11 [chromium] › e2e\sprint-2\responsive.spec.ts:49:11 › TEST-SR5-02 — cancelled-detail (NFR-08) › 390 px: no horizontal scroll (854ms)
+  ok 12 [chromium] › e2e\sprint-2\responsive.spec.ts:49:11 › TEST-SR5-02 — cancelled-detail (NFR-08) › 768 px: no horizontal scroll (955ms)
+  ok 13 [chromium] › e2e\sprint-2\responsive.spec.ts:49:11 › TEST-SR5-02 — cancelled-detail (NFR-08) › 1440 px: no horizontal scroll (1.0s)
+  ok 14 [chromium] › e2e\sprint-2\s2-09-store-profile-style.spec.ts:8:5 › TEST-U-08 (E2E) — pressed and unpressed game toggles differ in computed style (924ms)
+  x  15 [chromium] › e2e\sprint-2\s2-09-store-profile-style.spec.ts:23:5 › TEST-U-08 (E2E) — feature CSS comes after theme.css, so a one-class feature rule wins (1.1s)
+(node:22156) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ok 16 [chromium] › e2e\sprint-2\theme.spec.ts:19:7 › TEST-C-07 fonts (AC-C-07) › body is Inter, figures are Manrope with tabular digits, Thai title loads IBM Plex Sans Thai, no Google Fonts (2.0s)
+  ok 17 [chromium] › e2e\sprint-2\theme.spec.ts:71:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: events (1.1s)
+  ok 18 [chromium] › e2e\sprint-2\theme.spec.ts:71:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: event-open (1.0s)
+  ok 19 [chromium] › e2e\sprint-2\theme.spec.ts:71:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: event-registered (1.4s)
+  ok 20 [chromium] › e2e\sprint-2\theme.spec.ts:71:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: sign-in (843ms)
+  ok 21 [chromium] › e2e\sprint-2\theme.spec.ts:71:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: my-events (1.5s)
+  ok 22 [chromium] › e2e\sprint-2\theme.spec.ts:71:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: dashboard (1.5s)
+  ok 23 [chromium] › e2e\sprint-2\theme.spec.ts:71:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: create-event (1.4s)
+  ok 24 [chromium] › e2e\sprint-2\theme.spec.ts:71:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: registrations (1.4s)
+  ok 25 [chromium] › e2e\sprint-2\theme.spec.ts:71:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: edit-event (1.4s)
+  ok 26 [chromium] › e2e\sprint-2\theme.spec.ts:71:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: store-profile (1.4s)
+  x  27 [chromium] › e2e\sprint-2\theme.spec.ts:71:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: events-ended (1.2s)
+(node:2792) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ok 28 [chromium] › e2e\sprint-2\theme.spec.ts:80:7 › TEST-C-08 contrast and colours (AC-C-08) › seat chip, PLAYER badge and REGISTERED are green; primary button and date badge are teal (2.5s)
+
+
+  1) [chromium] › e2e\sprint-2\s2-09-store-profile-style.spec.ts:23:5 › TEST-U-08 (E2E) — feature CSS comes after theme.css, so a one-class feature rule wins 
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 1275
+    Received:   7
+
+      35 |   })
+      36 |   expect(order.theme).toBeGreaterThanOrEqual(0)
+    > 37 |   expect(order.feature).toBeGreaterThan(order.theme)
+         |                         ^
+      38 | })
+      39 |
+        at <repo>\e2e\sprint-2\s2-09-store-profile-style.spec.ts:37:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\sprint-2-s2-09-store-profi-32634-one-class-feature-rule-wins-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\sprint-2-s2-09-store-profi-32634-one-class-feature-rule-wins-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\sprint-2-s2-09-store-profi-32634-one-class-feature-rule-wins-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\sprint-2-s2-09-store-profi-32634-one-class-feature-rule-wins-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e\sprint-2\theme.spec.ts:71:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: events-ended 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 16
+
+    - Array []
+    + Array [
+    +   Array [
+    +     "a[href$=\"events/4\"] > .date-badge[aria-hidden=\"true\"] > .date-badge__month",
+    +     "a[href$=\"events/4\"] > .date-badge[aria-hidden=\"true\"] > .date-badge__day",
+    +     "a[href$=\"events/4\"] > div:nth-child(2) > .event-card__when",
+    +     "a[href$=\"events/4\"] > div:nth-child(2) > .event-card__when > .chip--muted.chip",
+    +     "a[href$=\"events/4\"] > div:nth-child(2) > .event-card__sub",
+    +     "a[href$=\"events/4\"] > .event-card__aside > .chips > .chip--seats.chip",
+    +     "a[href$=\"events/4\"] > .event-card__aside > .event-card__note.tabular-nums",
+    +     "a[href$=\"events/8\"] > .date-badge[aria-hidden=\"true\"] > .date-badge__month",
+    +     "a[href$=\"events/8\"] > div:nth-child(2) > .event-card__when",
+    +     "a[href$=\"events/8\"] > div:nth-child(2) > .event-card__when > .chip--muted.chip",
+    +     "a[href$=\"events/8\"] > div:nth-child(2) > .event-card__sub",
+    +     ".chip--cancelled",
+    +   ],
+    + ]
+
+      74 |       await expect(page.getByRole('heading', { name: s.ready, exact: true }).first()).toBeVisible()
+      75 |       const result = await new AxeBuilder({ page }).withRules(['color-contrast']).analyze()
+    > 76 |       expect(result.violations.map((v) => v.nodes.map((n) => n.target.join(' ')))).toEqual([])
+         |                                                                                    ^
+      77 |     })
+      78 |   }
+      79 |
+        at <repo>\e2e\sprint-2\theme.spec.ts:76:84
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\sprint-2-theme-TEST-C-08-c-47ee9-color-contrast-events-ended-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\sprint-2-theme-TEST-C-08-c-47ee9-color-contrast-events-ended-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\sprint-2-theme-TEST-C-08-c-47ee9-color-contrast-events-ended-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\sprint-2-theme-TEST-C-08-c-47ee9-color-contrast-events-ended-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › e2e\sprint-2\s2-09-store-profile-style.spec.ts:23:5 › TEST-U-08 (E2E) — feature CSS comes after theme.css, so a one-class feature rule wins 
+    [chromium] › e2e\sprint-2\theme.spec.ts:71:9 › TEST-C-08 contrast and colours (AC-C-08) › axe color-contrast: events-ended 
+  26 passed (1.5m)
