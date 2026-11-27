@@ -52,14 +52,14 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | FR-03 | Current-user request | Feature-A | Sprint 1 | AC-A-03 · I → **Pass**: TEST-A-03 | 2, 3 |
 | FR-04 | Sign-out ends the session | Feature-A | Sprint 1 | AC-A-04 · I, E → **Pass**: TEST-A-04 | 2, 3 |
 | FR-05 | Role navigation; protected pages redirect | Feature-C | Sprint 1 | AC-C-01, AC-C-02 · E → **Pass**: TEST-C-01, TEST-C-02 | 2, 3 |
-| FR-06 | Create and publish an event; owner recorded | Feature-D | Sprint 1 | AC-D-01 · I, E → **Pass**: TEST-D-01, JRN-01 | 2 |
+| FR-06 | Create and publish an event; owner recorded | Feature-D | Sprint 1 | AC-D-01 · I, E → **Pass**: TEST-D-01, JRN-01. Sprint 2 re-verification (S2-09) **Pass**: TEST-U-01 (E-06 with and without `game`; the create form requires one) | 2 |
 | FR-07 | Organizer's own events with counts | Feature-E | Sprint 1 | AC-E-01 · I, E → **Pass**: TEST-E-01 | 2 |
 | FR-08 | Draft events | Feature-K | Sprint 2 | AC-K-01 … 05 · I, C, E → **Planned**: TEST-K-01 … 05 (Sprint 2 STS) | 3 |
 | FR-09 | Edit event, capacity, deadline | Feature-L, Feature-M | Sprint 2 | AC-L-01 … 06, AC-M-01 … 04 · U, I, C, E → **Planned**: TEST-L-01 … 06, TEST-M-01 … 04 (Sprint 2 STS) | 3 |
 | FR-10 | Cancel event with reason, cascade | Feature-O | Sprint 2 | AC-O-01 … 03 · I, C, E → **Pass**: TEST-O-01 … 03 (red `47e1cee`, green `c2e0238`) | 3 |
 | FR-11 | Public list of upcoming events with counts | Feature-F | Sprint 1 | AC-F-01 · I, E → **Pass**: TEST-F-01 | 2 (with filters) |
 | FR-12 | Event detail with server-decided action; not found | Feature-F | Sprint 1 | AC-F-02, AC-F-03 · I, E → **Pass**: TEST-F-02, TEST-F-03 | 2, 3 |
-| FR-13 | Search, filters, paging | Feature-J | Sprint 2 | AC-J-01 … 03, AC-J-05 · U, I, C, E → **Pass**: TEST-J-01 … 03, TEST-J-05 (red `82b7aa9`, green `2c5e075`) | 3 (NFR-12) |
+| FR-13 | Search, filters, paging | Feature-J | Sprint 2 | AC-J-01 … 03, AC-J-05 · U, I, C, E → **Pass**: TEST-J-01 … 03, TEST-J-05 (red `82b7aa9`, green `2c5e075`). Sprint 2 re-verification (S2-09) **Pass**: TEST-U-02 (`game` filter with `q`, JRN-04) | 3 (NFR-12) |
 | FR-14 | Past/cancelled only on request, never registrable | Feature-J | Sprint 2 | AC-J-04, AC-O-02 · I, E → TEST-J-04 **Pass** (`2c5e075`); TEST-O-02 **Pass** (red `47e1cee`, green `c2e0238`) | 3 |
 | FR-15 | Register → `REGISTERED` record returned | Feature-G | Sprint 1 | AC-G-01 · I, E → **Pass**: TEST-G-01, JRN-01 | 2, 3 |
 | FR-16 | Rejections store nothing and give a reason | Feature-G, SR-02 | Sprint 1 | AC-G-02 … AC-G-05 · I, E → **Pass**: TEST-G-02, TEST-G-03, TEST-G-04, TEST-G-05 | 2 (deadline) |
@@ -75,8 +75,8 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | FR-26 | Sign in, then return to the same event | Feature-C | Sprint 1 | AC-C-03 · E → **Pass**: TEST-C-03 | 2, 3 |
 | FR-27 | Header shows name, role, sign-out | Feature-C | Sprint 1 | AC-C-04 · E → **Pass**: TEST-C-04 | 2, 3 |
 | FR-28 | Who and when for every state change | SR-08 (Feature-L, N, O, P) | Sprint 2 | AC-SR8-01 … 04, AC-L-01, AC-N-01, AC-O-01 (Sprint 2); AC-P-01, AC-P-03 (Sprint 3) · I → AC-O-01 via TEST-O-01 **Pass** (red `47e1cee`, green `c2e0238`); AC-N-01 via TEST-N-01 **Pass** (red `95d8e69`, green `62db165`); **Planned**: TEST-SR8-01 … 04 (Sprint 2 STS), TEST-P-01, TEST-P-03 (Sprint 3 STS) | 3 (check-in) |
-| FR-29 | Game of each event; filter by game (CH-11) | Feature-U | Sprint 2 | AC-U-01, AC-U-02 · U, I, C, E → **Planned**: TEST-U-01, TEST-U-02 (Sprint 2 STS) | 3 |
-| FR-30 | Store profile: games and contact (Sprint 2), logo (Sprint 3) (CH-11) | Feature-U, Feature-V | Sprint 2 | AC-U-03, AC-U-04, AC-U-05 · U, I, C → **Planned**: TEST-U-03, TEST-U-04, TEST-U-05 (Sprint 2 STS); logo AC-V-01 → TEST-V-01 (Sprint 3 STS) | 3 |
+| FR-29 | Game of each event; filter by game (CH-11) | Feature-U | Sprint 2 | AC-U-01, AC-U-02 · U, I, C, E → **Pass**: TEST-U-01, TEST-U-02, TEST-U-06 (red `9f3b967`, green `19bd097`; review 2 green `7af6773`) | 3 |
+| FR-30 | Store profile: games and contact (Sprint 2), logo (Sprint 3) (CH-11) | Feature-U, Feature-V | Sprint 2 | AC-U-03, AC-U-04, AC-U-05 · U, I, C → **Pass**: TEST-U-03, TEST-U-04, TEST-U-05, TEST-U-07, TEST-U-08 (red `9f3b967`, green `19bd097`; review 2 green `7af6773`); logo AC-V-01 → TEST-V-01 (Sprint 3 STS) | 3 |
 | FR-31 | Event banner, playmat fallback (CH-11) | Feature-V | Sprint 3 | AC-V-02 … 07 · U, I, C, E, M → **Planned**: TEST-V-02 … 07 (Sprint 3 STS) | — |
 | FR-32 | Start a tournament from checked-in players (CH-12) | Feature-W | Sprint 3 | AC-W-01, AC-W-02 · I, C → **Planned**: TEST-W-01, TEST-W-02 (Sprint 3 STS) | — |
 | FR-33 | Swiss pairing each round, no rematch, byes (CH-12) | Feature-W | Sprint 3 | AC-W-03, AC-W-04, AC-W-06 · U (property), I → **Planned**: TEST-W-03, TEST-W-04, TEST-W-06 (Sprint 3 STS) | — |
@@ -303,3 +303,5 @@ in the Sprint 2 contracts PR (S2-00), and the course's approved-scope rule for D
 | v0.10 | 26 Nov 2026 | S2-03: FR-13 Pass (TEST-J-01 … 03, 05) and FR-14 TEST-J-04 Pass; TEST-O-02 stays Planned | Team (AI-assisted) |
 | v0.11 | 26 Nov 2026 | S2-05: FR-10, FR-14 (TEST-O-02), FR-28 (AC-O-01) and BR-12 Pass | Team (AI-assisted) |
 | S2-07 | 26 Nov 2026 | FR-19, FR-20 and BR-11 Pass (TEST-N-01 … 05); FR-28 (AC-N-01), BR-06 (TEST-N-02, N-03) and NFR-05 (TEST-N-06) re-verified | Team (AI-assisted) |
+| S2-09 | 26 Nov 2026 | FR-29 and FR-30 Pass (TEST-U-01 … 05; red `9f3b967`, green `19bd097`); FR-06 (TEST-U-01) and FR-13 (TEST-U-02) re-verified | Team (AI-assisted) |
+| S2-09 | 26 Nov 2026 | Review 2 of [#113](https://github.com/GGital/My-little-pony/pull/113) (D-41): FR-29 and FR-30 also covered by TEST-U-06 … 08 (green `7af6773`) | Team (AI-assisted) |

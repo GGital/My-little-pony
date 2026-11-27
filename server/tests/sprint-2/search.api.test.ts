@@ -391,3 +391,40 @@ describe('TEST-J-06 — privacy and strict query validation (AC-J-06, BR-16, NFR
     }
   })
 })
+
+// TEST-U-02 (I) · AC-U-02, FR-29, FR-13 (Sprint 2 contracts §11.1): the E-04 game filter, ANDed with the others.
+describe('TEST-U-02 (I) E-04 game filter (AC-U-02, FR-29)', () => {
+  const ids = async (query: string) =>
+    ((await request(app).get(`/api/events${query}`)).body.items as { title: string; game: string }[])
+
+  it('game=POKEMON returns only Pokémon events, each carrying game POKEMON (EV-6 in, EV-1 out)', async () => {
+    const res = await request(app).get('/api/events?game=POKEMON')
+    expect(res.status).toBe(200)
+    expect(res.body.items.length).toBeGreaterThan(0)
+    for (const item of res.body.items) expect(item.game).toBe('POKEMON')
+    const ev6 = await prisma.event.findUniqueOrThrow({ where: { seedKey: 'EV-6' } })
+    const ev1 = await prisma.event.findUniqueOrThrow({ where: { seedKey: 'EV-1' } })
+    expect(ev6.game).toBe('POKEMON')
+    const found = res.body.items.map((i: { id: number }) => i.id)
+    expect(found).toContain(ev6.id)
+    expect(found).not.toContain(ev1.id)
+  })
+
+  it('game combined with q is the AND of both filters', async () => {
+    const items = await ids('?game=POKEMON&q=Release')
+    expect(items.length).toBeGreaterThan(0)
+    for (const item of items) {
+      expect(item.game).toBe('POKEMON')
+      expect(item.title).toMatch(/release/i)
+    }
+    expect(await ids('?game=POKEMON&q=zzzznomatch')).toEqual([])
+  })
+
+  it('game=chess (and any non-enum value) is 400 on game', async () => {
+    for (const value of ['chess', 'pokemon', 'CHESS', '']) {
+      const res = await request(app).get(`/api/events?game=${value}`)
+      expect(res.status).toBe(400)
+      expect(res.body.error.details.map((d: { field: string }) => d.field)).toContain('game')
+    }
+  })
+})

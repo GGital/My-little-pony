@@ -1,0 +1,11 @@
+/* Feature-U (UX-17, UX-19): the store profile page. */
+.store-profile__chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+.store-profile__chip { cursor: pointer; font: inherit; }
+/* Two classes on purpose: main.tsx loads component CSS before theme.css, so a one-class rule loses to .chip. */
+.store-profile__chip.is-on {
+  background: var(--accent-ink);
+  border-color: var(--accent-ink);
+  color: #fff;
+  font-weight: 700;
+}
+.store-profile__saved { color: var(--accent-ink); font-weight: 600; }

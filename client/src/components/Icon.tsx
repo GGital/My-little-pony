@@ -55,6 +55,12 @@ const PATHS = {
   spin: <path d="M12 3.5a8.5 8.5 0 1 0 8.5 8.5" />,
   plus: <path d="M12 5v14M5 12h14" />,
   close: <path d="M6 6l12 12M18 6L6 18" />,
+  card: (
+    <>
+      <rect x="6" y="3.5" width="12" height="17" rx="2" />
+      <path d="M9.5 8.5h5M9.5 12h5" />
+    </>
+  ),
   compass: (
     <>
       <circle cx="12" cy="12" r="8.5" />

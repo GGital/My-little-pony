@@ -11,6 +11,7 @@ import { FilterChips } from '../components/FilterChips'
 import { Pagination } from '../components/Pagination'
 import { SearchBar } from '../components/SearchBar'
 import { EVENT_TABS, PageTop } from '../components/PageTop'
+import { gameLabel } from '../utils/games'
 import { EMPTY_FILTERS, parseFilters, toQuery, type SearchFilters } from '../utils/searchParams'
 
 export const EventList: React.FC = () => {
@@ -58,7 +59,7 @@ export const EventList: React.FC = () => {
   return (
     <>
       <PageTop
-        title="Find an Event"
+        title={filters.game ? `${gameLabel(filters.game)} events` : 'Find an Event'}
         subtitle="Tournaments, casual nights and release events in Bangkok. All times are Bangkok time."
         tabs={participant ? EVENT_TABS : undefined}
       />
@@ -101,6 +102,7 @@ export const EventList: React.FC = () => {
                   key={event.id}
                   event={event}
                   to={`/events/${event.id}`}
+                  hideGame={!!filters.game}
                   endedChip={
                     event.status === 'CANCELLED'
                       ? 'Cancelled'

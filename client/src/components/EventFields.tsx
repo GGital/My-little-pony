@@ -1,6 +1,8 @@
-import React from 'react'
-import type { ApiErrorDetail } from '../api/types'
+import React, { useEffect, useState } from 'react'
+import { api } from '../api/client'
+import type { ApiErrorDetail, Game } from '../api/types'
 import { label } from '../utils/eventDisplay'
+import { GAME_LABELS, GAME_VALUES } from '../utils/games'
 import { FormFieldError, fieldErrorProps } from './FormFieldError'
 
 /** Every field of the create and edit forms, as the inputs hold them (times are Bangkok `datetime-local`). */
@@ -20,11 +22,29 @@ export type EventFormValues = {
   structureNote: string
   contact: string
   description: string
+  /** Feature-U: empty until chosen; the UI requires one (the API defaults to OTHER). */
+  game: Game | ''
+}
+
+/** The signed-in store's own games (E-23), so the Game select can list them first. Any failure: no groups. */
+function useStoreGames(): Game[] {
+  const [games, setGames] = useState<Game[]>([])
+  useEffect(() => {
+    let current = true
+    api
+      .get<{ games?: Game[] }>('/api/organizer/store')
+      .then((s) => current && setGames(Array.isArray(s?.games) ? s.games : []))
+      .catch(() => undefined)
+    return () => {
+      current = false
+    }
+  }, [])
+  return games
 }
 
 export const EMPTY_EVENT_FORM: EventFormValues = {
   title: '', type: 'CASUAL', format: 'CONSTRUCTED', venueName: '', venueAddress: '', city: '',
-  startAt: '', endAt: '', registrationDeadline: '', capacity: '24', feeLabel: '', structureNote: '', contact: '', description: '',
+  startAt: '', endAt: '', registrationDeadline: '', capacity: '24', feeLabel: '', structureNote: '', contact: '', description: '', game: '',
 }
 
 /** `YYYY-MM-DDTHH:mm` (Bangkok wall time, the form's input) → ISO with +07:00, as the API expects (NFR-11). */
@@ -58,6 +78,13 @@ type Props = {
  * field errors under each one. The parent owns the values and sends them.
  */
 export const EventFields: React.FC<Props> = ({ values, onChange, details, disabled, readOnly, startHint, capacityNote }) => {
+  const storeGames = useStoreGames()
+  const otherGames = GAME_VALUES.filter((g) => !storeGames.includes(g))
+  const gameOption = (g: Game) => (
+    <option key={g} value={g}>
+      {GAME_LABELS[g]}
+    </option>
+  )
   type TextKey = Exclude<keyof EventFormValues, 'type' | 'format' | 'description'>
   const field = (o: { id: TextKey; label: string; required?: boolean; hint?: string; type?: string; placeholder?: string; maxLength?: number }) => {
     const { id, label: text, required, hint, type = 'text', placeholder, maxLength } = o
@@ -119,6 +146,32 @@ export const EventFields: React.FC<Props> = ({ values, onChange, details, disabl
       <section className="form-card">
         <h2>The event</h2>
         {field({ id: 'title', label: 'Title', required: true, placeholder: 'e.g. Friday Night Constructed' })}
+        <div>
+          <label htmlFor="game" className="form-label">
+            Game <span className="req" aria-hidden="true">*</span>
+          </label>
+          <select
+            id="game"
+            name="game"
+            className="form-select"
+            value={values.game}
+            onChange={(e) => onChange('game', e.target.value as EventFormValues['game'])}
+            disabled={disabled || readOnly?.has('game')}
+            aria-required="true"
+            {...fieldErrorProps('game', details)}
+          >
+            <option value="">Choose a game</option>
+            {storeGames.length > 0 ? (
+              <>
+                <optgroup label="Your games">{GAME_VALUES.filter((g) => storeGames.includes(g)).map(gameOption)}</optgroup>
+                {otherGames.length > 0 && <optgroup label="Other games">{otherGames.map(gameOption)}</optgroup>}
+              </>
+            ) : (
+              GAME_VALUES.map(gameOption)
+            )}
+          </select>
+          <FormFieldError field="game" details={details} />
+        </div>
         <div className="form-grid">
           {choices('type', 'Event Type', ['CASUAL', 'TOURNAMENT', 'RELEASE'] as const)}
           {choices('format', 'Format', ['CONSTRUCTED', 'SEALED', 'DRAFT'] as const)}
@@ -153,7 +206,7 @@ export const EventFields: React.FC<Props> = ({ values, onChange, details, disabl
       <section className="form-card">
         <h2>More details</h2>
         {field({ id: 'structureNote', label: 'Structure Note', hint: 'optional, max 80', placeholder: 'e.g. 4 rounds · Best of 1', maxLength: 80 })}
-        {field({ id: 'contact', label: 'Contact', hint: 'optional, max 120', placeholder: 'e.g. hello@quantumcards.example', maxLength: 120 })}
+        {field({ id: 'contact', label: 'Contact', hint: "optional, max 120. Leave empty to use your store's contact details.", placeholder: 'e.g. hello@quantumcards.example', maxLength: 120 })}
         <div>
           <div className="d-flex justify-content-between align-items-baseline">
             <label htmlFor="description" className="form-label">

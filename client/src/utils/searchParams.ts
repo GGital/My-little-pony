@@ -3,6 +3,7 @@ export interface SearchFilters {
   q: string
   type: string
   format: string
+  game: string
   from: string
   to: string
   seatsAvailable: boolean
@@ -14,6 +15,7 @@ export const EMPTY_FILTERS: SearchFilters = {
   q: '',
   type: '',
   format: '',
+  game: '',
   from: '',
   to: '',
   seatsAvailable: false,
@@ -29,6 +31,7 @@ export function parseFilters(params: URLSearchParams): SearchFilters {
     q: params.get('q') ?? '',
     type: params.get('type') ?? '',
     format: params.get('format') ?? '',
+    game: params.get('game') ?? '',
     from: params.get('from') ?? '',
     to: params.get('to') ?? '',
     seatsAvailable: params.get('seatsAvailable') === 'true',
@@ -44,6 +47,7 @@ export function toQuery(filters: SearchFilters): URLSearchParams {
   if (q) params.set('q', q)
   if (filters.type) params.set('type', filters.type)
   if (filters.format) params.set('format', filters.format)
+  if (filters.game) params.set('game', filters.game)
   if (filters.from) params.set('from', filters.from)
   if (filters.to) params.set('to', filters.to)
   if (filters.seatsAvailable) params.set('seatsAvailable', 'true')

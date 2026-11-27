@@ -149,6 +149,7 @@ TEST-SR2-04 (every catalogue code) gains the two new codes. SDS §6.2 gets a ver
 | D-37 | The store profile holds the store's **public contact details** (phone, email, website, LINE). Every event shows them in its host section. The event's own `contact` field (Sprint 1, FR-06) stays as an optional "Contact for this event" shown above them. The store email is a separate public field, never the organizer's sign-in email (D-14 is unchanged) | Organizers stop retyping contact details on every event, and players always find a way to reach the store |
 | D-38 | Sprint 2 re-themes the client: **Deep Lagoon** colours, **Inter** for text, **Manrope** for figures, IBM Plex Sans Thai kept for Thai (design-direction v0.6). Token names stay; seats move to green | The team chose the palette and fonts from the trials on 21 Nov 2026; keeping token names limits the change to one file and the font imports |
 | D-40 | `include=cancelled` adds cancelled events that **have not started yet**; `include=past` adds started events; both together show every cancelled event. The time rule (`past`) and the status rule (`cancelled`) are independent. `seatsAvailable=false` is accepted and is the same as leaving it out. `%` and `_` in `q` match themselves | The AC-J-04 sentence "plus cancelled" had no time rule, and the review of S2-03 asked for one rule that S2-08 (Feature-O) and the traceability rows share |
+| D-41 | Review of #113. The **Game** control on the create and edit forms stays a required select ("Choose a game"), listing the store's games first ("Your games", then "Other games"). The game chip is **neutral** (white, card icon); teal stays reserved for seats and "registered". A list filtered to one game hides the chip and names the game in the heading. "Store profile" is in the organizer account menu, and the Dashboard keeps its button | A select with groups is shorter than seven radios and still shows the store's games first; the neutral chip keeps teal meaning "seats" | Reviewer GGital, 26 Nov 2026 |
 
 ### 0.7 Contract template
 
@@ -559,7 +560,7 @@ show a **Past** or **Cancelled** chip.
 | Sprint 1 item | Sprint 2 change | How it is re-tested |
 |---|---|---|
 | Feature-B, TEST-B-03 | The permission matrix gains E-13 … E-17 (SDS §7.1 rows) | TEST-B-03 gains rows; every cell is checked |
-| Feature-D, E-06 | Optional `saveAsDraft` and `registrationDeadline`; creation writes an `EventChange`; the `contact` field's hint now points at the store contact (D-37), with no rule change | TEST-D-01 … 05 unchanged and still green; TEST-K-01, TEST-M-01, TEST-U-04 |
+| Feature-D, E-06 | Optional `saveAsDraft` and `registrationDeadline`; creation writes an `EventChange`; the `contact` field's hint now points at the store contact (D-37), with no rule change | TEST-D-02 … 05 unchanged and still green; TEST-D-01 (C) and its E2E choose a game before publishing, because the UI requires one (Feature-U, S2-09); TEST-K-01, TEST-M-01, TEST-U-04 |
 | Feature-E, E-07 | Shows drafts and cancelled events with their chips; Edit and Publish buttons | TEST-E-01 gains a draft and a cancelled row |
 | Feature-F, E-04 / E-05 | Query, paging and `meta` (J); drafts are 404 (K); the new `CLOSED` rule (M); cancel fields (O) | TEST-F-01 … 05 unchanged and still green with no query; TEST-J-*, K-02, M-03, O-02 |
 | Feature-G, E-09 | Draft → 404; deadline → closed; cancelled → closed | TEST-G-01 … 06 still green, except TEST-G-04's draft case, which now expects `404 EVENT_NOT_FOUND` (v0.7, Sprint 1 STS v1.16); TEST-K-02, M-03, O-02 |
@@ -662,11 +663,12 @@ Decision D-37 (contact added in v0.4)
 6. UI (as in the prototype):
    - **Game** dropdown in the search bar, and a **neutral** game chip (white with a card icon) on event cards
      and the detail page. Teal stays reserved for seats and "registered". A list filtered to one game hides the
-     chip and names the game in the list heading;
-   - a required **Game** radio group on the create and edit forms;
-   - `/organizer/store` with "Games played here" toggle chips (`aria-pressed`), a **Contact** card (Phone, Email,
+     chip and names the game in the list heading ("Pokémon TCG events") (D-41);
+   - a required **Game** select on the create and edit forms (first option "Choose a game"; the store's games under
+     "Your games", the rest under "Other games"; one plain list if the store cannot be read) (D-41);
+   - `/organizer/store` with "Games played here" toggle chips (`aria-pressed`, a filled chip with a check icon when on), a **Contact** card (Phone, Email,
      Website, LINE ID, each with a visible label and an example hint) and **SAVE PROFILE**, linked from the
-     organizer menu;
+     organizer account menu and from a button on the Dashboard (D-41);
    - a host section on the detail page with the store's games and its contact details.
    The logo and banner parts of the prototype wait for Feature-V. Until then, the initials and the playmat pattern
    are shown.
@@ -695,7 +697,7 @@ are reported together):
 | AC | Given | When | Then |
 |---|---|---|---|
 | **AC-U-01** | Quantum Cards signed in | E-06 with `game: "POKEMON"`; E-06 with no `game`; E-06 with `game: "CHESS"`; E-13 `game: "MAGIC"`; UI: create an event without choosing a game | `201` with `game POKEMON`; `201` with `OTHER`; `400` on `game`; `200` and a `details` change row naming `game`; the form shows "Choose a game." and sends nothing |
-| **AC-U-02** | events with different games | E-04 `game=POKEMON`, with `q`, and `game=chess`; UI: choose Pokémon TCG in the search bar | only Pokémon events; the AND of both filters; `400` on `game`; the URL holds `game=POKEMON`, a "Game: Pokémon TCG" chip is shown, and every card shows the Pokémon TCG chip |
+| **AC-U-02** | events with different games | E-04 `game=POKEMON`, with `q`, and `game=chess`; UI: choose Pokémon TCG in the search bar | only Pokémon events; the AND of both filters; `400` on `game`; the URL holds `game=POKEMON`, a "Game: Pokémon TCG" chip is shown, the heading reads "Pokémon TCG events" and the cards show no game chip (an unfiltered list shows each card's chip) |
 | **AC-U-03** | Quantum Cards | E-23 `{ games: ["POKEMON","MAGIC"] }`, then `{ games: [] }`, `{ games: ["POKEMON","POKEMON"] }`, `{ games: ["X"] }`; E-23 by Mint and by a visitor | `200` and E-05 of a Quantum Cards event shows both games; `200` with none; `400` (duplicate); `400`; `403`; `401` |
 | **AC-U-04** | Quantum Cards owns event A (its own `contact` empty) and event B (`contact` "Ask for Ken at the counter") | E-23 with phone `02 555 0101`, email ` Hello@QuantumCards.example `, website `https://quantumcards.example/events`, LINE `@quantumcards`; E-05 A and B as a visitor; then E-23 `{ contactLine: "" }`; UI: open A and B | `200`; the email is stored trimmed and lower-case; E-05 A and B carry the same `store.contact`; after clearing, `line` is `null`; A's page shows the phone as a `tel:` link, the email as a `mailto:` link and the website as "quantumcards.example"; B's page shows "Contact for this event: Ask for Ken at the counter" above them; the organizer's sign-in email appears in neither response |
 | **AC-U-05** | Quantum Cards | E-23 with phone `abc`, email `hello@`, website `javascript:alert(1)`, website `ftp://store.example`, a 201-character website, LINE `my line id`, and `{}`; UI: the website link and a contact containing `<b>bold</b>` | `400` listing **every** failing field with the table's messages, and nothing stored; `{}` is `400` "Change at least one field."; the link has `target="_blank"` and `rel="noopener noreferrer nofollow"`; `<b>bold</b>` is shown as text (NFR-15) |
@@ -769,3 +771,5 @@ that fails blocks the merge. Nothing in Sprint 1's AC-C-01 … 06 or AC-SR5-01 m
 | #110 | 26 Nov 2026 | D-39 was used twice: the SRS's D-39 is CH-13 (Lab 7), so the `include=cancelled` decision of S2-03 becomes **D-40** (§0.6, AC-J-04) and is added to SRS §10.1. Nothing else changes | Team (AI-assisted) |
 | S2-06 | 26 Nov 2026 | §4: TEST-M-04 runs with Feature-N in S2-07, because `canCancel` and E-16 are built there (decision 26 Nov). §1 (review of #111): a `deadline` row is written only for an explicit, different deadline; a deadline sent again unchanged is not checked again | Team (AI-assisted) |
 | S2-07 | 26 Nov 2026 | §5 (review of #112): AC-N-06 says at most one of the 10 registrations wins the freed seat (exactly one when the cancel takes the lock first), because all 10 can take the lock before the cancel and each then correctly gets `EVENT_FULL`; active never exceeds 2. §8: Feature-H / I row names TEST-I-01 (lists `CANCELLED` rows, not counted) | Team (AI-assisted) |
+| S2-09 | 26 Nov 2026 | §8 (review of [#113](https://github.com/GGital/My-little-pony/pull/113)): the Feature-D row names the one Sprint 1 test that changes with Feature-U (TEST-D-01 chooses a game). No behaviour changed | Team (AI-assisted) |
+| S2-09 | 26 Nov 2026 | §0.6 D-41 and §11.1 (review of [#113](https://github.com/GGital/My-little-pony/pull/113)): the Game control stays a select with the store's games first; neutral chip hidden on a list filtered to one game; Store profile in the account menu; AC-U-02 now checks the heading and no card chips | Team (AI-assisted) |

@@ -13,7 +13,7 @@ import { NotFoundPage } from '../../routes/pages/NotFoundPage'
 /** BR-15, D-19: after the start only these may change; the rest is shown read-only (UX-08). */
 const SAFE_AFTER_START = new Set<keyof EventFormValues>(['description', 'structureNote', 'contact', 'feeLabel'])
 const ALL_FIELDS: (keyof EventFormValues)[] = [
-  'title', 'type', 'format', 'venueName', 'venueAddress', 'city', 'startAt', 'endAt', 'registrationDeadline',
+  'title', 'type', 'format', 'game', 'venueName', 'venueAddress', 'city', 'startAt', 'endAt', 'registrationDeadline',
   'capacity', 'feeLabel', 'structureNote', 'contact', 'description',
 ]
 const OPTIONAL = new Set<keyof EventFormValues>(['feeLabel', 'structureNote', 'contact', 'description'])
@@ -26,6 +26,7 @@ const toForm = (e: EventDetail): EventFormValues => ({
   registrationDeadline:
     e.registrationDeadline && Date.parse(e.registrationDeadline) !== Date.parse(e.startAt) ? toBangkokLocal(e.registrationDeadline) : '',
   feeLabel: e.feeLabel ?? '', structureNote: e.structureNote ?? '', contact: e.contact ?? '', description: e.description ?? '',
+  game: e.game ?? '',
 })
 
 /** Only the fields that differ from the saved event, in the API's shape (UX-06). */
@@ -44,7 +45,7 @@ function changedBody(values: EventFormValues, saved: EventFormValues): Record<st
 
 // ---- History panel (SR-08, UX-14): "23 Nov · 15:00 — Quantum Cards changed capacity from 24 to 30" ----
 const FIELD_NAMES: Record<string, string> = {
-  title: 'title', type: 'type', format: 'format', venueName: 'venue name', venueAddress: 'venue address', city: 'city',
+  title: 'title', type: 'type', format: 'format', game: 'game', venueName: 'venue name', venueAddress: 'venue address', city: 'city',
   startAt: 'start', endAt: 'end', feeLabel: 'fee', structureNote: 'structure note', contact: 'contact', description: 'description',
 }
 const bangkok = (iso: string, opts: Intl.DateTimeFormatOptions) =>

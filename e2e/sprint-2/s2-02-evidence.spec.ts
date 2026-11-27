@@ -62,6 +62,7 @@ test('S2-02-U2 saving a draft from the form lands on the draft with the owner-on
   await page.locator('#startAt').fill(bangkokLocal(4, 18))
   await page.locator('#endAt').fill(bangkokLocal(4, 22))
   await page.locator('#capacity').fill('16')
+  await page.getByLabel(/^Game/).selectOption('POKEMON')
   const saveDraft = page.getByRole('button', { name: 'SAVE DRAFT' })
   const hasButton = (await saveDraft.count()) > 0
   if (hasButton) {

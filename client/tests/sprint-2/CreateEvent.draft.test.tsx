@@ -29,7 +29,9 @@ const renderPage = () =>
     </MemoryRouter>,
   )
 
-const sentBody = (spy: ReturnType<typeof vi.spyOn>) => JSON.parse((spy.mock.calls[0][1] as RequestInit).body as string)
+// The form also reads the store's games (E-23), so the E-06 call is found by its URL, not by position.
+const eventCall = (spy: ReturnType<typeof vi.spyOn>) => (spy.mock.calls as [unknown, RequestInit | undefined][]).find((c) => c[0] === '/api/events')!
+const sentBody = (spy: ReturnType<typeof vi.spyOn>) => JSON.parse(eventCall(spy)[1]!.body as string)
 
 afterEach(() => vi.restoreAllMocks())
 
@@ -41,19 +43,21 @@ describe('TEST-K-01 (C) SAVE DRAFT on the create page (AC-K-01, UX-05)', () => {
   })
 
   it('SAVE DRAFT posts E-06 with saveAsDraft: true and lands on its edit page with "Draft saved. Only you can see it."', async () => {
-    const spy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(json(201, { id: 42, status: 'DRAFT' }))
+    const spy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (url) => String(url).includes('/api/organizer/store') ? json(200, { games: [] }) : json(201, { id: 42, status: 'DRAFT' }))
     renderPage()
+    fireEvent.change(screen.getByLabelText(/^Game/), { target: { value: 'POKEMON' } })
     fireEvent.click(screen.getByRole('button', { name: 'SAVE DRAFT' }))
 
     expect(await screen.findByTestId('path')).toHaveTextContent('/organizer/events/42/edit')
     expect(screen.getByTestId('toast')).toHaveTextContent('Draft saved. Only you can see it.')
-    expect(spy.mock.calls[0][0]).toBe('/api/events')
+    expect(eventCall(spy)[0]).toBe('/api/events')
     expect(sentBody(spy).saveAsDraft).toBe(true)
   })
 
   it('PUBLISH EVENT does not send saveAsDraft and still says "Your event is live."', async () => {
-    const spy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(json(201, { id: 43, status: 'PUBLISHED' }))
+    const spy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (url) => String(url).includes('/api/organizer/store') ? json(200, { games: [] }) : json(201, { id: 43, status: 'PUBLISHED' }))
     renderPage()
+    fireEvent.change(screen.getByLabelText(/^Game/), { target: { value: 'POKEMON' } })
     fireEvent.click(screen.getByRole('button', { name: 'PUBLISH EVENT' }))
 
     expect(await screen.findByTestId('toast')).toHaveTextContent('Your event is live.')
@@ -62,8 +66,9 @@ describe('TEST-K-01 (C) SAVE DRAFT on the create page (AC-K-01, UX-05)', () => {
 
   it('while a draft is saving, both buttons are disabled and SAVE DRAFT reads "Saving…"', async () => {
     let resolve!: (r: Response) => void
-    vi.spyOn(globalThis, 'fetch').mockReturnValue(new Promise<Response>((r) => (resolve = r)))
+    vi.spyOn(globalThis, 'fetch').mockImplementation((url) => (String(url).includes('/api/organizer/store') ? Promise.resolve(json(200, { games: [] })) : new Promise<Response>((r) => (resolve = r))))
     renderPage()
+    fireEvent.change(screen.getByLabelText(/^Game/), { target: { value: 'POKEMON' } })
     fireEvent.click(screen.getByRole('button', { name: 'SAVE DRAFT' }))
 
     expect(await screen.findByRole('button', { name: /Saving…/ })).toBeDisabled()

@@ -88,6 +88,7 @@ UAT findings from Team 1 KitLoop are Issues #56–#64; the triage is Part 4 of t
 | S2-04 Feature-L: edit an event and change its capacity (E-13, edit page, History panel); UAT #64 | [#81](https://github.com/GGital/My-little-pony/issues/81) | `feature/s2-04-edit-event` · (PR to be opened) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (requested when the PR opens) | In review: red `0906f89`, green `9f71b81` |
 | Merge rules for parallel PRs: `AGENTS.md`, `CLAUDE.md`, `merge=union`, evidence only when asked, D-39 → D-40 | — (chore, no Issue) | `chore/merge-rules` · [#110](https://github.com/GGital/My-little-pony/pull/110) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (MeldyRose) | In review (PR #110) |
 | S2-06 Feature-M: registration deadline (E-06, E-13, E-09, E-05; form field; "Registration closes …") | [#83](https://github.com/GGital/My-little-pony/issues/83) | `feature/s2-06-deadline` · [#111](https://github.com/GGital/My-little-pony/pull/111) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (MeldyRose) | In review (PR #111): red `d348686`, green `3886e35` |
+| S2-09 Feature-U: game per event, store profile (games, contact), game filter (E-23, E-04 `game`, store on E-05) | [#85](https://github.com/GGital/My-little-pony/issues/85) | `feature/s2-09-game-store-profile` | MeldyRose (drafted with Claude Code, see `ai-use.md`) | (filled in from the PR's review record) | In review (PR [#113](https://github.com/GGital/My-little-pony/pull/113)): red `9f3b967`, green `19bd097`; review 2 red `0ed888b`, `48e3ab1`, green `7af6773` |
 
 ## 6. Lab 7: Sprint 1 maintenance (CH-13)
 
@@ -150,3 +151,5 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | #110 | 26 Nov 2026 | §5 merge-rules row; §7 points at `AGENTS.md` §2 | Team (AI-assisted) |
 | S2-06 | 26 Nov 2026 | §5: S2-06 row | Team (AI-assisted) |
 | S2-07 | 26 Nov 2026 | S2-07 Feature-N cancel registration row | Team (AI-assisted) |
+| S2-09 | 26 Nov 2026 | S2-09 Feature-U game and store profile row | Team (AI-assisted) |
+| S2-09 | 26 Nov 2026 | S2-09 row: review 2 of [#113](https://github.com/GGital/My-little-pony/pull/113) (red and green commits added) | Team (AI-assisted) |

@@ -6,6 +6,7 @@ import { recordEventChange } from './changes.js'
 import { decideDeadline } from './deadline.js'
 import { validateEventTimes } from './event-rules.js'
 import { getEventDetail, type EventDetail } from './events.read.js'
+import { GAMES } from './store-contact.js'
 
 export class EventTimeError extends Error {
   readonly field: 'startAt' | 'endAt' | 'registrationDeadline'
@@ -75,6 +76,8 @@ export const createEventInputSchema = z
     format: z.enum(['CONSTRUCTED', 'SEALED', 'DRAFT'], {
       message: 'Choose a format.',
     }),
+    // Feature-U (FR-29): optional in the API, OTHER when absent, so Sprint 1 bodies stay valid. The UI requires it.
+    game: z.enum(GAMES, { message: 'Choose a game.' }).optional(),
     venueName: requiredTrimmedString(1, 80, 'Enter the venue name.'),
     venueAddress: requiredTrimmedString(1, 200, 'Enter the venue address.'),
     city: requiredTrimmedString(1, 60, 'Enter the city.'),
@@ -142,6 +145,7 @@ export async function createEvent(
         title: input.title,
         type: input.type,
         format: input.format,
+        game: input.game ?? 'OTHER',
         venueName: input.venueName,
         venueAddress: input.venueAddress,
         city: input.city,

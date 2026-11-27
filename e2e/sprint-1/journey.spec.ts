@@ -17,6 +17,7 @@ test('JRN-01 — publish → register → My Events → registration list (FR-06
   await page.locator('#startAt').fill(bangkokLocal(6, 18))
   await page.locator('#endAt').fill(bangkokLocal(6, 22))
   await page.locator('#capacity').fill('12')
+  await page.getByLabel(/^Game/).selectOption('POKEMON')
   await page.getByRole('button', { name: 'PUBLISH EVENT' }).click()
   await expect(page.getByText('Your event is live.')).toBeVisible()
   const eventPath = new URL(page.url()).pathname

@@ -27,6 +27,7 @@ test.describe('TEST-L6-59 (E2E) — a 120-character contact stays inside the eve
     await page.locator('#endAt').fill(bangkokLocal(10, 22))
     await page.locator('#capacity').fill('8')
     await page.locator('#contact').fill(LONG_CONTACT)
+    await page.getByLabel(/^Game/).selectOption('POKEMON')
     await page.getByRole('button', { name: 'PUBLISH EVENT' }).click()
 
     await expect(page).toHaveURL(/\/events\/(\d+)$/)
@@ -45,7 +46,7 @@ test.describe('TEST-L6-59 (E2E) — a 120-character contact stays inside the eve
       const m = await page.evaluate((contact) => {
         const right = (el: Element | null) => (el ? el.getBoundingClientRect().right : Number.NaN)
         const panel = document.querySelector('.app-panel')
-        const text = [...document.querySelectorAll('.info-row div')].find((d) => d.textContent === contact) ?? null
+        const text = [...document.querySelectorAll('.store-host__own')].find((d) => d.textContent === `Contact for this event: ${contact}`) ?? null
         return {
           pageScroll: document.documentElement.scrollWidth,
           innerWidth: window.innerWidth,
