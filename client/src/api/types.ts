@@ -70,7 +70,7 @@ export interface EventDetail extends EventSummary {
 /** One row of an event's change history, E-17 (Sprint 2 contracts §0.1, SR-08). Only the display name, never an id. */
 export interface EventChange {
   id: number;
-  field: 'status' | 'details' | 'capacity' | 'deadline';
+  field: 'status' | 'details' | 'capacity' | 'deadline' | 'attendance'; // attendance: Sprint 3 Feature-P
   oldValue: string | null;
   newValue: string;
   changedAt: string;

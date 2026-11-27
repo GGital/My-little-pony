@@ -55,6 +55,8 @@ function describe(c: EventChange): string {
   if (c.field === 'capacity') return `changed capacity from ${c.oldValue} to ${c.newValue}`
   if (c.field === 'deadline') return 'changed the registration deadline'
   if (c.field === 'details') return `changed ${c.newValue.split(', ').map((f) => FIELD_NAMES[f] ?? f).join(', ')}`
+  // Sprint 3 Feature-P (FR-28): E-17 names the organizer only, so the line names no player.
+  if (c.field === 'attendance') return c.newValue === 'CHECKED_IN' ? 'checked a player in' : 'undid a check-in'
   if (c.newValue === 'CANCELLED') return 'cancelled the event'
   if (c.oldValue === 'DRAFT') return 'published the draft'
   return c.newValue === 'DRAFT' ? 'saved the draft' : 'published the event'
