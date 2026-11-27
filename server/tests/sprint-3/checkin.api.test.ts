@@ -72,6 +72,8 @@ const attendanceChanges = (eventId: number) =>
 beforeAll(async () => {
   await resetDb()
   await seed(prisma, SEED_PASSWORD)
+  // Sign in on the fixed clock: a session made on the real clock has expired by T (2030).
+  setNow(T)
   cookies.quantum = await sessionFor('quantum@organizer.example')
   cookies.dragon = await sessionFor('dragon@organizer.example')
   cookies.mint = await sessionFor('mint@player.example')
