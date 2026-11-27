@@ -7,8 +7,10 @@ export const Notice: React.FC<{
   children: React.ReactNode
   onClose?: () => void
   role?: 'alert' | 'status'
-}> = ({ tone, children, onClose, role = tone === 'error' ? 'alert' : 'status' }) => (
-  <div className={`notice notice--${tone}`} role={role}>
+  /** Lets a page move focus to the message (contracts: sign-in 429). Makes the box focusable by script only. */
+  boxRef?: React.Ref<HTMLDivElement>
+}> = ({ tone, children, onClose, boxRef, role = tone === 'error' ? 'alert' : 'status' }) => (
+  <div className={`notice notice--${tone}`} role={role} ref={boxRef} tabIndex={boxRef ? -1 : undefined}>
     <Icon name={tone === 'error' || tone === 'warning' ? 'alert' : 'check'} />
     <span className="notice__body">{children}</span>
     {onClose && (
