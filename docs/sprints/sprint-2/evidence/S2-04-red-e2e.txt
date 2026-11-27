@@ -1,0 +1,63 @@
+Sprint 2 · S2-04 (Issue #81) · RED, E2E TEST-L-01 and the S2-04 evidence spec (before side)
+Commit: 0906f89 (tests only)
+Time: 2026-11-25T15:49:05Z
+Command: S2_SIDE=before npx playwright test e2e/sprint-2/edit.spec.ts e2e/sprint-2/s2-04-evidence.spec.ts --reporter=line
+
+[WebServer] Environment variables loaded from .env
+
+[WebServer] (node:20280) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[WebServer] (Use `node --trace-deprecation ...` to show where the warning was created)
+
+
+Running 6 tests using 1 worker
+
+[1/6] [chromium] › e2e\sprint-2\edit.spec.ts:8:5 › TEST-L-01 (E2E) — dashboard → Edit EV-1, change the title: "Changes saved.", public page and History agree (AC-L-01)
+[chromium] › e2e\sprint-2\edit.spec.ts:8:5 › TEST-L-01 (E2E) — dashboard → Edit EV-1, change the title: "Changes saved.", public page and History agree (AC-L-01)
+(node:14768) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+  1) [chromium] › e2e\sprint-2\edit.spec.ts:8:5 › TEST-L-01 (E2E) — dashboard → Edit EV-1, change the title: "Changes saved.", public page and History agree (AC-L-01) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('link', { name: 'Edit Friday Night Constructed' })
+
+
+       9 |   await signIn(page, EMAIL.quantum)
+      10 |   await page.goto('/organizer')
+    > 11 |   await page.getByRole('link', { name: 'Edit Friday Night Constructed' }).click()
+         |                                                                           ^
+      12 |   await expect(page).toHaveURL(/\/organizer\/events\/1\/edit$/)
+      13 |
+      14 |   const save = page.getByRole('button', { name: 'SAVE CHANGES' })
+        at <repo>\e2e\sprint-2\edit.spec.ts:11:75
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\sprint-2-edit-TEST-L-01-E2-f6fbf--and-History-agree-AC-L-01--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\sprint-2-edit-TEST-L-01-E2-f6fbf--and-History-agree-AC-L-01--chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\sprint-2-edit-TEST-L-01-E2-f6fbf--and-History-agree-AC-L-01--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\sprint-2-edit-TEST-L-01-E2-f6fbf--and-History-agree-AC-L-01--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[2/6] [chromium] › e2e\sprint-2\s2-04-evidence.spec.ts:38:5 › S2-04-U1 Quantum Cards opens the edit page of EV-1 from the event page
+[chromium] › e2e\sprint-2\s2-04-evidence.spec.ts:38:5 › S2-04-U1 Quantum Cards opens the edit page of EV-1 from the event page
+(node:18856) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[3/6] [chromium] › e2e\sprint-2\s2-04-evidence.spec.ts:52:5 › S2-04-U2 the dashboard rows offer Edit
+[4/6] [chromium] › e2e\sprint-2\s2-04-evidence.spec.ts:62:5 › S2-04-U3 saving a title change, then a capacity below the registrations
+[5/6] [chromium] › e2e\sprint-2\s2-04-evidence.spec.ts:86:5 › S2-04-U4 Dragon's Den opens the edit page of its started event EV-4
+[6/6] [chromium] › e2e\sprint-2\s2-04-evidence.spec.ts:97:5 › S2-04-A1 E-13 on EV-1 for each role, a capacity below the registrations, and the history it leaves
+  1 failed
+    [chromium] › e2e\sprint-2\edit.spec.ts:8:5 › TEST-L-01 (E2E) — dashboard → Edit EV-1, change the title: "Changes saved.", public page and History agree (AC-L-01) 
+  5 passed (1.2m)

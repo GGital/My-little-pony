@@ -66,11 +66,12 @@ export function insertRegistrationRaw(eventId: number, participantId: number, st
 
 /** Row count of every table, read independently of the code under test (STS §1.1 rule 3). */
 export async function tableCounts() {
-  const [users, sessions, events, registrations] = await Promise.all([
+  const [users, sessions, events, registrations, eventChanges] = await Promise.all([
     prisma.user.count(),
     prisma.session.count(),
     prisma.event.count(),
     prisma.registration.count(),
+    prisma.eventChange.count(), // Sprint 2 (SR-08): history rows count too, so "GET never writes" watches them
   ])
-  return { users, sessions, events, registrations }
+  return { users, sessions, events, registrations, eventChanges }
 }

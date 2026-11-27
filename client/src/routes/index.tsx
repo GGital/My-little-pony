@@ -9,8 +9,10 @@ import { EventList } from '../pages/EventList';
 import { EventDetail } from '../pages/EventDetail';
 import { MyEvents } from '../pages/MyEvents';
 import { CreateEvent } from '../pages/organizer/CreateEvent';
+import { EditEvent } from '../pages/organizer/EditEvent';
 import { Dashboard as OrganizerDashboard } from '../pages/organizer/Dashboard';
 import { Registrations } from '../pages/organizer/Registrations';
+import { StoreProfile } from '../pages/organizer/StoreProfile';
 
 export const AppRoutes: React.FC = () => {
   // #58: when another tab switched the account, remount the page so its data is loaded for the new account.
@@ -43,10 +45,26 @@ export const AppRoutes: React.FC = () => {
           }
         />
         <Route
+          path="/organizer/store"
+          element={
+            <RequireRole role="ORGANIZER">
+              <StoreProfile />
+            </RequireRole>
+          }
+        />
+        <Route
           path="/organizer/events/new"
           element={
             <RequireRole role="ORGANIZER">
               <CreateEvent />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/organizer/events/:id/edit"
+          element={
+            <RequireRole role="ORGANIZER">
+              <EditEvent />
             </RequireRole>
           }
         />

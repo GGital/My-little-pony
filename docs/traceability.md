@@ -1,7 +1,7 @@
 # Requirements-to-Features Traceability
 
-Project: **TCG Event Hub** · Document version: v0.4.2 — Lab 7 change CH-13 results (Issue #77); v0.1 approved in PR #1; CH-10 in PR 2; Sprint 1 results in I-12
-Inputs: [`docs/srs.md`](srs.md) v0.5 · [`docs/features.md`](features.md) v0.3 · Diagrams: [`docs/diagrams/`](diagrams/README.md)
+Project: **TCG Event Hub** · Document version: v0.12 — Sprint 2 release records (S2-08), with Lab 7 CH-13 merged in (v0.8 reviewed in PR #76: Sprint 2 and 3 contracts, CH-11, CH-12); v0.1 approved in PR #1; CH-10 in PR 2; Sprint 1 results in I-12
+Inputs: [`docs/srs.md`](srs.md) v0.7 · [`docs/features.md`](features.md) v0.5 · Diagrams: [`docs/diagrams/`](diagrams/README.md)
 
 This is step 3 of the course design process. Every requirement is followed through four links, so anyone can
 answer "where is this built, when, and how do we know it works?":
@@ -15,8 +15,9 @@ answer "where is this built, when, and how do we know it works?":
 - **Sprint 1** requirements already have **planned acceptance-criterion IDs** (`AC-<feature>-nn`). The Sprint 1
   feature contracts define each one fully, and the Software Test Specification gives each a test with the same
   number (`AC-G-02` → `TEST-G-02`).
-- **Sprint 2 and 3** requirements need a feature, a sprint and a verification method now. Their AC and test IDs
-  are added when those contracts are written (course rule, Deliverable 1 §3.2).
+- **Sprint 2 and 3** requirements now carry their AC and planned test IDs from the Sprint 2 and Sprint 3
+  contracts (v0.5). Their status stays **Planned** until a test has actually run on a release commit: a planned
+  test is never shown as done (Deliverable 2 §3.4).
 - A requirement shared by several features is **established** in one sprint, by the first feature listed, and
   **re-verified** (rerun as a regression test) in the later sprints shown.
 
@@ -34,6 +35,9 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | P-03 Players can't see if seats are left | FR-11, FR-12, FR-13 | Feature-F, Feature-J | 1, 2 |
 | P-04 Paper check-in, no-shows unknown | FR-21, FR-22, BR-18, BR-19, BR-20 | Feature-P, Feature-Q | 3 |
 | P-05 No attendance view across events | FR-23, FR-24 | Feature-Q, Feature-R | 3 |
+| P-06 Event game unclear (CH-11) | FR-29, FR-30 | Feature-U | 2 |
+| P-07 Stores look alike in the list (CH-11) | FR-30, FR-31 | Feature-U, Feature-V | 2, 3 |
+| P-08 Rounds paired and added up by hand (CH-12) | FR-32 … FR-37, BR-21 … BR-24 | Feature-W, Feature-X | 3 |
 
 ---
 
@@ -48,29 +52,38 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | FR-03 | Current-user request | Feature-A | Sprint 1 | AC-A-03 · I → **Pass**: TEST-A-03 | 2, 3 |
 | FR-04 | Sign-out ends the session | Feature-A | Sprint 1 | AC-A-04 · I, E → **Pass**: TEST-A-04 | 2, 3 |
 | FR-05 | Role navigation; protected pages redirect | Feature-C | Sprint 1 | AC-C-01, AC-C-02 · E → **Pass**: TEST-C-01, TEST-C-02 | 2, 3 |
-| FR-06 | Create and publish an event; owner recorded | Feature-D | Sprint 1 | AC-D-01 · I, E → **Pass**: TEST-D-01, JRN-01 | 2 |
+| FR-06 | Create and publish an event; owner recorded | Feature-D | Sprint 1 | AC-D-01 · I, E → **Pass**: TEST-D-01, JRN-01. Sprint 2 re-verification (S2-09) **Pass**: TEST-U-01 (E-06 with and without `game`; the create form requires one) | 2 |
 | FR-07 | Organizer's own events with counts | Feature-E | Sprint 1 | AC-E-01 · I, E → **Pass**: TEST-E-01 | 2 |
-| FR-08 | Draft events | Feature-K | Sprint 2 | I (draft hidden from others), E | 3 |
-| FR-09 | Edit event, capacity, deadline | Feature-L, Feature-M | Sprint 2 | U (limits), I, E | 3 |
-| FR-10 | Cancel event with reason, cascade | Feature-O | Sprint 2 | I (one transaction), E | 3 |
+| FR-08 | Draft events | Feature-K | Sprint 2 | AC-K-01 … 05 · I, C, E → **Pass**: TEST-K-01 … 05 (red `47b3838`, green `40f5687`), JRN-03 (S2-08) | 3 |
+| FR-09 | Edit event, capacity, deadline | Feature-L, Feature-M | Sprint 2 | AC-L-01 … 06, AC-M-01 … 04 · U, I, C, E → **Pass**: TEST-L-01 … 06 (red `0906f89`, green `9f71b81`), TEST-M-01 … 03 (red `d348686`, green `3886e35`), TEST-M-04 (S2-07, green `62db165`), JRN-03 (S2-08) | 3 |
+| FR-10 | Cancel event with reason, cascade | Feature-O | Sprint 2 | AC-O-01 … 03 · I, C, E → **Pass**: TEST-O-01 … 03 (red `47e1cee`, green `c2e0238`) | 3 |
 | FR-11 | Public list of upcoming events with counts | Feature-F | Sprint 1 | AC-F-01 · I, E → **Pass**: TEST-F-01 | 2 (with filters) |
 | FR-12 | Event detail with server-decided action; not found | Feature-F | Sprint 1 | AC-F-02, AC-F-03 · I, E → **Pass**: TEST-F-02, TEST-F-03 | 2, 3 |
-| FR-13 | Search, filters, paging | Feature-J | Sprint 2 | I, E | 3 (NFR-12) |
-| FR-14 | Past/cancelled only on request, never registrable | Feature-J | Sprint 2 | I | 3 |
+| FR-13 | Search, filters, paging | Feature-J | Sprint 2 | AC-J-01 … 03, AC-J-05 · U, I, C, E → **Pass**: TEST-J-01 … 03, TEST-J-05 (red `82b7aa9`, green `2c5e075`). Sprint 2 re-verification (S2-09) **Pass**: TEST-U-02 (`game` filter with `q`, JRN-04) | 3 (NFR-12) |
+| FR-14 | Past/cancelled only on request, never registrable | Feature-J | Sprint 2 | AC-J-04, AC-O-02 · I, E → TEST-J-04 **Pass** (`2c5e075`); TEST-O-02 **Pass** (red `47e1cee`, green `c2e0238`) | 3 |
 | FR-15 | Register → `REGISTERED` record returned | Feature-G | Sprint 1 | AC-G-01 · I, E → **Pass**: TEST-G-01, JRN-01 | 2, 3 |
 | FR-16 | Rejections store nothing and give a reason | Feature-G, SR-02 | Sprint 1 | AC-G-02 … AC-G-05 · I, E → **Pass**: TEST-G-02, TEST-G-03, TEST-G-04, TEST-G-05 | 2 (deadline) |
 | FR-17 | My Events: own registrations | Feature-H | Sprint 1 | AC-H-01 · I, E → **Pass**: TEST-H-01, JRN-01 | 2 (statuses) |
 | FR-18 | Organizer's registration list for own event | Feature-I | Sprint 1 | AC-I-01 · I, E → **Pass**: TEST-I-01, JRN-01 | 3 (check-in) |
-| FR-19 | Participant cancels before deadline | Feature-N | Sprint 2 | I, E | 3 |
-| FR-20 | Re-register after cancelling | Feature-N | Sprint 2 | I | 3 |
-| FR-21 | Check in during window | Feature-P | Sprint 3 | I, E | — |
-| FR-22 | Undo check-in | Feature-P | Sprint 3 | I | — |
-| FR-23 | Per-event attendance report | Feature-Q | Sprint 3 | U (rates), I | — |
-| FR-24 | Organizer summary over a date range | Feature-R | Sprint 3 | U, I | — |
-| FR-25 | Participant event history | Feature-S | Sprint 3 | I, E | — |
+| FR-19 | Participant cancels before deadline | Feature-N | Sprint 2 | AC-N-01, AC-N-04, AC-N-05 · I, C, E → **Pass**: TEST-N-01, TEST-N-04, TEST-N-05 (red `95d8e69`, green `62db165`) | 3 |
+| FR-20 | Re-register after cancelling | Feature-N | Sprint 2 | AC-N-02, AC-N-03 · I → **Pass**: TEST-N-02, TEST-N-03 (red `95d8e69`, green `62db165`) | 3 |
+| FR-21 | Check in during window | Feature-P | Sprint 3 | AC-P-01, AC-P-02, AC-P-05 · U, I, C, E → **Planned**: TEST-P-01, TEST-P-02, TEST-P-05 (Sprint 3 STS) | — |
+| FR-22 | Undo check-in | Feature-P | Sprint 3 | AC-P-03 · I, C → **Planned**: TEST-P-03 (Sprint 3 STS) | — |
+| FR-23 | Per-event attendance report | Feature-Q | Sprint 3 | AC-Q-01 … 05 · U, I, C, E → **Planned**: TEST-Q-01 … 05 (Sprint 3 STS) | — |
+| FR-24 | Organizer summary over a date range | Feature-R | Sprint 3 | AC-R-01 … 05 · U, I, C, E → **Planned**: TEST-R-01 … 05 (Sprint 3 STS) | — |
+| FR-25 | Participant event history | Feature-S | Sprint 3 | AC-S-01 … 05 · I, C, E → **Planned**: TEST-S-01 … 05 (Sprint 3 STS) | — |
 | FR-26 | Sign in, then return to the same event | Feature-C | Sprint 1 | AC-C-03 · E → **Pass**: TEST-C-03 | 2, 3 |
 | FR-27 | Header shows name, role, sign-out | Feature-C | Sprint 1 | AC-C-04 · E → **Pass**: TEST-C-04 | 2, 3 |
-| FR-28 | Who and when for every state change | SR-08 (Feature-L, N, O, P) | Sprint 2 | I (fields set from the session) | 3 (check-in) |
+| FR-28 | Who and when for every state change | SR-08 (Feature-L, N, O, P) | Sprint 2 | AC-SR8-01 … 04, AC-L-01, AC-N-01, AC-O-01 (Sprint 2); AC-P-01, AC-P-03 (Sprint 3) · I → AC-O-01 via TEST-O-01 **Pass** (red `47e1cee`, green `c2e0238`); AC-N-01 via TEST-N-01 **Pass** (red `95d8e69`, green `62db165`); TEST-SR8-01 … 04 **Pass** (red `7c3ad62`, green `dc987f9` + `dfa124f`; TEST-SR8-01 capacity step `9f71b81`, deadline step `3886e35`), JRN-03 (S2-08); **Planned**: TEST-P-01, TEST-P-03 (Sprint 3 STS) | 3 (check-in) |
+| FR-29 | Game of each event; filter by game (CH-11) | Feature-U | Sprint 2 | AC-U-01, AC-U-02 · U, I, C, E → **Pass**: TEST-U-01, TEST-U-02, TEST-U-06 (red `9f3b967`, green `19bd097`; review 2 green `7af6773`) | 3 |
+| FR-30 | Store profile: games and contact (Sprint 2), logo (Sprint 3) (CH-11) | Feature-U, Feature-V | Sprint 2 | AC-U-03, AC-U-04, AC-U-05 · U, I, C → **Pass**: TEST-U-03, TEST-U-04, TEST-U-05, TEST-U-07, TEST-U-08 (red `9f3b967`, green `19bd097`; review 2 green `7af6773`); logo AC-V-01 → TEST-V-01 (Sprint 3 STS) | 3 |
+| FR-31 | Event banner, playmat fallback (CH-11) | Feature-V | Sprint 3 | AC-V-02 … 07 · U, I, C, E, M → **Planned**: TEST-V-02 … 07 (Sprint 3 STS) | — |
+| FR-32 | Start a tournament from checked-in players (CH-12) | Feature-W | Sprint 3 | AC-W-01, AC-W-02 · I, C → **Planned**: TEST-W-01, TEST-W-02 (Sprint 3 STS) | — |
+| FR-33 | Swiss pairing each round, no rematch, byes (CH-12) | Feature-W | Sprint 3 | AC-W-03, AC-W-04, AC-W-06 · U (property), I → **Planned**: TEST-W-03, TEST-W-04, TEST-W-06 (Sprint 3 STS) | — |
+| FR-34 | Record and correct match results (CH-12) | Feature-X | Sprint 3 | AC-X-01, AC-X-02 · U, I → **Planned**: TEST-X-01, TEST-X-02 (Sprint 3 STS) | — |
+| FR-35 | Standings with tiebreakers; finish; winner (CH-12) | Feature-X | Sprint 3 | AC-X-03, AC-X-04, AC-X-06 · U, I, C → **Planned**: TEST-X-03, TEST-X-04, TEST-X-06 (Sprint 3 STS) | — |
+| FR-36 | Player sees own table, opponent, record, placing (CH-12) | Feature-X, Feature-S | Sprint 3 | AC-X-05, AC-X-04 · I, C → **Planned**: TEST-X-05, TEST-X-04 (Sprint 3 STS) | — |
+| FR-37 | Drop a player between rounds (CH-12) | Feature-W | Sprint 3 | AC-W-04 · I → **Planned**: TEST-W-04 (Sprint 3 STS) | — |
 
 ### 2.2 Business rules
 
@@ -81,21 +94,25 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | BR-03 | Required fields and lengths | Feature-D | Sprint 1 | AC-D-04 · U, I → **Pass**: TEST-D-04 | 2 |
 | BR-04 | Visibility (published/cancelled public, drafts owner-only); only open events accept registrations | Feature-F, Feature-G | Sprint 1 | AC-F-04, AC-G-04 · I → **Pass**: TEST-F-04, TEST-G-04 | 2 (drafts, cancelled, deadline) |
 | BR-05 | Active registrations never exceed capacity | Feature-G, SR-01 | Sprint 1 | AC-G-02 · U, I → **Pass**: TEST-G-02 | 2, 3 |
-| BR-06 | One active registration per participant per event | Feature-G, SR-01 | Sprint 1 | AC-G-03 · I → **Pass**: TEST-G-03 | 2 (re-register) |
+| BR-06 | One active registration per participant per event | Feature-G, SR-01 | Sprint 1 | AC-G-03 · I → **Pass**: TEST-G-03. Sprint 2 re-verification (S2-07) **Pass**: TEST-N-02, TEST-N-03 | 2 (re-register) |
 | BR-07 | Exactly one winner for the last seat | Feature-G | Sprint 1 | AC-G-06 · I → **Pass**: TEST-G-06, JRN-02 | 2, 3 |
-| BR-08 | Registration deadline | Feature-M, SR-03 | Sprint 2 | U (boundaries), I | 3 |
-| BR-09 | Capacity up to max; down only to active count | Feature-L | Sprint 2 | U, I | 3 |
+| BR-08 | Registration deadline | Feature-M, SR-03 | Sprint 2 | AC-M-01 … 04, AC-SR8-03 · U, I → **Pass**: TEST-M-01 … 03 (green `3886e35`), TEST-M-04 (green `62db165`), TEST-SR8-03 (green `dc987f9`) | 3 |
+| BR-09 | Capacity up to max; down only to active count | Feature-L | Sprint 2 | AC-L-02, AC-L-03 · U, I → **Pass**: TEST-L-02, TEST-L-03 (20 rounds; red `0906f89`, green `9f71b81`) | 3 |
 | BR-10 | Only participants register | Feature-G, Feature-B | Sprint 1 | AC-G-05 · I → **Pass**: TEST-G-05 | 2, 3 |
-| BR-11 | Cancel own, `REGISTERED`, before deadline | Feature-N | Sprint 2 | I | 3 |
-| BR-12 | Event cancel: not started, reason, cascade, final | Feature-O | Sprint 2 | I | 3 |
+| BR-11 | Cancel own, `REGISTERED`, before deadline | Feature-N | Sprint 2 | AC-N-04, AC-N-05 · U, I → **Pass**: TEST-N-04, TEST-N-05 (red `95d8e69`, green `62db165`) | 3 |
+| BR-12 | Event cancel: not started, reason, cascade, final | Feature-O | Sprint 2 | AC-O-01 … 06 · U, I → **Pass**: TEST-O-01 … 06 (red `47e1cee`, green `c2e0238`) | 3 |
 | BR-13 | Only organizers create events | Feature-B, Feature-D | Sprint 1 | AC-D-05 · I → **Pass**: TEST-D-05 | 2 |
 | BR-14 | Organizers manage only their own events | Feature-B, Feature-E, Feature-I | Sprint 1 | AC-E-02, AC-I-02 · I → **Pass**: TEST-E-02, TEST-I-02 | 2, 3 |
-| BR-15 | Frozen fields once started | Feature-L | Sprint 2 | U, I | 3 |
+| BR-15 | Frozen fields once started | Feature-L | Sprint 2 | AC-L-05 · U, I, C → **Pass**: TEST-L-05 (red `0906f89`, green `9f71b81`) | 3 |
 | BR-16 | Own registrations only; public sees counts; organizers see display names | Feature-B, F, H, I | Sprint 1 | AC-F-05, AC-H-02, AC-I-03 · I → **Pass**: TEST-F-05, TEST-H-02, TEST-I-03 | 2, 3 |
 | BR-17 | Identity only from the session | Feature-B | Sprint 1 | AC-B-01 · I → **Pass**: TEST-B-01 | 2, 3 |
-| BR-18 | Check-in: registered, owner, window | Feature-P, SR-03 | Sprint 3 | U (window), I | — |
-| BR-19 | Check in once; undo in window | Feature-P | Sprint 3 | I | — |
-| BR-20 | No-show and attendance-rate rule | Feature-Q, R, S | Sprint 3 | U | — |
+| BR-18 | Check-in: registered, owner, window | Feature-P, SR-03 | Sprint 3 | AC-P-02, AC-P-04, AC-P-05 · U, I → **Planned**: TEST-P-02, TEST-P-04, TEST-P-05 (Sprint 3 STS) | — |
+| BR-19 | Check in once; undo in window | Feature-P | Sprint 3 | AC-P-03, AC-P-04, AC-P-06 · I → **Planned**: TEST-P-03, TEST-P-04, TEST-P-06 (Sprint 3 STS) | — |
+| BR-20 | No-show and attendance-rate rule | Feature-Q, R, S | Sprint 3 | AC-Q-01 … 03, AC-R-01, AC-S-01 … 03 · U, I → **Planned**: TEST-Q-01 … 03, TEST-R-01, TEST-S-01 … 03 (Sprint 3 STS) | — |
+| BR-21 | Tournament start: TOURNAMENT, in progress, ≥ 2 checked in, once; rounds cap | Feature-W | Sprint 3 | AC-W-01, AC-W-02 · U, I → **Planned**: TEST-W-01, TEST-W-02 (Sprint 3 STS) | — |
+| BR-22 | Swiss pairing: no rematch, one bye at most, round must be complete | Feature-W | Sprint 3 | AC-W-03, AC-W-04, AC-W-06, AC-W-07 · U, I → **Planned**: TEST-W-03, TEST-W-04, TEST-W-06, TEST-W-07 (Sprint 3 STS) | — |
+| BR-23 | Results 0–3 each, total 1–5; 3/1/0 points; lock after next round or finish | Feature-X | Sprint 3 | AC-X-01, AC-X-02, AC-X-04 · U, I → **Planned**: TEST-X-01, TEST-X-02, TEST-X-04 (Sprint 3 STS) | — |
+| BR-24 | Standings order: points, OMW%, GW%, OGW% (1/3 floor), registration | Feature-X | Sprint 3 | AC-X-03 · U, I → **Planned**: TEST-X-03 (Sprint 3 STS) | — |
 
 ### 2.3 Non-functional requirements
 
@@ -105,27 +122,29 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | NFR-02 | 403 wrong role, 404 not owner; fixed check order | Feature-B, SR-02 | Sprint 1 | AC-B-03 · I → **Pass**: TEST-B-03 | 2, 3 |
 | NFR-03 | scrypt hash, no password in data or responses | Feature-A | Sprint 1 | AC-A-05 · U, I → **Pass**: TEST-A-05 | — |
 | NFR-04 | HttpOnly SameSite cookie, 8 h absolute, dead after sign-out | Feature-A | Sprint 1 | AC-A-04, AC-A-06 · U, I → **Pass**: TEST-A-04, TEST-A-06 | Lab 5 (deployed) |
-| NFR-05 | 20 simultaneous requests → exactly 1 wins | Feature-G | Sprint 1 | AC-G-06 · I → **Pass**: TEST-G-06, JRN-02 | 2 (with cancel) |
+| NFR-05 | 20 simultaneous requests → exactly 1 wins | Feature-G | Sprint 1 | AC-G-06 · I → **Pass**: TEST-G-06, JRN-02. Sprint 2 re-verification (S2-07) **Pass**: TEST-N-06 (20 rounds) | 2 (with cancel) |
 | NFR-06 | Data survives restart; migrations only; seed reproducible | SR-01 | Sprint 1 | AC-SR1-01, AC-SR1-02 · I, M → **Pass**: TEST-SR1-01, TEST-SR1-02 | 2, 3, Lab 5 |
 | NFR-07 | One safe error shape | SR-02 | Sprint 1 | AC-SR2-01 · I → **Pass**: TEST-SR2-01, TEST-SR2-04 | 2, 3 |
-| NFR-08 | No horizontal scroll at 390 / 768 / 1440 px | SR-05, Feature-C | Sprint 1 (Sprint 1 screens) | AC-SR5-01 · E → **Pass**: TEST-SR5-01 | 2, 3 (all screens) |
+| NFR-08 | No horizontal scroll at 390 / 768 / 1440 px | SR-05, Feature-C | Sprint 1 (Sprint 1 screens) | AC-SR5-01 · E → **Pass**: TEST-SR5-01 | 2 (TEST-SR5-05 and the theme check TEST-C-08, Sprint 2 STS §2.9–2.10), 3 (all screens: AC-SR5-03 → TEST-SR5-03) |
 | NFR-09 | Loading, empty, error, field-validation states | Feature-C | Sprint 1 | AC-C-05 · E → **Pass**: TEST-C-05 | 2, 3 |
-| NFR-10 | Keyboard, labels, contrast, 0 serious axe issues | SR-05 | Sprint 3 | E (axe scan), M (keyboard walk-through) | — |
+| NFR-10 | Keyboard, labels, contrast, 0 serious axe issues | SR-05 | Sprint 3 | AC-SR5-02, AC-SR5-04, AC-Q-05, AC-R-05 · E (axe), M (keyboard) → **Planned**: TEST-SR5-02, TEST-SR5-04, TEST-Q-05, TEST-R-05 (Sprint 3 STS) | 2 (theme contrast: AC-C-08 → **Pass**: TEST-C-08, red `ec3e8a0`, green `e671f38`; S2-08 adds edit, store profile and past and cancelled cards) |
 | NFR-11 | UTC storage, Bangkok display, server clock | SR-03 | Sprint 1 | AC-SR3-01 · U → **Pass**: TEST-SR3-01, TEST-SR3-02 | 2, 3 |
-| NFR-12 | < 500 ms p95 with 500 events / 5,000 registrations | SR-06 | Sprint 3 | M (scripted load run, results recorded) | — |
+| NFR-12 | < 500 ms p95 with 500 events / 5,000 registrations | SR-06 | Sprint 3 | AC-SR6-01, AC-SR6-02 · M (autocannon, recorded) → **Planned**: TEST-SR6-01, TEST-SR6-02 (Sprint 3 STS) | — |
 | NFR-13 | Environment config, no secrets, health check, Docker-ready | SR-04 | Sprint 1 (design) | AC-SR4-01 · I, M → **Pass**: TEST-SR4-01 | Lab 5 (Docker, CI/CD, GCP) |
 | NFR-14 | Every AC linked to a test; every BR has a negative test | SR-07 | Sprint 1 | AC-SR7-01 · M (traceability review) → **Pass**: TEST-SR7-01 | 2, 3 |
 | NFR-15 | Schema validation, no state change by GET, text shown as text | SR-02, Feature-C | Sprint 1 | AC-SR2-02, AC-SR2-03, AC-C-06 · I, E → **Pass**: TEST-SR2-02, TEST-SR2-03, TEST-SR2-05, TEST-C-06 | 2, 3 |
-| NFR-16 | 5 failed sign-ins in 10 min → 429 | Feature-T | Sprint 3 | I (fixed clock) | — |
+| NFR-16 | 5 failed sign-ins in 10 min → 429 | Feature-T | Sprint 3 | AC-T-01 … 05 · U, I, C → **Planned**: TEST-T-01 … 05 (Sprint 3 STS) | — |
+| NFR-17 | Safe image uploads (CH-11) | Feature-V, SR-04 | Sprint 3 | AC-V-01, AC-V-03, AC-V-06 · U, I, M → **Planned**: TEST-V-01, TEST-V-03, TEST-V-06 (Sprint 3 STS) | — |
+| NFR-18 | Pairing 256 entries < 1 s; no rematch in 1,000 tournaments (CH-12) | Feature-W | Sprint 3 | AC-W-03, AC-W-07 · U (property, benchmark) → **Planned**: TEST-W-03, TEST-W-07 (Sprint 3 STS) | — |
 
 ### 2.4 Allocation summary
 
 | Sprint | FR | BR | NFR established | Total |
 |---|---|---|---|---|
 | Sprint 1 | 15 | 12 | 13 | 40 |
-| Sprint 2 | 8 | 5 | 0 | 13 |
-| Sprint 3 | 5 | 3 | 3 | 11 |
-| **All** | **28** | **20** | **16** | **64** |
+| Sprint 2 | 10 | 5 | 0 | 15 |
+| Sprint 3 | 12 | 7 | 5 | 24 |
+| **All** | **37** | **24** | **18** | **79** |
 
 ### 2.5 Shared requirements: who establishes, who re-verifies
 
@@ -145,9 +164,13 @@ own acceptance criteria.
 | NFR-07 | SR-02 (1) | Feature-D, Feature-G (1) | Their rejections use the shared error shape |
 | NFR-08 | SR-05 (1) | Feature-C, Feature-F (1); every later screen | Each new screen is added to the three-width check |
 | NFR-09 | Feature-C (1) | Feature-H (1); every later screen | Each new list or form has loading, empty and error states |
-| NFR-10 | SR-05 (3) | Feature-Q (3) | Report tables are readable by screen readers and keyboard |
+| NFR-10 | SR-05 (3) | Feature-Q (3) | Report tables are readable by screen readers and keyboard | AC-SR5-02, AC-SR5-04, AC-Q-05, AC-R-05 · E (axe), M (keyboard) → **Planned**: TEST-SR5-02, TEST-SR5-04, TEST-Q-05, TEST-R-05 (Sprint 3 STS) 
 | NFR-11 | SR-03 (1) | Feature-D, F (1); Feature-L, M (2); Feature-P (3) | Every time boundary is tested with a fixed clock |
 | NFR-12 | SR-06 (3) | Feature-J (2), Feature-R (3) | Filtered list and summary meet the 500 ms target |
+| BR-14 | Feature-B, E, I (1) | Feature-K, L, O (2); Feature-P, Q, R, V (3) | Every new owner-only endpoint answers 404 to another organizer (TEST-B-03 rows) |
+| BR-17 | Feature-B (1) | Feature-U (2); Feature-V (3) | Store profile and uploads use the session identity only |
+| BR-16 | Feature-B, F, H, I (1) | Feature-X (3), with the D-32 exception | A player sees only their own opponent's display name; no standings, no other names (TEST-X-05) |
+| NFR-05 | Feature-G (1) | Feature-L, N, O (2); Feature-P (3) | Every write that takes the event lock has a 20-round race test (SDS §4.3a) | AC-SR6-01, AC-SR6-02 · M (autocannon, recorded) → **Planned**: TEST-SR6-01, TEST-SR6-02 (Sprint 3 STS) 
 
 ---
 
@@ -217,7 +240,10 @@ has at least one rejection criterion, so NFR-14's "negative test for every BR" h
 
 | Check | Result |
 |---|---|
-| Every FR, BR and NFR in SRS v0.5 appears in the matrix | 64 / 64 — no gaps |
+| Every FR, BR and NFR in SRS v0.7 appears in the matrix | 79 / 79 — no gaps |
+| Every Sprint 2 requirement has at least one planned AC | 15 / 15 (44 ACs in the Sprint 2 contracts) |
+| Every Sprint 3 requirement has at least one planned AC | 24 / 24 (53 ACs in the Sprint 3 contracts) |
+| Requirements implemented but not yet verified | Sprint 2: none, 15 / 15 **Pass** on the release candidate `2075544` (S2-08, 27 Nov 2026; FR-28 Pass for its Sprint 2 ACs). Sprint 3 rows: **Planned** |
 | Every Sprint 1 requirement has at least one planned AC | 40 / 40 |
 | Every planned AC traces back to a requirement | 47 / 47 |
 | Matrix owners agree with the feature inventory | yes. Differences are the later users listed in §2.5 |
@@ -243,8 +269,11 @@ made. Each still needs the teammate's approval in the spec Pull Request.
 | CH-08 | NFR-02 check order 401 → 403 → 404 → 409/422; NFR-04 8 h is absolute; NFR-13 health check | Makes the expected status code unambiguous and prepares Lab 5 | Feature-A, B, SR-02, SR-04 |
 | CH-09 | A-06 seed has ≥ 2 organizers and ≥ 3 participants; C-06 supported browsers; Q-08, Q-09 overlap questions resolved; X-08 reference fixed | Ownership tests need two users of each role; scope questions answered before building | SR-01 |
 | CH-10 | NFR-03 hashing changed from bcrypt to scrypt (D-15) | Chosen while writing the SDS: reuses reviewed TokTickIT code and avoids a native dependency in Docker | Feature-A, AC-A-05 |
+| CH-11 | Store identity and game: FR-29 … FR-31 (FR-30 includes the store's public contact details, D-37), NFR-17, X-01 and X-08 revised, X-14 added (SRS v0.6, 21 Nov 2026). Split by D-24: game in Sprint 2, images in Sprint 3 | Players need to know which card game an event is for, and stores asked to be recognisable in the list | Feature-U, Feature-V (new); Feature-D, J, L (re-verified) |
+| CH-12 | Swiss tournaments: FR-32 … FR-37, BR-21 … BR-24, NFR-18, X-05 narrowed, BR-16 exception D-32 (SRS v0.7, 21 Nov 2026), Sprint 3 (D-36) | Stores run tournaments and need pairings, results and a winner; the brief's "organizer management" covers it once check-in exists | Feature-W, Feature-X (new); Feature-P, S (re-verified) |
 
-No requirement was withdrawn and no ID was renumbered.
+No requirement was withdrawn and no ID was renumbered. CH-11 is a scope addition: it needs the teammate's approval
+in the Sprint 2 contracts PR (S2-00), and the course's approved-scope rule for Deliverable 2.
 
 ---
 
@@ -264,5 +293,16 @@ No requirement was withdrawn and no ID was renumbered.
 | v0.2 | 4 Nov 2026 | CH-10: scrypt instead of bcrypt (NFR-03, AC-A-05) | Team (AI-assisted) |
 | v0.3 | 7 Nov 2026 | Sprint 1 results: every Sprint 1 row names its tests and their result (I-12, STS §6) | Team (AI-assisted) |
 | v0.4 | 7 Nov 2026 | §4.1 coverage checked against SRS v0.5 (64 / 64, same IDs as v0.4); input features v0.3; v0.3 date corrected (7 Nov) | Team (AI-assisted) |
+| v0.5 | 21 Nov 2026 | Inputs SRS v0.6 and features v0.4. Sprint 2 and 3 rows carry AC and planned test IDs from the Sprint 2 (v0.3) and Sprint 3 (v0.1) contracts, status **Planned**; FR-29 … FR-31 and NFR-17 rows (CH-11); P-06, P-07; allocation 68 (Sprint 2: 15, Sprint 3: 13); BR-14, BR-17, NFR-05 re-verification rows; §4.1 checks for Sprint 2 and 3; CH-11 | Team (AI-assisted) |
+| v0.6 | 21 Nov 2026 | CH-12: FR-32 … FR-37, BR-21 … BR-24, NFR-18 rows with AC and planned test IDs (Sprint 3 contracts v0.2), status **Planned**; P-08; allocation 79 (Sprint 3: 24); BR-16 re-verification with the D-32 exception; CH-12 | Team (AI-assisted) |
+| v0.7 | 21 Nov 2026 | FR-30 row gains store contact (AC-U-04, AC-U-05); Sprint 2 has 42 ACs | Team (AI-assisted) |
+| v0.8 | 21 Nov 2026 | D-38 theme: NFR-10 re-verified in Sprint 2 by AC-C-08; NFR-08 points at TEST-C-08; Sprint 2 has 44 ACs | Team (AI-assisted) |
 | v0.4.1 | 23 Nov 2026 | Lab 7 change CH-13 (Issue #77): BR-02 and AC-D-03 rows describe the 60-minute lead time; TEST-D-03 (v2) and TEST-L7-01 … 04 Planned until the CH-13 run | Team (AI-assisted) |
 | v0.4.2 | 24 Nov 2026 | Lab 7 CH-13: BR-02 row Pass (red `f41f52f`, green `72ae022`) | Team (AI-assisted) |
+| v0.9 | 25 Nov 2026 | Lab 7 CH-13 rows (v0.4.1, v0.4.2, Sprint 1 line) merged into the Sprint 2 line: BR-02 Pass with red `f41f52f`, green `72ae022`; Sprint 2 rows unchanged | Team (AI-assisted) |
+| v0.10 | 26 Nov 2026 | S2-03: FR-13 Pass (TEST-J-01 … 03, 05) and FR-14 TEST-J-04 Pass; TEST-O-02 stays Planned | Team (AI-assisted) |
+| v0.11 | 26 Nov 2026 | S2-05: FR-10, FR-14 (TEST-O-02), FR-28 (AC-O-01) and BR-12 Pass | Team (AI-assisted) |
+| S2-07 | 26 Nov 2026 | FR-19, FR-20 and BR-11 Pass (TEST-N-01 … 05); FR-28 (AC-N-01), BR-06 (TEST-N-02, N-03) and NFR-05 (TEST-N-06) re-verified | Team (AI-assisted) |
+| S2-09 | 26 Nov 2026 | FR-29 and FR-30 Pass (TEST-U-01 … 05; red `9f3b967`, green `19bd097`); FR-06 (TEST-U-01) and FR-13 (TEST-U-02) re-verified | Team (AI-assisted) |
+| S2-09 | 26 Nov 2026 | Review 2 of [#113](https://github.com/GGital/My-little-pony/pull/113) (D-41): FR-29 and FR-30 also covered by TEST-U-06 … 08 (green `7af6773`) | Team (AI-assisted) |
+| v0.12 | 27 Nov 2026 | S2-08 release records: covers the S2-07 and S2-09 rows above. FR-08, FR-09, FR-28 (Sprint 2 ACs), BR-08, BR-09, BR-15 and NFR-10 (AC-C-08) Pass from their Issues' green commits, rerun on the release candidate `2075544`; JRN-03 added to FR-08, FR-09 and FR-28; all 15 Sprint 2 requirements Pass; NFR-08 names TEST-SR5-05 (renumbered from TEST-SR5-02, which is Sprint 3's axe scan) | Team (AI-assisted) |

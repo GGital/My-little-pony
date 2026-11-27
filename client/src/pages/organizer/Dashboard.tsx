@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../../api/client'
-import type { EventSummary } from '../../api/types'
+import { ApiError } from '../../api/errors'
+import type { EventDetail, EventSummary } from '../../api/types'
 import { EmptyState } from '../../components/EmptyState'
 import { ErrorState } from '../../components/ErrorState'
 import { EventCard, SeatsChip } from '../../components/EventCard'
 import { Icon } from '../../components/Icon'
 import { Loading } from '../../components/Loading'
+import { Notice } from '../../components/Notice'
 import { PageTop } from '../../components/PageTop'
 import { seatsLeft } from '../../utils/eventDisplay'
 
@@ -23,6 +25,9 @@ const STATUS_LABEL: Record<EventSummary['status'], string> = {
 export const Dashboard: React.FC = () => {
   const [items, setItems] = useState<EventSummary[] | null>(null)
   const [error, setError] = useState<string | null>(null)
+  // Sprint 2 Feature-K (UX-15): Publish on a draft row, then a toast or the server's reason.
+  const [publishing, setPublishing] = useState<number | null>(null)
+  const [notice, setNotice] = useState<{ tone: 'success' | 'error'; text: string } | null>(null)
 
   const load = useCallback(async () => {
     setItems(null)
@@ -39,6 +44,22 @@ export const Dashboard: React.FC = () => {
     load()
   }, [load])
 
+  const publish = async (event: EventSummary) => {
+    if (publishing !== null) return
+    setPublishing(event.id)
+    setNotice(null)
+    try {
+      const published = await api.post<EventDetail>(`/api/organizer/events/${event.id}/publish`)
+      setItems((list) => list && list.map((e) => (e.id === event.id ? { ...e, status: published.status } : e)))
+      setNotice({ tone: 'success', text: 'Your event is live.' })
+    } catch (err) {
+      const text = err instanceof ApiError ? [err.message, ...(err.details ?? []).map((d) => d.message)].join(' ') : 'Something went wrong. Please try again.'
+      setNotice({ tone: 'error', text })
+    } finally {
+      setPublishing(null)
+    }
+  }
+
   const create = (
     <Link to="/organizer/events/new" className="btn-big">
       <Icon name="plus" />
@@ -48,8 +69,23 @@ export const Dashboard: React.FC = () => {
 
   return (
     <>
-      <PageTop title="Dashboard" subtitle="Your events, earliest first, with live seat counts." action={items?.length ? create : undefined} />
+      <PageTop title="Dashboard" subtitle="Your events, earliest first, with live seat counts." action={
+          <>
+            <Link to="/organizer/store" className="btn-soft">
+              Store profile
+            </Link>
+            {items?.length ? create : null}
+          </>
+        }
+      />
       <div className="pbody">
+        {notice && (
+          <div className="page-alerts">
+            <Notice tone={notice.tone} onClose={() => setNotice(null)}>
+              {notice.text}
+            </Notice>
+          </div>
+        )}
         {error ? (
           <ErrorState message={error} onRetry={load} />
         ) : !items ? (
@@ -69,18 +105,36 @@ export const Dashboard: React.FC = () => {
                 aside={
                   <>
                     <div className="chips">
-                      <span className="chip chip--muted">{STATUS_LABEL[event.status] ?? event.status}</span>
-                      <SeatsChip event={event} />
+                      <span className={`chip ${event.status === 'CANCELLED' ? 'chip--cancelled' : 'chip--muted'}`}>{STATUS_LABEL[event.status] ?? event.status}</span>
+                      {event.status !== 'CANCELLED' && <SeatsChip event={event} />}
                     </div>
-                    <span className="event-card__note tabular-nums">{seatsLeft(event.seatsRemaining)}</span>
+                    {event.status !== 'CANCELLED' && <span className="event-card__note tabular-nums">{seatsLeft(event.seatsRemaining)}</span>}
                     <div className="event-card__actions">
-                      <Link
-                        to={`/organizer/events/${event.id}/registrations`}
-                        className="btn-soft btn-soft--primary"
-                        aria-label={`Registrations for ${event.title}`}
-                      >
-                        Registrations
-                      </Link>
+                      {event.status === 'DRAFT' ? (
+                        <button
+                          type="button"
+                          className="btn-soft btn-soft--primary"
+                          onClick={() => void publish(event)}
+                          disabled={publishing !== null}
+                          aria-busy={publishing === event.id}
+                          aria-label={`Publish ${event.title}`}
+                        >
+                          {publishing === event.id ? 'Publishing…' : 'Publish'}
+                        </button>
+                      ) : (
+                        <Link
+                          to={`/organizer/events/${event.id}/registrations`}
+                          className="btn-soft btn-soft--primary"
+                          aria-label={`Registrations for ${event.title}`}
+                        >
+                          Registrations
+                        </Link>
+                      )}
+                      {event.status !== 'CANCELLED' && (
+                        <Link to={`/organizer/events/${event.id}/edit`} className="btn-soft" aria-label={`Edit ${event.title}`}>
+                          Edit
+                        </Link>
+                      )}
                       <Link to={`/events/${event.id}`} className="btn-soft" aria-label={`View ${event.title}`}>
                         View
                       </Link>

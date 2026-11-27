@@ -1,0 +1,180 @@
+Sprint 2 · S2-01 (Issue #78) · RED, E2E (the Sprint 1 specs that list seed data, revised in A1 8694d76)
+Commit: 7c3ad62 (tests only; the seed still has EV-1 … EV-6)
+Time: 2026-11-25T07:22:12Z
+Command: npx playwright test e2e/sprint-1/events.spec.ts e2e/sprint-1/my-events.spec.ts e2e/sprint-1/organizer.spec.ts --reporter=line
+
+[WebServer] Environment variables loaded from .env
+
+
+[WebServer] (node:17236) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[WebServer] (Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 9 tests using 1 worker
+
+[1/9] [chromium] › e2e\sprint-1\events.spec.ts:8:5 › TEST-F-01 (E2E) — /events lists EV-1, 9, 2, 3, 5, 6 in start order; EV-3 shows FULL 2 / 2 (AC-F-01)
+[chromium] › e2e\sprint-1\events.spec.ts:8:5 › TEST-F-01 (E2E) — /events lists EV-1, 9, 2, 3, 5, 6 in start order; EV-3 shows FULL 2 / 2 (AC-F-01)
+(node:9944) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+  1) [chromium] › e2e\sprint-1\events.spec.ts:8:5 › TEST-F-01 (E2E) — /events lists EV-1, 9, 2, 3, 5, 6 in start order; EV-3 shows FULL 2 / 2 (AC-F-01) 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('a.event-card')
+    Expected: 6
+    Received: 5
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" with timeout 5000ms
+      - waiting for locator('a.event-card')
+        - locator resolved to 0 elements
+        - unexpected value "0"
+        8 × locator resolved to 5 elements
+          - unexpected value "5"
+
+
+       9 |   await page.goto('/events')
+      10 |   const cards = page.locator('a.event-card')
+    > 11 |   await expect(cards).toHaveCount(6)
+         |                       ^
+      12 |   await expect(cards.locator('.event-card__title')).toHaveText([
+      13 |     'Friday Night Constructed',
+      14 |     'Early Deadline Sealed',
+        at <repo>\e2e\sprint-1\events.spec.ts:11:23
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\events-TEST-F-01-E2E-—-eve-83722-V-3-shows-FULL-2-2-AC-F-01--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\events-TEST-F-01-E2E-—-eve-83722-V-3-shows-FULL-2-2-AC-F-01--chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\events-TEST-F-01-E2E-—-eve-83722-V-3-shows-FULL-2-2-AC-F-01--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\events-TEST-F-01-E2E-—-eve-83722-V-3-shows-FULL-2-2-AC-F-01--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[2/9] [chromium] › e2e\sprint-1\events.spec.ts:24:5 › TEST-F-03 (E2E) — /events/999999 shows the not-found page (AC-F-03)
+[chromium] › e2e\sprint-1\events.spec.ts:24:5 › TEST-F-03 (E2E) — /events/999999 shows the not-found page (AC-F-03)
+(node:32284) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[3/9] [chromium] › e2e\sprint-1\events.spec.ts:29:5 › TEST-F-04 (E2E) — the started EV-4 shows a disabled REGISTRATION CLOSED (AC-F-04)
+[4/9] [chromium] › e2e\sprint-1\events.spec.ts:36:5 › TEST-C-06 (E2E) — a description with <script> and <b> is shown as text and never runs (AC-C-06)
+[5/9] [chromium] › e2e\sprint-1\my-events.spec.ts:8:5 › TEST-H-01 (E2E) — Mint sees four cards, soonest first, that open their events (AC-H-01)
+  2) [chromium] › e2e\sprint-1\my-events.spec.ts:8:5 › TEST-H-01 (E2E) — Mint sees four cards, soonest first, that open their events (AC-H-01) 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: locator('a.event-card').locator('.event-card__title')
+    Timeout: 5000ms
+    - Expected  - 1
+    + Received  + 0
+
+      Array [
+        "Live Now Casual",
+        "Friday Night Constructed",
+    -   "Early Deadline Sealed",
+        "Last Seat Sealed",
+      ]
+
+    Call log:
+      - Expect "toHaveText" with timeout 5000ms
+      - waiting for locator('a.event-card').locator('.event-card__title')
+        2 × locator resolved to 0 elements
+        7 × locator resolved to 3 elements
+
+
+      10 |   await page.goto('/me/registrations')
+      11 |   const cards = page.locator('a.event-card')
+    > 12 |   await expect(cards.locator('.event-card__title')).toHaveText([
+         |                                                     ^
+      13 |     'Live Now Casual',
+      14 |     'Friday Night Constructed',
+      15 |     'Early Deadline Sealed',
+        at <repo>\e2e\sprint-1\my-events.spec.ts:12:53
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\my-events-TEST-H-01-E2E-—--664df--open-their-events-AC-H-01--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\my-events-TEST-H-01-E2E-—--664df--open-their-events-AC-H-01--chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\my-events-TEST-H-01-E2E-—--664df--open-their-events-AC-H-01--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\my-events-TEST-H-01-E2E-—--664df--open-their-events-AC-H-01--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[6/9] [chromium] › e2e\sprint-1\my-events.spec.ts:24:5 › TEST-H-01 (E2E) — Nok sees the empty state with Find an Event (AC-H-01)
+[chromium] › e2e\sprint-1\my-events.spec.ts:24:5 › TEST-H-01 (E2E) — Nok sees the empty state with Find an Event (AC-H-01)
+(node:23704) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[7/9] [chromium] › e2e\sprint-1\organizer.spec.ts:8:5 › TEST-E-01 (E2E) — /organizer lists exactly Quantum Cards' events in start order (AC-E-01)
+  3) [chromium] › e2e\sprint-1\organizer.spec.ts:8:5 › TEST-E-01 (E2E) — /organizer lists exactly Quantum Cards' events in start order (AC-E-01) 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: locator('.event-card .event-card__title')
+    Timeout: 5000ms
+    - Expected  - 2
+    + Received  + 0
+
+      Array [
+        "Friday Night Constructed",
+    -   "Early Deadline Sealed",
+        "Last Seat Sealed",
+        "Release Weekend Sealed · เปิดกล่องสุดสัปดาห์",
+    -   "Prerelease Planning Night",
+      ]
+
+    Call log:
+      - Expect "toHaveText" with timeout 5000ms
+      - waiting for locator('.event-card .event-card__title')
+        2 × locator resolved to 0 elements
+        7 × locator resolved to 3 elements
+
+
+       9 |   await page.goto('/organizer')
+      10 |   // Sprint 2 (S2-01) seeds EV-9 and the draft EV-7 for Quantum Cards (Sprint 2 contracts §0.4).
+    > 11 |   await expect(page.locator('.event-card .event-card__title')).toHaveText([
+         |                                                                ^
+      12 |     'Friday Night Constructed',
+      13 |     'Early Deadline Sealed',
+      14 |     'Last Seat Sealed',
+        at <repo>\e2e\sprint-1\organizer.spec.ts:11:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\organizer-TEST-E-01-E2E-—--4e682-nts-in-start-order-AC-E-01--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\organizer-TEST-E-01-E2E-—--4e682-nts-in-start-order-AC-E-01--chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\organizer-TEST-E-01-E2E-—--4e682-nts-in-start-order-AC-E-01--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\organizer-TEST-E-01-E2E-—--4e682-nts-in-start-order-AC-E-01--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[8/9] [chromium] › e2e\sprint-1\organizer.spec.ts:21:5 › TEST-I-01 (E2E) — EV-1 lists Mint, Ploy, Boss; EV-6 says "No registrations yet." (AC-I-01)
+[chromium] › e2e\sprint-1\organizer.spec.ts:21:5 › TEST-I-01 (E2E) — EV-1 lists Mint, Ploy, Boss; EV-6 says "No registrations yet." (AC-I-01)
+(node:38732) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[9/9] [chromium] › e2e\sprint-1\organizer.spec.ts:37:5 › TEST-D-01 (E2E) — fill the form and publish: the detail page says "Your event is live." (AC-D-01)
+  3 failed
+    [chromium] › e2e\sprint-1\events.spec.ts:8:5 › TEST-F-01 (E2E) — /events lists EV-1, 9, 2, 3, 5, 6 in start order; EV-3 shows FULL 2 / 2 (AC-F-01) 
+    [chromium] › e2e\sprint-1\my-events.spec.ts:8:5 › TEST-H-01 (E2E) — Mint sees four cards, soonest first, that open their events (AC-H-01) 
+    [chromium] › e2e\sprint-1\organizer.spec.ts:8:5 › TEST-E-01 (E2E) — /organizer lists exactly Quantum Cards' events in start order (AC-E-01) 
+  6 passed (1.0m)

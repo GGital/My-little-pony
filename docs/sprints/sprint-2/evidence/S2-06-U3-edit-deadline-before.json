@@ -1,0 +1,13 @@
+{
+  "id": "S2-06-U3-edit-deadline",
+  "side": "before",
+  "action": "Quantum Cards: /organizer/events/1/edit, Registration closes = start − 2 h, SAVE CHANGES",
+  "expected": "After: \"Changes saved.\" and a History line \"Quantum Cards changed the registration deadline\"",
+  "actual": {
+    "hasField": false,
+    "saved": null
+  },
+  "time": "2026-11-26T03:06:01.834Z",
+  "commit": "d348686",
+  "screenshot": "S2-06-U3-edit-deadline-before.png"
+}

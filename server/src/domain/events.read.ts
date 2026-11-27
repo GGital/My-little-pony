@@ -1,6 +1,12 @@
 import type { EventFormat, EventStatus, EventType, Prisma, PrismaClient } from '@prisma/client'
 import type { Actor } from './actor.js'
+import { bangkokDayRange, escapeLikeWildcards, type SearchQuery } from './search-query.js'
+import { effectiveDeadline, isRegistrationOpen } from './deadline.js'
+import { now } from '../clock.js'
 import { hasStarted, upcomingWhere } from './time.js'
+import { canCancelRegistration } from './registration-rules.js'
+import { storeSelect, toContact, type StoreContact } from './store-profile.js'
+import type { GameValue } from './store-contact.js'
 
 export type ViewerAction =
   | 'MANAGE'
@@ -25,9 +31,16 @@ export type EventSummary = {
   registeredCount: number
   seatsRemaining: number
   status: EventStatus
+  /** Feature-U (FR-29). */
+  game: GameValue
+  /** Feature-U: the host store. The logo is Sprint 3 (Feature-V), so `logoUrl` is null for now. */
+  store: { displayName: string; logoUrl: string | null }
+  /** Sprint 2 Feature-M: the EFFECTIVE deadline, the stored one or startAt (contracts §0.1, BR-08). */
+  registrationDeadline: string
 }
 
-export type EventDetail = EventSummary & {
+export type EventDetail = Omit<EventSummary, 'store'> & {
+  store: { displayName: string; logoUrl: string | null; games: GameValue[]; contact: StoreContact }
   venueAddress: string
   structureNote: string | null
   contact: string | null
@@ -35,27 +48,75 @@ export type EventDetail = EventSummary & {
   organizer: {
     displayName: string
   }
+  /** Public on a cancelled event, null otherwise (Sprint 2 contracts §6, E-05); `cancelledById` is never returned. */
+  cancelReason: string | null
+  cancelledAt: string | null
   hasStarted: boolean
   viewer: {
     action: ViewerAction
     registrationId: number | null
+    /** Sprint 2 Feature-N: the server decides whether the viewer may cancel now. */
+    canCancel: boolean
   }
 }
 
+/** Page size is fixed at 20 (Feature-J contracts §7). */
+const PAGE_SIZE = 20
+
+export type SearchMeta = { page: number; pageSize: number; totalItems: number }
+
 /**
- * E-04: Returns upcoming published events in startAt asc, then id asc order.
- * Registered counts and seats remaining are computed from active registrations.
+ * E-04 (Feature-J, contracts §7): published events that match every filter (AND), startAt then id order, 20 a page.
+ * Drafts are impossible by construction: DRAFT is never in the status list.
+ * `%` and `_` in the text are matched literally, so the text and seat parts run as raw SQL id queries.
  */
-export async function listUpcomingEvents(prisma: PrismaClient): Promise<{ items: EventSummary[] }> {
-  const events = await prisma.event.findMany({
-    where: {
-      status: 'PUBLISHED',
-      ...upcomingWhere(),
-    },
-    orderBy: [{ startAt: 'asc' }, { id: 'asc' }],
-    select: summarySelect,
-  })
-  return { items: events.map(toSummary) }
+export async function searchEvents(
+  prisma: PrismaClient,
+  query: SearchQuery,
+): Promise<{ items: EventSummary[]; meta: SearchMeta }> {
+  const include = query.include ? query.include.split(',').map((p) => p.trim()) : []
+  const and: Prisma.EventWhereInput[] = [
+    { status: include.includes('cancelled') ? { in: ['PUBLISHED', 'CANCELLED'] } : 'PUBLISHED' },
+  ]
+  if (!include.includes('past')) and.push(upcomingWhere())
+  if (query.type) and.push({ type: query.type })
+  if (query.format) and.push({ format: query.format })
+  if (query.game) and.push({ game: query.game })
+  if (query.from) and.push({ startAt: { gte: bangkokDayRange(query.from)[0] } })
+  if (query.to) and.push({ startAt: { lt: bangkokDayRange(query.to)[1] } })
+
+  if (query.q) {
+    // Backslash is PostgreSQL's default LIKE escape. Do not add ESCAPE '\' here: inside a JS template
+    // literal it becomes ESCAPE '' (no escape character) and a literal % or _ would never match.
+    const pattern = `%${escapeLikeWildcards(query.q)}%`
+    const rows = await prisma.$queryRaw<{ id: number }[]>`
+      SELECT "id" FROM "Event"
+      WHERE "title" ILIKE ${pattern} OR "venueName" ILIKE ${pattern} OR "city" ILIKE ${pattern}`
+    and.push({ id: { in: rows.map((r) => r.id) } })
+  }
+
+  if (query.seatsAvailable === 'true') {
+    // registeredCount < capacity; a full event has as many active registrations as seats (contracts §0.1).
+    const full = await prisma.$queryRaw<{ id: number }[]>`
+      SELECT e."id" FROM "Event" e
+      WHERE e."capacity" <= (
+        SELECT count(*) FROM "Registration" r
+        WHERE r."eventId" = e."id" AND r."status" IN ('REGISTERED', 'CHECKED_IN'))`
+    and.push({ id: { notIn: full.map((r) => r.id) } })
+  }
+
+  const where: Prisma.EventWhereInput = { AND: and }
+  const [totalItems, events] = await prisma.$transaction([
+    prisma.event.count({ where }),
+    prisma.event.findMany({
+      where,
+      orderBy: [{ startAt: 'asc' }, { id: 'asc' }],
+      skip: (query.page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+      select: summarySelect,
+    }),
+  ])
+  return { items: events.map(toSummary), meta: { page: query.page, pageSize: PAGE_SIZE, totalItems } }
 }
 
 /** Active registrations count towards the seats (contracts §0.1). */
@@ -73,6 +134,9 @@ export const summarySelect = {
   feeLabel: true,
   capacity: true,
   status: true,
+  game: true,
+  registrationDeadline: true,
+  organizer: { select: { displayName: true } },
   _count: { select: { registrations: { where: { status: ACTIVE_STATUSES } } } },
 } as const
 
@@ -95,6 +159,9 @@ export function toSummary(e: SummaryRow): EventSummary {
     registeredCount,
     seatsRemaining: Math.max(0, e.capacity - registeredCount),
     status: e.status,
+    game: e.game,
+    store: { displayName: e.organizer.displayName, logoUrl: null },
+    registrationDeadline: effectiveDeadline(e).toISOString(),
   }
 }
 
@@ -104,7 +171,7 @@ export async function getEventSummary(prisma: Pick<PrismaClient, 'event'>, event
 }
 
 /**
- * E-05: Returns details of a published event with viewer.action.
+ * E-05: Returns details of a published event, or of the caller's own draft, with viewer.action.
  * viewer.action is evaluated in strict order (contracts 0.2).
  */
 export async function getEventDetail(
@@ -112,10 +179,13 @@ export async function getEventDetail(
   eventId: number,
   actor?: Actor,
 ): Promise<EventDetail | null> {
+  // A draft is visible to its owner only (Sprint 2 contracts §2, BR-04); for anyone else it does not exist.
+  const ownDraft = actor?.role === 'ORGANIZER' ? [{ status: 'DRAFT' as const, organizerId: actor.id }] : []
   const event = await prisma.event.findFirst({
     where: {
       id: eventId,
-      status: 'PUBLISHED',
+      // A cancelled event stays visible to everyone (BR-04).
+      OR: [{ status: { in: ['PUBLISHED', 'CANCELLED'] as EventStatus[] } }, ...ownDraft],
     },
     select: {
       id: true,
@@ -134,10 +204,12 @@ export async function getEventDetail(
       contact: true,
       description: true,
       status: true,
+      cancelReason: true,
+      cancelledAt: true,
+      registrationDeadline: true,
+      game: true,
       organizer: {
-        select: {
-          displayName: true,
-        },
+        select: storeSelect, // explicit columns: the sign-in email is never read (D-14)
       },
       _count: {
         select: {
@@ -158,6 +230,7 @@ export async function getEventDetail(
   const seatsRemaining = Math.max(0, event.capacity - registeredCount)
 
   let activeRegistrationId: number | null = null
+  let canCancel = false
   if (actor && actor.role === 'PARTICIPANT') {
     const reg = await prisma.registration.findFirst({
       where: {
@@ -165,10 +238,16 @@ export async function getEventDetail(
         participantId: actor.id,
         status: { in: ['REGISTERED', 'CHECKED_IN'] },
       },
-      select: { id: true },
+      select: { id: true, status: true },
     })
     if (reg) {
       activeRegistrationId = reg.id
+      canCancel = canCancelRegistration({
+        registrationStatus: reg.status,
+        eventStatus: event.status,
+        startAt: event.startAt,
+        registrationDeadline: event.registrationDeadline,
+      })
     }
   }
 
@@ -180,7 +259,8 @@ export async function getEventDetail(
     action = 'ORGANIZER_CANNOT_REGISTER'
   } else if (activeRegistrationId !== null) {
     action = 'REGISTERED'
-  } else if (started || event.status !== 'PUBLISHED') {
+  } else if (!isRegistrationOpen(event, now())) {
+    // Sprint 2 §0.2: not published, started, or at or after the deadline (the start is never before the deadline).
     action = 'CLOSED'
   } else if (seatsRemaining === 0) {
     action = 'FULL'
@@ -204,15 +284,26 @@ export async function getEventDetail(
     registeredCount,
     seatsRemaining,
     status: event.status,
+    registrationDeadline: effectiveDeadline(event).toISOString(),
     feeLabel: event.feeLabel,
     structureNote: event.structureNote,
     contact: event.contact,
     description: event.description,
-    organizer: event.organizer,
+    organizer: { displayName: event.organizer.displayName },
+    game: event.game,
+    store: {
+      displayName: event.organizer.displayName,
+      logoUrl: null,
+      games: event.organizer.games,
+      contact: toContact(event.organizer),
+    },
+    cancelReason: event.cancelReason,
+    cancelledAt: event.cancelledAt?.toISOString() ?? null,
     hasStarted: started,
     viewer: {
       action,
       registrationId: action === 'REGISTERED' ? activeRegistrationId : null,
+      canCancel: action === 'REGISTERED' && canCancel,
     },
   }
 }

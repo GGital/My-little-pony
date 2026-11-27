@@ -2,15 +2,35 @@ import type { PrismaClient } from '@prisma/client'
 import { ownRegistrationWhere, type Actor } from './actor.js'
 import { summarySelect, toSummary } from './events.read.js'
 import type { ParticipantRegistration } from './registrations.js'
+import { canCancelRegistration } from './registration-rules.js'
 
-const select = { id: true, status: true, createdAt: true, event: { select: summarySelect } } as const
+const select = {
+  id: true,
+  status: true,
+  createdAt: true,
+  cancelledAt: true,
+  event: { select: summarySelect },
+} as const
 
-type Row = { id: number; status: ParticipantRegistration['status']; createdAt: Date; event: Parameters<typeof toSummary>[0] }
+type Row = {
+  id: number
+  status: ParticipantRegistration['status']
+  createdAt: Date
+  cancelledAt: Date | null
+  event: Parameters<typeof toSummary>[0]
+}
 
 const toParticipantRegistration = (row: Row): ParticipantRegistration => ({
   id: row.id,
   status: row.status,
   createdAt: row.createdAt.toISOString(),
+  cancelledAt: row.cancelledAt?.toISOString() ?? null,
+  canCancel: canCancelRegistration({
+    registrationStatus: row.status,
+    eventStatus: row.event.status,
+    startAt: row.event.startAt,
+    registrationDeadline: row.event.registrationDeadline,
+  }),
   event: toSummary(row.event),
 })
 

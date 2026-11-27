@@ -1,0 +1,62 @@
+Sprint 2 · S2-02 (Issue #79) · RED, E2E TEST-K-03 and the S2-02 evidence spec (before side)
+Commit: 47b3838 (tests only)
+Time: 2026-11-25T14:26:46Z
+Command: S2_SIDE=before npx playwright test e2e/sprint-2/drafts.spec.ts e2e/sprint-2/s2-02-evidence.spec.ts --reporter=line
+
+[WebServer] Environment variables loaded from .env
+
+[WebServer] (node:38492) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[WebServer] (Use `node --trace-deprecation ...` to show where the warning was created)
+
+
+Running 5 tests using 1 worker
+
+[1/5] [chromium] › e2e\sprint-2\drafts.spec.ts:8:5 › TEST-K-03 (E2E) — dashboard → Publish on EV-7: "Your event is live." and EV-7 is on /events (AC-K-03)
+[chromium] › e2e\sprint-2\drafts.spec.ts:8:5 › TEST-K-03 (E2E) — dashboard → Publish on EV-7: "Your event is live." and EV-7 is on /events (AC-K-03)
+(node:24152) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+  1) [chromium] › e2e\sprint-2\drafts.spec.ts:8:5 › TEST-K-03 (E2E) — dashboard → Publish on EV-7: "Your event is live." and EV-7 is on /events (AC-K-03) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('.event-card').filter({ hasText: 'Prerelease Planning Night' }).getByRole('button', { name: 'Publish Prerelease Planning Night' })
+
+
+      15 |   const draft = page.locator('.event-card', { hasText: 'Prerelease Planning Night' })
+      16 |   await expect(draft.getByText('Draft', { exact: true })).toBeVisible()
+    > 17 |   await draft.getByRole('button', { name: 'Publish Prerelease Planning Night' }).click()
+         |                                                                                  ^
+      18 |
+      19 |   await expect(page.getByText('Your event is live.')).toBeVisible()
+      20 |   await expect(draft.getByText('Published', { exact: true })).toBeVisible()
+        at <repo>\e2e\sprint-2\drafts.spec.ts:17:82
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\sprint-2-drafts-TEST-K-03--b3441--EV-7-is-on-events-AC-K-03--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\sprint-2-drafts-TEST-K-03--b3441--EV-7-is-on-events-AC-K-03--chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\sprint-2-drafts-TEST-K-03--b3441--EV-7-is-on-events-AC-K-03--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\sprint-2-drafts-TEST-K-03--b3441--EV-7-is-on-events-AC-K-03--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[2/5] [chromium] › e2e\sprint-2\s2-02-evidence.spec.ts:39:5 › S2-02-U1 the create form: SAVE DRAFT next to PUBLISH EVENT
+[chromium] › e2e\sprint-2\s2-02-evidence.spec.ts:39:5 › S2-02-U1 the create form: SAVE DRAFT next to PUBLISH EVENT
+(node:21636) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[3/5] [chromium] › e2e\sprint-2\s2-02-evidence.spec.ts:49:5 › S2-02-U2 saving a draft from the form lands on the draft with the owner-only banner
+[4/5] [chromium] › e2e\sprint-2\s2-02-evidence.spec.ts:73:5 › S2-02-U3 the dashboard publishes EV-7, which then appears on /events
+[5/5] [chromium] › e2e\sprint-2\s2-02-evidence.spec.ts:98:5 › S2-02-A1 the API on the seeded draft EV-7: E-05 for the owner and a visitor, E-09 by Nok, E-14 for each role
+  1 failed
+    [chromium] › e2e\sprint-2\drafts.spec.ts:8:5 › TEST-K-03 (E2E) — dashboard → Publish on EV-7: "Your event is live." and EV-7 is on /events (AC-K-03) 
+  4 passed (1.0m)

@@ -1,0 +1,18 @@
+{
+  "id": "S2-01-U3-my-events",
+  "side": "after",
+  "action": "Mint opens /me/registrations",
+  "expected": "After: 4 cards, \"Early Deadline Sealed\" third",
+  "actual": {
+    "url": "/me/registrations",
+    "titles": [
+      "Live Now Casual",
+      "Friday Night Constructed",
+      "Early Deadline Sealed",
+      "Last Seat Sealed"
+    ]
+  },
+  "time": "2026-11-25T07:33:50.746Z",
+  "commit": "dfa124f",
+  "screenshot": "S2-01-U3-my-events-after.png"
+}

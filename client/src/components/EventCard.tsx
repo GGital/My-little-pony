@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import type { EventSummary } from '../api/types'
 import { formatEventTime } from '../utils/formatEventTime'
 import { dateBadge, label, seatLevel, seatsLeft } from '../utils/eventDisplay'
+import { GameChip } from './GameChip'
 import { Icon } from './Icon'
 
 /** Seats chip: teal, amber when few are left, red FULL at 0 (design-direction §5.1). */
@@ -19,15 +20,27 @@ export const SeatsChip: React.FC<{ event: EventSummary }> = ({ event }) => {
 }
 
 /** Fee chip, then seats chip, then "n seats left" (unless full). */
-export const DefaultAside: React.FC<{ event: EventSummary }> = ({ event }) => (
-  <>
-    <div className="chips">
-      <span className="chip">{event.feeLabel || 'Free'}</span>
-      <SeatsChip event={event} />
-    </div>
-    {event.seatsRemaining > 0 && <span className="event-card__note tabular-nums">{seatsLeft(event.seatsRemaining)}</span>}
-  </>
-)
+export const DefaultAside: React.FC<{ event: EventSummary }> = ({ event }) => {
+  // A cancelled event has no seats to offer: its registrations are all EVENT_CANCELLED, so the counts would read
+  // "n seats left" on an event nobody can join (S2-05 review). Show the red Cancelled chip instead.
+  if (event.status === 'CANCELLED') {
+    return (
+      <div className="chips">
+        <span className="chip">{event.feeLabel || 'Free'}</span>
+        <span className="chip chip--cancelled">Cancelled</span>
+      </div>
+    )
+  }
+  return (
+    <>
+      <div className="chips">
+        <span className="chip">{event.feeLabel || 'Free'}</span>
+        <SeatsChip event={event} />
+      </div>
+      {event.seatsRemaining > 0 && <span className="event-card__note tabular-nums">{seatsLeft(event.seatsRemaining)}</span>}
+    </>
+  )
+}
 
 export interface EventCardProps {
   event: EventSummary
@@ -35,10 +48,14 @@ export interface EventCardProps {
   to?: string
   /** Right-hand column; the fee and seats chips by default. */
   aside?: React.ReactNode
+  /** Search results only (Feature-J): dims a past or cancelled event and names why. */
+  endedChip?: 'Past' | 'Cancelled'
+  /** A list filtered to one game names it in the heading, so the cards leave the chip out (D-41). */
+  hideGame?: boolean
 }
 
 /** One event in a list: date badge, weekday · time, title, type · format, venue · city, chips. */
-export const EventCard: React.FC<EventCardProps> = ({ event, to, aside }) => {
+export const EventCard: React.FC<EventCardProps> = ({ event, to, aside, endedChip, hideGame }) => {
   const badge = dateBadge(event.startAt)
   const body = (
     <>
@@ -47,10 +64,14 @@ export const EventCard: React.FC<EventCardProps> = ({ event, to, aside }) => {
         <span className="date-badge__day">{badge.day}</span>
       </div>
       <div>
-        <div className="event-card__when">{formatEventTime(event.startAt)}</div>
+        <div className="event-card__when">
+          {formatEventTime(event.startAt)}
+          {endedChip && <span className="chip chip--muted">{endedChip}</span>}
+        </div>
         <h3 className="event-card__title">{event.title}</h3>
         <div className="event-card__sub">
           {label(event.type)} · {label(event.format)}
+          {event.game && !hideGame && <GameChip game={event.game} />}
         </div>
         <div className="event-card__venue">
           {event.venueName} · {event.city}
@@ -60,10 +81,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event, to, aside }) => {
     </>
   )
   return to ? (
-    <Link to={to} className="event-card">
+    <Link to={to} className={endedChip ? 'event-card event-card--ended' : 'event-card'}>
       {body}
     </Link>
   ) : (
-    <article className="event-card">{body}</article>
+    <article className={endedChip ? 'event-card event-card--ended' : 'event-card'}>{body}</article>
   )
 }

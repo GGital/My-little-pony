@@ -72,7 +72,25 @@ UAT findings from Team 1 KitLoop are Issues #56–#64; the triage is Part 4 of t
 | L6-61 Signed-in user on /login goes on | [#61](https://github.com/GGital/My-little-pony/issues/61) | `fix/l6-61-login-when-signed-in` · [#72](https://github.com/GGital/My-little-pony/pull/72) | Phattaratorn | Praewa (approved #72, 20 Nov) | Merged 20 Nov (`6f7c5ba`); red `a317329`, green `4dd625b` |
 | L6-59 Long contact stays inside the event page | [#59](https://github.com/GGital/My-little-pony/issues/59) | `fix/l6-59-contact-overflow` · [#73](https://github.com/GGital/My-little-pony/pull/73) | Phattaratorn | Praewa (approved #73, 20 Nov) | Merged 20 Nov (`62615bb`); red `46af54f`, green `5302003` |
 
-## 5. Lab 7: Sprint 1 maintenance (CH-13)
+## 5. Sprints 2 and 3
+
+| Item | Issue | Branch · PR | Built by | Reviewed by | Status |
+|---|---|---|---|---|---|
+| S2-10 Deep Lagoon theme and type (Issue #86, D-38) | [#86](https://github.com/GGital/My-little-pony/issues/86) | `feature/s2-10-theme` · [#95](https://github.com/GGital/My-little-pony/pull/95) | MeldyRose (drafted with Claude Code, see `ai-use.md`) | Phattaratorn (approved #95, 25 Nov) | Merged 25 Nov (`632b074`); red `ec3e8a0`, green `e671f38` |
+| S2-07 Feature-N: cancel a registration and register again (E-16, `canCancel`, dialog, Cancelled chip) | [#84](https://github.com/GGital/My-little-pony/issues/84) | `feature/s2-07-cancel-registration` · [#112](https://github.com/GGital/My-little-pony/pull/112) | MeldyRose (drafted with Claude Code, see `ai-use.md`) | Phattaratorn (approved #112, 26 Nov) | Merged 26 Nov (`1446abd`); red `95d8e69`, green `62db165` |
+| S2-05 Feature-O: cancel an event with a reason (E-15, cancel dialog, banner, chips) | [#82](https://github.com/GGital/My-little-pony/issues/82) | `feature/s2-05-cancel-event` · [#109](https://github.com/GGital/My-little-pony/pull/109) | MeldyRose (drafted with Claude Code, see `ai-use.md`) | Phattaratorn (approved #109, 26 Nov) | Merged 26 Nov (`6d89327`); red `47e1cee`, green `c2e0238` |
+| S2-00 / S3-00 Sprint 2 and 3 contracts, STS, Issue plans; SRS v0.7 (CH-11, CH-12), features, plan, SDS, traceability, UI direction | Issues [#78](https://github.com/GGital/My-little-pony/issues/78)–[#87](https://github.com/GGital/My-little-pony/issues/87) created 23 Nov | `docs/s2-s3-contracts` · [#76](https://github.com/GGital/My-little-pony/pull/76) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (approved #76, 21 Nov) | Merged 21 Nov (`40d3699`) |
+| CH-13 merged into the Sprint 2 line; Sprint 2 contracts v0.6 and STS v0.5 use the 60-minute lead time | [#77](https://github.com/GGital/My-little-pony/issues/77) | `chore/s2-sync-ch13` · [#92](https://github.com/GGital/My-little-pony/pull/92) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (approved #92, 25 Nov) | Merged 25 Nov (`5da7651`) |
+| S2-01 SR-08 data foundation: migrations `0003`, `0004`, change history, E-17, seed EV-7 … EV-9 | [#78](https://github.com/GGital/My-little-pony/issues/78) | `feature/s2-01-data-foundation` · [#93](https://github.com/GGital/My-little-pony/pull/93) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (approved #93, 25 Nov) | Merged 25 Nov (`4d75208`); red `7c3ad62`, green `dc987f9` + fixtures `dfa124f` |
+| S2-02 Feature-K: save a draft and publish it (E-06 `saveAsDraft`, E-14, owner-only drafts) | [#79](https://github.com/GGital/My-little-pony/issues/79) | `feature/s2-02-drafts` · [#107](https://github.com/GGital/My-little-pony/pull/107) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (approved #107, 25 Nov) | Merged 25 Nov (`752fb92`); red `47b3838`, green `40f5687` |
+| S2-03 Feature-J: search, filters and paging (E-04 query and meta, live search bar, filter chips) | [#80](https://github.com/GGital/My-little-pony/issues/80) | `feature/s2-03-search` · [#94](https://github.com/GGital/My-little-pony/pull/94) | MeldyRose (drafted with Claude Code, see `ai-use.md`) | Phattaratorn (approved #94, 26 Nov; review on the real database: literal `%` and `_`, Back / Forward, page 2) | Merged 26 Nov (`b50e525`); red `82b7aa9`, green `2c5e075`, review fixes `18564ab`, `a0a86f3`, `23d5526` |
+| S2-04 Feature-L: edit an event and change its capacity (E-13, edit page, History panel); UAT #64 | [#81](https://github.com/GGital/My-little-pony/issues/81) | `feature/s2-04-edit-event` · [#108](https://github.com/GGital/My-little-pony/pull/108) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (approved #108, 26 Nov) | Merged 26 Nov (`cd1d5b0`); red `0906f89`, green `9f71b81` |
+| Merge rules for parallel PRs: `AGENTS.md`, `CLAUDE.md`, `merge=union`, evidence only when asked, D-39 → D-40 | — (chore, no Issue) | `chore/merge-rules` · [#110](https://github.com/GGital/My-little-pony/pull/110) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (approved #110, 26 Nov) | Merged 26 Nov (`fdad099`) |
+| S2-06 Feature-M: registration deadline (E-06, E-13, E-09, E-05; form field; "Registration closes …") | [#83](https://github.com/GGital/My-little-pony/issues/83) | `feature/s2-06-deadline` · [#111](https://github.com/GGital/My-little-pony/pull/111) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (approved #111, 26 Nov) | Merged 26 Nov (`904a31c`); red `d348686`, green `3886e35` |
+| S2-09 Feature-U: game per event, store profile (games, contact), game filter (E-23, E-04 `game`, store on E-05) | [#85](https://github.com/GGital/My-little-pony/issues/85) | `feature/s2-09-game-store-profile` · [#113](https://github.com/GGital/My-little-pony/pull/113) | MeldyRose (drafted with Claude Code, see `ai-use.md`) | Phattaratorn (approved #113, 26 Nov) | Merged 27 Nov (`6af9641`); red `9f3b967`, green `19bd097`, review 2 red `0ed888b`, green `7af6773` |
+| S2-08 Integration, journeys, regression and release records (JRN-03, JRN-04, TEST-SR5-05, CSS order and contrast fixes) | [#87](https://github.com/GGital/My-little-pony/issues/87) | `feature/s2-08-integration-release` · (PR to be opened) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (requested when the PR opens) | In review: red `7f4a1b3`, green `abbc44b` |
+
+## 6. Lab 7: Sprint 1 maintenance (CH-13)
 
 One approved change to BR-02 (a new event must start at least 60 minutes after it is created). Contract first, then
 tests, then code; the evidence index is [`labs/lab07/README.md`](labs/lab07/README.md).
@@ -80,9 +98,13 @@ tests, then code; the evidence index is [`labs/lab07/README.md`](labs/lab07/READ
 | Item | Issue | Branch · PR | Built by | Reviewed by | Status |
 |---|---|---|---|---|---|
 | L7 change request and contract revision (SRS, contracts, STS, SDS, traceability) | [#77](https://github.com/GGital/My-little-pony/issues/77) | `feature/l7-ch13-lead-time` · [#88](https://github.com/GGital/My-little-pony/pull/88) | Phattaratorn (TA approval obtained 23 Nov) | Praewa (approved #88, 24 Nov) | Merged 24 Nov (`a44fcac`); contract commit `751e9cd` |
-| L7 tests, implementation and evidence | [#77](https://github.com/GGital/My-little-pony/issues/77) | `feature/l7-ch13-code` · PR pending | Phattaratorn | Praewa (to request) | Red `f41f52f`, green `72ae022`; evidence committed; review, release `v0.1.2` and deploy pending |
+| L7 tests, implementation and evidence | [#77](https://github.com/GGital/My-little-pony/issues/77) | `feature/l7-ch13-code` · [#89](https://github.com/GGital/My-little-pony/pull/89) | Phattaratorn | Praewa (approved #89, 24 Nov) | Merged 24 Nov (`816230a`); red `f41f52f`, green `72ae022`, evidence `68d4377` |
+| L7 release to `main` and deploy | [#77](https://github.com/GGital/My-little-pony/issues/77) | `sprint-1-staging` · [#90](https://github.com/GGital/My-little-pony/pull/90) | Phattaratorn (release PR, tag, live checks with Claude Code; signed in by hand) | Praewa (approved #90, 24 Nov) | Merged 24 Nov (`dff72b6`), tag `v0.1.2`; Cloud Run `tcg-event-hub-00018-s6f`; L7-D01, L7-D02 PASS |
+| L7 release and deploy records (README v1.1) | [#77](https://github.com/GGital/My-little-pony/issues/77) | `docs/l7-release-records` · [#91](https://github.com/GGital/My-little-pony/pull/91) | Phattaratorn | Praewa (approved #91, 24 Nov) | Merged 24 Nov (`be04c17`) |
 
-## 6. Keeping this table current
+## 7. Keeping this table current
+
+From 26 Nov 2026 the rules in [`AGENTS.md`](../AGENTS.md) §2 apply: each PR adds only its own Issue's row with the status `In review (PR #N)`, and labels its version rows with its Issue ID. The sprint's integration Issue numbers the versions and marks the rows `Merged (sha)` in one records commit.
 
 Every Issue PR updates its own row (branch, PR, built by, reviewed by, status) and the summary in §2, in the same PR
 as the work. Pair work names both students. Reviewers are filled in from the PR's review record, not in advance.
@@ -115,4 +137,20 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.24 | 20 Nov 2026 | §4 Lab 6: #62 merged (#66), #63 merged (#68), CI runner pin (#67), L6-58 in progress | Team (AI-assisted) |
 | v0.25 | 21 Nov 2026 | §4 Lab 6: #58 merged (#69), #60 merged (#70), #57 merged (#71), #56 merged (#65, approved by Phattaratorn); L6-61 in review (#72) | Team (AI-assisted) |
 | v0.26 | 21 Nov 2026 | §4 Lab 6: #61 merged (#72), #59 merged (#73); all eight accepted defects on `sprint-1-staging`, release to `main` and KitLoop retest pending | Team (AI-assisted) |
+| v0.27 | 21 Nov 2026 | §5 Sprints 2 and 3 added (contracts PR row); the maintenance section becomes §6 | Team (AI-assisted) |
+| v0.28 | 21 Nov 2026 | §5: PR #76 linked; CH-12 added to its scope | Team (AI-assisted) |
 | v0.26.1 | 24 Nov 2026 | §5 Lab 7 CH-13 rows (#88 merged; tests, code and evidence); "Keeping this table current" becomes §6 | Team (AI-assisted) |
+| v0.26.2 | 25 Nov 2026 | §5 Lab 7: #89 merged, release #90 (`v0.1.2`, revision `tcg-event-hub-00018-s6f`), records PR row | Team (AI-assisted) |
+| v0.29 | 25 Nov 2026 | Lab 7 CH-13 merged into the Sprint 2 line: its rows become §6 and "Keeping this table current" §7; §5 contracts row: #76 merged, Issues #78–#87; §6 #91 merged (`be04c17`) | Team (AI-assisted) |
+| v0.30 | 25 Nov 2026 | §5: CH-13 sync row | Team (AI-assisted) |
+| v0.31 | 25 Nov 2026 | §5: S2-01 row | Team (AI-assisted) |
+| v0.33 | 25 Nov 2026 | §5: S2-02 row (v0.32 is the Sprint 3 Issues row on `docs/s3-contracts-d2`) | Team (AI-assisted) |
+| v0.34 | 26 Nov 2026 | §5: S2-03 row (rebased onto #95 and #107) | Team (AI-assisted) |
+| v0.35 | 26 Nov 2026 | §5: #107 merged; S2-04 row | Team (AI-assisted) |
+| v0.36 | 26 Nov 2026 | S2-05 Feature-O cancel event row | Team (AI-assisted) |
+| #110 | 26 Nov 2026 | §5 merge-rules row; §7 points at `AGENTS.md` §2 | Team (AI-assisted) |
+| S2-06 | 26 Nov 2026 | §5: S2-06 row | Team (AI-assisted) |
+| S2-07 | 26 Nov 2026 | S2-07 Feature-N cancel registration row | Team (AI-assisted) |
+| S2-09 | 26 Nov 2026 | S2-09 Feature-U game and store profile row | Team (AI-assisted) |
+| S2-09 | 26 Nov 2026 | S2-09 row: review 2 of [#113](https://github.com/GGital/My-little-pony/pull/113) (red and green commits added) | Team (AI-assisted) |
+| v0.37 | 27 Nov 2026 | S2-08 release records: covers the #110, S2-06, S2-07 and S2-09 rows above; every Sprint 2 row marked `Merged (sha)` from its PR record, with the approving reviewer; the duplicated S2-00 row removed; S2-08 row added | Team (AI-assisted) |

@@ -1,0 +1,481 @@
+Sprint 2 · S2-02 (Issue #79) · RED, server unit + API (test database)
+Commit: 47b3838 (tests only, with the decidePublish stub; the code is sprint-2-staging 4d75208)
+Time: 2026-11-25T14:25:18Z
+Command: cd server; npx vitest run
+
+
+ RUN  v4.0.18 <repo>/server
+
+ ❯ tests/sprint-2/drafts.api.test.ts (13 tests | 6 failed | 6 skipped) 1142ms
+     × E-06 with saveAsDraft: 201 DRAFT, publishedAt null, one change row null → DRAFT; E-07 lists it; E-05 gives MANAGE 19ms
+     ✓ E-06 without saveAsDraft still publishes at once (Sprint 1 behaviour unchanged) 31ms
+     ↓ a visitor: E-04 never lists it, E-05 is the same 404 as a missing id
+     ↓ Nok (participant): E-04 never lists it, E-05 is the same 404 as a missing id
+     ↓ Dragon's Den (another organizer): E-04 never lists it, E-05 is the same 404 as a missing id
+     ↓ E-09 by Nok is 404 EVENT_NOT_FOUND and stores no registration
+     × E-14 by the owner: 200 PUBLISHED, publishedAt = T, change row DRAFT → PUBLISHED; E-04 now lists it 8ms
+     × accepts a request with no body at all (contract: body {} or none) 8ms
+     × a draft whose start has passed (clock moved): 422 on startAt, still DRAFT 9ms
+     × a draft starting in 30 minutes: 422 on startAt (CH-13); in exactly 60 minutes: 200 8ms
+     × a published event: 409 ALREADY_PUBLISHED; a cancelled one: 409 ALREADY_CANCELLED 27ms
+     ↓ E-14 by Dragon's Den 404 (same as a missing id), Mint 403, a visitor 401, a foreign Origin 403, bad ids and bodies 400; nothing changes
+     ↓ E-06 by Mint with saveAsDraft is 403; saveAsDraft "yes" and status "DRAFT" are 400; nothing is stored
+ ✓ tests/sprint-1/auth.api.test.ts (21 tests) 4870ms
+     ✓ an unknown email takes as long as a wrong password (dummy hash): mean difference < 50 ms over 20 tries  2947ms
+ ✓ tests/sprint-1/registrations.concurrency.api.test.ts (1 test) 5702ms
+     ✓ 20 rounds: 20 racers for 1 seat → one 201, 19 × 409 EVENT_FULL; 5 calls by one participant → one 201, four 409 ALREADY_REGISTERED  3702ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts (28 tests) 2184ms
+     ✓ refuses an unknown code at compile time, and accepts a known one  2177ms
+ ❯ tests/sprint-1/authorization.api.test.ts (72 tests | 5 failed) 2184ms
+     ✓ E-09 with an empty body stores the caller as participantId (Mint on EV-6) 37ms
+     ✓ E-09 with participantId of another user → 400 VALIDATION_FAILED on that field, nothing stored 37ms
+     ✓ E-06 with organizerId of another organizer → 400 VALIDATION_FAILED on that field, nothing stored 19ms
+     ✓ real E-06: valid event creation stores organizerId = caller.id (Dragon's Den creates, not id 1) 49ms
+     ✓ E-02 → 401 UNAUTHENTICATED 8ms
+     ✓ E-03 → 401 UNAUTHENTICATED 9ms
+     ✓ E-06 → 401 UNAUTHENTICATED 9ms
+     ✓ E-07 → 401 UNAUTHENTICATED 5ms
+     ✓ E-08 → 401 UNAUTHENTICATED 6ms
+     ✓ E-09 → 401 UNAUTHENTICATED 7ms
+     ✓ E-10 → 401 UNAUTHENTICATED 7ms
+     ✓ E-11 → 401 UNAUTHENTICATED 8ms
+     ✓ E-17 → 401 UNAUTHENTICATED 7ms
+     × E-14 → 401 UNAUTHENTICATED 15ms
+     ✓ lists every endpoint E-01 … E-11 and the Sprint 2 ones built so far (E-02 is in its own case below) 0ms
+     ✓ E-01 POST as visitor → 200 94ms
+     ✓ E-01 POST as mint → 200 83ms
+     ✓ E-01 POST as quantum → 200 82ms
+     ✓ E-01 POST as dragon → 200 83ms
+     ✓ E-03 GET as visitor → 401 4ms
+     ✓ E-03 GET as mint → 200 9ms
+     ✓ E-03 GET as quantum → 200 8ms
+     ✓ E-03 GET as dragon → 200 9ms
+     ✓ E-04 GET as visitor → 200 12ms
+     ✓ E-05 GET as visitor → 200 11ms
+     ✓ E-04 GET as mint → 200 9ms
+     ✓ E-05 GET as mint → 200 11ms
+     ✓ E-04 GET as quantum → 200 9ms
+     ✓ E-05 GET as quantum → 200 11ms
+     ✓ E-04 GET as dragon → 200 12ms
+     ✓ E-05 GET as dragon → 200 9ms
+     ✓ E-06 POST as visitor → 401 4ms
+     ✓ E-06 POST as mint → 403 6ms
+     ✓ E-06 POST as quantum → 201 16ms
+     ✓ E-06 POST as dragon → 201 14ms
+     ✓ E-07 GET as visitor → 401 4ms
+     ✓ E-07 GET as mint → 403 6ms
+     ✓ E-07 GET as quantum → 200 10ms
+     ✓ E-07 GET as dragon → 200 9ms
+     ✓ E-08 GET as visitor → 401 4ms
+     ✓ E-08 GET as mint → 403 6ms
+     ✓ E-08 GET as quantum → 200 11ms
+     ✓ E-08 GET as dragon → 404 8ms
+     ✓ E-08 GET as visitor → 401 4ms
+     ✓ E-08 GET as quantum → 400 6ms
+     ✓ E-09 POST as visitor → 401 4ms
+     ✓ E-09 POST as mint → 201 25ms
+     ✓ E-09 POST as quantum → 403 7ms
+     ✓ E-09 POST as dragon → 403 7ms
+     ✓ E-10 GET as visitor → 401 4ms
+     ✓ E-10 GET as mint → 200 11ms
+     ✓ E-10 GET as quantum → 403 7ms
+     ✓ E-10 GET as dragon → 403 7ms
+     ✓ E-11 GET as visitor → 401 5ms
+     ✓ E-11 GET as mint → 200 10ms
+     ✓ E-11 GET as mint → 404 8ms
+     ✓ E-11 GET as quantum → 403 7ms
+     ✓ E-11 GET as dragon → 403 6ms
+     ✓ E-17 GET as visitor → 401 5ms
+     ✓ E-17 GET as mint → 403 6ms
+     ✓ E-17 GET as quantum → 200 10ms
+     ✓ E-17 GET as dragon → 404 8ms
+     ✓ E-17 GET as quantum → 400 8ms
+     × E-14 POST as visitor → 401 4ms
+     × E-14 POST as mint → 403 7ms
+     ✓ E-14 POST as dragon → 404 7ms
+     × E-14 POST as quantum → 400 7ms
+     × E-14 POST as quantum → 200 7ms
+     ✓ E-02 sign out as mint → 204 (its own session) 92ms
+     ✓ E-02 sign out as quantum → 204 (its own session) 89ms
+     ✓ E-02 sign out as dragon → 204 (its own session) 88ms
+     ✓ 404 bodies are byte-identical whether the record exists and is someone else's, or does not exist 71ms
+ ✓ tests/lab5/ready.api.test.ts (2 tests) 2090ms
+     ✓ answers 503 {status:"not_ready"} when the database cannot be reached, without leaking why  2037ms
+ ✓ tests/sprint-1/health.api.test.ts (2 tests) 2065ms
+     ✓ answers 503 {status:"unavailable"} when the database cannot be reached, and logs why  2015ms
+ ✓ tests/sprint-1/validation.api.test.ts (20 tests) 1474ms
+ ✓ tests/sprint-1/organizer.api.test.ts (10 tests) 1538ms
+ ✓ tests/sprint-1/events.read.api.test.ts (11 tests) 1375ms
+     ✓ returns matching viewer.action and all public fields across visitor, player, owner, other organizer  400ms
+ ✓ tests/sprint-1/events.create.api.test.ts (24 tests) 1130ms
+ ✓ tests/sprint-2/changes.api.test.ts (4 tests) 981ms
+ ✓ tests/sprint-1/registrations.api.test.ts (15 tests) 975ms
+ ✓ tests/sprint-1/seed.api.test.ts (7 tests) 818ms
+     ✓ creates 2 organizers, 4 participants, the 6 events of contracts §0.3 and the 3 of Sprint 2 §0.4  553ms
+ ✓ tests/lab6/calendar-date.api.test.ts (6 tests) 846ms
+ ✓ tests/sprint-1/me.api.test.ts (6 tests) 886ms
+ ✓ tests/lab6/nul-character.api.test.ts (3 tests) 780ms
+ ✓ tests/sprint-1/persistence.api.test.ts (2 tests) 618ms
+     ✓ an event published with E-06 and a registration made with E-09 read back identically after a "restart"  488ms
+ ✓ tests/sprint-1/unit/config.unit.test.ts (6 tests) 522ms
+     ✓ the real server refuses to start without DATABASE_URL and says why  498ms
+ ✓ tests/sprint-1/time.api.test.ts (9 tests) 531ms
+ ✓ tests/sprint-1/errors.api.test.ts (10 tests) 424ms
+ ✓ tests/sprint-1/unit/password.unit.test.ts (2 tests) 355ms
+ ✓ tests/sprint-1/constraints.api.test.ts (12 tests) 148ms
+ ✓ tests/sprint-2/constraints.api.test.ts (6 tests) 134ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts (11 tests) 5ms
+ ❯ tests/sprint-2/unit/event-lifecycle.unit.test.ts (7 tests | 6 failed) 13ms
+     ✓ publishes a draft that starts at least 60 minutes from now and has no deadline 2ms
+     × refuses a cancelled event first, then an already published one (contract check order) 6ms
+     × refuses a draft starting in the past with EVENT_TIME_INVALID on startAt (CH-13) 1ms
+     × refuses a draft starting now with EVENT_TIME_INVALID on startAt (CH-13) 1ms
+     × refuses a draft starting in 30 minutes with EVENT_TIME_INVALID on startAt (CH-13) 1ms
+     × refuses a draft starting in 59 minutes with EVENT_TIME_INVALID on startAt (CH-13) 1ms
+     × refuses a draft whose registration deadline is now or has passed (BR-08), and accepts one still ahead 1ms
+ ✓ tests/lab5/static.api.test.ts (4 tests) 55ms
+ ✓ tests/lab5/origin.api.test.ts (6 tests) 46ms
+ ✓ tests/lab5/version.api.test.ts (2 tests) 37ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts (16 tests) 11ms
+ ✓ tests/lab5/unit/config.unit.test.ts (5 tests) 8ms
+ ✓ tests/lab5/unit/version-config.unit.test.ts (5 tests) 8ms
+ ✓ tests/sprint-1/unit/registration-rules.unit.test.ts (8 tests) 4ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/sprint-2/drafts.api.test.ts > TEST-K-02 (I) a draft is invisible to everyone but its owner (AC-K-02, BR-04)
+AssertionError: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ createDraft tests/sprint-2/drafts.api.test.ts:56:22
+     54| async function createDraft(startIn?: number) {
+     55|   const res = await post('/api/events', cookies.quantum).send(body(sta…
+     56|   expect(res.status).toBe(201)
+       |                      ^
+     57|   return res.body as { id: number; title: string; startAt: string }
+     58| }
+ ❯ tests/sprint-2/drafts.api.test.ts:118:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/19]⎯
+
+ FAIL  tests/sprint-2/drafts.api.test.ts > TEST-K-05 (I) who may save and publish drafts (AC-K-05, BR-13, BR-17)
+AssertionError: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ createDraft tests/sprint-2/drafts.api.test.ts:56:22
+     54| async function createDraft(startIn?: number) {
+     55|   const res = await post('/api/events', cookies.quantum).send(body(sta…
+     56|   expect(res.status).toBe(201)
+       |                      ^
+     57|   return res.body as { id: number; title: string; startAt: string }
+     58| }
+ ❯ tests/sprint-2/drafts.api.test.ts:226:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/19]⎯
+
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 17 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/sprint-2/drafts.api.test.ts > TEST-K-01 (I) saving a draft (AC-K-01, FR-08) > E-06 with saveAsDraft: 201 DRAFT, publishedAt null, one change row null → DRAFT; E-07 lists it; E-05 gives MANAGE
+AssertionError: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ tests/sprint-2/drafts.api.test.ts:88:24
+     86|     setNow(T)
+     87|     const res = await post('/api/events', cookies.quantum).send(body(u…
+     88|     expect(res.status).toBe(201)
+       |                        ^
+     89|     expect(res.body.status).toBe('DRAFT')
+     90| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/19]⎯
+
+ FAIL  tests/sprint-2/drafts.api.test.ts > TEST-K-03 (I) publishing a draft (AC-K-03, FR-08, FR-28) > E-14 by the owner: 200 PUBLISHED, publishedAt = T, change row DRAFT → PUBLISHED; E-04 now lists it
+AssertionError: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ createDraft tests/sprint-2/drafts.api.test.ts:56:22
+     54| async function createDraft(startIn?: number) {
+     55|   const res = await post('/api/events', cookies.quantum).send(body(sta…
+     56|   expect(res.status).toBe(201)
+       |                      ^
+     57|   return res.body as { id: number; title: string; startAt: string }
+     58| }
+ ❯ tests/sprint-2/drafts.api.test.ts:148:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/19]⎯
+
+ FAIL  tests/sprint-2/drafts.api.test.ts > TEST-K-03 (I) publishing a draft (AC-K-03, FR-08, FR-28) > accepts a request with no body at all (contract: body {} or none)
+AssertionError: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ createDraft tests/sprint-2/drafts.api.test.ts:56:22
+     54| async function createDraft(startIn?: number) {
+     55|   const res = await post('/api/events', cookies.quantum).send(body(sta…
+     56|   expect(res.status).toBe(201)
+       |                      ^
+     57|   return res.body as { id: number; title: string; startAt: string }
+     58| }
+ ❯ tests/sprint-2/drafts.api.test.ts:166:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/19]⎯
+
+ FAIL  tests/sprint-2/drafts.api.test.ts > TEST-K-04 (I) publishing re-checks the time rules; published and cancelled events are refused (AC-K-04, D-21) > a draft whose start has passed (clock moved): 422 on startAt, still DRAFT
+AssertionError: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ createDraft tests/sprint-2/drafts.api.test.ts:56:22
+     54| async function createDraft(startIn?: number) {
+     55|   const res = await post('/api/events', cookies.quantum).send(body(sta…
+     56|   expect(res.status).toBe(201)
+       |                      ^
+     57|   return res.body as { id: number; title: string; startAt: string }
+     58| }
+ ❯ tests/sprint-2/drafts.api.test.ts:188:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/19]⎯
+
+ FAIL  tests/sprint-2/drafts.api.test.ts > TEST-K-04 (I) publishing re-checks the time rules; published and cancelled events are refused (AC-K-04, D-21) > a draft starting in 30 minutes: 422 on startAt (CH-13); in exactly 60 minutes: 200
+AssertionError: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ createDraft tests/sprint-2/drafts.api.test.ts:56:22
+     54| async function createDraft(startIn?: number) {
+     55|   const res = await post('/api/events', cookies.quantum).send(body(sta…
+     56|   expect(res.status).toBe(201)
+       |                      ^
+     57|   return res.body as { id: number; title: string; startAt: string }
+     58| }
+ ❯ tests/sprint-2/drafts.api.test.ts:195:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/19]⎯
+
+ FAIL  tests/sprint-2/drafts.api.test.ts > TEST-K-04 (I) publishing re-checks the time rules; published and cancelled events are refused (AC-K-04, D-21) > a published event: 409 ALREADY_PUBLISHED; a cancelled one: 409 ALREADY_CANCELLED
+AssertionError: expected 404 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 404
+
+ ❯ expectRefused tests/sprint-2/drafts.api.test.ts:179:24
+    177|     const changesBefore = await prisma.eventChange.count()
+    178|     const res = await post(E14(id), cookies.quantum).send({})
+    179|     expect(res.status).toBe(status)
+       |                        ^
+    180|     expect(res.body.error.code).toBe(code)
+    181|     if (field) expect(res.body.error.details).toEqual([expect.objectCo…
+ ❯ tests/sprint-2/drafts.api.test.ts:211:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/19]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-02 — no session: every protected endpoint answers 401 with only an error (AC-B-02, NFR-01) > E-14 → 401 UNAUTHENTICATED
+AssertionError: expected 404 to be 401 // Object.is equality
+
+- Expected
++ Received
+
+- 401
++ 404
+
+ ❯ tests/sprint-1/authorization.api.test.ts:130:24
+    128|   ] as const)('%s → 401 UNAUTHENTICATED', async (_id, method, path) =>…
+    129|     const res = await call(method, path(), 'visitor')
+    130|     expect(res.status).toBe(401)
+       |                        ^
+    131|     expect(Object.keys(res.body)).toEqual(['error'])
+    132|     expect(res.body.error.code).toBe('UNAUTHENTICATED')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/19]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-14 POST as visitor → 401
+AssertionError: expected 404 to be 401 // Object.is equality
+
+- Expected
++ Received
+
+- 401
++ 404
+
+ ❯ tests/sprint-1/authorization.api.test.ts:214:26
+    212|     async (_name, [, method, path, as, status, body]) => {
+    213|       const res = await call(method, path(), as, body?.())
+    214|       expect(res.status).toBe(status)
+       |                          ^
+    215|       if (status >= 400) expect(Object.keys(res.body)).toEqual(['error…
+    216|     },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/19]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-14 POST as mint → 403
+AssertionError: expected 404 to be 403 // Object.is equality
+
+- Expected
++ Received
+
+- 403
++ 404
+
+ ❯ tests/sprint-1/authorization.api.test.ts:214:26
+    212|     async (_name, [, method, path, as, status, body]) => {
+    213|       const res = await call(method, path(), as, body?.())
+    214|       expect(res.status).toBe(status)
+       |                          ^
+    215|       if (status >= 400) expect(Object.keys(res.body)).toEqual(['error…
+    216|     },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/19]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-14 POST as quantum → 400
+AssertionError: expected 404 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 404
+
+ ❯ tests/sprint-1/authorization.api.test.ts:214:26
+    212|     async (_name, [, method, path, as, status, body]) => {
+    213|       const res = await call(method, path(), as, body?.())
+    214|       expect(res.status).toBe(status)
+       |                          ^
+    215|       if (status >= 400) expect(Object.keys(res.body)).toEqual(['error…
+    216|     },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/19]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-14 POST as quantum → 200
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ tests/sprint-1/authorization.api.test.ts:214:26
+    212|     async (_name, [, method, path, as, status, body]) => {
+    213|       const res = await call(method, path(), as, body?.())
+    214|       expect(res.status).toBe(status)
+       |                          ^
+    215|       if (status >= 400) expect(Object.keys(res.body)).toEqual(['error…
+    216|     },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/19]⎯
+
+ FAIL  tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-K-04 (U) decidePublish: the E-14 checks after the owner is found (AC-K-04, D-21) > refuses a cancelled event first, then an already published one (contract check order)
+AssertionError: expected { ok: true } to deeply equal { Object (ok, code) }
+
+- Expected
++ Received
+
+  {
+-   "code": "ALREADY_CANCELLED",
+-   "ok": false,
++   "ok": true,
+  }
+
+ ❯ tests/sprint-2/unit/event-lifecycle.unit.test.ts:15:104
+     13| 
+     14|   it('refuses a cancelled event first, then an already published one (…
+     15|     expect(decidePublish({ status: 'CANCELLED', startAt: min(-60), reg…
+       |                                                                                                        ^
+     16|       ok: false,
+     17|       code: 'ALREADY_CANCELLED',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/19]⎯
+
+ FAIL  tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-K-04 (U) decidePublish: the E-14 checks after the owner is found (AC-K-04, D-21) > refuses a draft starting in the past with EVENT_TIME_INVALID on startAt (CH-13)
+ FAIL  tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-K-04 (U) decidePublish: the E-14 checks after the owner is found (AC-K-04, D-21) > refuses a draft starting now with EVENT_TIME_INVALID on startAt (CH-13)
+ FAIL  tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-K-04 (U) decidePublish: the E-14 checks after the owner is found (AC-K-04, D-21) > refuses a draft starting in 30 minutes with EVENT_TIME_INVALID on startAt (CH-13)
+ FAIL  tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-K-04 (U) decidePublish: the E-14 checks after the owner is found (AC-K-04, D-21) > refuses a draft starting in 59 minutes with EVENT_TIME_INVALID on startAt (CH-13)
+AssertionError: expected { ok: true } to deeply equal { ok: false, …(3) }
+
+- Expected
++ Received
+
+  {
+-   "code": "EVENT_TIME_INVALID",
+-   "field": "startAt",
+-   "message": "The start must be at least 60 minutes from now.",
+-   "ok": false,
++   "ok": true,
+  }
+
+ ❯ tests/sprint-2/unit/event-lifecycle.unit.test.ts:31:104
+     29|     ['in 59 minutes', 59],
+     30|   ])('refuses a draft starting %s with EVENT_TIME_INVALID on startAt (…
+     31|     expect(decidePublish({ status: 'DRAFT', startAt: min(minutes), reg…
+       |                                                                                                        ^
+     32|       ok: false,
+     33|       code: 'EVENT_TIME_INVALID',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/19]⎯
+
+ FAIL  tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-K-04 (U) decidePublish: the E-14 checks after the owner is found (AC-K-04, D-21) > refuses a draft whose registration deadline is now or has passed (BR-08), and accepts one still ahead
+AssertionError: expected { ok: true } to deeply equal { ok: false, …(3) }
+
+- Expected
++ Received
+
+  {
+-   "code": "EVENT_TIME_INVALID",
+-   "field": "registrationDeadline",
+-   "message": "The deadline must be in the future.",
+-   "ok": false,
++   "ok": true,
+  }
+
+ ❯ tests/sprint-2/unit/event-lifecycle.unit.test.ts:46:99
+     44|       message: 'The deadline must be in the future.',
+     45|     }
+     46|     expect(decidePublish({ status: 'DRAFT', startAt: min(120), registr…
+       |                                                                                                   ^
+     47|     expect(decidePublish({ status: 'DRAFT', startAt: min(120), registr…
+     48|     expect(decidePublish({ status: 'DRAFT', startAt: min(120), registr…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/19]⎯
+
+
+ Test Files  3 failed | 30 passed (33)
+      Tests  17 failed | 333 passed | 6 skipped (356)
+   Start at  21:25:21
+   Duration  58.35s (transform 790ms, setup 0ms, import 15.82s, tests 33.96s, environment 4ms)
+

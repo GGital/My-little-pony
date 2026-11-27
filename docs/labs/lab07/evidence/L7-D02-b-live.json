@@ -1,0 +1,17 @@
+{
+  "id": "L7-D02-b",
+  "side": "live",
+  "manual": "signed in by hand; steps automated (Playwright, headed Chromium)",
+  "site": "https://tcg-event-hub-932557875237.asia-southeast1.run.app",
+  "action": "Live: Mint (participant) opens /organizer/events/new",
+  "expected": "The \"This page isn't available for your account\" page; no form",
+  "actual": {
+    "url": "/organizer/events/new",
+    "heading": "This page isn't available for your account",
+    "messages": [],
+    "formPresent": false
+  },
+  "time": "2026-11-24T17:30:48.814Z",
+  "deployedCommit": "dff72b668f36b40a2502cc83c7e3d4874044d606",
+  "screenshot": "L7-D02-b-live.png"
+}

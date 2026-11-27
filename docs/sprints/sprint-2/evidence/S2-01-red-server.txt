@@ -1,0 +1,699 @@
+Sprint 2 · S2-01 (Issue #78) · RED, server unit + API (test database)
+Commit: 7c3ad62 (tests only: A1 8694d76 + A2 7c3ad62; server/src, prisma/ identical to chore/s2-sync-ch13 d4afbc2)
+Time: 2026-11-25T07:20:55Z
+Command: cd server; npm run db:migrate:test; npx vitest run
+
+
+ RUN  v4.0.18 <repo>/server
+
+ ✓ tests/sprint-1/registrations.concurrency.api.test.ts (1 test) 6111ms
+     ✓ 20 rounds: 20 racers for 1 seat → one 201, 19 × 409 EVENT_FULL; 5 calls by one participant → one 201, four 409 ALREADY_REGISTERED  3863ms
+ ✓ tests/sprint-1/auth.api.test.ts (21 tests) 5435ms
+     ✓ an unknown email takes as long as a wrong password (dummy hash): mean difference < 50 ms over 20 tries  3315ms
+ ❯ tests/sprint-1/unit/errors.unit.test.ts (28 tests | 3 failed) 2357ms
+     × has exactly the SDS §6.2 codes 7ms
+     ✓ VALIDATION_FAILED answers 400 with the standard body 1ms
+     ✓ INVALID_PATH_PARAMETER answers 400 with the standard body 0ms
+     ✓ UNAUTHENTICATED answers 401 with the standard body 0ms
+     ✓ INVALID_CREDENTIALS answers 401 with the standard body 0ms
+     ✓ FORBIDDEN answers 403 with the standard body 0ms
+     ✓ EVENT_NOT_FOUND answers 404 with the standard body 0ms
+     ✓ REGISTRATION_NOT_FOUND answers 404 with the standard body 0ms
+     ✓ NOT_FOUND answers 404 with the standard body 0ms
+     ✓ EVENT_FULL answers 409 with the standard body 0ms
+     ✓ ALREADY_REGISTERED answers 409 with the standard body 0ms
+     ✓ REGISTRATION_CLOSED answers 409 with the standard body 0ms
+     ✓ CAPACITY_BELOW_REGISTERED answers 409 with the standard body 0ms
+     ✓ EVENT_STARTED answers 409 with the standard body 0ms
+     ✓ ALREADY_CANCELLED answers 409 with the standard body 0ms
+     ✓ NOT_IN_CHECK_IN_WINDOW answers 409 with the standard body 0ms
+     ✓ ALREADY_CHECKED_IN answers 409 with the standard body 0ms
+     × ALREADY_PUBLISHED answers 409 with the standard body 1ms
+     × NOT_PUBLISHED answers 409 with the standard body 0ms
+     ✓ PAYLOAD_TOO_LARGE answers 413 with the standard body 0ms
+     ✓ UNSUPPORTED_MEDIA_TYPE answers 415 with the standard body 0ms
+     ✓ EVENT_TIME_INVALID answers 422 with the standard body 0ms
+     ✓ TOO_MANY_ATTEMPTS answers 429 with the standard body 0ms
+     ✓ INTERNAL_ERROR answers 500 with the standard body 0ms
+     ✓ adds details only when given 0ms
+     ✓ uses the fixed safe wording for 500 (contracts §2 item 6) 0ms
+     ✓ throws at run time for a code outside the catalogue 1ms
+     ✓ refuses an unknown code at compile time, and accepts a known one  2343ms
+ ✓ tests/sprint-1/health.api.test.ts (2 tests) 2077ms
+     ✓ answers 503 {status:"unavailable"} when the database cannot be reached, and logs why  2022ms
+ ❯ tests/sprint-1/authorization.api.test.ts (66 tests | 5 failed) 2033ms
+     ✓ E-09 with an empty body stores the caller as participantId (Mint on EV-6) 36ms
+     ✓ E-09 with participantId of another user → 400 VALIDATION_FAILED on that field, nothing stored 19ms
+     ✓ E-06 with organizerId of another organizer → 400 VALIDATION_FAILED on that field, nothing stored 12ms
+     ✓ real E-06: valid event creation stores organizerId = caller.id (Dragon's Den creates, not id 1) 25ms
+     ✓ E-02 → 401 UNAUTHENTICATED 6ms
+     ✓ E-03 → 401 UNAUTHENTICATED 7ms
+     ✓ E-06 → 401 UNAUTHENTICATED 5ms
+     ✓ E-07 → 401 UNAUTHENTICATED 6ms
+     ✓ E-08 → 401 UNAUTHENTICATED 5ms
+     ✓ E-09 → 401 UNAUTHENTICATED 4ms
+     ✓ E-10 → 401 UNAUTHENTICATED 4ms
+     ✓ E-11 → 401 UNAUTHENTICATED 4ms
+     × E-17 → 401 UNAUTHENTICATED 8ms
+     ✓ lists every endpoint E-01 … E-11 and the Sprint 2 ones built so far (E-02 is in its own case below) 0ms
+     ✓ E-01 POST as visitor → 200 86ms
+     ✓ E-01 POST as mint → 200 82ms
+     ✓ E-01 POST as quantum → 200 81ms
+     ✓ E-01 POST as dragon → 200 82ms
+     ✓ E-03 GET as visitor → 401 4ms
+     ✓ E-03 GET as mint → 200 8ms
+     ✓ E-03 GET as quantum → 200 8ms
+     ✓ E-03 GET as dragon → 200 9ms
+     ✓ E-04 GET as visitor → 200 9ms
+     ✓ E-05 GET as visitor → 200 8ms
+     ✓ E-04 GET as mint → 200 9ms
+     ✓ E-05 GET as mint → 200 11ms
+     ✓ E-04 GET as quantum → 200 9ms
+     ✓ E-05 GET as quantum → 200 9ms
+     ✓ E-04 GET as dragon → 200 10ms
+     ✓ E-05 GET as dragon → 200 9ms
+     ✓ E-06 POST as visitor → 401 4ms
+     ✓ E-06 POST as mint → 403 9ms
+     ✓ E-06 POST as quantum → 201 14ms
+     ✓ E-06 POST as dragon → 201 11ms
+     ✓ E-07 GET as visitor → 401 4ms
+     ✓ E-07 GET as mint → 403 6ms
+     ✓ E-07 GET as quantum → 200 9ms
+     ✓ E-07 GET as dragon → 200 9ms
+     ✓ E-08 GET as visitor → 401 4ms
+     ✓ E-08 GET as mint → 403 6ms
+     ✓ E-08 GET as quantum → 200 12ms
+     ✓ E-08 GET as dragon → 404 8ms
+     ✓ E-08 GET as visitor → 401 4ms
+     ✓ E-08 GET as quantum → 400 6ms
+     ✓ E-09 POST as visitor → 401 4ms
+     ✓ E-09 POST as mint → 201 22ms
+     ✓ E-09 POST as quantum → 403 7ms
+     ✓ E-09 POST as dragon → 403 7ms
+     ✓ E-10 GET as visitor → 401 4ms
+     ✓ E-10 GET as mint → 200 11ms
+     ✓ E-10 GET as quantum → 403 6ms
+     ✓ E-10 GET as dragon → 403 6ms
+     ✓ E-11 GET as visitor → 401 4ms
+     ✓ E-11 GET as mint → 200 10ms
+     ✓ E-11 GET as mint → 404 8ms
+     ✓ E-11 GET as quantum → 403 6ms
+     ✓ E-11 GET as dragon → 403 7ms
+     × E-17 GET as visitor → 401 5ms
+     × E-17 GET as mint → 403 7ms
+     × E-17 GET as quantum → 200 7ms
+     ✓ E-17 GET as dragon → 404 6ms
+     × E-17 GET as quantum → 400 7ms
+     ✓ E-02 sign out as mint → 204 (its own session) 91ms
+     ✓ E-02 sign out as quantum → 204 (its own session) 87ms
+     ✓ E-02 sign out as dragon → 204 (its own session) 87ms
+     ✓ 404 bodies are byte-identical whether the record exists and is someone else's, or does not exist 49ms
+ ✓ tests/sprint-1/validation.api.test.ts (19 tests) 1408ms
+ ✓ tests/sprint-1/organizer.api.test.ts (9 tests) 1304ms
+ ❯ tests/sprint-1/events.read.api.test.ts (11 tests | 1 failed) 1378ms
+     × returns upcoming published events in startAt then id order with accurate counts 32ms
+     ✓ returns the same list when called with a session 131ms
+     ✓ returns matching viewer.action and all public fields across visitor, player, owner, other organizer  396ms
+     ✓ E-05 /999999 -> 404 EVENT_NOT_FOUND 7ms
+     ✓ E-05 /abc -> 400 INVALID_PATH_PARAMETER 4ms
+     ✓ E-05 /0 -> 400 INVALID_PATH_PARAMETER 4ms
+     ✓ E-05 /-1 -> 400 INVALID_PATH_PARAMETER 4ms
+     ✓ E-05 /2147483648 -> 400 INVALID_PATH_PARAMETER 3ms
+     ✓ E-05 /99999999999 -> 400 INVALID_PATH_PARAMETER 3ms
+     ✓ EV-4 is absent from E-04 list; E-05 returns hasStarted: true and action: CLOSED 100ms
+     ✓ neither E-04 nor E-05 responses contain participant data or the registrations key 128ms
+ ✓ tests/sprint-1/events.create.api.test.ts (24 tests) 1089ms
+ ✓ tests/sprint-1/registrations.api.test.ts (15 tests) 903ms
+ ❯ tests/sprint-2/changes.api.test.ts (4 tests | 4 failed) 940ms
+     × E-06 writes status null → PUBLISHED in the same request; E-17 returns it with only the display name 29ms
+     × lists the newest change first (changedAt desc, then id desc) 15ms
+     × another organizer gets 404, byte-identical to a missing id 18ms
+     × a participant gets 403, a visitor 401, and a malformed id 400 21ms
+ ❯ tests/sprint-2/constraints.api.test.ts (6 tests | 6 failed) 96ms
+     × rejects UPDATE and DELETE by the event_change_append_only trigger and leaves the rows unchanged 16ms
+     × rejects a registration deadline after the start (event_deadline_before_start) 8ms
+     × accepts a deadline exactly at the start, and no deadline 5ms
+     × rejects CANCELLED without a reason, and PUBLISHED with cancelledAt set (event_cancel_fields) 6ms
+     × accepts CANCELLED with the time, the canceller and the reason all set 5ms
+     × rejects a CANCELLED registration without cancelledAt, and a REGISTERED one with it (registration_cancel_fields) 7ms
+ ✓ tests/lab5/ready.api.test.ts (2 tests) 2064ms
+     ✓ answers 503 {status:"not_ready"} when the database cannot be reached, without leaking why  2015ms
+ ✓ tests/lab6/calendar-date.api.test.ts (6 tests) 831ms
+ ✓ tests/sprint-1/me.api.test.ts (6 tests) 840ms
+ ❯ tests/sprint-1/seed.api.test.ts (7 tests | 3 failed) 817ms
+     × creates 2 organizers, 4 participants, the 6 events of contracts §0.3 and the 3 of Sprint 2 §0.4 566ms
+     ✓ gives EV-3 no free seat, EV-2 exactly one, and EV-4 a start in the past and an end in the future 10ms
+     × adds EV-7 as a DRAFT, EV-8 CANCELLED with Boss EVENT_CANCELLED, EV-9 with a passed deadline and Mint (§0.4) 8ms
+     × gives each event its game and each store its games and public contact (§0.4, Feature-U) 2ms
+     ✓ stores scrypt hashes that verify with the seed password 140ms
+     ✓ adds nothing when it runs a second time 47ms
+     ✓ refuses to run without a password of at least 12 characters 2ms
+ ✓ tests/lab6/nul-character.api.test.ts (3 tests) 765ms
+ ✓ tests/sprint-1/persistence.api.test.ts (2 tests) 598ms
+     ✓ an event published with E-06 and a registration made with E-09 read back identically after a "restart"  481ms
+ ✓ tests/sprint-1/unit/config.unit.test.ts (6 tests) 569ms
+     ✓ the real server refuses to start without DATABASE_URL and says why  544ms
+ ✓ tests/sprint-1/time.api.test.ts (9 tests) 491ms
+ ✓ tests/sprint-1/errors.api.test.ts (10 tests) 408ms
+ ✓ tests/sprint-1/unit/password.unit.test.ts (2 tests) 357ms
+ ✓ tests/sprint-1/constraints.api.test.ts (12 tests) 129ms
+ ✓ tests/lab5/static.api.test.ts (4 tests) 55ms
+ ✓ tests/lab5/origin.api.test.ts (6 tests) 44ms
+ ✓ tests/lab5/version.api.test.ts (2 tests) 36ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts (16 tests) 10ms
+ ✓ tests/lab5/unit/config.unit.test.ts (5 tests) 8ms
+ ✓ tests/lab5/unit/version-config.unit.test.ts (5 tests) 8ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts (11 tests) 6ms
+ ✓ tests/sprint-1/unit/registration-rules.unit.test.ts (8 tests) 4ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 22 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/sprint-2/changes.api.test.ts > TEST-SR8-01 (S2-01 part) creating an event records who and when, and E-17 shows it (AC-SR8-01, FR-28) > E-06 writes status null → PUBLISHED in the same request; E-17 returns it with only the display name
+PrismaClientKnownRequestError: 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+Raw query failed. Code: `42P01`. Message: `relation "EventChange" does not exist`
+ ❯ ei.handleRequestError node_modules/@prisma/client/runtime/library.js:121:7268
+ ❯ ei.handleAndLogRequestError node_modules/@prisma/client/runtime/library.js:121:6593
+ ❯ ei.request node_modules/@prisma/client/runtime/library.js:121:6300
+ ❯ a node_modules/@prisma/client/runtime/library.js:130:9551
+ ❯ tests/sprint-2/changes.api.test.ts:66:12
+     64|     expect(created.status).toBe(201)
+     65| 
+     66|     expect(await storedChanges(created.body.id)).toEqual([
+       |            ^
+     67|       { field: 'status', oldValue: null, newValue: 'PUBLISHED', change…
+     68|     ])
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/22]⎯
+
+ FAIL  tests/sprint-2/changes.api.test.ts > TEST-SR8-01 (S2-01 part) creating an event records who and when, and E-17 shows it (AC-SR8-01, FR-28) > lists the newest change first (changedAt desc, then id desc)
+PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRaw()` invocation:
+
+
+Raw query failed. Code: `42P01`. Message: `relation "EventChange" does not exist`
+ ❯ ei.handleRequestError node_modules/@prisma/client/runtime/library.js:121:7268
+ ❯ ei.handleAndLogRequestError node_modules/@prisma/client/runtime/library.js:121:6593
+ ❯ ei.request node_modules/@prisma/client/runtime/library.js:121:6300
+ ❯ a node_modules/@prisma/client/runtime/library.js:130:9551
+ ❯ tests/sprint-2/changes.api.test.ts:93:5
+     91|     const later = new Date(T.getTime() + 60 * 60 * 1000)
+     92|     // Two rows written directly, as E-13 will write them in S2-04; on…
+     93|     await prisma.$executeRaw`
+       |     ^
+     94|       INSERT INTO "EventChange" ("eventId", "changedById", "field", "o…
+     95|         (${created.body.id}, ${quantumId}, 'capacity'::"ChangeField", …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/22]⎯
+
+ FAIL  tests/sprint-2/changes.api.test.ts > TEST-SR8-04 only the owner reads the history (AC-SR8-04, NFR-02) > another organizer gets 404, byte-identical to a missing id
+AssertionError: expected 'NOT_FOUND' to be 'EVENT_NOT_FOUND' // Object.is equality
+
+Expected: "EVENT_NOT_FOUND"
+Received: "NOT_FOUND"
+
+ ❯ tests/sprint-2/changes.api.test.ts:115:37
+    113|     expect(other.status).toBe(404)
+    114|     expect(missing.status).toBe(404)
+    115|     expect(missing.body.error.code).toBe('EVENT_NOT_FOUND')
+       |                                     ^
+    116|     expect(other.text).toBe(missing.text)
+    117|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/22]⎯
+
+ FAIL  tests/sprint-2/changes.api.test.ts > TEST-SR8-04 only the owner reads the history (AC-SR8-04, NFR-02) > a participant gets 403, a visitor 401, and a malformed id 400
+AssertionError: expected [ 404, 404, 404 ] to deeply equal [ 403, 401, 400 ]
+
+- Expected
++ Received
+
+  [
+-   403,
+-   401,
+-   400,
++   404,
++   404,
++   404,
+  ]
+
+ ❯ tests/sprint-2/changes.api.test.ts:123:68
+    121|     const visitor = await request(app).get(E17(eventId))
+    122|     const malformed = await request(app).get(E17('abc')).set('Cookie',…
+    123|     expect([participant.status, visitor.status, malformed.status]).toE…
+       |                                                                    ^
+    124|     expect(participant.body.error.code).toBe('FORBIDDEN')
+    125|     expect(visitor.body.error.code).toBe('UNAUTHENTICATED')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/22]⎯
+
+ FAIL  tests/sprint-2/constraints.api.test.ts > TEST-SR8-02 EventChange rows are append-only (AC-SR8-02, X-11) > rejects UPDATE and DELETE by the event_change_append_only trigger and leaves the rows unchanged
+AssertionError: promise rejected "PrismaClientKnownRequestError{ …(7) }" instead of resolving
+ ❯ tests/sprint-2/constraints.api.test.ts:30:72
+     28|   it('rejects UPDATE and DELETE by the event_change_append_only trigge…
+     29|     const event = await makeEvent(organizerId)
+     30|     await expect(insertChangeRaw(event.id, 'status', null, 'PUBLISHED'…
+       |                                                                        ^
+     31|     await expect(insertChangeRaw(event.id, 'capacity', '24', '30')).re…
+     32|     const before = await readChanges(event.id)
+
+Caused by: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRaw()` invocation:
+
+
+Raw query failed. Code: `42P01`. Message: `relation "EventChange" does not exist`
+ ❯ ei.handleRequestError node_modules/@prisma/client/runtime/library.js:121:7268
+ ❯ ei.handleAndLogRequestError node_modules/@prisma/client/runtime/library.js:121:6593
+ ❯ ei.request node_modules/@prisma/client/runtime/library.js:121:6300
+ ❯ a node_modules/@prisma/client/runtime/library.js:130:9551
+ ❯ tests/sprint-2/constraints.api.test.ts:30:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'P2010', meta: { code: '42P01', message: 'relation "EventChange" does not exist' }, clientVersion: '6.19.3', batchRequestIdx: undefined }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/22]⎯
+
+ FAIL  tests/sprint-2/constraints.api.test.ts > TEST-SR8-03 deadline, event cancel and registration cancel fields (AC-SR8-03, BR-08, BR-12, FR-28) > rejects a registration deadline after the start (event_deadline_before_start)
+AssertionError: expected [Function] to throw error matching /Code: `23514`[\s\S]*event_deadline_be…/ but got '\nInvalid `prisma.$executeRaw()` invo…'
+
+- Expected: 
+/Code: `23514`[\s\S]*event_deadline_before_start/
+
++ Received: 
+"
+Invalid `prisma.$executeRaw()` invocation:
+
+
+Raw query failed. Code: `42703`. Message: `column \"registrationDeadline\" of relation \"Event\" does not exist`"
+
+ ❯ tests/sprint-2/constraints.api.test.ts:50:5
+     48|   it('rejects a registration deadline after the start (event_deadline_…
+     49|     const event = await makeEvent(organizerId, { startAt: start, endAt…
+     50|     await expect(
+       |     ^
+     51|       prisma.$executeRaw`UPDATE "Event" SET "registrationDeadline" = $…
+     52|                          WHERE id = ${event.id}`,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/22]⎯
+
+ FAIL  tests/sprint-2/constraints.api.test.ts > TEST-SR8-03 deadline, event cancel and registration cancel fields (AC-SR8-03, BR-08, BR-12, FR-28) > accepts a deadline exactly at the start, and no deadline
+AssertionError: promise rejected "PrismaClientKnownRequestError{ …(7) }" instead of resolving
+ ❯ tests/sprint-2/constraints.api.test.ts:60:5
+     58|     await expect(
+     59|       prisma.$executeRaw`UPDATE "Event" SET "registrationDeadline" = $…
+     60|     ).resolves.toBe(1)
+       |     ^
+     61|     await expect(prisma.$executeRaw`UPDATE "Event" SET "registrationDe…
+     62|   })
+
+Caused by: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRaw()` invocation:
+
+
+Raw query failed. Code: `42703`. Message: `column "registrationDeadline" of relation "Event" does not exist`
+ ❯ ei.handleRequestError node_modules/@prisma/client/runtime/library.js:121:7268
+ ❯ ei.handleAndLogRequestError node_modules/@prisma/client/runtime/library.js:121:6593
+ ❯ ei.request node_modules/@prisma/client/runtime/library.js:121:6300
+ ❯ a node_modules/@prisma/client/runtime/library.js:130:9551
+ ❯ tests/sprint-2/constraints.api.test.ts:58:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'P2010', meta: { code: '42703', message: 'column "registrationDeadline" of relation "Event" does not exist' }, clientVersion: '6.19.3', batchRequestIdx: undefined }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/22]⎯
+
+ FAIL  tests/sprint-2/constraints.api.test.ts > TEST-SR8-03 deadline, event cancel and registration cancel fields (AC-SR8-03, BR-08, BR-12, FR-28) > rejects CANCELLED without a reason, and PUBLISHED with cancelledAt set (event_cancel_fields)
+AssertionError: expected [Function] to throw error matching /Code: `23514`[\s\S]*event_cancel_fiel…/ but got '\nInvalid `prisma.$executeRaw()` invo…'
+
+- Expected: 
+/Code: `23514`[\s\S]*event_cancel_fields/
+
++ Received: 
+"
+Invalid `prisma.$executeRaw()` invocation:
+
+
+Raw query failed. Code: `42703`. Message: `column \"cancelledAt\" of relation \"Event\" does not exist`"
+
+ ❯ tests/sprint-2/constraints.api.test.ts:66:5
+     64|   it('rejects CANCELLED without a reason, and PUBLISHED with cancelled…
+     65|     const event = await makeEvent(organizerId)
+     66|     await expect(
+       |     ^
+     67|       prisma.$executeRaw`UPDATE "Event" SET "status" = 'CANCELLED', "c…
+     68|                          WHERE id = ${event.id}`,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/22]⎯
+
+ FAIL  tests/sprint-2/constraints.api.test.ts > TEST-SR8-03 deadline, event cancel and registration cancel fields (AC-SR8-03, BR-08, BR-12, FR-28) > accepts CANCELLED with the time, the canceller and the reason all set
+AssertionError: promise rejected "PrismaClientKnownRequestError{ …(7) }" instead of resolving
+ ❯ tests/sprint-2/constraints.api.test.ts:80:5
+     78|       prisma.$executeRaw`UPDATE "Event" SET "status" = 'CANCELLED', "c…
+     79|                          "cancelReason" = 'Store closed.' WHERE id = $…
+     80|     ).resolves.toBe(1)
+       |     ^
+     81|   })
+     82| 
+
+Caused by: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRaw()` invocation:
+
+
+Raw query failed. Code: `42703`. Message: `column "cancelledAt" of relation "Event" does not exist`
+ ❯ ei.handleRequestError node_modules/@prisma/client/runtime/library.js:121:7268
+ ❯ ei.handleAndLogRequestError node_modules/@prisma/client/runtime/library.js:121:6593
+ ❯ ei.request node_modules/@prisma/client/runtime/library.js:121:6300
+ ❯ a node_modules/@prisma/client/runtime/library.js:130:9551
+ ❯ tests/sprint-2/constraints.api.test.ts:77:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'P2010', meta: { code: '42703', message: 'column "cancelledAt" of relation "Event" does not exist' }, clientVersion: '6.19.3', batchRequestIdx: undefined }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/22]⎯
+
+ FAIL  tests/sprint-2/constraints.api.test.ts > TEST-SR8-03 deadline, event cancel and registration cancel fields (AC-SR8-03, BR-08, BR-12, FR-28) > rejects a CANCELLED registration without cancelledAt, and a REGISTERED one with it (registration_cancel_fields)
+AssertionError: promise resolved "1" instead of rejecting
+
+- Expected: 
+Error {
+  "message": "rejected promise",
+}
+
++ Received: 
+1
+
+ ❯ tests/sprint-2/constraints.api.test.ts:85:77
+     83|   it('rejects a CANCELLED registration without cancelledAt, and a REGI…
+     84|     const event = await makeEvent(organizerId)
+     85|     await expect(insertRegistrationRaw(event.id, participantId, 'CANCE…
+       |                                                                             ^
+     86|       check('registration_cancel_fields'),
+     87|     )
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/22]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-02 — no session: every protected endpoint answers 401 with only an error (AC-B-02, NFR-01) > E-17 → 401 UNAUTHENTICATED
+AssertionError: expected 404 to be 401 // Object.is equality
+
+- Expected
++ Received
+
+- 401
++ 404
+
+ ❯ tests/sprint-1/authorization.api.test.ts:126:24
+    124|   ] as const)('%s → 401 UNAUTHENTICATED', async (_id, method, path) =>…
+    125|     const res = await call(method, path(), 'visitor')
+    126|     expect(res.status).toBe(401)
+       |                        ^
+    127|     expect(Object.keys(res.body)).toEqual(['error'])
+    128|     expect(res.body.error.code).toBe('UNAUTHENTICATED')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/22]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-17 GET as visitor → 401
+AssertionError: expected 404 to be 401 // Object.is equality
+
+- Expected
++ Received
+
+- 401
++ 404
+
+ ❯ tests/sprint-1/authorization.api.test.ts:203:26
+    201|     async (_name, [, method, path, as, status, body]) => {
+    202|       const res = await call(method, path(), as, body?.())
+    203|       expect(res.status).toBe(status)
+       |                          ^
+    204|       if (status >= 400) expect(Object.keys(res.body)).toEqual(['error…
+    205|     },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/22]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-17 GET as mint → 403
+AssertionError: expected 404 to be 403 // Object.is equality
+
+- Expected
++ Received
+
+- 403
++ 404
+
+ ❯ tests/sprint-1/authorization.api.test.ts:203:26
+    201|     async (_name, [, method, path, as, status, body]) => {
+    202|       const res = await call(method, path(), as, body?.())
+    203|       expect(res.status).toBe(status)
+       |                          ^
+    204|       if (status >= 400) expect(Object.keys(res.body)).toEqual(['error…
+    205|     },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/22]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-17 GET as quantum → 200
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ tests/sprint-1/authorization.api.test.ts:203:26
+    201|     async (_name, [, method, path, as, status, body]) => {
+    202|       const res = await call(method, path(), as, body?.())
+    203|       expect(res.status).toBe(status)
+       |                          ^
+    204|       if (status >= 400) expect(Object.keys(res.body)).toEqual(['error…
+    205|     },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/22]⎯
+
+ FAIL  tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-17 GET as quantum → 400
+AssertionError: expected 404 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 404
+
+ ❯ tests/sprint-1/authorization.api.test.ts:203:26
+    201|     async (_name, [, method, path, as, status, body]) => {
+    202|       const res = await call(method, path(), as, body?.())
+    203|       expect(res.status).toBe(status)
+       |                          ^
+    204|       if (status >= 400) expect(Object.keys(res.body)).toEqual(['error…
+    205|     },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/22]⎯
+
+ FAIL  tests/sprint-1/events.read.api.test.ts > TEST-F-01 — public event list E-04 (AC-F-01, FR-11) > returns upcoming published events in startAt then id order with accurate counts
+AssertionError: expected 5 to be 6 // Object.is equality
+
+- Expected
++ Received
+
+- 6
++ 5
+
+ ❯ tests/sprint-1/events.read.api.test.ts:34:26
+     32|     // EV-4 has started, EV-7 is a draft and EV-8 is cancelled, so 6 e…
+     33|     // Sprint 2 (S2-01) added EV-9; it starts at the same time as EV-1…
+     34|     expect(items.length).toBe(6)
+       |                          ^
+     35| 
+     36|     // S2: verify exact titles listed in startAt then id order
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/22]⎯
+
+ FAIL  tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > creates 2 organizers, 4 participants, the 6 events of contracts §0.3 and the 3 of Sprint 2 §0.4
+AssertionError: expected { users: 6, events: 6, …(1) } to deeply equal { users: 6, events: 9, …(1) }
+
+- Expected
++ Received
+
+  {
+-   "events": 9,
+-   "registrations": 11,
++   "events": 6,
++   "registrations": 9,
+    "users": 6,
+  }
+
+ ❯ tests/sprint-1/seed.api.test.ts:57:28
+     55|     }
+     56|     // Sprint 2 adds EV-7 (no registrations), EV-8 (Boss) and EV-9 (Mi…
+     57|     expect(await counts()).toEqual({ users: 6, events: 9, registration…
+       |                            ^
+     58|   })
+     59| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/22]⎯
+
+ FAIL  tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > adds EV-7 as a DRAFT, EV-8 CANCELLED with Boss EVENT_CANCELLED, EV-9 with a passed deadline and Mint (§0.4)
+PrismaClientValidationError: 
+Invalid `prisma.event.findUniqueOrThrow()` invocation in
+<repo>/server/tests/sprint-1/seed.api.test.ts:78:20
+
+  75 it('adds EV-7 as a DRAFT, EV-8 CANCELLED with Boss EVENT_CANCELLED, EV-9 with a passed deadline and Mint (§0.4)', async () => {
+  76   const now = Date.now()
+  77   const load = (seedKey: string) =>
+→ 78     prisma.event.findUniqueOrThrow({
+           where: {
+             seedKey: "EV-7"
+           },
+           include: {
+             organizer: true,
+             cancelledBy: true,
+             ~~~~~~~~~~~
+             registrations: {
+               include: {
+                 participant: true
+               }
+             }
+           }
+         })
+
+Unknown field `cancelledBy` for include statement on model `Event`. Available options are marked with ?.
+ ❯ Nn node_modules/@prisma/client/runtime/library.js:29:1363
+ ❯ ei.handleRequestError node_modules/@prisma/client/runtime/library.js:121:6911
+ ❯ ei.handleAndLogRequestError node_modules/@prisma/client/runtime/library.js:121:6593
+ ❯ ei.request node_modules/@prisma/client/runtime/library.js:121:6300
+ ❯ a node_modules/@prisma/client/runtime/library.js:130:9551
+ ❯ tests/sprint-1/seed.api.test.ts:82:29
+     80|         include: { organizer: true, cancelledBy: true, registrations: …
+     81|       })
+     82|     const [ev7, ev8, ev9] = await Promise.all([load('EV-7'), load('EV-…
+       |                             ^
+     83| 
+     84|     expect([ev7.title, ev7.organizer.displayName, ev7.status, ev7.capa…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/22]⎯
+
+ FAIL  tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > gives each event its game and each store its games and public contact (§0.4, Feature-U)
+PrismaClientValidationError: 
+Invalid `prisma.event.findMany()` invocation in
+<repo>/server/tests/sprint-1/seed.api.test.ts:104:39
+
+  101 })
+  102 
+  103 it('gives each event its game and each store its games and public contact (§0.4, Feature-U)', async () => {
+→ 104   const events = await prisma.event.findMany({
+          select: {
+            seedKey: true,
+            game: true,
+            ~~~~
+        ?   id?: true,
+        ?   organizerId?: true,
+        ?   title?: true,
+        ?   type?: true,
+        ?   format?: true,
+        ?   venueName?: true,
+        ?   venueAddress?: true,
+        ?   city?: true,
+        ?   startAt?: true,
+        ?   endAt?: true,
+        ?   capacity?: true,
+        ?   feeLabel?: true,
+        ?   structureNote?: true,
+        ?   contact?: true,
+        ?   description?: true,
+        ?   status?: true,
+        ?   publishedAt?: true,
+        ?   createdAt?: true,
+        ?   updatedAt?: true,
+        ?   organizer?: true,
+        ?   registrations?: true,
+        ?   _count?: true
+          },
+          orderBy: {
+            seedKey: "asc"
+          }
+        })
+
+Unknown field `game` for select statement on model `Event`. Available options are marked with ?.
+ ❯ Nn node_modules/@prisma/client/runtime/library.js:29:1363
+ ❯ ei.handleRequestError node_modules/@prisma/client/runtime/library.js:121:6911
+ ❯ ei.handleAndLogRequestError node_modules/@prisma/client/runtime/library.js:121:6593
+ ❯ ei.request node_modules/@prisma/client/runtime/library.js:121:6300
+ ❯ a node_modules/@prisma/client/runtime/library.js:130:9551
+ ❯ tests/sprint-1/seed.api.test.ts:104:20
+    102| 
+    103|   it('gives each event its game and each store its games and public co…
+    104|     const events = await prisma.event.findMany({ select: { seedKey: tr…
+       |                    ^
+    105|     expect(Object.fromEntries(events.map((e) => [e.seedKey, e.game])))…
+    106|       'EV-1': 'MAGIC', 'EV-2': 'MAGIC', 'EV-3': 'YUGIOH', 'EV-4': 'LOR…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/22]⎯
+
+ FAIL  tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > has exactly the SDS §6.2 codes
+AssertionError: expected [ 'ALREADY_CANCELLED', …(20) ] to deeply equal [ 'ALREADY_CANCELLED', …(22) ]
+
+- Expected
++ Received
+
+@@ -1,9 +1,8 @@
+  [
+    "ALREADY_CANCELLED",
+    "ALREADY_CHECKED_IN",
+-   "ALREADY_PUBLISHED",
+    "ALREADY_REGISTERED",
+    "CAPACITY_BELOW_REGISTERED",
+    "EVENT_FULL",
+    "EVENT_NOT_FOUND",
+    "EVENT_STARTED",
+@@ -12,11 +11,10 @@
+    "INTERNAL_ERROR",
+    "INVALID_CREDENTIALS",
+    "INVALID_PATH_PARAMETER",
+    "NOT_FOUND",
+    "NOT_IN_CHECK_IN_WINDOW",
+-   "NOT_PUBLISHED",
+    "PAYLOAD_TOO_LARGE",
+    "REGISTRATION_CLOSED",
+    "REGISTRATION_NOT_FOUND",
+    "TOO_MANY_ATTEMPTS",
+    "UNAUTHENTICATED",
+
+ ❯ tests/sprint-1/unit/errors.unit.test.ts:75:40
+     73| describe('TEST-SR2-04 — every error code gets its status from the cata…
+     74|   it('has exactly the SDS §6.2 codes', () => {
+     75|     expect(Object.keys(ERRORS).sort()).toEqual(CATALOGUE.map(([code]) …
+       |                                        ^
+     76|   })
+     77| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/22]⎯
+
+ FAIL  tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > ALREADY_PUBLISHED answers 409 with the standard body
+Error: Unknown error code: ALREADY_PUBLISHED
+ ❯ sendError src/http/errors.ts:47:43
+     45| /** The only way an error response is sent (contracts §2 item 1). */
+     46| export function sendError(res: Response, code: ErrorCode, details?: Er…
+     47|   if (!Object.hasOwn(ERRORS, code)) throw new Error(`Unknown error cod…
+       |                                           ^
+     48|   const { status, message } = ERRORS[code]
+     49|   return res.status(status).json({ error: { code, message, ...(details…
+ ❯ tests/sprint-1/unit/errors.unit.test.ts:80:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/22]⎯
+
+ FAIL  tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > NOT_PUBLISHED answers 409 with the standard body
+Error: Unknown error code: NOT_PUBLISHED
+ ❯ sendError src/http/errors.ts:47:43
+     45| /** The only way an error response is sent (contracts §2 item 1). */
+     46| export function sendError(res: Response, code: ErrorCode, details?: Er…
+     47|   if (!Object.hasOwn(ERRORS, code)) throw new Error(`Unknown error cod…
+       |                                           ^
+     48|   const { status, message } = ERRORS[code]
+     49|   return res.status(status).json({ error: { code, message, ...(details…
+ ❯ tests/sprint-1/unit/errors.unit.test.ts:80:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/22]⎯
+
+
+ Test Files  6 failed | 25 passed (31)
+      Tests  22 failed | 306 passed (328)
+   Start at  14:20:58
+   Duration  58.70s (transform 966ms, setup 0ms, import 17.08s, tests 33.17s, environment 4ms)
+

@@ -1,0 +1,23 @@
+{
+  "id": "S2-01-A2-create-history",
+  "side": "before",
+  "action": "POST /api/events as Quantum Cards (capacity 24), then GET /api/organizer/events/7/changes",
+  "expected": "After: 201, then 200 with one item: status null → PUBLISHED, changedBy \"Quantum Cards\", no email or user id",
+  "actual": {
+    "create": {
+      "status": 201,
+      "id": 7
+    },
+    "history": {
+      "status": 404,
+      "body": {
+        "error": {
+          "code": "NOT_FOUND",
+          "message": "There is nothing here."
+        }
+      }
+    }
+  },
+  "time": "2026-11-25T07:26:41.946Z",
+  "commit": "fa9c056"
+}

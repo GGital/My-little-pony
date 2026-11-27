@@ -1,0 +1,3465 @@
+Sprint 2 · S2-06 (Issue #83) · RED, client component tests
+Commit: d348686
+Time: 2026-11-26T03:05:01Z
+Command: cd client; npx vitest run
+
+
+ RUN  v4.0.18 <repo>/client
+
+ ✓ tests/sprint-1/RouteGuards.test.tsx (4 tests) 192ms
+ ✓ tests/sprint-1/States.test.tsx (5 tests) 529ms
+ ✓ tests/sprint-1/EventDetail.test.tsx (3 tests) 774ms
+     ✓ lint check: dangerouslySetInnerHTML count is strictly 0 across client/src  357ms
+ ✓ tests/sprint-1/Dashboard.test.tsx (3 tests) 780ms
+     ✓ shows each owned event in start order with title, date, status, seat count, and links to Registrations and View  568ms
+ ✓ tests/sprint-1/MyEvents.test.tsx (3 tests) 878ms
+     ✓ shows each registration as a card in the order E-10 gives, with a REGISTERED chip, linking to its event  581ms
+ ✓ tests/sprint-1/Registrations.test.tsx (5 tests) 894ms
+     ✓ shows event title, seat counts chip, and table with players in order with Bangkok time and status  617ms
+ ✓ tests/sprint-1/Registration.test.tsx (2 tests) 945ms
+     ✓ holds the seat while sending, ignores extra presses, then flips, updates counts and announces  714ms
+ ✓ tests/sprint-1/SignInPage.test.tsx (8 tests) 1106ms
+     ✓ posts E-01 with the typed email and password, then follows a safe returnTo  433ms
+ ✓ tests/sprint-2/Drafts.test.tsx (4 tests) 1079ms
+     ✓ shows "Draft — only you can see this event." and PUBLISH EVENT; publishing calls E-14 and says "Your event is live."  623ms
+ ✓ tests/lab6/SessionEnded.test.tsx (4 tests) 846ms
+     ✓ REGISTER answered with 401 on /events/26: shows the session-ended message on /login?returnTo=%2Fevents%2F26  601ms
+ ✓ tests/sprint-1/CreateEvent.test.tsx (4 tests) 1373ms
+     ✓ renders all required form controls in order with character counter  679ms
+     ✓ shows Publishing… with aria-busy while submitting and navigates to detail with toast on success  367ms
+ ✓ tests/sprint-1/AppShell.test.tsx (7 tests) 1046ms
+ ✓ tests/lab6/TabAccountSync.test.tsx (4 tests) 1048ms
+     ✓ another tab signed in as Boss: when this tab is shown again the header says Boss and the event reloads for Boss  638ms
+ ✓ tests/sprint-2/EditEvent.test.tsx (10 tests) 2431ms
+     ✓ fills the form with the current values; SAVE CHANGES is disabled until a change; the capacity hint names the count  680ms
+     ✓ PATCH carries the changed title only; "Changes saved." is shown and the button is disabled again  346ms
+ ❯ tests/sprint-2/EventDetail.deadline.test.tsx (5 tests | 4 failed) 3798ms
+     × shows "Registration closes Thu 5 Nov · 15:00" and a disabled REGISTRATION CLOSED when the server says CLOSED 1114ms
+     × create: the field says when it closes by default; a value is sent with +07:00, an empty field sends nothing 125ms
+     ✓ create without a deadline: the body has no registrationDeadline  504ms
+     × edit: an early deadline is filled in; clearing it sends null 1033ms
+     × edit: a deadline equal to the start (the default) shows as empty, and moving the start does not send it 1016ms
+ ✓ tests/sprint-1/unit/api.unit.test.ts (4 tests) 23ms
+ ✓ tests/sprint-2/unit/theme-contrast.unit.test.ts (20 tests) 11ms
+ ✓ tests/sprint-2/unit/theme-tokens.unit.test.ts (31 tests) 11ms
+ ✓ tests/sprint-1/unit/formatEventTime.unit.test.ts (3 tests) 39ms
+ ✓ tests/lab6/SafeReturnTo.test.tsx (9 tests) 294ms
+ ✓ tests/sprint-2/CreateEvent.draft.test.tsx (4 tests) 698ms
+ ✓ tests/sprint-1/AppRoutes.test.tsx (5 tests) 279ms
+ ✓ tests/sprint-2/EventSearch.test.tsx (2 tests) 599ms
+     ✓ submits search, updates query, renders filter chips and handles Clear filters  514ms
+ ✓ tests/sprint-1/ActionButton.test.tsx (7 tests) 273ms
+ ✓ tests/lab5/BuildFooter.test.tsx (2 tests) 139ms
+ ✓ tests/lab6/TitleOverflow.test.tsx (2 tests) 265ms
+ ✓ tests/sprint-1/EventList.test.tsx (1 test) 166ms
+ ✓ tests/lab6/SignedInLogin.test.tsx (5 tests) 206ms
+stderr | tests/lab5/EventListSubtitle.test.tsx > TEST-L5-08 (E) — the Find an Event page explains what is listed > shows one line under the title about the events and the time zone
+An update to EventList inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to EventList inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ tests/lab5/EventListSubtitle.test.tsx (1 test) 159ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/sprint-2/EventDetail.deadline.test.tsx > TEST-M-01 / M-03 (C) the event page shows the deadline and a closed button (AC-M-01, AC-M-03, UX-10) > shows "Registration closes Thu 5 Nov · 15:00" and a disabled REGISTRATION CLOSED when the server says CLOSED
+TestingLibraryElementError: Unable to find an element with the text: Registration closes Thu 5 Nov · 15:00. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      aria-live="polite"
+      class="visually-hidden-live"
+    />
+    <div
+      class="dhead"
+    >
+      <div
+        class="dhead__title"
+      >
+        <h1>
+          Early Deadline Sealed
+        </h1>
+        <p
+          class="host"
+        >
+          at 
+          <strong>
+            Quantum Cards
+          </strong>
+           · 
+          Bangkok
+        </p>
+      </div>
+      <div>
+        <div
+          class="lbl"
+        >
+          Date
+        </div>
+        <div
+          class="dhead__fact"
+        >
+          Sat 7 Nov 2026
+        </div>
+      </div>
+      <div>
+        <div
+          class="lbl"
+        >
+          Time
+        </div>
+        <div
+          class="dhead__fact tabular-nums"
+        >
+          17:00–21:00
+        </div>
+      </div>
+      <div>
+        <div
+          class="lbl"
+        >
+          Players
+        </div>
+        <div
+          class="dhead__fact tabular-nums"
+        >
+          1
+           / 
+          8
+        </div>
+      </div>
+      <div
+        class="dhead__action"
+      >
+        <button
+          class="btn-big"
+          disabled=""
+          type="button"
+        >
+          REGISTRATION CLOSED
+        </button>
+      </div>
+    </div>
+    <div
+      class="cols"
+    >
+      <div
+        class="cols__main"
+      >
+        <section
+          class="box details-box"
+        >
+          <h2>
+            Event details
+          </h2>
+          <span
+            class="pill"
+          >
+            Casual
+          </span>
+          <div
+            class="info-row"
+          >
+            <div
+              class="ico"
+            >
+              <svg
+                aria-hidden="true"
+                class="i"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <rect
+                  height="15.5"
+                  rx="2.5"
+                  width="17"
+                  x="3.5"
+                  y="5"
+                />
+                <path
+                  d="M3.5 10h17M8 3v4M16 3v4"
+                />
+              </svg>
+            </div>
+            <div>
+              Sat 7 Nov 2026
+              <br />
+              <span
+                class="tabular-nums"
+              >
+                17:00–21:00
+              </span>
+               (Bangkok time)
+            </div>
+          </div>
+          <div
+            class="info-row"
+          >
+            <div
+              class="ico"
+            >
+              <svg
+                aria-hidden="true"
+                class="i"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 21s6.5-5.8 6.5-11A6.5 6.5 0 0 0 5.5 10c0 5.2 6.5 11 6.5 11z"
+                />
+                <circle
+                  cx="12"
+                  cy="10"
+                  r="2.4"
+                />
+              </svg>
+            </div>
+            <div>
+              1631 Kanchanaphisek Rd
+            </div>
+          </div>
+          <div
+            class="info-row"
+          >
+            <div
+              class="ico"
+            >
+              <svg
+                aria-hidden="true"
+                class="i"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M8 4h8v5.5a4 4 0 0 1-8 0V4zM8 6.5H5.5a2.5 2.5 0 0 0 2.6 3.2M16 6.5h2.5a2.5 2.5 0 0 1-2.6 3.2M12 13.5V17M8.5 20.5h7M10 17h4v3.5h-4z"
+                />
+              </svg>
+            </div>
+            <div>
+              Sealed
+              <br />
+              3 rounds
+            </div>
+          </div>
+          <div
+            class="info-row"
+          >
+            <div
+              class="ico"
+            >
+              <svg
+                aria-hidden="true"
+                class="i"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <rect
+                  height="12"
+                  rx="2.5"
+                  width="18"
+                  x="3"
+                  y="6"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="2.4"
+                />
+                <path
+                  d="M6.5 9.5v5M17.5 9.5v5"
+                />
+              </svg>
+            </div>
+            <div>
+              Free
+            </div>
+          </div>
+          <p
+            class="description"
+          >
+            Registration closed early so the product can be ordered.
+          </p>
+        </section>
+        <section
+          class="box contact-box"
+        >
+          <h2>
+            Contact
+          </h2>
+          <div
+            class="info-row"
+          >
+            <div
+              class="ico"
+            >
+              <svg
+                aria-hidden="true"
+                class="i"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <rect
+                  height="13"
+                  rx="2.5"
+                  width="18"
+                  x="3"
+                  y="5.5"
+                />
+                <path
+                  d="M4 7.5l8 6 8-6"
+                />
+              </svg>
+            </div>
+            <div>
+              hello@quantumcards.example
+            </div>
+          </div>
+        </section>
+      </div>
+      <div
+        class="cols__side"
+      >
+        <div
+          class="seat-card"
+        >
+          <div
+            class="seat-card__inner"
+          >
+            <section
+              aria-hidden="false"
+              aria-labelledby="seats-title"
+              class="seat-card__face box"
+            >
+              <h2
+                class="seat-card__head"
+                id="seats-title"
+              >
+                Seats
+                <span
+                  class="tabular-nums"
+                >
+                  1
+                   / 
+                  8
+                </span>
+              </h2>
+              <div
+                aria-hidden="true"
+                class="seat-bar"
+              >
+                <div
+                  class="seat-bar__fill"
+                  style="transform: scaleX(0.125);"
+                />
+              </div>
+              <p
+                class="seat-card__left tabular-nums"
+              >
+                7 seats left
+              </p>
+              <p
+                class="sub mt-2"
+              >
+                Player names are private. Only the organizer of this event can see who registered.
+              </p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      aria-live="polite"
+      class="visually-hidden-live"
+    />
+    <div
+      class="dhead"
+    >
+      <div
+        class="dhead__title"
+      >
+        <h1>
+          Early Deadline Sealed
+        </h1>
+        <p
+          class="host"
+        >
+          at 
+          <strong>
+            Quantum Cards
+          </strong>
+           · 
+          Bangkok
+        </p>
+      </div>
+      <div>
+        <div
+          class="lbl"
+        >
+          Date
+        </div>
+        <div
+          class="dhead__fact"
+        >
+          Sat 7 Nov 2026
+        </div>
+      </div>
+      <div>
+        <div
+          class="lbl"
+        >
+          Time
+        </div>
+        <div
+          class="dhead__fact tabular-nums"
+        >
+          17:00–21:00
+        </div>
+      </div>
+      <div>
+        <div
+          class="lbl"
+        >
+          Players
+        </div>
+        <div
+          class="dhead__fact tabular-nums"
+        >
+          1
+           / 
+          8
+        </div>
+      </div>
+      <div
+        class="dhead__action"
+      >
+        <button
+          class="btn-big"
+          disabled=""
+          type="button"
+        >
+          REGISTRATION CLOSED
+        </button>
+      </div>
+    </div>
+    <div
+      class="cols"
+    >
+      <div
+        class="cols__main"
+      >
+        <section
+          class="box details-box"
+        >
+          <h2>
+            Event details
+          </h2>
+          <span
+            class="pill"
+          >
+            Casual
+          </span>
+          <div
+            class="info-row"
+          >
+            <div
+              class="ico"
+            >
+              <svg
+                aria-hidden="true"
+                class="i"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <rect
+                  height="15.5"
+                  rx="2.5"
+                  width="17"
+                  x="3.5"
+                  y="5"
+                />
+                <path
+                  d="M3.5 10h17M8 3v4M16 3v4"
+                />
+              </svg>
+            </div>
+            <div>
+              Sat 7 Nov 2026
+              <br />
+              <span
+                class="tabular-nums"
+              >
+                17:00–21:00
+              </span>
+               (Bangkok time)
+            </div>
+          </div>
+          <div
+            class="info-row"
+          >
+            <div
+              class="ico"
+            >
+              <svg
+                aria-hidden="true"
+                class="i"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 21s6.5-5.8 6.5-11A6.5 6.5 0 0 0 5.5 10c0 5.2 6.5 11 6.5 11z"
+                />
+                <circle
+                  cx="12"
+                  cy="10"
+                  r="2.4"
+                />
+              </svg>
+            </div>
+            <div>
+              1631 Kanchanaphisek Rd
+            </div>
+          </div>
+          <div
+            class="info-row"
+          >
+            <div
+              class="ico"
+            >
+              <svg
+                aria-hidden="true"
+                class="i"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M8 4h8v5.5a4 4 0 0 1-8 0V4zM8 6.5H5.5a2.5 2.5 0 0 0 2.6 3.2M16 6.5h2.5a2.5 2.5 0 0 1-2.6 3.2M12 13.5V17M8.5 20.5h7M10 17h4v3.5h-4z"
+                />
+              </svg>
+            </div>
+            <div>
+              Sealed
+              <br />
+              3 rounds
+            </div>
+          </div>
+          <div
+            class="info-row"
+          >
+            <div
+              class="ico"
+            >
+              <svg
+                aria-hidden="true"
+                class="i"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <rect
+                  height="12"
+                  rx="2.5"
+                  width="18"
+                  x="3"
+                  y="6"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="2.4"
+                />
+                <path
+                  d="M6.5 9.5v5M17.5 9.5v5"
+                />
+              </svg>
+            </div>
+            <div>
+              Free
+            </div>
+          </div>
+          <p
+            class="description"
+          >
+            Registration closed early so the product can be ordered.
+          </p>
+        </section>
+        <section
+          class="box contact-box"
+        >
+          <h2>
+            Contact
+          </h2>
+          <div
+            class="info-row"
+          >
+            <div
+              class="ico"
+            >
+              <svg
+                aria-hidden="true"
+                class="i"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <rect
+                  height="13"
+                  rx="2.5"
+                  width="18"
+                  x="3"
+                  y="5.5"
+                />
+                <path
+                  d="M4 7.5l8 6 8-6"
+                />
+              </svg>
+            </div>
+            <div>
+              hello@quantumcards.example
+            </div>
+          </div>
+        </section>
+      </div>
+      <div
+        class="cols__side"
+      >
+        <div
+          class="seat-card"
+        >
+          <div
+            class="seat-card__inner"
+          >
+            <section
+              aria-hidden="false"
+              aria-labelledby="seats-title"
+              class="seat-card__face box"
+            >
+              <h2
+                class="seat-card__head"
+                id="seats-title"
+              >
+                Seats
+                <span
+                  class="tabular-nums"
+                >
+                  1
+                   / 
+                  8
+                </span>
+              </h2>
+              <div
+                aria-hidden="true"
+                class="seat-bar"
+              >
+                <div
+                  class="seat-bar__fill"
+                  style="transform: scaleX(0.125);"
+                />
+              </div>
+              <p
+                class="seat-card__left tabular-nums"
+              >
+                7 seats left
+              </p>
+              <p
+                class="sub mt-2"
+              >
+                Player names are private. Only the organizer of this event can see who registered.
+              </p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/sprint-2/EventDetail.deadline.test.tsx:69:25
+     67|     stubApi(EVENT)
+     68|     renderAt('/events/9', <EventDetail />, '/events/:id')
+     69|     expect(await screen.findByText('Registration closes Thu 5 Nov · 15…
+       |                         ^
+     70|     expect(screen.getByRole('button', { name: 'REGISTRATION CLOSED' })…
+     71|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/sprint-2/EventDetail.deadline.test.tsx > TEST-M-01 (C) the create and edit forms send a deadline only when one is given (AC-M-01, AC-M-02) > create: the field says when it closes by default; a value is sent with +07:00, an empty field sends nothing
+TestingLibraryElementError: Unable to find an element with the text: (Leave empty to close at the start time.). This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="ptop"
+    >
+      <div
+        class="ptop__row"
+      >
+        <div>
+          <h1>
+            Create an event
+          </h1>
+          <p
+            class="host"
+          >
+            It goes live as soon as you publish it, or save a draft that only you can see. Times are Bangkok time.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      class="pbody"
+    >
+      <form
+        class="form-section"
+        novalidate=""
+        style="max-width: 760px;"
+      >
+        <section
+          class="form-card"
+        >
+          <h2>
+            The event
+          </h2>
+          <div>
+            <label
+              class="form-label"
+              for="title"
+            >
+              Title
+               
+              <span
+                aria-hidden="true"
+                class="req"
+              >
+                *
+              </span>
+            </label>
+            <input
+              aria-required="true"
+              class="form-control"
+              id="title"
+              name="title"
+              placeholder="e.g. Friday Night Constructed"
+              type="text"
+              value=""
+            />
+          </div>
+          <div
+            class="form-grid"
+          >
+            <fieldset>
+              <legend
+                class="form-label"
+              >
+                Event Type
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </legend>
+              <div
+                class="choice-group"
+              >
+                <label
+                  class="choice"
+                  title="Casual"
+                >
+                  <input
+                    checked=""
+                    class="visually-hidden"
+                    name="type"
+                    type="radio"
+                    value="CASUAL"
+                  />
+                  CASUAL
+                </label>
+                <label
+                  class="choice"
+                  title="Tournament"
+                >
+                  <input
+                    class="visually-hidden"
+                    name="type"
+                    type="radio"
+                    value="TOURNAMENT"
+                  />
+                  TOURNAMENT
+                </label>
+                <label
+                  class="choice"
+                  title="Release"
+                >
+                  <input
+                    class="visually-hidden"
+                    name="type"
+                    type="radio"
+                    value="RELEASE"
+                  />
+                  RELEASE
+                </label>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend
+                class="form-label"
+              >
+                Format
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </legend>
+              <div
+                class="choice-group"
+              >
+                <label
+                  class="choice"
+                  title="Constructed"
+                >
+                  <input
+                    checked=""
+                    class="visually-hidden"
+                    name="format"
+                    type="radio"
+                    value="CONSTRUCTED"
+                  />
+                  CONSTRUCTED
+                </label>
+                <label
+                  class="choice"
+                  title="Sealed"
+                >
+                  <input
+                    class="visually-hidden"
+                    name="format"
+                    type="radio"
+                    value="SEALED"
+                  />
+                  SEALED
+                </label>
+                <label
+                  class="choice"
+                  title="Draft"
+                >
+                  <input
+                    class="visually-hidden"
+                    name="format"
+                    type="radio"
+                    value="DRAFT"
+                  />
+                  DRAFT
+                </label>
+              </div>
+            </fieldset>
+          </div>
+        </section>
+        <section
+          class="form-card"
+        >
+          <h2>
+            Where
+          </h2>
+          <div>
+            <label
+              class="form-label"
+              for="venueName"
+            >
+              Venue Name
+               
+              <span
+                aria-hidden="true"
+                class="req"
+              >
+                *
+              </span>
+            </label>
+            <input
+              aria-required="true"
+              class="form-control"
+              id="venueName"
+              name="venueName"
+              placeholder="e.g. Quantum Cards"
+              type="text"
+              value=""
+            />
+          </div>
+          <div>
+            <label
+              class="form-label"
+              for="venueAddress"
+            >
+              Venue Address
+               
+              <span
+                aria-hidden="true"
+                class="req"
+              >
+                *
+              </span>
+            </label>
+            <input
+              aria-required="true"
+              class="form-control"
+              id="venueAddress"
+              name="venueAddress"
+              placeholder="e.g. 1631 Kanchanaphisek Rd"
+              type="text"
+              value=""
+            />
+          </div>
+          <div>
+            <label
+              class="form-label"
+              for="city"
+            >
+              City
+               
+              <span
+                aria-hidden="true"
+                class="req"
+              >
+                *
+              </span>
+            </label>
+            <input
+              aria-required="true"
+              class="form-control"
+              id="city"
+              name="city"
+              placeholder="e.g. Bangkok"
+              type="text"
+              value=""
+            />
+          </div>
+        </section>
+        <section
+          class="form-card"
+        >
+          <h2>
+            When
+          </h2>
+          <div
+            class="form-grid"
+          >
+            <div>
+              <label
+                class="form-label"
+                for="startAt"
+              >
+                Start Date & Time (Bangkok)
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+                <span
+                  class="field-hint"
+                >
+                  (
+                  at least 1 hour from now
+                  )
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="startAt"
+                name="startAt"
+                type="datetime-local"
+                value=""
+              />
+            </div>
+            <div>
+              <label
+                class="form-label"
+                for="endAt"
+              >
+                End Date & Time (Bangkok)
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="endAt"
+                name="endAt"
+                type="datetime-local"
+                value=""
+              />
+            </div>
+          </div>
+          <p
+            class="sub small"
+          >
+            An event can last at most 24 hours.
+          </p>
+        </section>
+        <section
+          class="form-card"
+        >
+          <h2>
+            Seats and fee
+          </h2>
+          <div
+            class="form-grid"
+          >
+            <div>
+              <label
+                class="form-label"
+                for="capacity"
+              >
+                Capacity
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+                <span
+                  class="field-hint"
+                >
+                  (
+                  1–256
+                  )
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="capacity"
+                max="256"
+                min="1"
+                name="capacity"
+                type="number"
+                value="24"
+              />
+            </div>
+            <div>
+              <label
+                class="form-label"
+                for="feeLabel"
+              >
+                Fee Label
+                 
+                <span
+                  class="field-hint"
+                >
+                  (
+                  optional, max 40
+                  )
+                </span>
+              </label>
+              <input
+                class="form-control"
+                id="feeLabel"
+                maxlength="40"
+                name="feeLabel"
+                placeholder="e.g. Free or THB 250"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+        </section>
+        <section
+          class="form-card"
+        >
+          <h2>
+            More details
+          </h2>
+          <div>
+            <label
+              class="form-label"
+              for="structureNote"
+            >
+              Structure Note
+               
+              <span
+                class="field-hint"
+              >
+                (
+                optional, max 80
+                )
+              </span>
+            </label>
+            <input
+              class="form-control"
+              id="structureNote"
+              maxlength="80"
+              name="structureNote"
+              placeholder="e.g. 4 rounds · Best of 1"
+              type="text"
+              value=""
+            />
+          </div>
+          <div>
+            <label
+              class="form-label"
+              for="contact"
+            >
+              Contact
+               
+              <span
+                class="field-hint"
+              >
+                (
+                optional, max 120
+                )
+              </span>
+            </label>
+            <input
+              class="form-control"
+              id="contact"
+              maxlength="120"
+              name="contact"
+              placeholder="e.g. hello@quantumcards.example"
+              type="text"
+              value=""
+            />
+          </div>
+          <div>
+            <div
+              class="d-flex justify-content-between align-items-baseline"
+            >
+              <label
+                class="form-label"
+                for="description"
+              >
+                Description 
+                <span
+                  class="field-hint"
+                >
+                  (optional)
+                </span>
+              </label>
+              <span
+                class="small sub tabular-nums"
+              >
+                0
+                 / 2,000
+              </span>
+            </div>
+            <textarea
+              class="form-control"
+              id="description"
+              maxlength="2000"
+              name="description"
+              placeholder="Deck rules, prizes, schedule…"
+              rows="5"
+            />
+          </div>
+        </section>
+        <div
+          class="form-actions"
+        >
+          <button
+            aria-busy="false"
+            class="btn-big"
+            type="submit"
+          >
+            PUBLISH EVENT
+          </button>
+          <button
+            aria-busy="false"
+            class="btn-big btn-big--outline"
+            type="button"
+          >
+            SAVE DRAFT
+          </button>
+          <span
+            class="sub small"
+          >
+            Fields marked * are required.
+          </span>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/sprint-2/EventDetail.deadline.test.tsx:78:19
+     76|     const calls = stubApi(EVENT)
+     77|     renderAt('/organizer/events/new', <CreateEvent />, '/organizer/eve…
+     78|     expect(screen.getByText('(Leave empty to close at the start time.)…
+       |                   ^
+     79|     fireEvent.change(screen.getByLabelText(/Registration closes/), { t…
+     80|     fireEvent.click(screen.getByRole('button', { name: 'PUBLISH EVENT'…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/sprint-2/EventDetail.deadline.test.tsx > TEST-M-01 (C) the create and edit forms send a deadline only when one is given (AC-M-01, AC-M-02) > edit: an early deadline is filled in; clearing it sends null
+TestingLibraryElementError: Unable to find a label with the text of: /Registration closes/
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="ptop"
+    >
+      <div
+        class="ptop__row"
+      >
+        <div>
+          <h1>
+            Edit event
+          </h1>
+          <p
+            class="host"
+          >
+            Early Deadline Sealed
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      class="pbody"
+    >
+      <div
+        class="page-alerts"
+      />
+      <div
+        class="cols"
+      >
+        <form
+          class="form-section cols__main"
+          novalidate=""
+        >
+          <section
+            class="form-card"
+          >
+            <h2>
+              The event
+            </h2>
+            <div>
+              <label
+                class="form-label"
+                for="title"
+              >
+                Title
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="title"
+                name="title"
+                placeholder="e.g. Friday Night Constructed"
+                type="text"
+                value="Early Deadline Sealed"
+              />
+            </div>
+            <div
+              class="form-grid"
+            >
+              <fieldset>
+                <legend
+                  class="form-label"
+                >
+                  Event Type
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                </legend>
+                <div
+                  class="choice-group"
+                >
+                  <label
+                    class="choice"
+                    title="Casual"
+                  >
+                    <input
+                      checked=""
+                      class="visually-hidden"
+                      name="type"
+                      type="radio"
+                      value="CASUAL"
+                    />
+                    CASUAL
+                  </label>
+                  <label
+                    class="choice"
+                    title="Tournament"
+                  >
+                    <input
+                      class="visually-hidden"
+                      name="type"
+                      type="radio"
+                      value="TOURNAMENT"
+                    />
+                    TOURNAMENT
+                  </label>
+                  <label
+                    class="choice"
+                    title="Release"
+                  >
+                    <input
+                      class="visually-hidden"
+                      name="type"
+                      type="radio"
+                      value="RELEASE"
+                    />
+                    RELEASE
+                  </label>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend
+                  class="form-label"
+                >
+                  Format
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                </legend>
+                <div
+                  class="choice-group"
+                >
+                  <label
+                    class="choice"
+                    title="Constructed"
+                  >
+                    <input
+                      class="visually-hidden"
+                      name="format"
+                      type="radio"
+                      value="CONSTRUCTED"
+                    />
+                    CONSTRUCTED
+                  </label>
+                  <label
+                    class="choice"
+                    title="Sealed"
+                  >
+                    <input
+                      checked=""
+                      class="visually-hidden"
+                      name="format"
+                      type="radio"
+                      value="SEALED"
+                    />
+                    SEALED
+                  </label>
+                  <label
+                    class="choice"
+                    title="Draft"
+                  >
+                    <input
+                      class="visually-hidden"
+                      name="format"
+                      type="radio"
+                      value="DRAFT"
+                    />
+                    DRAFT
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+          </section>
+          <section
+            class="form-card"
+          >
+            <h2>
+              Where
+            </h2>
+            <div>
+              <label
+                class="form-label"
+                for="venueName"
+              >
+                Venue Name
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="venueName"
+                name="venueName"
+                placeholder="e.g. Quantum Cards"
+                type="text"
+                value="Quantum Cards"
+              />
+            </div>
+            <div>
+              <label
+                class="form-label"
+                for="venueAddress"
+              >
+                Venue Address
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="venueAddress"
+                name="venueAddress"
+                placeholder="e.g. 1631 Kanchanaphisek Rd"
+                type="text"
+                value="1631 Kanchanaphisek Rd"
+              />
+            </div>
+            <div>
+              <label
+                class="form-label"
+                for="city"
+              >
+                City
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="city"
+                name="city"
+                placeholder="e.g. Bangkok"
+                type="text"
+                value="Bangkok"
+              />
+            </div>
+          </section>
+          <section
+            class="form-card"
+          >
+            <h2>
+              When
+            </h2>
+            <div
+              class="form-grid"
+            >
+              <div>
+                <label
+                  class="form-label"
+                  for="startAt"
+                >
+                  Start Date & Time (Bangkok)
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                  <span
+                    class="field-hint"
+                  >
+                    (
+                    at least 1 hour from now
+                    )
+                  </span>
+                </label>
+                <input
+                  aria-required="true"
+                  class="form-control"
+                  id="startAt"
+                  name="startAt"
+                  type="datetime-local"
+                  value="2026-11-07T17:00"
+                />
+              </div>
+              <div>
+                <label
+                  class="form-label"
+                  for="endAt"
+                >
+                  End Date & Time (Bangkok)
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                </label>
+                <input
+                  aria-required="true"
+                  class="form-control"
+                  id="endAt"
+                  name="endAt"
+                  type="datetime-local"
+                  value="2026-11-07T21:00"
+                />
+              </div>
+            </div>
+            <p
+              class="sub small"
+            >
+              An event can last at most 24 hours.
+            </p>
+          </section>
+          <section
+            class="form-card"
+          >
+            <h2>
+              Seats and fee
+            </h2>
+            <div
+              class="form-grid"
+            >
+              <div>
+                <label
+                  class="form-label"
+                  for="capacity"
+                >
+                  Capacity
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                  <span
+                    class="field-hint"
+                  >
+                    (
+                    1–256
+                    )
+                  </span>
+                </label>
+                <input
+                  aria-required="true"
+                  class="form-control"
+                  id="capacity"
+                  max="256"
+                  min="1"
+                  name="capacity"
+                  type="number"
+                  value="8"
+                />
+                <p
+                  class="sub small capacity-hint"
+                >
+                  At least 1: that's how many players are registered.
+                </p>
+              </div>
+              <div>
+                <label
+                  class="form-label"
+                  for="feeLabel"
+                >
+                  Fee Label
+                   
+                  <span
+                    class="field-hint"
+                  >
+                    (
+                    optional, max 40
+                    )
+                  </span>
+                </label>
+                <input
+                  class="form-control"
+                  id="feeLabel"
+                  maxlength="40"
+                  name="feeLabel"
+                  placeholder="e.g. Free or THB 250"
+                  type="text"
+                  value="Free"
+                />
+              </div>
+            </div>
+          </section>
+          <section
+            class="form-card"
+          >
+            <h2>
+              More details
+            </h2>
+            <div>
+              <label
+                class="form-label"
+                for="structureNote"
+              >
+                Structure Note
+                 
+                <span
+                  class="field-hint"
+                >
+                  (
+                  optional, max 80
+                  )
+                </span>
+              </label>
+              <input
+                class="form-control"
+                id="structureNote"
+                maxlength="80"
+                name="structureNote"
+                placeholder="e.g. 4 rounds · Best of 1"
+                type="text"
+                value="3 rounds"
+              />
+            </div>
+            <div>
+              <label
+                class="form-label"
+                for="contact"
+              >
+                Contact
+                 
+                <span
+                  class="field-hint"
+                >
+                  (
+                  optional, max 120
+                  )
+                </span>
+              </label>
+              <input
+                class="form-control"
+                id="contact"
+                maxlength="120"
+                name="contact"
+                placeholder="e.g. hello@quantumcards.example"
+                type="text"
+                value="hello@quantumcards.example"
+              />
+            </div>
+            <div>
+              <div
+                class="d-flex justify-content-between align-items-baseline"
+              >
+                <label
+                  class="form-label"
+                  for="description"
+                >
+                  Description 
+                  <span
+                    class="field-hint"
+                  >
+                    (optional)
+                  </span>
+                </label>
+                <span
+                  class="small sub tabular-nums"
+                >
+                  56
+                   / 2,000
+                </span>
+              </div>
+              <textarea
+                class="form-control"
+                id="description"
+                maxlength="2000"
+                name="description"
+                placeholder="Deck rules, prizes, schedule…"
+                rows="5"
+              >
+                Registration closed early so the product can be ordered.
+              </textarea>
+            </div>
+          </section>
+          <div
+            class="form-actions"
+          >
+            <button
+              aria-busy="false"
+              class="btn-big"
+              disabled=""
+              type="submit"
+            >
+              SAVE CHANGES
+            </button>
+          </div>
+        </form>
+        <div
+          class="cols__side"
+        >
+          <section
+            class="box manage-box"
+          >
+            <h2>
+              Your event
+            </h2>
+            <p
+              class="d-flex gap-2 flex-wrap"
+            >
+              <a
+                class="btn-soft"
+                data-discover="true"
+                href="/organizer/events/9/registrations"
+              >
+                Registrations
+              </a>
+              <a
+                class="btn-soft"
+                data-discover="true"
+                href="/events/9"
+              >
+                View event page
+              </a>
+            </p>
+          </section>
+          <section
+            aria-label="History"
+            class="box history-box"
+          >
+            <h2>
+              History
+            </h2>
+            <p
+              class="sub"
+            >
+              No changes yet.
+            </p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="ptop"
+    >
+      <div
+        class="ptop__row"
+      >
+        <div>
+          <h1>
+            Edit event
+          </h1>
+          <p
+            class="host"
+          >
+            Early Deadline Sealed
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      class="pbody"
+    >
+      <div
+        class="page-alerts"
+      />
+      <div
+        class="cols"
+      >
+        <form
+          class="form-section cols__main"
+          novalidate=""
+        >
+          <section
+            class="form-card"
+          >
+            <h2>
+              The event
+            </h2>
+            <div>
+              <label
+                class="form-label"
+                for="title"
+              >
+                Title
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="title"
+                name="title"
+                placeholder="e.g. Friday Night Constructed"
+                type="text"
+                value="Early Deadline Sealed"
+              />
+            </div>
+            <div
+              class="form-grid"
+            >
+              <fieldset>
+                <legend
+                  class="form-label"
+                >
+                  Event Type
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                </legend>
+                <div
+                  class="choice-group"
+                >
+                  <label
+                    class="choice"
+                    title="Casual"
+                  >
+                    <input
+                      checked=""
+                      class="visually-hidden"
+                      name="type"
+                      type="radio"
+                      value="CASUAL"
+                    />
+                    CASUAL
+                  </label>
+                  <label
+                    class="choice"
+                    title="Tournament"
+                  >
+                    <input
+                      class="visually-hidden"
+                      name="type"
+                      type="radio"
+                      value="TOURNAMENT"
+                    />
+                    TOURNAMENT
+                  </label>
+                  <label
+                    class="choice"
+                    title="Release"
+                  >
+                    <input
+                      class="visually-hidden"
+                      name="type"
+                      type="radio"
+                      value="RELEASE"
+                    />
+                    RELEASE
+                  </label>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend
+                  class="form-label"
+                >
+                  Format
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                </legend>
+                <div
+                  class="choice-group"
+                >
+                  <label
+                    class="choice"
+                    title="Constructed"
+                  >
+                    <input
+                      class="visually-hidden"
+                      name="format"
+                      type="radio"
+                      value="CONSTRUCTED"
+                    />
+                    CONSTRUCTED
+                  </label>
+                  <label
+                    class="choice"
+                    title="Sealed"
+                  >
+                    <input
+                      checked=""
+                      class="visually-hidden"
+                      name="format"
+                      type="radio"
+                      value="SEALED"
+                    />
+                    SEALED
+                  </label>
+                  <label
+                    class="choice"
+                    title="Draft"
+                  >
+                    <input
+                      class="visually-hidden"
+                      name="format"
+                      type="radio"
+                      value="DRAFT"
+                    />
+                    DRAFT
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+          </section>
+          <section
+            class="form-card"
+          >
+            <h2>
+              Where
+            </h2>
+            <div>
+              <label
+                class="form-label"
+                for="venueName"
+              >
+                Venue Name
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="venueName"
+                name="venueName"
+                placeholder="e.g. Quantum Cards"
+                type="text"
+                value="Quantum Cards"
+              />
+            </div>
+            <div>
+              <label
+                class="form-label"
+                for="venueAddress"
+              >
+                Venue Address
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="venueAddress"
+                name="venueAddress"
+                placeholder="e.g. 1631 Kanchanaphisek Rd"
+                type="text"
+                value="1631 Kanchanaphisek Rd"
+              />
+            </div>
+            <div>
+              <label
+                class="form-label"
+                for="city"
+              >
+                City
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="city"
+                name="city"
+                placeholder="e.g. Bangkok"
+                type="text"
+                value="Bangkok"
+              />
+            </div>
+          </section>
+          <section
+            class="form-card"
+          >
+            <h2>
+              When
+            </h2>
+            <div
+              class="form-grid"
+            >
+              <div>
+                <label
+                  class="form-label"
+                  for="startAt"
+                >
+                  Start Date & Time (Bangkok)
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                  <span
+                    class="field-hint"
+                  >
+                    (
+                    at least 1 hour from now
+                    )
+                  </span>
+                </label>
+                <input
+                  aria-required="true"
+                  class="form-control"
+                  id="startAt"
+                  name="startAt"
+                  type="datetime-local"
+                  value="2026-11-07T17:00"
+                />
+              </div>
+              <div>
+                <label
+                  class="form-label"
+                  for="endAt"
+                >
+                  End Date & Time (Bangkok)
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                </label>
+                <input
+                  aria-required="true"
+                  class="form-control"
+                  id="endAt"
+                  name="endAt"
+                  type="datetime-local"
+                  value="2026-11-07T21:00"
+                />
+              </div>
+            </div>
+            <p
+              class="sub small"
+            >
+              An event can last at most 24 hours.
+            </p>
+          </section>
+          <section
+            class="form-card"
+          >
+            <h2>
+              Seats and fee
+            </h2>
+            <div
+              class="form-grid"
+            >
+              <div>
+                <label
+                  class="form-label"
+                  for="capacity"
+                >
+                  Capacity
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                  <span
+                    class="field-hint"
+                  >
+                    (
+                    1–256
+                    )
+                  </span>
+                </label>
+                <input
+                  aria-required="true"
+                  class="form-control"
+                  id="capacity"
+                  max="256"
+                  min="1"
+                  name="capacity"
+                  type="number"
+                  value="8"
+                />
+                <p
+                  class="sub small capacity-hint"
+                >
+                  At least 1: that's how many players are registered.
+                </p>
+              </div>
+              <div>
+                <label
+                  class="form-label"
+                  for="feeLabel"
+                >
+                  Fee Label
+                   
+                  <span
+                    class="field-hint"
+                  >
+                    (
+                    optional, max 40
+                    )
+                  </span>
+                </label>
+                <input
+                  class="form-control"
+                  id="feeLabel"
+                  maxlength="40"
+                  name="feeLabel"
+                  placeholder="e.g. Free or THB 250"
+                  type="text"
+                  value="Free"
+                />
+              </div>
+            </div>
+          </section>
+          <section
+            class="form-card"
+          >
+            <h2>
+              More details
+            </h2>
+            <div>
+              <label
+                class="form-label"
+                for="structureNote"
+              >
+                Structure Note
+                 
+                <span
+                  class="field-hint"
+                >
+                  (
+                  optional, max 80
+                  )
+                </span>
+              </label>
+              <input
+                class="form-control"
+                id="structureNote"
+                maxlength="80"
+                name="structureNote"
+                placeholder="e.g. 4 rounds · Best of 1"
+                type="text"
+                value="3 rounds"
+              />
+            </div>
+            <div>
+              <label
+                class="form-label"
+                for="contact"
+              >
+                Contact
+                 
+                <span
+                  class="field-hint"
+                >
+                  (
+                  optional, max 120
+                  )
+                </span>
+              </label>
+              <input
+                class="form-control"
+                id="contact"
+                maxlength="120"
+                name="contact"
+                placeholder="e.g. hello@quantumcards.example"
+                type="text"
+                value="hello@quantumcards.example"
+              />
+            </div>
+            <div>
+              <div
+                class="d-flex justify-content-between align-items-baseline"
+              >
+                <label
+                  class="form-label"
+                  for="description"
+                >
+                  Description 
+                  <span
+                    class="field-hint"
+                  >
+                    (optional)
+                  </span>
+                </label>
+                <span
+                  class="small sub tabular-nums"
+                >
+                  56
+                   / 2,000
+                </span>
+              </div>
+              <textarea
+                class="form-control"
+                id="description"
+                maxlength="2000"
+                name="description"
+                placeholder="Deck rules, prizes, schedule…"
+                rows="5"
+              >
+                Registration closed early so the product can be ordered.
+              </textarea>
+            </div>
+          </section>
+          <div
+            class="form-actions"
+          >
+            <button
+              aria-busy="false"
+              class="btn-big"
+              disabled=""
+              type="submit"
+            >
+              SAVE CHANGES
+            </button>
+          </div>
+        </form>
+        <div
+          class="cols__side"
+        >
+          <section
+            class="box manage-box"
+          >
+            <h2>
+              Your event
+            </h2>
+            <p
+              class="d-flex gap-2 flex-wrap"
+            >
+              <a
+                class="btn-soft"
+                data-discover="true"
+                href="/organizer/events/9/registrations"
+              >
+                Registrations
+              </a>
+              <a
+                class="btn-soft"
+                data-discover="true"
+                href="/events/9"
+              >
+                View event page
+              </a>
+            </p>
+          </section>
+          <section
+            aria-label="History"
+            class="box history-box"
+          >
+            <h2>
+              History
+            </h2>
+            <p
+              class="sub"
+            >
+              No changes yet.
+            </p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/sprint-2/EventDetail.deadline.test.tsx:96:32
+     94|     const calls = stubApi({ ...EVENT, viewer: { action: 'MANAGE', regi…
+     95|     renderAt('/organizer/events/9/edit', <EditEvent />, '/organizer/ev…
+     96|     const field = await screen.findByLabelText(/Registration closes/)
+       |                                ^
+     97|     expect(field).toHaveValue('2026-11-05T15:00')
+     98|     fireEvent.change(field, { target: { value: '' } })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/sprint-2/EventDetail.deadline.test.tsx > TEST-M-01 (C) the create and edit forms send a deadline only when one is given (AC-M-01, AC-M-02) > edit: a deadline equal to the start (the default) shows as empty, and moving the start does not send it
+TestingLibraryElementError: Unable to find a label with the text of: /Registration closes/
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="ptop"
+    >
+      <div
+        class="ptop__row"
+      >
+        <div>
+          <h1>
+            Edit event
+          </h1>
+          <p
+            class="host"
+          >
+            Early Deadline Sealed
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      class="pbody"
+    >
+      <div
+        class="page-alerts"
+      />
+      <div
+        class="cols"
+      >
+        <form
+          class="form-section cols__main"
+          novalidate=""
+        >
+          <section
+            class="form-card"
+          >
+            <h2>
+              The event
+            </h2>
+            <div>
+              <label
+                class="form-label"
+                for="title"
+              >
+                Title
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="title"
+                name="title"
+                placeholder="e.g. Friday Night Constructed"
+                type="text"
+                value="Early Deadline Sealed"
+              />
+            </div>
+            <div
+              class="form-grid"
+            >
+              <fieldset>
+                <legend
+                  class="form-label"
+                >
+                  Event Type
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                </legend>
+                <div
+                  class="choice-group"
+                >
+                  <label
+                    class="choice"
+                    title="Casual"
+                  >
+                    <input
+                      checked=""
+                      class="visually-hidden"
+                      name="type"
+                      type="radio"
+                      value="CASUAL"
+                    />
+                    CASUAL
+                  </label>
+                  <label
+                    class="choice"
+                    title="Tournament"
+                  >
+                    <input
+                      class="visually-hidden"
+                      name="type"
+                      type="radio"
+                      value="TOURNAMENT"
+                    />
+                    TOURNAMENT
+                  </label>
+                  <label
+                    class="choice"
+                    title="Release"
+                  >
+                    <input
+                      class="visually-hidden"
+                      name="type"
+                      type="radio"
+                      value="RELEASE"
+                    />
+                    RELEASE
+                  </label>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend
+                  class="form-label"
+                >
+                  Format
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                </legend>
+                <div
+                  class="choice-group"
+                >
+                  <label
+                    class="choice"
+                    title="Constructed"
+                  >
+                    <input
+                      class="visually-hidden"
+                      name="format"
+                      type="radio"
+                      value="CONSTRUCTED"
+                    />
+                    CONSTRUCTED
+                  </label>
+                  <label
+                    class="choice"
+                    title="Sealed"
+                  >
+                    <input
+                      checked=""
+                      class="visually-hidden"
+                      name="format"
+                      type="radio"
+                      value="SEALED"
+                    />
+                    SEALED
+                  </label>
+                  <label
+                    class="choice"
+                    title="Draft"
+                  >
+                    <input
+                      class="visually-hidden"
+                      name="format"
+                      type="radio"
+                      value="DRAFT"
+                    />
+                    DRAFT
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+          </section>
+          <section
+            class="form-card"
+          >
+            <h2>
+              Where
+            </h2>
+            <div>
+              <label
+                class="form-label"
+                for="venueName"
+              >
+                Venue Name
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="venueName"
+                name="venueName"
+                placeholder="e.g. Quantum Cards"
+                type="text"
+                value="Quantum Cards"
+              />
+            </div>
+            <div>
+              <label
+                class="form-label"
+                for="venueAddress"
+              >
+                Venue Address
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="venueAddress"
+                name="venueAddress"
+                placeholder="e.g. 1631 Kanchanaphisek Rd"
+                type="text"
+                value="1631 Kanchanaphisek Rd"
+              />
+            </div>
+            <div>
+              <label
+                class="form-label"
+                for="city"
+              >
+                City
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="city"
+                name="city"
+                placeholder="e.g. Bangkok"
+                type="text"
+                value="Bangkok"
+              />
+            </div>
+          </section>
+          <section
+            class="form-card"
+          >
+            <h2>
+              When
+            </h2>
+            <div
+              class="form-grid"
+            >
+              <div>
+                <label
+                  class="form-label"
+                  for="startAt"
+                >
+                  Start Date & Time (Bangkok)
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                  <span
+                    class="field-hint"
+                  >
+                    (
+                    at least 1 hour from now
+                    )
+                  </span>
+                </label>
+                <input
+                  aria-required="true"
+                  class="form-control"
+                  id="startAt"
+                  name="startAt"
+                  type="datetime-local"
+                  value="2026-11-07T17:00"
+                />
+              </div>
+              <div>
+                <label
+                  class="form-label"
+                  for="endAt"
+                >
+                  End Date & Time (Bangkok)
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                </label>
+                <input
+                  aria-required="true"
+                  class="form-control"
+                  id="endAt"
+                  name="endAt"
+                  type="datetime-local"
+                  value="2026-11-07T21:00"
+                />
+              </div>
+            </div>
+            <p
+              class="sub small"
+            >
+              An event can last at most 24 hours.
+            </p>
+          </section>
+          <section
+            class="form-card"
+          >
+            <h2>
+              Seats and fee
+            </h2>
+            <div
+              class="form-grid"
+            >
+              <div>
+                <label
+                  class="form-label"
+                  for="capacity"
+                >
+                  Capacity
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                  <span
+                    class="field-hint"
+                  >
+                    (
+                    1–256
+                    )
+                  </span>
+                </label>
+                <input
+                  aria-required="true"
+                  class="form-control"
+                  id="capacity"
+                  max="256"
+                  min="1"
+                  name="capacity"
+                  type="number"
+                  value="8"
+                />
+                <p
+                  class="sub small capacity-hint"
+                >
+                  At least 1: that's how many players are registered.
+                </p>
+              </div>
+              <div>
+                <label
+                  class="form-label"
+                  for="feeLabel"
+                >
+                  Fee Label
+                   
+                  <span
+                    class="field-hint"
+                  >
+                    (
+                    optional, max 40
+                    )
+                  </span>
+                </label>
+                <input
+                  class="form-control"
+                  id="feeLabel"
+                  maxlength="40"
+                  name="feeLabel"
+                  placeholder="e.g. Free or THB 250"
+                  type="text"
+                  value="Free"
+                />
+              </div>
+            </div>
+          </section>
+          <section
+            class="form-card"
+          >
+            <h2>
+              More details
+            </h2>
+            <div>
+              <label
+                class="form-label"
+                for="structureNote"
+              >
+                Structure Note
+                 
+                <span
+                  class="field-hint"
+                >
+                  (
+                  optional, max 80
+                  )
+                </span>
+              </label>
+              <input
+                class="form-control"
+                id="structureNote"
+                maxlength="80"
+                name="structureNote"
+                placeholder="e.g. 4 rounds · Best of 1"
+                type="text"
+                value="3 rounds"
+              />
+            </div>
+            <div>
+              <label
+                class="form-label"
+                for="contact"
+              >
+                Contact
+                 
+                <span
+                  class="field-hint"
+                >
+                  (
+                  optional, max 120
+                  )
+                </span>
+              </label>
+              <input
+                class="form-control"
+                id="contact"
+                maxlength="120"
+                name="contact"
+                placeholder="e.g. hello@quantumcards.example"
+                type="text"
+                value="hello@quantumcards.example"
+              />
+            </div>
+            <div>
+              <div
+                class="d-flex justify-content-between align-items-baseline"
+              >
+                <label
+                  class="form-label"
+                  for="description"
+                >
+                  Description 
+                  <span
+                    class="field-hint"
+                  >
+                    (optional)
+                  </span>
+                </label>
+                <span
+                  class="small sub tabular-nums"
+                >
+                  56
+                   / 2,000
+                </span>
+              </div>
+              <textarea
+                class="form-control"
+                id="description"
+                maxlength="2000"
+                name="description"
+                placeholder="Deck rules, prizes, schedule…"
+                rows="5"
+              >
+                Registration closed early so the product can be ordered.
+              </textarea>
+            </div>
+          </section>
+          <div
+            class="form-actions"
+          >
+            <button
+              aria-busy="false"
+              class="btn-big"
+              disabled=""
+              type="submit"
+            >
+              SAVE CHANGES
+            </button>
+          </div>
+        </form>
+        <div
+          class="cols__side"
+        >
+          <section
+            class="box manage-box"
+          >
+            <h2>
+              Your event
+            </h2>
+            <p
+              class="d-flex gap-2 flex-wrap"
+            >
+              <a
+                class="btn-soft"
+                data-discover="true"
+                href="/organizer/events/9/registrations"
+              >
+                Registrations
+              </a>
+              <a
+                class="btn-soft"
+                data-discover="true"
+                href="/events/9"
+              >
+                View event page
+              </a>
+            </p>
+          </section>
+          <section
+            aria-label="History"
+            class="box history-box"
+          >
+            <h2>
+              History
+            </h2>
+            <p
+              class="sub"
+            >
+              No changes yet.
+            </p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="ptop"
+    >
+      <div
+        class="ptop__row"
+      >
+        <div>
+          <h1>
+            Edit event
+          </h1>
+          <p
+            class="host"
+          >
+            Early Deadline Sealed
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      class="pbody"
+    >
+      <div
+        class="page-alerts"
+      />
+      <div
+        class="cols"
+      >
+        <form
+          class="form-section cols__main"
+          novalidate=""
+        >
+          <section
+            class="form-card"
+          >
+            <h2>
+              The event
+            </h2>
+            <div>
+              <label
+                class="form-label"
+                for="title"
+              >
+                Title
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="title"
+                name="title"
+                placeholder="e.g. Friday Night Constructed"
+                type="text"
+                value="Early Deadline Sealed"
+              />
+            </div>
+            <div
+              class="form-grid"
+            >
+              <fieldset>
+                <legend
+                  class="form-label"
+                >
+                  Event Type
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                </legend>
+                <div
+                  class="choice-group"
+                >
+                  <label
+                    class="choice"
+                    title="Casual"
+                  >
+                    <input
+                      checked=""
+                      class="visually-hidden"
+                      name="type"
+                      type="radio"
+                      value="CASUAL"
+                    />
+                    CASUAL
+                  </label>
+                  <label
+                    class="choice"
+                    title="Tournament"
+                  >
+                    <input
+                      class="visually-hidden"
+                      name="type"
+                      type="radio"
+                      value="TOURNAMENT"
+                    />
+                    TOURNAMENT
+                  </label>
+                  <label
+                    class="choice"
+                    title="Release"
+                  >
+                    <input
+                      class="visually-hidden"
+                      name="type"
+                      type="radio"
+                      value="RELEASE"
+                    />
+                    RELEASE
+                  </label>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend
+                  class="form-label"
+                >
+                  Format
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                </legend>
+                <div
+                  class="choice-group"
+                >
+                  <label
+                    class="choice"
+                    title="Constructed"
+                  >
+                    <input
+                      class="visually-hidden"
+                      name="format"
+                      type="radio"
+                      value="CONSTRUCTED"
+                    />
+                    CONSTRUCTED
+                  </label>
+                  <label
+                    class="choice"
+                    title="Sealed"
+                  >
+                    <input
+                      checked=""
+                      class="visually-hidden"
+                      name="format"
+                      type="radio"
+                      value="SEALED"
+                    />
+                    SEALED
+                  </label>
+                  <label
+                    class="choice"
+                    title="Draft"
+                  >
+                    <input
+                      class="visually-hidden"
+                      name="format"
+                      type="radio"
+                      value="DRAFT"
+                    />
+                    DRAFT
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+          </section>
+          <section
+            class="form-card"
+          >
+            <h2>
+              Where
+            </h2>
+            <div>
+              <label
+                class="form-label"
+                for="venueName"
+              >
+                Venue Name
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="venueName"
+                name="venueName"
+                placeholder="e.g. Quantum Cards"
+                type="text"
+                value="Quantum Cards"
+              />
+            </div>
+            <div>
+              <label
+                class="form-label"
+                for="venueAddress"
+              >
+                Venue Address
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="venueAddress"
+                name="venueAddress"
+                placeholder="e.g. 1631 Kanchanaphisek Rd"
+                type="text"
+                value="1631 Kanchanaphisek Rd"
+              />
+            </div>
+            <div>
+              <label
+                class="form-label"
+                for="city"
+              >
+                City
+                 
+                <span
+                  aria-hidden="true"
+                  class="req"
+                >
+                  *
+                </span>
+              </label>
+              <input
+                aria-required="true"
+                class="form-control"
+                id="city"
+                name="city"
+                placeholder="e.g. Bangkok"
+                type="text"
+                value="Bangkok"
+              />
+            </div>
+          </section>
+          <section
+            class="form-card"
+          >
+            <h2>
+              When
+            </h2>
+            <div
+              class="form-grid"
+            >
+              <div>
+                <label
+                  class="form-label"
+                  for="startAt"
+                >
+                  Start Date & Time (Bangkok)
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                  <span
+                    class="field-hint"
+                  >
+                    (
+                    at least 1 hour from now
+                    )
+                  </span>
+                </label>
+                <input
+                  aria-required="true"
+                  class="form-control"
+                  id="startAt"
+                  name="startAt"
+                  type="datetime-local"
+                  value="2026-11-07T17:00"
+                />
+              </div>
+              <div>
+                <label
+                  class="form-label"
+                  for="endAt"
+                >
+                  End Date & Time (Bangkok)
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                </label>
+                <input
+                  aria-required="true"
+                  class="form-control"
+                  id="endAt"
+                  name="endAt"
+                  type="datetime-local"
+                  value="2026-11-07T21:00"
+                />
+              </div>
+            </div>
+            <p
+              class="sub small"
+            >
+              An event can last at most 24 hours.
+            </p>
+          </section>
+          <section
+            class="form-card"
+          >
+            <h2>
+              Seats and fee
+            </h2>
+            <div
+              class="form-grid"
+            >
+              <div>
+                <label
+                  class="form-label"
+                  for="capacity"
+                >
+                  Capacity
+                   
+                  <span
+                    aria-hidden="true"
+                    class="req"
+                  >
+                    *
+                  </span>
+                  <span
+                    class="field-hint"
+                  >
+                    (
+                    1–256
+                    )
+                  </span>
+                </label>
+                <input
+                  aria-required="true"
+                  class="form-control"
+                  id="capacity"
+                  max="256"
+                  min="1"
+                  name="capacity"
+                  type="number"
+                  value="8"
+                />
+                <p
+                  class="sub small capacity-hint"
+                >
+                  At least 1: that's how many players are registered.
+                </p>
+              </div>
+              <div>
+                <label
+                  class="form-label"
+                  for="feeLabel"
+                >
+                  Fee Label
+                   
+                  <span
+                    class="field-hint"
+                  >
+                    (
+                    optional, max 40
+                    )
+                  </span>
+                </label>
+                <input
+                  class="form-control"
+                  id="feeLabel"
+                  maxlength="40"
+                  name="feeLabel"
+                  placeholder="e.g. Free or THB 250"
+                  type="text"
+                  value="Free"
+                />
+              </div>
+            </div>
+          </section>
+          <section
+            class="form-card"
+          >
+            <h2>
+              More details
+            </h2>
+            <div>
+              <label
+                class="form-label"
+                for="structureNote"
+              >
+                Structure Note
+                 
+                <span
+                  class="field-hint"
+                >
+                  (
+                  optional, max 80
+                  )
+                </span>
+              </label>
+              <input
+                class="form-control"
+                id="structureNote"
+                maxlength="80"
+                name="structureNote"
+                placeholder="e.g. 4 rounds · Best of 1"
+                type="text"
+                value="3 rounds"
+              />
+            </div>
+            <div>
+              <label
+                class="form-label"
+                for="contact"
+              >
+                Contact
+                 
+                <span
+                  class="field-hint"
+                >
+                  (
+                  optional, max 120
+                  )
+                </span>
+              </label>
+              <input
+                class="form-control"
+                id="contact"
+                maxlength="120"
+                name="contact"
+                placeholder="e.g. hello@quantumcards.example"
+                type="text"
+                value="hello@quantumcards.example"
+              />
+            </div>
+            <div>
+              <div
+                class="d-flex justify-content-between align-items-baseline"
+              >
+                <label
+                  class="form-label"
+                  for="description"
+                >
+                  Description 
+                  <span
+                    class="field-hint"
+                  >
+                    (optional)
+                  </span>
+                </label>
+                <span
+                  class="small sub tabular-nums"
+                >
+                  56
+                   / 2,000
+                </span>
+              </div>
+              <textarea
+                class="form-control"
+                id="description"
+                maxlength="2000"
+                name="description"
+                placeholder="Deck rules, prizes, schedule…"
+                rows="5"
+              >
+                Registration closed early so the product can be ordered.
+              </textarea>
+            </div>
+          </section>
+          <div
+            class="form-actions"
+          >
+            <button
+              aria-busy="false"
+              class="btn-big"
+              disabled=""
+              type="submit"
+            >
+              SAVE CHANGES
+            </button>
+          </div>
+        </form>
+        <div
+          class="cols__side"
+        >
+          <section
+            class="box manage-box"
+          >
+            <h2>
+              Your event
+            </h2>
+            <p
+              class="d-flex gap-2 flex-wrap"
+            >
+              <a
+                class="btn-soft"
+                data-discover="true"
+                href="/organizer/events/9/registrations"
+              >
+                Registrations
+              </a>
+              <a
+                class="btn-soft"
+                data-discover="true"
+                href="/events/9"
+              >
+                View event page
+              </a>
+            </p>
+          </section>
+          <section
+            aria-label="History"
+            class="box history-box"
+          >
+            <h2>
+              History
+            </h2>
+            <p
+              class="sub"
+            >
+              No changes yet.
+            </p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/sprint-2/EventDetail.deadline.test.tsx:107:25
+    105|     const calls = stubApi({ ...EVENT, registrationDeadline: EVENT.star…
+    106|     renderAt('/organizer/events/9/edit', <EditEvent />, '/organizer/ev…
+    107|     expect(await screen.findByLabelText(/Registration closes/)).toHave…
+       |                         ^
+    108|     fireEvent.change(screen.getByLabelText(/Start Date & Time/), { tar…
+    109|     fireEvent.change(screen.getByLabelText(/End Date & Time/), { targe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed | 28 passed (29)
+      Tests  4 failed | 163 passed (167)
+   Start at  10:05:03
+   Duration  14.88s (transform 7.97s, setup 26.46s, import 32.93s, tests 20.88s, environment 105.16s)
+
