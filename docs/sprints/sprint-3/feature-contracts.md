@@ -1,10 +1,10 @@
 # Sprint 3 Feature Engineering Contracts
 
-Project: **TCG Event Hub** · Sprint 3 (23 Nov – 13 Dec 2026) · Document version: v0.3 — **draft for team review** (changes in §15)
-Inputs: [`../../srs.md`](../../srs.md) v0.8 · [`../../features.md`](../../features.md) v0.7 ·
-[`../../traceability.md`](../../traceability.md) v0.9 · [`../../system-sds.md`](../../system-sds.md) v0.15 ·
+Project: **TCG Event Hub** · Sprint 3 (23 Nov – 13 Dec 2026) · Document version: v0.2 — **draft for team review** (changes in §15)
+Inputs: [`../../srs.md`](../../srs.md) v0.9 · [`../../features.md`](../../features.md) v0.7 ·
+[`../../traceability.md`](../../traceability.md) v0.12 · [`../../system-sds.md`](../../system-sds.md) v0.15 ·
 [`../plan.md`](../plan.md) v0.3 §4 · [`../../ui/design-direction.md`](../../ui/design-direction.md) v0.6 ·
-Sprint 2 contracts: [`../sprint-2/feature-contracts.md`](../sprint-2/feature-contracts.md) v0.6 ·
+Sprint 2 contracts: [`../sprint-2/feature-contracts.md`](../sprint-2/feature-contracts.md) v0.10 (released as `v0.2.0`) ·
 Tests: [`sts.md`](sts.md) · Issues and Definition of Done: [`README.md`](README.md)
 
 This document has one engineering contract per Sprint 3 feature (P, Q, R, S, T, V, and the tournament features W
@@ -95,10 +95,11 @@ the live check-in demonstration. After the seed: 6 users, **11** events. AC-SR1-
 | 409 `NOT_ENOUGH_PLAYERS` **new** | E-26, E-27 | "At least 2 checked-in players are needed." |
 | 409 `ROUND_NOT_COMPLETE`, `NO_ROUNDS_LEFT`, `ROUND_LOCKED`, `ALREADY_DROPPED` **new** | E-27 … E-30 | "Enter every result of round {n} first." · "All {n} rounds are paired. Finish the tournament." · "Round {n} is closed: the next round has been paired." · "{name} has already dropped." |
 
-### 0.5 Decisions proposed with these contracts (to be recorded in SRS §10.1)
+### 0.5 Decisions made with these contracts (recorded in SRS §10.1)
 
 D-26 (check-in window boundaries and no-shows counted only after the end) and D-27 (throttling counted per email,
-including unknown emails; a success does not reset the count) are in SRS v0.6. This contract also proposes:
+including unknown emails; a success does not reset the count) are in SRS v0.6. These were proposed with the contracts
+and are recorded in SRS §10.1 as well (D-28 … D-30 in v0.6, D-31 … D-36 in v0.7):
 
 | ID | Decision | Why |
 |---|---|---|
@@ -715,4 +716,5 @@ here. Each one is linked to at least one AC above.
 |---|---|---|---|
 | v0.1 | 21 Nov 2026 | First draft: time words, shapes, seed EV-10 (AC-SR1-02 revised to 10 events), new codes, D-28 … D-30 proposed; Feature-P, Q, R, S, T, V (moved from Sprint 2 §11.2 with AC-V-07 added), SR-05, SR-06, SR-07; 39 ACs; re-verification table; JRN-05 … 07 | Team (AI-assisted) |
 | v0.2 | 21 Nov 2026 | CH-12: §7 Feature-W (Swiss pairings and rounds) and §8 Feature-X (results, standings, winner, player view), 14 ACs; seed EV-11 (AC-SR1-02: 11 events); tournament error codes; D-31 … D-36; re-verification rows; JRN-08; later sections renumbered §9 … §15; 53 ACs | Team (AI-assisted) |
-| v0.3 | 25 Nov 2026 | Deliverable 2 check (Part C): every contract names each template layer, or says "no change in this layer" (P and W rules labelled; UI lines for T, V and X; layer lines for SR-05 and SR-06; SR-07 gains Links and Behaviour); CH-13 noted in the shared rules; §0.3 says two seed events; inputs SRS v0.8, traceability v0.9, SDS v0.15, Sprint 2 contracts v0.6. No AC changes | Team (AI-assisted) |
+| #118 | 25 Nov 2026 | Deliverable 2 check (Part C): every contract names each template layer, or says "no change in this layer" (P and W rules labelled; UI lines for T, V and X; layer lines for SR-05 and SR-06; SR-07 gains Links and Behaviour); CH-13 noted in the shared rules; §0.3 says two seed events; inputs SRS v0.8, traceability v0.9, SDS v0.15, Sprint 2 contracts v0.6. No AC changes | Team (AI-assisted) |
+| #118 | 27 Nov 2026 | Deliverable 2 check, 27 Nov: inputs are the current SRS v0.9, traceability v0.12 and the released Sprint 2 contracts v0.10, re-read for Sprint 3 (CH-13, D-40 and D-41 change no Sprint 3 rule); §0.5 says D-28 … D-36 are recorded in the SRS, not only proposed. No AC changes | Team (AI-assisted) |

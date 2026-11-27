@@ -1,6 +1,6 @@
 # Sprint 3: engineering contracts, tests and Definition of Done
 
-Project: **TCG Event Hub** · Sprint 3 (23 Nov – 13 Dec 2026) · Version v0.3 — **draft for team review** (changes in §6)
+Project: **TCG Event Hub** · Sprint 3 (23 Nov – 13 Dec 2026) · Version v0.2 — **draft for team review** (changes in §6)
 
 | Document | What it is |
 |---|---|
@@ -24,20 +24,20 @@ This is the same chain as Sprint 1 README §1 and Sprint 2 README §1. `AC-P-04`
 
 There is one GitHub Issue per row (label `sprint-3`, milestone "Sprint 3 · Final delivery"; created 25 Nov 2026).
 Branches start from `sprint-3-staging`, named `feature/s3-<n>-<slug>` and created with `--no-track`.
-`sprint-3-staging` was cut on 25 Nov from `sprint-2-staging` `4d75208` (S2-01 and the CH-13 sync merged), and takes
-`sprint-2-staging` again once `v0.2.0` is released. The contracts (S3-00) were reviewed and merged with the Sprint 2
-contracts in PR #76 (21 Nov). Because the Deliverable 2 candidate must contain tested Sprint 3
-work, S3-01 and S3-05 start as soon as the Sprint 2 release `v0.2.0` is on `main`
-([`../plan.md`](../plan.md) v0.2, revised schedule).
+`sprint-3-staging` was cut on 25 Nov from `sprint-2-staging` `4d75208` (S2-01 and the CH-13 sync merged), and took
+the rest of `sprint-2-staging` on 27 Nov, after `v0.2.0` was released (PR #117). The contracts (S3-00) were reviewed
+and merged with the Sprint 2 contracts in PR #76 (21 Nov). Deliverable 2 asks for the Sprint 3 specification documents
+to be complete, as they were for Sprints 1 and 2 before their code, and not for Sprint 3 code. So no Sprint 3 feature
+branch starts before **30 Nov** (team decision 27 Nov; [`../plan.md`](../plan.md), revised schedule of 27 Nov).
 
 | Issue | GitHub | Title | Contract | Tests it must make pass | Depends on | Student | Target |
 |---|---|---|---|---|---|---|---|
-| S3-00 | PR #76 | Sprint 3 contracts and STS (this folder) | all | — (documents) | — | both | Sun 22 Nov |
-| S3-01 | [#96](https://github.com/GGital/My-little-pony/issues/96) | Feature-P: check-in and undo (+ seed EV-10) | §1 | TEST-P-01 … 06 | `v0.2.0` | 1 (Phattaratorn) | Fri 27 Nov |
-| S3-05 | [#97](https://github.com/GGital/My-little-pony/issues/97) | Feature-T: sign-in throttling | §5 | TEST-T-01 … 05 | `v0.2.0` | 2 (Praewa) | Fri 27 Nov |
-| S3-02 | [#98](https://github.com/GGital/My-little-pony/issues/98) | Feature-Q: attendance report | §2 | TEST-Q-01 … 05 | S3-01 | 1 (Phattaratorn) | Mon 30 Nov |
+| S3-00 | PR #76, #118 | Sprint 3 contracts and STS (this folder); Deliverable 2 check | all | — (documents) | — | both | Sun 22 Nov · 29 Nov |
+| S3-01 | [#96](https://github.com/GGital/My-little-pony/issues/96) | Feature-P: check-in and undo (+ seed EV-10) | §1 | TEST-P-01 … 06 | `v0.2.0` | 1 (Phattaratorn) | 30 Nov – Tue 1 Dec |
+| S3-05 | [#97](https://github.com/GGital/My-little-pony/issues/97) | Feature-T: sign-in throttling | §5 | TEST-T-01 … 05 | `v0.2.0` | 2 (Praewa) | 30 Nov – Tue 1 Dec |
+| S3-02 | [#98](https://github.com/GGital/My-little-pony/issues/98) | Feature-Q: attendance report | §2 | TEST-Q-01 … 05 | S3-01 | 1 (Phattaratorn) | Wed 2 Dec |
 | S3-06 | [#99](https://github.com/GGital/My-little-pony/issues/99) | Feature-V: store logo and event banner (bucket, API, UI) | §6 | TEST-V-01 … 07 | S2-09 | 2 (Praewa) | 30 Nov (API) · 8 Dec (UI) |
-| S3-03 | [#100](https://github.com/GGital/My-little-pony/issues/100) | Feature-R: organizer summary | §3 | TEST-R-01 … 05 | S3-02 | 1 (Phattaratorn) | Tue 1 Dec |
+| S3-03 | [#100](https://github.com/GGital/My-little-pony/issues/100) | Feature-R: organizer summary | §3 | TEST-R-01 … 05 | S3-02 | 1 (Phattaratorn) | Thu 3 Dec |
 | S3-04 | [#101](https://github.com/GGital/My-little-pony/issues/101) | Feature-S: participant history | §4 | TEST-S-01 … 05 | S3-01 | 2 (Praewa) | Fri 4 Dec |
 | S3-10 | [#102](https://github.com/GGital/My-little-pony/issues/102) | Feature-W: Swiss pairing engine, start, rounds, drops | §7 | TEST-W-01 … 07 | S3-01 | 1 (Phattaratorn) | 5 Dec (engine) · 10 Dec |
 | S3-11 | [#103](https://github.com/GGital/My-little-pony/issues/103) | Feature-X: results, standings, finish, player view | §8 | TEST-X-01 … 07 | S3-10, S3-04 | 2 (Praewa) | Thu 10 Dec |
@@ -65,13 +65,13 @@ submitted candidate and never says more than the evidence shows.
 | **Tested** | merged into `sprint-3-staging`; the Sprint 1–3 suites pass on the merge commit |
 | **Accepted** | released on `main` in a tag and deployed; post-deploy check recorded |
 
-| Feature / defect | Issue | Current status (25 Nov) | Achieved AC · tested commit | Remaining action | Depends on | Owner, target |
+| Feature / defect | Issue | Current status (27 Nov) | Achieved AC · tested commit | Remaining action | Depends on | Owner, target |
 |---|---|---|---|---|---|---|
-| Feature-P check-in and undo (AC-P-01 … 06) | [#96](https://github.com/GGital/My-little-pony/issues/96) | Planned | — | Tests first, then implement; TEST-P-06 race 20 rounds; seed EV-10; red/green in `sts.md` §5 | `v0.2.0` | Phattaratorn, 27 Nov (in the Deliverable 2 candidate) |
-| Feature-T sign-in throttling (AC-T-01 … 05) | [#97](https://github.com/GGital/My-little-pony/issues/97) | Planned | — | Tests first, then implement; JRN-06 | `v0.2.0` | Praewa, 27 Nov (in the Deliverable 2 candidate) |
-| Feature-Q attendance report (AC-Q-01 … 05) | [#98](https://github.com/GGital/My-little-pony/issues/98) | Planned | — | All ACs; the axe check on the report | S3-01 | Phattaratorn, 30 Nov |
+| Feature-P check-in and undo (AC-P-01 … 06) | [#96](https://github.com/GGital/My-little-pony/issues/96) | Planned | — | Tests first, then implement; TEST-P-06 race 20 rounds; seed EV-10; red/green in `sts.md` §5 | `v0.2.0` (released 27 Nov) | Phattaratorn, 30 Nov – 1 Dec |
+| Feature-T sign-in throttling (AC-T-01 … 05) | [#97](https://github.com/GGital/My-little-pony/issues/97) | Planned | — | Tests first, then implement; JRN-06 | `v0.2.0` (released 27 Nov) | Praewa, 30 Nov – 1 Dec |
+| Feature-Q attendance report (AC-Q-01 … 05) | [#98](https://github.com/GGital/My-little-pony/issues/98) | Planned | — | All ACs; the axe check on the report | S3-01 | Phattaratorn, 2 Dec |
 | Feature-V logo and banner (AC-V-01 … 07) | [#99](https://github.com/GGital/My-little-pony/issues/99) | Planned | — | Bucket and IAM, `MediaStore`, endpoints (30 Nov), UI states, deploy check V-06 | S2-09 | Praewa, 8 Dec |
-| Feature-R organizer summary (AC-R-01 … 05) | [#100](https://github.com/GGital/My-little-pony/issues/100) | Planned | — | All ACs | S3-02 | Phattaratorn, 1 Dec |
+| Feature-R organizer summary (AC-R-01 … 05) | [#100](https://github.com/GGital/My-little-pony/issues/100) | Planned | — | All ACs | S3-02 | Phattaratorn, 3 Dec |
 | Feature-S participant history (AC-S-01 … 05) | [#101](https://github.com/GGital/My-little-pony/issues/101) | Planned | — | All ACs | S3-01 | Praewa, 4 Dec |
 | Feature-W Swiss pairings (AC-W-01 … 07) | [#102](https://github.com/GGital/My-little-pony/issues/102) | Planned | — | Pairing engine and property test first (NFR-18), then endpoints and the pairings screen; seed EV-11; decide on the fallback on 8 Dec if late | S3-01 | Phattaratorn, 5 Dec (engine), 10 Dec |
 | Feature-X results and standings (AC-X-01 … 07) | [#103](https://github.com/GGital/My-little-pony/issues/103) | Planned | — | Results, standings with the worked fixture, finish, player view, History placing | S3-10, S3-04 | Praewa, 10 Dec |
@@ -79,8 +79,10 @@ submitted candidate and never says more than the evidence shows.
 | SR-06 performance (AC-SR6-01, 02) | [#105](https://github.com/GGital/My-little-pony/issues/105) | Planned | — | Perf seed, load run, indexes if needed (M evidence) | S3-03 | Praewa, 10 Dec |
 | SR-07, journeys, release (AC-SR7-02, JRN-05 … 08) | [#106](https://github.com/GGital/My-little-pony/issues/106) | Planned | — | Regression, UAT re-tests of the Lab 6 cases, `v1.0.0`, demo video of at most 10 minutes | all | Both, 12–13 Dec |
 
-No defect is open on 25 Nov 2026 (the Lab 6 findings are closed; #64 is delivered by S2-04). Sprint 2 rows are
-tracked in the Sprint 2 README and `sts.md` §5; they are not repeated here.
+No defect is open on 27 Nov 2026 (the Lab 6 findings are closed; #64 is delivered by S2-04). One known limitation
+comes from the Sprint 2 release (Sprint 2 `sts.md` §6): where focus goes after a confirmed Cancel registration is not
+yet specified or tested. It belongs to S3-07 ([#104](https://github.com/GGital/My-little-pony/issues/104)), through
+AC-SR5-04. Sprint 2 rows are tracked in the Sprint 2 README and `sts.md` §5; they are not repeated here.
 
 ## 4. Test-driven workflow
 
@@ -108,4 +110,5 @@ Issue. Sprint 3 adds:
 |---|---|---|---|
 | v0.1 | 21 Nov 2026 | First Sprint 3 package: contracts v0.1, STS v0.1, Issue plan S3-00 … S3-09, remaining-work table for Deliverable 2, DoD additions | Team (AI-assisted) |
 | v0.2 | 21 Nov 2026 | CH-12: S3-10 Feature-W and S3-11 Feature-X with targets; remaining-work rows; S3-03 moved to 1 Dec; DoD-6 endpoints; contract section numbers follow contracts v0.2 | Team (AI-assisted) |
-| v0.3 | 25 Nov 2026 | Deliverable 2 check: §2 links the GitHub Issues #96 … #106 and names the students, says where `sprint-3-staging` was cut and that S3-00 merged in PR #76; §3 uses the Deliverable 2 columns (status words, achieved AC and tested commit, missing work, dependencies, owner by name and date). No defect is open on 25 Nov | Team (AI-assisted) |
+| #118 | 25 Nov 2026 | Deliverable 2 check: §2 links the GitHub Issues #96 … #106 and names the students, says where `sprint-3-staging` was cut and that S3-00 merged in PR #76; §3 uses the Deliverable 2 columns (status words, achieved AC and tested commit, missing work, dependencies, owner by name and date). No defect is open on 25 Nov | Team (AI-assisted) |
+| #118 | 27 Nov 2026 | §2: `sprint-3-staging` took Sprint 2 after `v0.2.0` (PR #117); Deliverable 2 asks for complete Sprint 3 specifications, not code, so no feature starts before 30 Nov (team decision 27 Nov). New targets: S3-01 and S3-05 30 Nov – 1 Dec, S3-02 2 Dec, S3-03 3 Dec; the other dates are unchanged. §3: status as of 27 Nov, the same targets, and the focus limitation carried from Sprint 2 to S3-07 | Team (AI-assisted) |
