@@ -18,7 +18,16 @@ export type EventChangeItem = {
  */
 export function recordEventChange(
   tx: Prisma.TransactionClient,
-  change: { eventId: number; changedById: number; field: ChangeField; oldValue: string | null; newValue: string; changedAt: Date },
+  change: {
+    eventId: number
+    changedById: number
+    field: ChangeField
+    oldValue: string | null
+    newValue: string
+    changedAt: Date
+    /** Sprint 3: set on `attendance` rows (Feature-P), so the row names the registration it changed. */
+    registrationId?: number
+  },
 ) {
   return tx.eventChange.create({ data: change })
 }

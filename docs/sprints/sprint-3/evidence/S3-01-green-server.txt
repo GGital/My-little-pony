@@ -1,0 +1,594 @@
+
+> test
+> vitest run --reporter=verbose --no-color
+
+
+ RUN  v4.0.18 <repo>/server
+
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-01 (I) the owner cancels: event, registrations and history change together (AC-O-01, FR-10, FR-28, BR-12) > E-15: 200 CANCELLED with reason and time; 3 active → EVENT_CANCELLED; the CANCELLED row is untouched; one PUBLISHED → CANCELLED row 56ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-01 (I) the owner cancels: event, registrations and history change together (AC-O-01, FR-10, FR-28, BR-12) > an event with no registrations cancels too; the reason is stored trimmed 26ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-09 by a player is 409 REGISTRATION_CLOSED and stores nothing 19ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > a second E-15 is 409 ALREADY_CANCELLED and keeps the first reason and time 13ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-14 publish of a cancelled event is 409 ALREADY_CANCELLED 11ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-13 edit of a cancelled event is 409 ALREADY_CANCELLED and changes nothing (cancellation is final) 15ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-04 leaves the event out of the default list 14ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-04 with include=cancelled lists it with status CANCELLED, and only then (FR-14, BR-04) 22ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-05 as a visitor: still visible, with the reason and time, action CLOSED, and never cancelledById 9ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-05 for a player who was registered: action CLOSED and the reason is visible 11ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-05 for a published event has null cancel fields 11ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-10 shows the affected player their registration as EVENT_CANCELLED 14ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-07 lists it for the owner as CANCELLED 11ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-03 (I) the reason is checked before anything else changes (AC-O-03, BR-12) > a reason that is missing: 400 VALIDATION_FAILED with the reason message, and nothing changes 58ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-03 (I) the reason is checked before anything else changes (AC-O-03, BR-12) > a reason that is 4 characters: 400 VALIDATION_FAILED with the reason message, and nothing changes 30ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-03 (I) the reason is checked before anything else changes (AC-O-03, BR-12) > a reason that is 201 characters: 400 VALIDATION_FAILED with the reason message, and nothing changes 26ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-03 (I) the reason is checked before anything else changes (AC-O-03, BR-12) > a reason that is only spaces: 400 VALIDATION_FAILED with the reason message, and nothing changes 27ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-03 (I) the reason is checked before anything else changes (AC-O-03, BR-12) > a reason that is not a string: 400 VALIDATION_FAILED with the reason message, and nothing changes 22ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-03 (I) the reason is checked before anything else changes (AC-O-03, BR-12) > an unknown field in the body is 400 and changes nothing 11ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-03 (I) the reason is checked before anything else changes (AC-O-03, BR-12) > 5 and 200 characters are accepted (two events) 41ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-03 (I) the reason is checked before anything else changes (AC-O-03, BR-12) > a bad path id is 400 INVALID_PATH_PARAMETER 6ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-03 (I) the reason is checked before anything else changes (AC-O-03, BR-12) > validation comes before ownership: a bad reason on a missing event is 400, a good one is 404 16ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-04 (I) only an upcoming, published event can be cancelled (AC-O-04, BR-04) > an event started 1 minute ago: 409 EVENT_STARTED and nothing changes 23ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-04 (I) only an upcoming, published event can be cancelled (AC-O-04, BR-04) > an event starting exactly now: 409 EVENT_STARTED and nothing changes 20ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-04 (I) only an upcoming, published event can be cancelled (AC-O-04, BR-04) > an event one minute from now can still be cancelled 31ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-04 (I) only an upcoming, published event can be cancelled (AC-O-04, BR-04) > a draft: 409 NOT_PUBLISHED and nothing changes 19ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-05 (I) only the owner can cancel (AC-O-05, BR-13, BR-14, SR-05) > another organizer (Dragon's Den) is refused and nothing changes 18ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-05 (I) only the owner can cancel (AC-O-05, BR-13, BR-14, SR-05) > a participant (Mint) is refused and nothing changes 15ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-05 (I) only the owner can cancel (AC-O-05, BR-13, BR-14, SR-05) > a visitor is refused and nothing changes 13ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-05 (I) only the owner can cancel (AC-O-05, BR-13, BR-14, SR-05) > another organizer's event is the same 404 as a missing one 20ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-05 (I) only the owner can cancel (AC-O-05, BR-13, BR-14, SR-05) > a foreign Origin is 403 FORBIDDEN and nothing changes 11ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-05 (I) only the owner can cancel (AC-O-05, BR-13, BR-14, SR-05) > GET on the cancel path is 404 (POST only) 6ms
+ ✓ tests/sprint-3/checkin.api.test.ts > TEST-P-01 (I) · AC-P-01, FR-21, FR-28: the owner checks Mint in > 200 CHECKED_IN at T by Quantum Cards; the row and one attendance change row are stored; E-08 counts it; seats unchanged 66ms
+ ✓ tests/sprint-3/checkin.api.test.ts > TEST-P-01 (I) · AC-P-01, FR-21, FR-28: the owner checks Mint in > accepts no body at all as well as {} 23ms
+ ✓ tests/sprint-3/checkin.api.test.ts > TEST-P-02 (I) · AC-P-02, BR-18, NFR-11: the window boundaries on the server clock > S − 61 → 409; S − 60 → 200; E − 1 → 200; E → 409; the undo at E → 409; E-08 open false/true/true/false 159ms
+ ✓ tests/sprint-3/checkin.api.test.ts > TEST-P-03 (I) · AC-P-03, FR-22, BR-19: the owner undoes a check-in > 200 REGISTERED with both check-in fields null; a second attendance row CHECKED_IN → REGISTERED; the count goes back 55ms
+ ✓ tests/sprint-3/checkin.api.test.ts > TEST-P-04 (I) · AC-P-04, BR-18, BR-19: statuses that cannot be checked in or undone > Mint ALREADY_CHECKED_IN; Ploy and Boss REGISTRATION_NOT_ACTIVE; undo of Nok NOT_CHECKED_IN; nothing changes 108ms
+ ✓ tests/sprint-3/checkin.api.test.ts > TEST-P-05 (I) · AC-P-05, BR-14, NFR-02: who may check in, and the order of the checks > E-18: another organizer 404 byte-identical to 999999; participant 403; visitor 401; foreign Origin 403; abc 400 63ms
+ ✓ tests/sprint-3/checkin.api.test.ts > TEST-P-05 (I) · AC-P-05, BR-14, NFR-02: who may check in, and the order of the checks > E-19: another organizer 404 byte-identical to 999999; participant 403; visitor 401; foreign Origin 403; abc 400 55ms
+ ✓ tests/sprint-3/checkin.api.test.ts > TEST-P-05 (I) · AC-P-05, BR-14, NFR-02: who may check in, and the order of the checks > E-18 takes no input: a body with a field is 400 before any lookup 13ms
+ ✓ tests/sprint-3/checkin.api.test.ts > Cross-feature · Feature-O E-15 after a check-in (BR-12, BR-19, FR-28) > 200; the checked-in row becomes EVENT_CANCELLED with its check-in fields cleared; the attendance history stays 50ms
+ ✓ tests/sprint-3/checkin.api.test.ts > TEST-B-03 rows (E-18, E-19) POST and DELETE /api/organizer/registrations/:id/check-in > visitor 401; participant 403; another organizer 404; the owner 200 for both 73ms
+ ✓ tests/sprint-1/registrations.concurrency.api.test.ts > TEST-G-06 — the last seat can never be sold twice (AC-G-06, BR-07, NFR-05) > 20 rounds: 20 racers for 1 seat → one 201, 19 × 409 EVENT_FULL; 5 calls by one participant → one 201, four 409 ALREADY_REGISTERED 3753ms
+ ✓ tests/sprint-2/lifecycle.concurrency.api.test.ts > TEST-L-03 — a capacity cut and registrations racing for the last seats (AC-L-03, BR-09, NFR-05) > 20 rounds: active ≤ capacity, and the outcome is one of the two allowed ones 1615ms
+ ✓ tests/sprint-2/lifecycle.concurrency.api.test.ts > TEST-N-06 — cancel racing registrations, and a double cancel (AC-N-06, NFR-05, BR-06) > 20 rounds: at most one of 10 registrations takes the freed seat; active never above 2 1605ms
+ ✓ tests/sprint-2/lifecycle.concurrency.api.test.ts > TEST-N-06 — cancel racing registrations, and a double cancel (AC-N-06, NFR-05, BR-06) > 20 rounds: two simultaneous cancels give one 200 and one 409 ALREADY_CANCELLED 480ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-01 — sign in, then who am I (AC-A-01, FR-01, FR-03) > a trimmed, mixed-case email signs in: 200 AuthUser, a tcg.sid cookie, E-03 the same user, one hashed Session row 143ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-02 — failed sign-in tells nothing (AC-A-02, FR-02) > wrong password and unknown email: identical 401 INVALID_CREDENTIALS, no Session row, no cookie 224ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-02 — failed sign-in tells nothing (AC-A-02, FR-02) > an unknown email takes as long as a wrong password (dummy hash): mean difference < 50 ms over 20 tries 3097ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-02 — failed sign-in tells nothing (AC-A-02, FR-02) > E-01 with a missing email → 400 VALIDATION_FAILED on that field, no session 8ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-02 — failed sign-in tells nothing (AC-A-02, FR-02) > E-01 with an email without @ → 400 VALIDATION_FAILED on that field, no session 7ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-02 — failed sign-in tells nothing (AC-A-02, FR-02) > E-01 with an empty password → 400 VALIDATION_FAILED on that field, no session 7ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-02 — failed sign-in tells nothing (AC-A-02, FR-02) > E-01 with a password over 128 characters → 400 VALIDATION_FAILED on that field, no session 9ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-02 — failed sign-in tells nothing (AC-A-02, FR-02) > E-01 with an extra key → 400 VALIDATION_FAILED on that field, no session 8ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-02 — failed sign-in tells nothing (AC-A-02, FR-02) > E-01 from a foreign Origin → 403 FORBIDDEN even with the right password, no session 8ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-03 — who am I with and without a session (AC-A-03, FR-03) > a valid cookie → 200 AuthUser 109ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-03 — who am I with and without a session (AC-A-03, FR-03) > no cookie → 401 UNAUTHENTICATED 11ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-03 — who am I with and without a session (AC-A-03, FR-03) > a malformed cookie (tcg.sid=abc) → 401 UNAUTHENTICATED 7ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-03 — who am I with and without a session (AC-A-03, FR-03) > a well-formed but unknown token → 401 UNAUTHENTICATED 9ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-04 — sign out really ends the session (AC-A-04, FR-04, NFR-04) > E-02 → 204, Session row gone, expired cookie; the old cookie then gets 401 everywhere 126ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-04 — sign out really ends the session (AC-A-04, FR-04, NFR-04) > E-02 without a cookie → 401 first, even without an Origin (SDS §2.3 check order) 7ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-04 — sign out really ends the session (AC-A-04, FR-04, NFR-04) > E-02 with a valid cookie but a foreign Origin → 403 FORBIDDEN, and the session survives 106ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-04 — sign out really ends the session (AC-A-04, FR-04, NFR-04) > E-10 answers 200 for the same participant while the session is valid 102ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-06 — cookie attributes and the 8-hour absolute expiry (AC-A-06, NFR-04) > HttpOnly, SameSite=Lax, Path=/, Max-Age=28800; E-03 200 at T + 7 h 59 min, 401 at T + 8 h 97ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-06 — cookie attributes and the 8-hour absolute expiry (AC-A-06, NFR-04) > signing in again after expiry deletes the expired session row (SDS §8) 160ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-05 (I) — hashes stored, never returned (AC-A-05, NFR-03) > every seeded passwordHash has the scrypt format 3ms
+ ✓ tests/sprint-1/auth.api.test.ts > TEST-A-05 (I) — hashes stored, never returned (AC-A-05, NFR-03) > no Sprint 1 response carries a password field, a hash or the seed password 195ms
+ ✓ tests/sprint-2/cancel-event.concurrency.api.test.ts > TEST-O-06 — two cancels at once: one wins, one is ALREADY_CANCELLED (AC-O-06, BR-12; this is what FOR UPDATE protects) > 20 rounds: 5 simultaneous E-15 calls → exactly one 200 and four 409 ALREADY_CANCELLED, one history row 710ms
+ ✓ tests/sprint-2/cancel-event.concurrency.api.test.ts > TEST-O-06 — cancelling never leaves an active registration behind (AC-O-06, BR-07, NFR-02) > 20 rounds: 1 cancel + 10 registrations at once → event CANCELLED, no active registration, every E-09 is 201 or 409 REGISTRATION_CLOSED 1725ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > has exactly the SDS §6.2 codes 1ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > VALIDATION_FAILED answers 400 with the standard body 1ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > INVALID_PATH_PARAMETER answers 400 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > UNAUTHENTICATED answers 401 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > INVALID_CREDENTIALS answers 401 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > FORBIDDEN answers 403 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > EVENT_NOT_FOUND answers 404 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > REGISTRATION_NOT_FOUND answers 404 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > NOT_FOUND answers 404 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > EVENT_FULL answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > ALREADY_REGISTERED answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > REGISTRATION_CLOSED answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > CAPACITY_BELOW_REGISTERED answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > EVENT_STARTED answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > ALREADY_CANCELLED answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > NOT_IN_CHECK_IN_WINDOW answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > ALREADY_CHECKED_IN answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > REGISTRATION_NOT_ACTIVE answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > NOT_CHECKED_IN answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > ALREADY_PUBLISHED answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > NOT_PUBLISHED answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > PAYLOAD_TOO_LARGE answers 413 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > UNSUPPORTED_MEDIA_TYPE answers 415 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > EVENT_TIME_INVALID answers 422 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > TOO_MANY_ATTEMPTS answers 429 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > INTERNAL_ERROR answers 500 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > adds details only when given 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > uses the fixed safe wording for 500 (contracts §2 item 6) 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > throws at run time for a code outside the catalogue 1ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > refuses an unknown code at compile time, and accepts a known one 2360ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-01 — identity comes only from the session (AC-B-01, BR-17) > E-09 with an empty body stores the caller as participantId (Mint on EV-6) 42ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-01 — identity comes only from the session (AC-B-01, BR-17) > E-09 with participantId of another user → 400 VALIDATION_FAILED on that field, nothing stored 22ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-01 — identity comes only from the session (AC-B-01, BR-17) > E-06 with organizerId of another organizer → 400 VALIDATION_FAILED on that field, nothing stored 19ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-01 — identity comes only from the session (AC-B-01, BR-17) > real E-06: valid event creation stores organizerId = caller.id (Dragon's Den creates, not id 1) 30ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-02 — no session: every protected endpoint answers 401 with only an error (AC-B-02, NFR-01) > E-02 → 401 UNAUTHENTICATED 5ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-02 — no session: every protected endpoint answers 401 with only an error (AC-B-02, NFR-01) > E-03 → 401 UNAUTHENTICATED 5ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-02 — no session: every protected endpoint answers 401 with only an error (AC-B-02, NFR-01) > E-06 → 401 UNAUTHENTICATED 5ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-02 — no session: every protected endpoint answers 401 with only an error (AC-B-02, NFR-01) > E-07 → 401 UNAUTHENTICATED 4ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-02 — no session: every protected endpoint answers 401 with only an error (AC-B-02, NFR-01) > E-08 → 401 UNAUTHENTICATED 4ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-02 — no session: every protected endpoint answers 401 with only an error (AC-B-02, NFR-01) > E-09 → 401 UNAUTHENTICATED 4ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-02 — no session: every protected endpoint answers 401 with only an error (AC-B-02, NFR-01) > E-10 → 401 UNAUTHENTICATED 5ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-02 — no session: every protected endpoint answers 401 with only an error (AC-B-02, NFR-01) > E-11 → 401 UNAUTHENTICATED 4ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-02 — no session: every protected endpoint answers 401 with only an error (AC-B-02, NFR-01) > E-17 → 401 UNAUTHENTICATED 4ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-02 — no session: every protected endpoint answers 401 with only an error (AC-B-02, NFR-01) > E-14 → 401 UNAUTHENTICATED 8ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-02 — no session: every protected endpoint answers 401 with only an error (AC-B-02, NFR-01) > E-13 → 401 UNAUTHENTICATED 8ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > lists every endpoint E-01 … E-11 and the Sprint 2 ones built so far (E-02 is in its own case below) 0ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-01 POST as visitor → 200 84ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-01 POST as mint → 200 84ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-01 POST as quantum → 200 84ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-01 POST as dragon → 200 82ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-03 GET as visitor → 401 4ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-03 GET as mint → 200 9ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-03 GET as quantum → 200 8ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-03 GET as dragon → 200 8ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-04 GET as visitor → 200 15ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-05 GET as visitor → 200 8ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-04 GET as mint → 200 12ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-05 GET as mint → 200 12ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-04 GET as quantum → 200 13ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-05 GET as quantum → 200 10ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-04 GET as dragon → 200 12ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-05 GET as dragon → 200 10ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-06 POST as visitor → 401 4ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-06 POST as mint → 403 7ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-06 POST as quantum → 201 17ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-06 POST as dragon → 201 15ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-07 GET as visitor → 401 4ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-07 GET as mint → 403 6ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-07 GET as quantum → 200 11ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-07 GET as dragon → 200 11ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-08 GET as visitor → 401 4ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-08 GET as mint → 403 7ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-08 GET as quantum → 200 12ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-08 GET as dragon → 404 9ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-08 GET as visitor → 401 4ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-08 GET as quantum → 400 7ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-09 POST as visitor → 401 4ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-09 POST as mint → 201 24ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-09 POST as quantum → 403 7ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-09 POST as dragon → 403 7ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-10 GET as visitor → 401 5ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-10 GET as mint → 200 12ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-10 GET as quantum → 403 7ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-10 GET as dragon → 403 6ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-11 GET as visitor → 401 4ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-11 GET as mint → 200 11ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-11 GET as mint → 404 9ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-11 GET as quantum → 403 7ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-11 GET as dragon → 403 7ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-17 GET as visitor → 401 4ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-17 GET as mint → 403 6ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-17 GET as quantum → 200 10ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-17 GET as dragon → 404 8ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-17 GET as quantum → 400 7ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-14 POST as visitor → 401 4ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-14 POST as mint → 403 7ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-14 POST as dragon → 404 11ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-14 POST as quantum → 400 7ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-14 POST as quantum → 200 17ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-13 PATCH as visitor → 401 4ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-13 PATCH as mint → 403 8ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-13 PATCH as dragon → 404 11ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-13 PATCH as quantum → 400 7ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-13 PATCH as quantum → 200 19ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-02 sign out as mint → 204 (its own session) 90ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-02 sign out as quantum → 204 (its own session) 90ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > E-02 sign out as dragon → 204 (its own session) 88ms
+ ✓ tests/sprint-1/authorization.api.test.ts > TEST-B-03 — the Sprint 1 permission matrix, cell by cell (AC-B-03, NFR-02, BR-10, BR-13, BR-14, BR-16) > 404 bodies are byte-identical whether the record exists and is someone else's, or does not exist 90ms
+ ✓ tests/sprint-1/health.api.test.ts > TEST-SR4-01 (I) — E-12 GET /api/health > answers 200 {status:"ok"} when the database is up 47ms
+ ✓ tests/sprint-1/health.api.test.ts > TEST-SR4-01 (I) — E-12 GET /api/health > answers 503 {status:"unavailable"} when the database cannot be reached, and logs why 2024ms
+ ✓ tests/lab5/ready.api.test.ts > TEST-L5-02 (I) — GET /api/ready for the smoke test and Cloud Run (Lab 5 Ep. 2 point 6) > answers 200 {status:"ready", db:"connected"} when the database answers 47ms
+ ✓ tests/lab5/ready.api.test.ts > TEST-L5-02 (I) — GET /api/ready for the smoke test and Cloud Run (Lab 5 Ep. 2 point 6) > answers 503 {status:"not_ready"} when the database cannot be reached, without leaking why 2014ms
+ ✓ tests/sprint-2/cancel-registration.api.test.ts > TEST-N-01 · AC-N-01, FR-19, FR-28: a participant cancels their seat > 200 CANCELLED with cancelledAt = T, 2 / 24 by independent count, the row kept, and the other endpoints agree 95ms
+ ✓ tests/sprint-2/cancel-registration.api.test.ts > TEST-N-01 · AC-N-01, FR-19, FR-28: a participant cancels their seat > E-11 and E-05 show canCancel true for an active registration, and E-05 gives the registration id 29ms
+ ✓ tests/sprint-2/cancel-registration.api.test.ts > TEST-N-02 · AC-N-02, FR-20, BR-06: registering again makes a new row > 201 with a new id, 2 rows (1 CANCELLED, 1 REGISTERED), then 409 ALREADY_REGISTERED 71ms
+ ✓ tests/sprint-2/cancel-registration.api.test.ts > TEST-N-03 · AC-N-03, BR-05: a freed seat goes to the next player > 2 / 2: Ploy cancels → 200; Nok registers → 201; Ploy again → 409 EVENT_FULL; active = 2 55ms
+ ✓ tests/sprint-2/cancel-registration.api.test.ts > TEST-N-04 · AC-N-04, BR-11: rows that cannot be cancelled > CANCELLED and EVENT_CANCELLED → ALREADY_CANCELLED; CHECKED_IN → ALREADY_CHECKED_IN; past the deadline → REGISTRATION_CLOSED; nothing changes 65ms
+ ✓ tests/sprint-2/cancel-registration.api.test.ts > TEST-M-04 · AC-M-04, BR-08, BR-11: the deadline closes cancelling too > canCancel is true at D − 1 min and false at D on E-10, E-11 and E-05; E-16 at D is 409 REGISTRATION_CLOSED 84ms
+ ✓ tests/sprint-2/cancel-registration.api.test.ts > TEST-N-05 · AC-N-05, BR-11, BR-16, BR-17, NFR-02: who may cancel > another player and a missing id give the same 404; the owner 403; a visitor 401; a foreign Origin 403; a body with participantId 400 99ms
+ ✓ tests/sprint-2/cancel-registration.api.test.ts > TEST-N-05 · AC-N-05, BR-11, BR-16, BR-17, NFR-02: who may cancel > an empty body and no body both cancel 61ms
+ ✓ tests/sprint-2/cancel-registration.api.test.ts > TEST-B-03 rows (E-16) POST /api/me/registrations/:id/cancel > visitor 401; owner 403; another organizer (Dragon Den) 403; another player 404; the registered player 200 59ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-02 — zod .strict() reports every failing field (AC-SR2-02, NFR-15) > wrong types, a bad date and an unknown field → 400 with one details entry per field 73ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-02 — zod .strict() reports every failing field (AC-SR2-02, NFR-15) > a valid body passes through as the parsed value 6ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-02 — zod .strict() reports every failing field (AC-SR2-02, NFR-15) > real E-06 with organizer session, wrong types, bad date and unknown field → 400 VALIDATION_FAILED 116ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > the route table lists exactly E-01 … E-12, and no test file calls an access probe 27ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > calling every Sprint 1 and Sprint 2 route with GET leaves every table unchanged 115ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > with a signed-in participant, GET on every Sprint 1 and Sprint 2 route leaves every table unchanged 260ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > with a signed-in organizer, GET on every Sprint 1 and Sprint 2 route leaves every table unchanged 268ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > GET on POST-only /api/auth/login → 404 NOT_FOUND 4ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > GET on POST-only /api/auth/logout → 404 NOT_FOUND 4ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > GET on POST-only /api/events/1/registrations → 404 NOT_FOUND 3ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > GET on POST-only /api/organizer/events/1/publish → 404 NOT_FOUND 3ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > GET on POST-only /api/organizer/events/1/cancel → 404 NOT_FOUND 4ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > GET on POST-only /api/me/registrations/1/cancel → 404 NOT_FOUND 4ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > GET on POST-only /api/organizer/registrations/1/check-in → 404 NOT_FOUND 3ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-03 — GET never writes (AC-SR2-03, NFR-15) > GET on POST-only /api/__test/echo → 404 NOT_FOUND 3ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > a text/plain body → 415 UNSUPPORTED_MEDIA_TYPE 4ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > a 101 kB body → 413 PAYLOAD_TOO_LARGE 5ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > a foreign Origin → 403 FORBIDDEN 4ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > no Origin at all → 403 FORBIDDEN 4ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > malformed JSON → 400 VALIDATION_FAILED, not a 500 5ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > a POST with no body is not a 415 (E-09 sends none); it reaches validation 4ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > real E-09: text/plain → 415, foreign Origin → 403, both storing nothing; no body → 201 128ms
+ ✓ tests/sprint-1/validation.api.test.ts > TEST-SR2-05 — JSON only, 100 kB limit, origin check (NFR-15) > none of the rejected requests stored anything 12ms
+ ✓ tests/sprint-2/drafts.api.test.ts > TEST-K-01 (I) saving a draft (AC-K-01, FR-08) > E-06 with saveAsDraft: 201 DRAFT, publishedAt null, one change row null → DRAFT; E-07 lists it; E-05 gives MANAGE 66ms
+ ✓ tests/sprint-2/drafts.api.test.ts > TEST-K-01 (I) saving a draft (AC-K-01, FR-08) > E-06 without saveAsDraft still publishes at once (Sprint 1 behaviour unchanged) 20ms
+ ✓ tests/sprint-2/drafts.api.test.ts > TEST-K-02 (I) a draft is invisible to everyone but its owner (AC-K-02, BR-04) > a visitor: E-04 never lists it, E-05 is the same 404 as a missing id 60ms
+ ✓ tests/sprint-2/drafts.api.test.ts > TEST-K-02 (I) a draft is invisible to everyone but its owner (AC-K-02, BR-04) > Nok (participant): E-04 never lists it, E-05 is the same 404 as a missing id 62ms
+ ✓ tests/sprint-2/drafts.api.test.ts > TEST-K-02 (I) a draft is invisible to everyone but its owner (AC-K-02, BR-04) > Dragon's Den (another organizer): E-04 never lists it, E-05 is the same 404 as a missing id 60ms
+ ✓ tests/sprint-2/drafts.api.test.ts > TEST-K-02 (I) a draft is invisible to everyone but its owner (AC-K-02, BR-04) > E-09 by Nok is 404 EVENT_NOT_FOUND and stores no registration 16ms
+ ✓ tests/sprint-2/drafts.api.test.ts > TEST-K-03 (I) publishing a draft (AC-K-03, FR-08, FR-28) > E-14 by the owner: 200 PUBLISHED, publishedAt = T, change row DRAFT → PUBLISHED; E-04 now lists it 52ms
+ ✓ tests/sprint-2/drafts.api.test.ts > TEST-K-03 (I) publishing a draft (AC-K-03, FR-08, FR-28) > accepts a request with no body at all (contract: body {} or none) 35ms
+ ✓ tests/sprint-2/drafts.api.test.ts > TEST-K-04 (I) publishing re-checks the time rules; published and cancelled events are refused (AC-K-04, D-21) > a draft whose start has passed (clock moved): 422 on startAt, still DRAFT 34ms
+ ✓ tests/sprint-2/drafts.api.test.ts > TEST-K-04 (I) publishing re-checks the time rules; published and cancelled events are refused (AC-K-04, D-21) > a draft starting in 30 minutes: 422 on startAt (CH-13); in exactly 60 minutes: 200 65ms
+ ✓ tests/sprint-2/drafts.api.test.ts > TEST-K-04 (I) publishing re-checks the time rules; published and cancelled events are refused (AC-K-04, D-21) > a published event: 409 ALREADY_PUBLISHED; a cancelled one: 409 ALREADY_CANCELLED 72ms
+ ✓ tests/sprint-2/drafts.api.test.ts > TEST-K-05 (I) who may save and publish drafts (AC-K-05, BR-13, BR-17) > E-14 by Dragon's Den 404 (same as a missing id), Mint 403, a visitor 401, a foreign Origin 403, bad ids and bodies 400; nothing changes 91ms
+ ✓ tests/sprint-2/drafts.api.test.ts > TEST-K-05 (I) who may save and publish drafts (AC-K-05, BR-13, BR-17) > E-06 by Mint with saveAsDraft is 403; saveAsDraft "yes" and status "DRAFT" are 400; nothing is stored 30ms
+ ✓ tests/sprint-3/checkin.concurrency.api.test.ts > TEST-P-06a — two check-ins of the same registration at once (AC-P-06, BR-19, NFR-05) > 20 rounds: one 200, one 409 ALREADY_CHECKED_IN, one change row 618ms
+ ✓ tests/sprint-3/checkin.concurrency.api.test.ts > TEST-P-06b — the owner checks in while the player cancels (AC-P-06, BR-19, NFR-05) > 20 rounds: exactly CHECKED_IN or CANCELLED, never both timestamps, and the loser got the matching 409 563ms
+ ✓ tests/sprint-1/organizer.api.test.ts > TEST-E-01 — Organizer sees own events in start order with independent counts (AC-E-01, FR-07) > O1: exactly three events, in startAt asc order; counts match independent Prisma counts 27ms
+ ✓ tests/sprint-1/organizer.api.test.ts > TEST-E-01 — Organizer sees own events in start order with independent counts (AC-E-01, FR-07) > lists the owner's draft and cancelled event with their status (Sprint 2 contracts §2, UX-15) 182ms
+ ✓ tests/sprint-1/organizer.api.test.ts > TEST-E-01 — Organizer sees own events in start order with independent counts (AC-E-01, FR-07) > an organizer with no events gets 200 { items: [] } 15ms
+ ✓ tests/sprint-1/organizer.api.test.ts > TEST-E-02 — Organizer sees none of another organizer's events; participant gets 403 (AC-E-02, BR-14) > O2 sees only its own events, and none of O1's ids 15ms
+ ✓ tests/sprint-1/organizer.api.test.ts > TEST-E-02 — Organizer sees none of another organizer's events; participant gets 403 (AC-E-02, BR-14) > a participant calling E-07 gets 403 FORBIDDEN; signed-out gets 401 UNAUTHENTICATED 20ms
+ ✓ tests/sprint-1/organizer.api.test.ts > Feature-I — Event Registration List (E-08, contracts §12) > TEST-I-01 — Owner sees who registered in createdAt order with counts; empty list (AC-I-01, FR-18) > O1 gets 200 with the cancelled row first, then three REGISTERED rows in registration order, and counts 3/24/21 (cancelled rows are not counted) 14ms
+ ✓ tests/sprint-1/organizer.api.test.ts > Feature-I — Event Registration List (E-08, contracts §12) > TEST-I-01 — Owner sees who registered in createdAt order with counts; empty list (AC-I-01, FR-18) > O1 gets 200 with items: [] and counts 0/32/32 on an event with no registrations (EV-6) 10ms
+ ✓ tests/sprint-1/organizer.api.test.ts > Feature-I — Event Registration List (E-08, contracts §12) > TEST-I-02 — Another organizer gets 404 EVENT_NOT_FOUND, byte-identical to non-existent id (AC-I-02, BR-14) > O2 calling E-08 for O1's event and for a non-existent id both get 404 EVENT_NOT_FOUND with identical bodies 18ms
+ ✓ tests/sprint-1/organizer.api.test.ts > Feature-I — Event Registration List (E-08, contracts §12) > TEST-I-03 — Participant gets 403; response contains no email and no participantId (AC-I-03, BR-16) > participant gets 403 FORBIDDEN, visitor gets 401 UNAUTHENTICATED 13ms
+ ✓ tests/sprint-1/organizer.api.test.ts > Feature-I — Event Registration List (E-08, contracts §12) > TEST-I-03 — Participant gets 403; response contains no email and no participantId (AC-I-03, BR-16) > owner's response contains no email address and no participantId / email keys (BR-16) 10ms
+ ✓ tests/sprint-2/edit.api.test.ts > TEST-L-01 (I) the owner edits details; registrations are untouched (AC-L-01, FR-09, #64) > 200 with the new values; E-05 agrees; one details change row naming the fields; the 3 registrations are unchanged 62ms
+ ✓ tests/sprint-2/edit.api.test.ts > TEST-L-01 (I) the owner edits details; registrations are untouched (AC-L-01, FR-09, #64) > a field sent with its current value is not a change: 200 and no change row 23ms
+ ✓ tests/sprint-2/edit.api.test.ts > TEST-L-01 (I) the owner edits details; registrations are untouched (AC-L-01, FR-09, #64) > the owner's draft can be edited like an upcoming event (contracts §2) 25ms
+ ✓ tests/sprint-2/edit.api.test.ts > TEST-L-02 (I) capacity never below the active registrations (AC-L-02, BR-09, BR-01) > 24 → 3 ok; 2 is 409 naming 3; 256 ok; 257, 0 and 1.5 are 400; 30 ok with 27 seats left; one capacity row per accepted value 109ms
+ ✓ tests/sprint-2/edit.api.test.ts > TEST-L-04 (I) the time rules on the resulting start and end (AC-L-04, BR-02, CH-13, NFR-11) > start 1 min ago and 59 min away: 422 startAt; 60 min away (with its end): 200; end-only +25 h: 422; +24 h: 200; one day later: 200 and E-04 reorders 125ms
+ ✓ tests/sprint-2/edit.api.test.ts > TEST-L-04 (I) the time rules on the resulting start and end (AC-L-04, BR-02, CH-13, NFR-11) > a new start earlier than the stored deadline is 422 on registrationDeadline, not a 500 (D-23; AC-M-02 in S2-06) 18ms
+ ✓ tests/sprint-2/edit.api.test.ts > TEST-L-05 (I) after the start only description, structure, contact and fee change (AC-L-05, BR-15, D-19) > started 1 h ago: description + feeLabel 200; capacity 409 EVENT_STARTED; startAt + title 409 listing both; nothing frozen changes 48ms
+ ✓ tests/sprint-2/edit.api.test.ts > TEST-L-05 (I) after the start only description, structure, contact and fee change (AC-L-05, BR-15, D-19) > an event starting exactly now counts as started (D-10) 13ms
+ ✓ tests/sprint-2/edit.api.test.ts > TEST-L-06 (I) who may edit, and empty or forbidden bodies (AC-L-06, BR-14, NFR-02) > Dragon's Den 404 (same as a missing id), Mint 403, a visitor 401, a foreign Origin 403, {} and organizerId 400, abc 400; a cancelled event 409; nothing changes 117ms
+ ✓ tests/sprint-1/events.read.api.test.ts > TEST-F-01 — public event list E-04 (AC-F-01, FR-11) > returns upcoming published events in startAt then id order with accurate counts 35ms
+ ✓ tests/sprint-1/events.read.api.test.ts > TEST-F-01 — public event list E-04 (AC-F-01, FR-11) > returns the same list when called with a session 133ms
+ ✓ tests/sprint-1/events.read.api.test.ts > TEST-F-02 — event detail E-05 and viewer.action (AC-F-02, FR-12) > returns matching viewer.action and all public fields across visitor, player, owner, other organizer 401ms
+ ✓ tests/sprint-1/events.read.api.test.ts > TEST-F-03 — non-existent and malformed path parameter (AC-F-03, FR-12) > E-05 /999999 -> 404 EVENT_NOT_FOUND 8ms
+ ✓ tests/sprint-1/events.read.api.test.ts > TEST-F-03 — non-existent and malformed path parameter (AC-F-03, FR-12) > E-05 /abc -> 400 INVALID_PATH_PARAMETER 5ms
+ ✓ tests/sprint-1/events.read.api.test.ts > TEST-F-03 — non-existent and malformed path parameter (AC-F-03, FR-12) > E-05 /0 -> 400 INVALID_PATH_PARAMETER 5ms
+ ✓ tests/sprint-1/events.read.api.test.ts > TEST-F-03 — non-existent and malformed path parameter (AC-F-03, FR-12) > E-05 /-1 -> 400 INVALID_PATH_PARAMETER 4ms
+ ✓ tests/sprint-1/events.read.api.test.ts > TEST-F-03 — non-existent and malformed path parameter (AC-F-03, FR-12) > E-05 /2147483648 -> 400 INVALID_PATH_PARAMETER 4ms
+ ✓ tests/sprint-1/events.read.api.test.ts > TEST-F-03 — non-existent and malformed path parameter (AC-F-03, FR-12) > E-05 /99999999999 -> 400 INVALID_PATH_PARAMETER 4ms
+ ✓ tests/sprint-1/events.read.api.test.ts > TEST-F-04 — started events hidden from list and closed on detail (AC-F-04, BR-04) > EV-4 is absent from E-04 list; E-05 returns hasStarted: true and action: CLOSED 105ms
+ ✓ tests/sprint-1/events.read.api.test.ts > TEST-F-05 — privacy: no participant IDs, names, emails, or registrations key (AC-F-05, BR-16) > neither E-04 nor E-05 responses contain participant data or the registrations key 127ms
+ ✓ tests/sprint-2/deadline.api.test.ts > TEST-M-01 (I) setting a deadline, and the effective deadline everywhere (AC-M-01, BR-08) > E-06 without a deadline answers the start; with start − 2 h answers that; E-13 sets one and writes a deadline row 87ms
+ ✓ tests/sprint-2/deadline.api.test.ts > TEST-M-01 (I) setting a deadline, and the effective deadline everywhere (AC-M-01, BR-08) > E-04 and E-07 carry the effective deadline on every summary 49ms
+ ✓ tests/sprint-2/deadline.api.test.ts > TEST-M-01 (I) setting a deadline, and the effective deadline everywhere (AC-M-01, BR-08) > E-06 refuses a deadline that is not an ISO time with an offset (400 "Enter a date and time.") 9ms
+ ✓ tests/sprint-2/deadline.api.test.ts > TEST-M-02 (I) the deadline rules on E-13 and E-06 (AC-M-02, BR-08, D-23) > start + 1 min, now and 1 min ago are 422; the start itself and null are 200 (null gives back the start) 86ms
+ ✓ tests/sprint-2/deadline.api.test.ts > TEST-M-02 (I) the deadline rules on E-13 and E-06 (AC-M-02, BR-08, D-23) > a new start earlier than the stored deadline is 422 on registrationDeadline (D-23); with a new deadline in the same body it is fine 46ms
+ ✓ tests/sprint-2/deadline.api.test.ts > TEST-M-02 (I) the deadline rules on E-13 and E-06 (AC-M-02, BR-08, D-23) > E-06 refuses a deadline after the start, and one in the past 14ms
+ ✓ tests/sprint-2/deadline.api.test.ts > TEST-M-03 (I) registration closes at the deadline (AC-M-03, BR-08, BR-04, D-17) > E-09 one minute before D is 201; at D and one minute after are 409 REGISTRATION_CLOSED; E-05 says CLOSED at D; E-04 still lists it 119ms
+ ✓ tests/sprint-2/deadline.api.test.ts > Review of #111 (I) the deadline is frozen once the event has started (BR-15, contracts §4) > E-13 with a registrationDeadline on a started event is 409 EVENT_STARTED naming registrationDeadline; nothing changes 37ms
+ ✓ tests/sprint-2/deadline.api.test.ts > Second review of #111 (I) a deadline sent again unchanged, and what a start move records > a passed deadline sent again unchanged (alone or with another field) is accepted and writes no deadline row; a different past one is still 422 62ms
+ ✓ tests/sprint-2/deadline.api.test.ts > Second review of #111 (I) a deadline sent again unchanged, and what a start move records > moving the start of an event with no stored deadline writes a details row only (SR-08 records explicit deadline changes) 37ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-01 (I) game on create and edit (AC-U-01, FR-29) > E-06 with game POKEMON: 201 and game POKEMON stored 33ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-01 (I) game on create and edit (AC-U-01, FR-29) > E-06 without game: 201 and game OTHER (Sprint 1 bodies stay valid) 19ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-01 (I) game on create and edit (AC-U-01, FR-29) > E-06 with game CHESS: 400 on game and nothing stored 13ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-01 (I) game on create and edit (AC-U-01, FR-29) > E-13 game MAGIC: 200, stored, and one details change row naming game 31ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-01 (I) game on create and edit (AC-U-01, FR-29) > E-13 game CHESS: 400 on game 12ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-01 (I) game on create and edit (AC-U-01, FR-29) > E-05 and E-04 summaries carry game and store { displayName, logoUrl } 45ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-03 (I) the store profile games (AC-U-03, FR-30, BR-17, NFR-02) > E-23 { games: [POKEMON, MAGIC] }: 200, stored, and E-05 of a Quantum Cards event shows both 26ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-03 (I) the store profile games (AC-U-03, FR-30, BR-17, NFR-02) > GET /api/organizer/store returns the caller’s own { displayName, games, contact } 19ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-03 (I) the store profile games (AC-U-03, FR-30, BR-17, NFR-02) > E-23 { games: [] }: 200 with no games 11ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-03 (I) the store profile games (AC-U-03, FR-30, BR-17, NFR-02) > E-23 with a duplicate game, an unknown game, or more than 7: 400 on games and nothing changes 31ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-03 (I) the store profile games (AC-U-03, FR-30, BR-17, NFR-02) > E-23 by Mint (participant) 403, by a visitor 401 21ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-03 (I) the store profile games (AC-U-03, FR-30, BR-17, NFR-02) > E-23 edits only the caller’s own store: Dragon’s games are untouched 12ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-04 (I) the store contact on every event (AC-U-04, FR-30, D-37, D-14) > E-23 contact: 200, email trimmed and lower-case; A and B carry the same store.contact; B keeps its own contact 56ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-04 (I) the store contact on every event (AC-U-04, FR-30, D-37, D-14) > an unset field is null and a partial PATCH keeps the other fields 22ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-04 (I) the store contact on every event (AC-U-04, FR-30, D-37, D-14) > a LINE ID without @ is accepted 10ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-05 (I) contact validation (AC-U-05, NFR-15) > E-23 with every field wrong: 400 listing every failing field with the contract messages, nothing stored 14ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-05 (I) contact validation (AC-U-05, NFR-15) > E-23 website ftp:// and a 201-character website: 400 on contactWebsite 15ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-05 (I) contact validation (AC-U-05, NFR-15) > E-23 {}: 400 "Change at least one field." 8ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-U-05 (I) contact validation (AC-U-05, NFR-15) > E-23 phone with fewer than 9 digits: 400; E-23 with a wrong Origin: 403; a non-JSON body: 415 19ms
+ ✓ tests/sprint-2/games.api.test.ts > TEST-B-03 rows (E-23) GET and PATCH /api/organizer/store > visitor 401; Mint 403; Quantum Cards 200 on both methods 37ms
+ ✓ tests/sprint-2/search.api.test.ts > TEST-J-01 — search text queries against seed (AC-J-01, FR-13) > searches by q=quantum, BANGKOK, draft night, เปิดกล่อง, 50%_off, 101 chars 99ms
+ ✓ tests/sprint-2/search.api.test.ts > TEST-J-01 — literal % and _ in q (AC-J-01, contracts §7 q rule) > finds an event whose title contains % or _ by that exact text, and q=% is not a wildcard 68ms
+ ✓ tests/sprint-2/search.api.test.ts > TEST-J-02 — filter combinations and Bangkok date boundaries (AC-J-02, FR-13, NFR-11, D-22) > filters by type, format, from/to across Bangkok midnight, seatsAvailable, and combined 68ms
+ ✓ tests/sprint-2/search.api.test.ts > TEST-J-03 — pagination and metadata (AC-J-03, FR-13) > pages 45 matching events with 20 items per page and meta.totalItems 45 78ms
+ ✓ tests/sprint-2/search.api.test.ts > TEST-J-04 — include parameter and draft isolation (AC-J-04, FR-14, BR-04) > filters by include=past, include=cancelled, include=past,cancelled, and rejects drafts 53ms
+ ✓ tests/sprint-2/search.api.test.ts > TEST-J-06 — privacy and strict query validation (AC-J-06, BR-16, NFR-15) > rejects unknown query keys with 400 and does not leak participant data 63ms
+ ✓ tests/sprint-2/search.api.test.ts > TEST-U-02 (I) E-04 game filter (AC-U-02, FR-29) > game=POKEMON returns only Pokémon events, each carrying game POKEMON (EV-6 in, EV-1 out) 17ms
+ ✓ tests/sprint-2/search.api.test.ts > TEST-U-02 (I) E-04 game filter (AC-U-02, FR-29) > game combined with q is the AND of both filters 24ms
+ ✓ tests/sprint-2/search.api.test.ts > TEST-U-02 (I) E-04 game filter (AC-U-02, FR-29) > game=chess (and any non-enum value) is 400 on game 17ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-01 (I) — Valid event creation and publication (AC-D-01, FR-06) > posts a valid event tomorrow with capacity 24 → 201, stored row PUBLISHED, listed in E-04 57ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-01 (I) — Valid event creation and publication (AC-D-01, FR-06) > the owner is the caller, not anyone else (Dragon's Den creates, not id 1) 20ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = 0 → 400 VALIDATION_FAILED with exact message, 0 rows stored 37ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = -1 → 400 VALIDATION_FAILED with exact message, 0 rows stored 19ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = 1.5 → 400 VALIDATION_FAILED with exact message, 0 rows stored 15ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = 257 → 400 VALIDATION_FAILED with exact message, 0 rows stored 15ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = 24 → 400 VALIDATION_FAILED with exact message, 0 rows stored 11ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = null → 400 VALIDATION_FAILED with exact message, 0 rows stored 12ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = 1 gives 201 and stores row 34ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-02 (I) — Capacity boundary and invalid values (AC-D-02, BR-01) > capacity = 256 gives 201 and stores row 17ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > start = T → 422 EVENT_TIME_INVALID naming () => T.toISOString(), 0 rows stored 11ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > start = T - 1 min → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() - 6e4).toISOString(), 0 rows stored 11ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > start = T + 1 min (CH-13) → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() + 6e4).toISOString(), 0 rows stored 11ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > start = T + 59 min (CH-13) → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() + 59 * 6e4).toISOString(), 0 rows stored 12ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > end = start → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() + 36e5).toISOString(), 0 rows stored 11ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > end = start + 24 h 1 min → 422 EVENT_TIME_INVALID naming () => new Date(T.getTime() + 36e5).toISOString(), 0 rows stored 10ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > start = T + 60 min → 201 accepted, stored once (CH-13 boundary) 27ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-03 (I, v2 CH-13) — Time rules enforcement (AC-D-03, BR-02) > end = start + 24 h → 201 accepted 15ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-04 (I) — Validation details and string rules (AC-D-04, BR-03) > body missing all required fields → 400 with details for EVERY failing field in one response, 0 rows stored 11ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-04 (I) — Validation details and string rules (AC-D-04, BR-03) > whitespace-only text counts as missing, 0 rows stored 11ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-04 (I) — Validation details and string rules (AC-D-04, BR-03) > rejects title of 2 chars and 101 chars, description 2,001 chars 25ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-04 (I) — Validation details and string rules (AC-D-04, BR-03) > accepts 3-char and 100-char titles → 201 30ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-05 (I) — Access control: organizer only (AC-D-05, BR-13) > participant (Mint) → 403 FORBIDDEN, 0 rows stored 11ms
+ ✓ tests/sprint-1/events.create.api.test.ts > TEST-D-05 (I) — Access control: organizer only (AC-D-05, BR-13) > visitor (signed out) → 401 UNAUTHENTICATED, 0 rows stored 8ms
+ ✓ tests/sprint-2/changes.api.test.ts > TEST-SR8-01 (S2-01 + S2-04 parts) creating and editing an event records who and when, and E-17 shows it (AC-SR8-01, FR-28) > E-06 writes status null → PUBLISHED in the same request; E-17 returns it with only the display name 49ms
+ ✓ tests/sprint-2/changes.api.test.ts > TEST-SR8-01 (S2-01 + S2-04 parts) creating and editing an event records who and when, and E-17 shows it (AC-SR8-01, FR-28) > S2-04 step: at T + 1 h, E-13 capacity 24 → 30 writes a capacity row; E-17 lists it first 52ms
+ ✓ tests/sprint-2/changes.api.test.ts > TEST-SR8-01 (S2-01 + S2-04 parts) creating and editing an event records who and when, and E-17 shows it (AC-SR8-01, FR-28) > S2-06 step (completes AC-SR8-01): T + 1 h capacity 24 → 30, T + 2 h a deadline; E-17 has 3 rows, newest first 66ms
+ ✓ tests/sprint-2/changes.api.test.ts > TEST-SR8-01 (S2-01 + S2-04 parts) creating and editing an event records who and when, and E-17 shows it (AC-SR8-01, FR-28) > lists the newest change first (changedAt desc, then id desc) 28ms
+ ✓ tests/sprint-2/changes.api.test.ts > TEST-SR8-04 only the owner reads the history (AC-SR8-04, NFR-02) > another organizer gets 404, byte-identical to a missing id 18ms
+ ✓ tests/sprint-2/changes.api.test.ts > TEST-SR8-04 only the owner reads the history (AC-SR8-04, NFR-02) > a participant gets 403, a visitor 401, and a malformed id 400 19ms
+ ✓ tests/sprint-1/registrations.api.test.ts > TEST-G-01 — a participant takes a seat (AC-G-01, FR-15) > 201 ParticipantRegistration with updated counts; one new row for P; E-05 then says REGISTERED 80ms
+ ✓ tests/sprint-1/registrations.api.test.ts > TEST-G-01 — a participant takes a seat (AC-G-01, FR-15) > a body of {} is accepted like no body 24ms
+ ✓ tests/sprint-1/registrations.api.test.ts > TEST-G-02 (I) — a full event (AC-G-02, BR-05, FR-16) > 2 / 2 → 409 EVENT_FULL with the contract message; still 2 active rows 26ms
+ ✓ tests/sprint-1/registrations.api.test.ts > TEST-G-03 — one active registration per participant per event (AC-G-03, BR-06) > again, then twice at the same time: every response 409 ALREADY_REGISTERED; one active row 83ms
+ ✓ tests/sprint-1/registrations.api.test.ts > TEST-G-04 (I) — closed when started or not published (AC-G-04, BR-04) > started 1 min ago → 409 REGISTRATION_CLOSED, no row 18ms
+ ✓ tests/sprint-1/registrations.api.test.ts > TEST-G-04 (I) — closed when started or not published (AC-G-04, BR-04) > starting exactly now (T) → 409 REGISTRATION_CLOSED, no row 17ms
+ ✓ tests/sprint-1/registrations.api.test.ts > TEST-G-04 (I) — closed when started or not published (AC-G-04, BR-04) > a draft event → 404 EVENT_NOT_FOUND (Sprint 2, AC-K-02), no row 17ms
+ ✓ tests/sprint-1/registrations.api.test.ts > TEST-G-05 — organizers cannot register, even for their own event (AC-G-05, BR-10) > owner and other organizer → 403 FORBIDDEN, no row 19ms
+ ✓ tests/sprint-1/registrations.api.test.ts > E-09 order of checks (contracts §10) > a missing event → 404 EVENT_NOT_FOUND 10ms
+ ✓ tests/sprint-1/registrations.api.test.ts > E-09 order of checks (contracts §10) > path id abc → 400 INVALID_PATH_PARAMETER 7ms
+ ✓ tests/sprint-1/registrations.api.test.ts > E-09 order of checks (contracts §10) > path id 0 → 400 INVALID_PATH_PARAMETER 8ms
+ ✓ tests/sprint-1/registrations.api.test.ts > E-09 order of checks (contracts §10) > path id 2147483648 → 400 INVALID_PATH_PARAMETER 10ms
+ ✓ tests/sprint-1/registrations.api.test.ts > E-09 order of checks (contracts §10) > a body with a field → 400 VALIDATION_FAILED, no row 12ms
+ ✓ tests/sprint-1/registrations.api.test.ts > E-09 order of checks (contracts §10) > without a session → 401 before anything else; with a foreign Origin → 403, no row 16ms
+ ✓ tests/sprint-1/registrations.api.test.ts > E-09 order of checks (contracts §10) > a closed event that is also full answers REGISTRATION_CLOSED; a full one where P is registered answers ALREADY_REGISTERED 58ms
+ ✓ tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > creates 2 organizers, 4 participants, the 6 events of contracts §0.3, the 3 of Sprint 2 §0.4 and EV-10 602ms
+ ✓ tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > gives EV-3 no free seat, EV-2 exactly one, and EV-4 a start in the past and an end in the future 10ms
+ ✓ tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > adds EV-7 as a DRAFT, EV-8 CANCELLED with Boss EVENT_CANCELLED, EV-9 with a passed deadline and Mint (§0.4) 8ms
+ ✓ tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > gives each event its game and each store its games and public contact (§0.4, Feature-U) 6ms
+ ✓ tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > adds EV-10, ended a week ago, with a check-in by Quantum Cards, a no-show and a cancellation (Sprint 3 §0.3) 6ms
+ ✓ tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > stores scrypt hashes that verify with the seed password 146ms
+ ✓ tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > adds nothing when it runs a second time 66ms
+ ✓ tests/sprint-1/seed.api.test.ts > TEST-SR1-02 the seed creates the contract data once and only once > refuses to run without a password of at least 12 characters 2ms
+ ✓ tests/sprint-1/me.api.test.ts > TEST-H-01 — My Events lists only the caller's registrations, soonest first (AC-H-01, FR-17) > P1: exactly three ParticipantRegistrations in event start order, each with its event and counts 26ms
+ ✓ tests/sprint-1/me.api.test.ts > TEST-H-01 — My Events lists only the caller's registrations, soonest first (AC-H-01, FR-17) > P2 with no registrations: 200 { items: [] } 10ms
+ ✓ tests/sprint-1/me.api.test.ts > TEST-H-01 — My Events lists only the caller's registrations, soonest first (AC-H-01, FR-17) > E-11 returns one of the caller's own registrations with its event 13ms
+ ✓ tests/sprint-1/me.api.test.ts > TEST-H-02 — another participant's registration is never confirmed (AC-H-02, BR-16) > P1 on P3's registration and on a missing id: both 404 REGISTRATION_NOT_FOUND, byte-identical, no P3 data 19ms
+ ✓ tests/sprint-1/me.api.test.ts > TEST-H-02 — another participant's registration is never confirmed (AC-H-02, BR-16) > an organizer calling E-10 or E-11 → 403 FORBIDDEN; signed out → 401 20ms
+ ✓ tests/sprint-1/me.api.test.ts > TEST-H-02 — another participant's registration is never confirmed (AC-H-02, BR-16) > E-11 path id: abc, 0 and 2147483648 → 400 INVALID_PATH_PARAMETER for a participant 22ms
+ ✓ tests/lab6/calendar-date.api.test.ts > TEST-L6-57 (I) — a date that does not exist is a validation error, not a different day (#57, AC-D-03, NFR-15) > 29 February in a non-leap year (the UAT case) → 400 VALIDATION_FAILED naming startAt and endAt, 0 rows stored 50ms
+ ✓ tests/lab6/calendar-date.api.test.ts > TEST-L6-57 (I) — a date that does not exist is a validation error, not a different day (#57, AC-D-03, NFR-15) > 30 February → 400 VALIDATION_FAILED naming startAt and endAt, 0 rows stored 22ms
+ ✓ tests/lab6/calendar-date.api.test.ts > TEST-L6-57 (I) — a date that does not exist is a validation error, not a different day (#57, AC-D-03, NFR-15) > 31 April → 400 VALIDATION_FAILED naming startAt and endAt, 0 rows stored 15ms
+ ✓ tests/lab6/calendar-date.api.test.ts > TEST-L6-57 (I) — a date that does not exist is a validation error, not a different day (#57, AC-D-03, NFR-15) > 31 June → 400 VALIDATION_FAILED naming startAt and endAt, 0 rows stored 18ms
+ ✓ tests/lab6/calendar-date.api.test.ts > TEST-L6-57 (I) — a date that does not exist is a validation error, not a different day (#57, AC-D-03, NFR-15) > a valid start with an impossible end → 400 naming only endAt 8ms
+ ✓ tests/lab6/calendar-date.api.test.ts > TEST-L6-57 (I) — a date that does not exist is a validation error, not a different day (#57, AC-D-03, NFR-15) > control: 29 February in a leap year (2028) is a real date → 201, stored on that day 29ms
+ ✓ tests/lab6/nul-character.api.test.ts > TEST-L6-63 (I) — U+0000 in event text is a validation error, not a server error (#63, NFR-15, NFR-09) > description "UAT" + U+0000 + "TEST" → 400 VALIDATION_FAILED naming description, 0 rows stored 49ms
+ ✓ tests/lab6/nul-character.api.test.ts > TEST-L6-63 (I) — U+0000 in event text is a validation error, not a server error (#63, NFR-15, NFR-09) > U+0000 in required and other optional fields → one detail per field, 0 rows stored 20ms
+ ✓ tests/lab6/nul-character.api.test.ts > TEST-L6-63 (I) — U+0000 in event text is a validation error, not a server error (#63, NFR-15, NFR-09) > control: Thai text and line breaks in the description still publish → 201, stored as sent 35ms
+ ✓ tests/sprint-1/persistence.api.test.ts > TEST-SR1-01 data survives a new database connection > reads back an event and a registration, with identical values, through a separate Prisma client 51ms
+ ✓ tests/sprint-1/persistence.api.test.ts > TEST-SR1-01 (I-12) — what the API wrote survives a new app and a new database connection > an event published with E-06 and a registration made with E-09 read back identically after a "restart" 522ms
+ ✓ tests/sprint-1/time.api.test.ts > TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-SR3-01, NFR-11) > now() returns the fixed time T, and a copy that cannot move the clock 46ms
+ ✓ tests/sprint-1/time.api.test.ts > TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-SR3-01, NFR-11) > only the T + 1 min event is upcoming in the database query 39ms
+ ✓ tests/sprint-1/time.api.test.ts > TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-SR3-01, NFR-11) > an event starting exactly at T counts as started, like T − 1 min; T + 1 min has not started 32ms
+ ✓ tests/sprint-1/time.api.test.ts > TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-SR3-01, NFR-11) > E-04 returns only T + 1 min event; E-05 for T returns hasStarted: true and viewer.action: CLOSED 85ms
+ ✓ tests/sprint-1/time.api.test.ts > TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-SR3-01, NFR-11) > E-09 at T: the T event → 409 REGISTRATION_CLOSED, the T + 1 min event → 201 260ms
+ ✓ tests/sprint-1/time.api.test.ts > TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-SR3-01, NFR-11) > times survive the database to the millisecond and serialise as UTC ending in Z 30ms
+ ✓ tests/sprint-1/time.api.test.ts > TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-SR3-01, NFR-11) > after resetNow() the clock follows real time again 17ms
+ ✓ tests/sprint-1/time.api.test.ts > TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-SR3-01, NFR-11) > setNow() refuses to run outside NODE_ENV=test 19ms
+ ✓ tests/sprint-1/time.api.test.ts > TEST-SR3-01 — the server clock decides "upcoming" and "started" (AC-SR3-01, NFR-11) > rule code in src/domain never reads the system clock directly (contracts §3 item 1) 27ms
+ ✓ tests/sprint-1/unit/config.unit.test.ts > TEST-SR4-01 (U) — configuration is complete and checked at start-up (NFR-13) > .env.example, the SDS §9.1 table and config.ts name the same variables 5ms
+ ✓ tests/sprint-1/unit/config.unit.test.ts > TEST-SR4-01 (U) — configuration is complete and checked at start-up (NFR-13) > reads a valid environment into typed values, with defaults for the optional ones 3ms
+ ✓ tests/sprint-1/unit/config.unit.test.ts > TEST-SR4-01 (U) — configuration is complete and checked at start-up (NFR-13) > throws naming DATABASE_URL when it is missing or empty 1ms
+ ✓ tests/sprint-1/unit/config.unit.test.ts > TEST-SR4-01 (U) — configuration is complete and checked at start-up (NFR-13) > throws naming APP_ORIGIN when it is missing or empty 0ms
+ ✓ tests/sprint-1/unit/config.unit.test.ts > TEST-SR4-01 (U) — configuration is complete and checked at start-up (NFR-13) > rejects malformed values without echoing them (they may be secrets) 1ms
+ ✓ tests/sprint-1/unit/config.unit.test.ts > TEST-SR4-01 (U) — configuration is complete and checked at start-up (NFR-13) > the real server refuses to start without DATABASE_URL and says why 502ms
+ ✓ tests/sprint-1/errors.api.test.ts > TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, NFR-07) > 400 'VALIDATION_FAILED' 47ms
+ ✓ tests/sprint-1/errors.api.test.ts > TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, NFR-07) > 401 'UNAUTHENTICATED' 9ms
+ ✓ tests/sprint-1/errors.api.test.ts > TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, NFR-07) > 403 'FORBIDDEN' 9ms
+ ✓ tests/sprint-1/errors.api.test.ts > TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, NFR-07) > 404 'NOT_FOUND' 8ms
+ ✓ tests/sprint-1/errors.api.test.ts > TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, NFR-07) > 409 'EVENT_FULL' 8ms
+ ✓ tests/sprint-1/errors.api.test.ts > TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, NFR-07) > 500 'INTERNAL_ERROR' 10ms
+ ✓ tests/sprint-1/errors.api.test.ts > TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, NFR-07) > 500 logs the real error on the server, without cookies or headers 11ms
+ ✓ tests/sprint-1/errors.api.test.ts > TEST-SR2-01 — every error body has the same safe shape (AC-SR2-01, NFR-07) > 400 lists the failing fields in details 9ms
+ ✓ tests/sprint-1/errors.api.test.ts > TEST-SR2-01 (I-12) — real 401 and 409 bodies have the same safe shape (AC-SR2-01, NFR-07) > E-03 signed out (an unknown cookie) → 401 UNAUTHENTICATED 5ms
+ ✓ tests/sprint-1/errors.api.test.ts > TEST-SR2-01 (I-12) — real 401 and 409 bodies have the same safe shape (AC-SR2-01, NFR-07) > E-09 on a full event → 409 EVENT_FULL, and the body names no other participant 24ms
+ ✓ tests/sprint-1/unit/password.unit.test.ts > TEST-A-05 (U) — scrypt password hashing > hashPassword gives scrypt$32768$8$1$<salt>$<hash>, with a new salt each time 155ms
+ ✓ tests/sprint-1/unit/password.unit.test.ts > TEST-A-05 (U) — scrypt password hashing > verifyPassword: the right password is true, a wrong one or a malformed hash is false 213ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-03 capacity must be a whole number from 1 to 256 (BR-01) > rejects capacity 0 at database level 14ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-03 capacity must be a whole number from 1 to 256 (BR-01) > rejects capacity -1 at database level 3ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-03 capacity must be a whole number from 1 to 256 (BR-01) > rejects capacity 257 at database level 2ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-03 capacity must be a whole number from 1 to 256 (BR-01) > accepts capacity 1 4ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-03 capacity must be a whole number from 1 to 256 (BR-01) > accepts capacity 256 2ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-04 an event ends after it starts and lasts at most 24 hours (BR-02) > rejects an end equal to the start 2ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-04 an event ends after it starts and lasts at most 24 hours (BR-02) > rejects an end before the start 3ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-04 an event ends after it starts and lasts at most 24 hours (BR-02) > rejects an end 24 hours and 1 minute after the start 2ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-04 an event ends after it starts and lasts at most 24 hours (BR-02) > accepts an end exactly 24 hours after the start 2ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-05 one ACTIVE registration per participant per event (BR-06) > is enforced by a partial unique index that covers only active statuses 11ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-05 one ACTIVE registration per participant per event (BR-06) > rejects a second active registration, then allows one again after the first is cancelled 24ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-05 one ACTIVE registration per participant per event (BR-06) > lets two different participants hold active registrations for the same event 10ms
+ ✓ tests/sprint-2/constraints.api.test.ts > TEST-SR8-02 EventChange rows are append-only (AC-SR8-02, X-11) > rejects UPDATE and DELETE by the event_change_append_only trigger and leaves the rows unchanged 37ms
+ ✓ tests/sprint-2/constraints.api.test.ts > TEST-SR8-03 deadline, event cancel and registration cancel fields (AC-SR8-03, BR-08, BR-12, FR-28) > rejects a registration deadline after the start (event_deadline_before_start) 6ms
+ ✓ tests/sprint-2/constraints.api.test.ts > TEST-SR8-03 deadline, event cancel and registration cancel fields (AC-SR8-03, BR-08, BR-12, FR-28) > accepts a deadline exactly at the start, and no deadline 7ms
+ ✓ tests/sprint-2/constraints.api.test.ts > TEST-SR8-03 deadline, event cancel and registration cancel fields (AC-SR8-03, BR-08, BR-12, FR-28) > rejects CANCELLED without a reason, and PUBLISHED with cancelledAt set (event_cancel_fields) 8ms
+ ✓ tests/sprint-2/constraints.api.test.ts > TEST-SR8-03 deadline, event cancel and registration cancel fields (AC-SR8-03, BR-08, BR-12, FR-28) > accepts CANCELLED with the time, the canceller and the reason all set 5ms
+ ✓ tests/sprint-2/constraints.api.test.ts > TEST-SR8-03 deadline, event cancel and registration cancel fields (AC-SR8-03, BR-08, BR-12, FR-28) > rejects a CANCELLED registration without cancelledAt, and a REGISTERED one with it (registration_cancel_fields) 14ms
+ ✓ tests/lab5/static.api.test.ts > TEST-L5-01 (I) — one container serves the API and the built React app (SD-01, Lab 5 R-03) > serves index.html at / 29ms
+ ✓ tests/lab5/static.api.test.ts > TEST-L5-01 (I) — one container serves the API and the built React app (SD-01, Lab 5 R-03) > serves index.html for a client-side route, so a reload of /events/1 works 10ms
+ ✓ tests/lab5/static.api.test.ts > TEST-L5-01 (I) — one container serves the API and the built React app (SD-01, Lab 5 R-03) > serves a built asset as itself, not as index.html 8ms
+ ✓ tests/lab5/static.api.test.ts > TEST-L5-01 (I) — one container serves the API and the built React app (SD-01, Lab 5 R-03) > keeps an unknown /api path as the JSON 404, never the page 9ms
+ ✓ tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > lets a POST from https://tcg-event-hub-123.asia-southeast1.run.app through 19ms
+ ✓ tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > lets a POST from https://tcg-event-hub-abc-as.a.run.app through 6ms
+ ✓ tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > rejects another site with 403 FORBIDDEN 5ms
+ ✓ tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > rejects a prefix of a listed origin with 403 FORBIDDEN 4ms
+ ✓ tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > rejects the whole list as one value with 403 FORBIDDEN 5ms
+ ✓ tests/lab5/origin.api.test.ts > TEST-L5-04 (I) — requireOrigin accepts every origin in the APP_ORIGIN list and nothing else > rejects a POST with no Origin header 5ms
+ ✓ tests/lab5/version.api.test.ts > TEST-L5-05 (I) — GET /api/version names the commit the image was built from > answers {commit} with the full GIT_SHA of the image 29ms
+ ✓ tests/lab5/version.api.test.ts > TEST-L5-05 (I) — GET /api/version names the commit the image was built from > answers {commit:"local"} outside a pipeline build 8ms
+ ✓ tests/lab5/unit/config.unit.test.ts > TEST-L5-03 (U) — APP_ORIGIN accepts a comma-separated list of origins > loads a list of two origins 5ms
+ ✓ tests/lab5/unit/config.unit.test.ts > TEST-L5-03 (U) — APP_ORIGIN accepts a comma-separated list of origins > throws naming APP_ORIGIN for an entry that is not an origin 1ms
+ ✓ tests/lab5/unit/config.unit.test.ts > TEST-L5-03 (U) — APP_ORIGIN accepts a comma-separated list of origins > throws naming APP_ORIGIN for an entry with a path 0ms
+ ✓ tests/lab5/unit/config.unit.test.ts > TEST-L5-03 (U) — APP_ORIGIN accepts a comma-separated list of origins > throws naming APP_ORIGIN for an empty entry 0ms
+ ✓ tests/lab5/unit/config.unit.test.ts > TEST-L5-03 (U) — APP_ORIGIN accepts a comma-separated list of origins > throws naming APP_ORIGIN for a space after the comma 0ms
+ ✓ tests/sprint-2/unit/search-query.unit.test.ts > TEST-J-02 (U) — search query unit tests (AC-J-02, FR-13, NFR-11, D-22) > bangkokDayRange calculates correct UTC boundaries for Bangkok day 2ms
+ ✓ tests/sprint-2/unit/search-query.unit.test.ts > TEST-J-02 (U) — search query unit tests (AC-J-02, FR-13, NFR-11, D-22) > escapeLikeWildcards escapes % and _ literally 0ms
+ ✓ tests/sprint-2/unit/search-query.unit.test.ts > TEST-J-02 (U) — search query unit tests (AC-J-02, FR-13, NFR-11, D-22) > searchQuerySchema validation > accepts empty/absent query 2ms
+ ✓ tests/sprint-2/unit/search-query.unit.test.ts > TEST-J-02 (U) — search query unit tests (AC-J-02, FR-13, NFR-11, D-22) > searchQuerySchema validation > accepts valid text query and trims whitespace 0ms
+ ✓ tests/sprint-2/unit/search-query.unit.test.ts > TEST-J-02 (U) — search query unit tests (AC-J-02, FR-13, NFR-11, D-22) > searchQuerySchema validation > rejects text query over 100 characters 1ms
+ ✓ tests/sprint-2/unit/search-query.unit.test.ts > TEST-J-02 (U) — search query unit tests (AC-J-02, FR-13, NFR-11, D-22) > searchQuerySchema validation > accepts valid event type and rejects invalid type 1ms
+ ✓ tests/sprint-2/unit/search-query.unit.test.ts > TEST-J-02 (U) — search query unit tests (AC-J-02, FR-13, NFR-11, D-22) > searchQuerySchema validation > accepts valid format and rejects invalid format 0ms
+ ✓ tests/sprint-2/unit/search-query.unit.test.ts > TEST-J-02 (U) — search query unit tests (AC-J-02, FR-13, NFR-11, D-22) > searchQuerySchema validation > accepts valid dates and rejects non-calendar dates 0ms
+ ✓ tests/sprint-2/unit/search-query.unit.test.ts > TEST-J-02 (U) — search query unit tests (AC-J-02, FR-13, NFR-11, D-22) > searchQuerySchema validation > rejects from > to with message on to 0ms
+ ✓ tests/sprint-2/unit/search-query.unit.test.ts > TEST-J-02 (U) — search query unit tests (AC-J-02, FR-13, NFR-11, D-22) > searchQuerySchema validation > validates seatsAvailable 0ms
+ ✓ tests/sprint-2/unit/search-query.unit.test.ts > TEST-J-02 (U) — search query unit tests (AC-J-02, FR-13, NFR-11, D-22) > searchQuerySchema validation > validates include parameter 1ms
+ ✓ tests/sprint-2/unit/search-query.unit.test.ts > TEST-J-02 (U) — search query unit tests (AC-J-02, FR-13, NFR-11, D-22) > searchQuerySchema validation > validates page number 0ms
+ ✓ tests/sprint-2/unit/search-query.unit.test.ts > TEST-J-02 (U) — search query unit tests (AC-J-02, FR-13, NFR-11, D-22) > searchQuerySchema validation > strictly rejects unrecognized query keys 0ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-02 (U) — Capacity validation (BR-01, AC-D-02) > rejects capacity = 0 (0) with exact message: Capacity must be a whole number from 1 to 256. 5ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-02 (U) — Capacity validation (BR-01, AC-D-02) > rejects capacity = -1 (negative number -1) with exact message: Capacity must be a whole number from 1 to 256. 0ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-02 (U) — Capacity validation (BR-01, AC-D-02) > rejects capacity = 1.5 (fractional number 1.5) with exact message: Capacity must be a whole number from 1 to 256. 0ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-02 (U) — Capacity validation (BR-01, AC-D-02) > rejects capacity = 257 (257 (> 256)) with exact message: Capacity must be a whole number from 1 to 256. 0ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-02 (U) — Capacity validation (BR-01, AC-D-02) > rejects capacity = 24 (string "24") with exact message: Capacity must be a whole number from 1 to 256. 0ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-02 (U) — Capacity validation (BR-01, AC-D-02) > rejects capacity = null (null) with exact message: Capacity must be a whole number from 1 to 256. 0ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-02 (U) — Capacity validation (BR-01, AC-D-02) > accepts boundary capacity = 1 0ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-02 (U) — Capacity validation (BR-01, AC-D-02) > accepts boundary capacity = 256 0ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-04 (U) — Field rules and missing fields (BR-03, AC-D-04) > reports every failing field in one response when all required fields are missing 1ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-04 (U) — Field rules and missing fields (BR-03, AC-D-04) > whitespace-only strings count as missing 1ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-04 (U) — Field rules and missing fields (BR-03, AC-D-04) > rejects title shorter than 3 chars ("ab") with "Use 3 to 100 characters for the title." 0ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-04 (U) — Field rules and missing fields (BR-03, AC-D-04) > rejects title longer than 100 chars (101 chars) with "Use 3 to 100 characters for the title." 0ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-04 (U) — Field rules and missing fields (BR-03, AC-D-04) > accepts title of 3 chars and 100 chars 0ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-04 (U) — Field rules and missing fields (BR-03, AC-D-04) > rejects description longer than 2,000 chars (2,001 chars) with "Use up to 2,000 characters." 0ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-04 (U) — Field rules and missing fields (BR-03, AC-D-04) > accepts description up to 2,000 chars 0ms
+ ✓ tests/sprint-1/unit/event-input.unit.test.ts > TEST-D-02 (U) & TEST-D-04 (U) — Event input schema validation (BR-01, BR-03, AC-D-02, AC-D-04) > TEST-D-04 (U) — Field rules and missing fields (BR-03, AC-D-04) > rejects unknown keys (.strict()) 0ms
+ ✓ tests/sprint-2/unit/event-input.unit.test.ts > TEST-O-03 (U) cancelBody: the reason is 5–200 characters after trimming (AC-O-03) > accepts 5 and 200 characters and returns the trimmed text 4ms
+ ✓ tests/sprint-2/unit/event-input.unit.test.ts > TEST-O-03 (U) cancelBody: the reason is 5–200 characters after trimming (AC-O-03) > refuses a reason that is too short (4) with the contract message 3ms
+ ✓ tests/sprint-2/unit/event-input.unit.test.ts > TEST-O-03 (U) cancelBody: the reason is 5–200 characters after trimming (AC-O-03) > refuses a reason that is too long (201) with the contract message 0ms
+ ✓ tests/sprint-2/unit/event-input.unit.test.ts > TEST-O-03 (U) cancelBody: the reason is 5–200 characters after trimming (AC-O-03) > refuses a reason that is only spaces with the contract message 0ms
+ ✓ tests/sprint-2/unit/event-input.unit.test.ts > TEST-O-03 (U) cancelBody: the reason is 5–200 characters after trimming (AC-O-03) > refuses a reason that is 4 characters padded by spaces with the contract message 0ms
+ ✓ tests/sprint-2/unit/event-input.unit.test.ts > TEST-O-03 (U) cancelBody: the reason is 5–200 characters after trimming (AC-O-03) > refuses a reason that is a number with the contract message 0ms
+ ✓ tests/sprint-2/unit/event-input.unit.test.ts > TEST-O-03 (U) cancelBody: the reason is 5–200 characters after trimming (AC-O-03) > refuses a reason that is null with the contract message 0ms
+ ✓ tests/sprint-2/unit/event-input.unit.test.ts > TEST-O-03 (U) cancelBody: the reason is 5–200 characters after trimming (AC-O-03) > refuses a reason that is an object with the contract message 0ms
+ ✓ tests/sprint-2/unit/event-input.unit.test.ts > TEST-O-03 (U) cancelBody: the reason is 5–200 characters after trimming (AC-O-03) > refuses a missing reason and any unknown field (strict body, BR-17) 0ms
+ ✓ tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > defaults to "local" when the image was not built by the pipeline 5ms
+ ✓ tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > keeps a full 40-character commit SHA 0ms
+ ✓ tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > throws naming GIT_SHA for a short SHA 1ms
+ ✓ tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > throws naming GIT_SHA for upper-case hex 0ms
+ ✓ tests/lab5/unit/version-config.unit.test.ts > TEST-L5-06 (U) — GIT_SHA is the full commit SHA of the build, or "local" > throws naming GIT_SHA for anything else 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > trims every value and lower-cases the email 2ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > "" and null clear a field (stored as null); absent fields are not in the result 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactPhone "02 555 0101" is valid: true 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactPhone "+66 2 555 0101" is valid: true 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactPhone "(02) 555-0101" is valid: true 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactPhone "123456789" is valid: true 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactPhone "12345678" is valid: false 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactPhone "(02) 555-01" is valid: false 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactPhone "abc" is valid: false 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactPhone "02 555 0101 ext 5" is valid: false 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactPhone "111111111111111111111" is valid: false 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactEmail "hello@store.example" is valid: true 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactEmail "hello@" is valid: false 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactEmail "not an email" is valid: false 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactEmail "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@x.io" is valid: false 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactWebsite "https://quantumcards.example" is valid: true 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactWebsite "http://quantumcards.example/a?b=1" is valid: true 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactWebsite "javascript:alert(1)" is valid: false 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactWebsite "data:text/html,<b>x</b>" is valid: false 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactWebsite "ftp://store.example" is valid: false 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactWebsite "quantumcards.example" is valid: false 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactWebsite "https://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com" is valid: false 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactWebsite "https://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com" is valid: true 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactLine "@quantumcards" is valid: true 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactLine "quantum.cards_1-x" is valid: true 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactLine "@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" is valid: true 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactLine "@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" is valid: false 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactLine "my line id" is valid: false 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactLine "@" is valid: false 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > contactLine "@@x" is valid: false 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > reports every failing field together, in one list 1ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > {} (and a body of only unknown keys) is "Change at least one field." 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > games: unique, known values, at most 7; [] is allowed 0ms
+ ✓ tests/sprint-2/unit/store-contact.unit.test.ts > TEST-U-05 (U) validateStoreProfile > markup in a value is kept as text, never stripped or parsed (NFR-15) 0ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — Event time rules validation (BR-02, AC-D-03) > rejects start equal to now (start = T) with startAt: The start must be at least 60 minutes from now. 1ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — Event time rules validation (BR-02, AC-D-03) > rejects start in the past (start = T - 1 min) with startAt: The start must be at least 60 minutes from now. 0ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — Event time rules validation (BR-02, AC-D-03) > rejects end equal to start (end = start) with endAt: The end must be after the start. 0ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — Event time rules validation (BR-02, AC-D-03) > rejects end before start (end < start) with endAt: The end must be after the start. 0ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — Event time rules validation (BR-02, AC-D-03) > rejects duration over 24 h (end = start + 24 h 1 min) with endAt: An event can last at most 24 hours. 0ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — Event time rules validation (BR-02, AC-D-03) > accepts duration exactly 24 h (end = start + 24 h) 0ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — Event time rules validation (BR-02, AC-D-03) > source check: event-rules.ts uses clock.now() and never calls Date.now() directly 1ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — the start must be at least 60 minutes after now (BR-02, AC-D-03, Issue #77) > rejects start = T + 1 min with startAt: The start must be at least 60 minutes from now. 1ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — the start must be at least 60 minutes after now (BR-02, AC-D-03, Issue #77) > rejects start = T + 59 min with startAt: The start must be at least 60 minutes from now. 0ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — the start must be at least 60 minutes after now (BR-02, AC-D-03, Issue #77) > rejects start = T + 60 min - 1 ms with startAt: The start must be at least 60 minutes from now. 0ms
+ ✓ tests/sprint-1/unit/event-rules.unit.test.ts > TEST-D-03 (U, v2 CH-13) — the start must be at least 60 minutes after now (BR-02, AC-D-03, Issue #77) > accepts start = T + 60 min exactly (the boundary) 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-K-04 (U) decidePublish: the E-14 checks after the owner is found (AC-K-04, D-21) > publishes a draft that starts at least 60 minutes from now and has no deadline 2ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-K-04 (U) decidePublish: the E-14 checks after the owner is found (AC-K-04, D-21) > refuses a cancelled event first, then an already published one (contract check order) 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-K-04 (U) decidePublish: the E-14 checks after the owner is found (AC-K-04, D-21) > refuses a draft starting in the past with EVENT_TIME_INVALID on startAt (CH-13) 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-K-04 (U) decidePublish: the E-14 checks after the owner is found (AC-K-04, D-21) > refuses a draft starting now with EVENT_TIME_INVALID on startAt (CH-13) 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-K-04 (U) decidePublish: the E-14 checks after the owner is found (AC-K-04, D-21) > refuses a draft starting in 30 minutes with EVENT_TIME_INVALID on startAt (CH-13) 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-K-04 (U) decidePublish: the E-14 checks after the owner is found (AC-K-04, D-21) > refuses a draft starting in 59 minutes with EVENT_TIME_INVALID on startAt (CH-13) 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-K-04 (U) decidePublish: the E-14 checks after the owner is found (AC-K-04, D-21) > refuses a draft whose registration deadline is now or has passed (BR-08), and accepts one still ahead 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-L-02 (U) decideCapacity: capacity never below the active registrations (AC-L-02, BR-09) > 3 active, new capacity 3 → OK 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-L-02 (U) decideCapacity: capacity never below the active registrations (AC-L-02, BR-09) > 3 active, new capacity 30 → OK 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-L-02 (U) decideCapacity: capacity never below the active registrations (AC-L-02, BR-09) > 3 active, new capacity 2 → CAPACITY_BELOW_REGISTERED 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-L-02 (U) decideCapacity: capacity never below the active registrations (AC-L-02, BR-09) > 0 active, new capacity 1 → OK 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-L-02 (U) decideCapacity: capacity never below the active registrations (AC-L-02, BR-09) > 8 active, new capacity 7 → CAPACITY_BELOW_REGISTERED 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-L-04 (U) decideEditTimes: BR-02 on the resulting start and end (AC-L-04, CH-13, D-23) > accepts a body without times, a later start with its end, and an end exactly 24 h after the stored start 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-L-04 (U) decideEditTimes: BR-02 on the resulting start and end (AC-L-04, CH-13, D-23) > refuses a start 1 minute ago 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-L-04 (U) decideEditTimes: BR-02 on the resulting start and end (AC-L-04, CH-13, D-23) > refuses a start 59 minutes away (CH-13) 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-L-04 (U) decideEditTimes: BR-02 on the resulting start and end (AC-L-04, CH-13, D-23) > refuses an end at the stored start 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-L-04 (U) decideEditTimes: BR-02 on the resulting start and end (AC-L-04, CH-13, D-23) > refuses an end 25 h after the stored start 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-L-04 (U) decideEditTimes: BR-02 on the resulting start and end (AC-L-04, CH-13, D-23) > refuses a start after the stored end 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-L-04 (U) decideEditTimes: BR-02 on the resulting start and end (AC-L-04, CH-13, D-23) > refuses a new start earlier than the stored deadline (D-23), and checks no start lead time when only the end moves 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-L-05 (U) frozenFields: after the start only description, structure, contact and fee change (AC-L-05, BR-15, D-19) > lists the frozen fields of the body, in body order, once the event has started 0ms
+ ✓ tests/sprint-2/unit/event-lifecycle.unit.test.ts > TEST-L-05 (U) frozenFields: after the start only description, structure, contact and fee change (AC-L-05, BR-15, D-19) > freezes nothing before the start 0ms
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-02 (U) isCheckInOpen at the window boundaries (AC-P-02, BR-18, D-26) > S − 61 min → Fri Mar 01 2030 14:59:00 GMT+0700 (เวลาอินโดจีน) 1ms
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-02 (U) isCheckInOpen at the window boundaries (AC-P-02, BR-18, D-26) > S − 60 min (opens exactly here) → Fri Mar 01 2030 15:00:00 GMT+0700 (เวลาอินโดจีน) 0ms
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-02 (U) isCheckInOpen at the window boundaries (AC-P-02, BR-18, D-26) > S − 59 min → Fri Mar 01 2030 15:01:00 GMT+0700 (เวลาอินโดจีน) 0ms
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-02 (U) isCheckInOpen at the window boundaries (AC-P-02, BR-18, D-26) > E − 1 min → Fri Mar 01 2030 20:59:00 GMT+0700 (เวลาอินโดจีน) 0ms
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-02 (U) isCheckInOpen at the window boundaries (AC-P-02, BR-18, D-26) > E (closed exactly here) → Fri Mar 01 2030 21:00:00 GMT+0700 (เวลาอินโดจีน) 0ms
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-02 (U) isCheckInOpen at the window boundaries (AC-P-02, BR-18, D-26) > E + 1 min → Fri Mar 01 2030 21:01:00 GMT+0700 (เวลาอินโดจีน) 0ms
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-02 (U) isCheckInOpen at the window boundaries (AC-P-02, BR-18, D-26) > checkInWindow gives the state and both edges, so the page never compares times itself 1ms
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > check in a REGISTERED registration inside the window → OK 0ms
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > check in a CHECKED_IN registration inside the window → ALREADY_CHECKED_IN 0ms
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > check in a CANCELLED registration inside the window → REGISTRATION_NOT_ACTIVE 0ms
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > check in a EVENT_CANCELLED registration inside the window → REGISTRATION_NOT_ACTIVE 0ms
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > undo a CHECKED_IN registration inside the window → OK 0ms
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > undo a REGISTERED registration inside the window → NOT_CHECKED_IN 0ms
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > undo a CANCELLED registration inside the window → NOT_CHECKED_IN 0ms
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > undo a EVENT_CANCELLED registration inside the window → NOT_CHECKED_IN 0ms
+ ✓ tests/sprint-3/unit/attendance-rules.unit.test.ts > TEST-P-04 (U) decideCheckIn and decideUndo per status (AC-P-04, BR-18, BR-19) > outside the window both answer NOT_IN_CHECK_IN_WINDOW first, whatever the status (contract check order) 0ms
+ ✓ tests/sprint-2/unit/deadline.unit.test.ts > TEST-M-02 (U) decideDeadline: at or before the start, and still in the future (AC-M-02, BR-08) > accepts no deadline, one before the start, and one exactly at the start 1ms
+ ✓ tests/sprint-2/unit/deadline.unit.test.ts > TEST-M-02 (U) decideDeadline: at or before the start, and still in the future (AC-M-02, BR-08) > refuses a deadline 1 minute after the start 1ms
+ ✓ tests/sprint-2/unit/deadline.unit.test.ts > TEST-M-02 (U) decideDeadline: at or before the start, and still in the future (AC-M-02, BR-08) > refuses a deadline now 0ms
+ ✓ tests/sprint-2/unit/deadline.unit.test.ts > TEST-M-02 (U) decideDeadline: at or before the start, and still in the future (AC-M-02, BR-08) > refuses a deadline 1 minute ago 0ms
+ ✓ tests/sprint-2/unit/deadline.unit.test.ts > §0.3 effectiveDeadline and isRegistrationOpen (BR-04 + BR-08, D-17) > the effective deadline is the stored one, or the start when none is set 0ms
+ ✓ tests/sprint-2/unit/deadline.unit.test.ts > §0.3 effectiveDeadline and isRegistrationOpen (BR-04 + BR-08, D-17) > is open before the deadline and closed at and after it (D-17); never open unless PUBLISHED 0ms
+ ✓ tests/sprint-2/unit/deadline.unit.test.ts > TEST-M-03 (U) decideRegistration closes at the deadline (AC-M-03, BR-08, D-17) > at deadline 59 min → OK 0ms
+ ✓ tests/sprint-2/unit/deadline.unit.test.ts > TEST-M-03 (U) decideRegistration closes at the deadline (AC-M-03, BR-08, D-17) > at deadline 60 min → REGISTRATION_CLOSED 0ms
+ ✓ tests/sprint-2/unit/deadline.unit.test.ts > TEST-M-03 (U) decideRegistration closes at the deadline (AC-M-03, BR-08, D-17) > at deadline 61 min → REGISTRATION_CLOSED 0ms
+ ✓ tests/sprint-1/unit/registration-rules.unit.test.ts > TEST-G-02 (U) — a full event (BR-05) > active = capacity → EVENT_FULL; one seat left → OK 1ms
+ ✓ tests/sprint-1/unit/registration-rules.unit.test.ts > TEST-G-04 (U) — registration closes when the event starts or is not published (BR-04) > started 1 min ago → REGISTRATION_CLOSED 0ms
+ ✓ tests/sprint-1/unit/registration-rules.unit.test.ts > TEST-G-04 (U) — registration closes when the event starts or is not published (BR-04) > starting exactly now → REGISTRATION_CLOSED 0ms
+ ✓ tests/sprint-1/unit/registration-rules.unit.test.ts > TEST-G-04 (U) — registration closes when the event starts or is not published (BR-04) > a draft → REGISTRATION_CLOSED 0ms
+ ✓ tests/sprint-1/unit/registration-rules.unit.test.ts > TEST-G-04 (U) — registration closes when the event starts or is not published (BR-04) > cancelled → REGISTRATION_CLOSED 0ms
+ ✓ tests/sprint-1/unit/registration-rules.unit.test.ts > TEST-G-04 (U) — registration closes when the event starts or is not published (BR-04) > starting 1 min from now → OK 0ms
+ ✓ tests/sprint-1/unit/registration-rules.unit.test.ts > Rule order (contracts §10 "Order of checks") > already registered → ALREADY_REGISTERED, even when the event is also full 0ms
+ ✓ tests/sprint-1/unit/registration-rules.unit.test.ts > Rule order (contracts §10 "Order of checks") > closed beats already registered and full 0ms
+ ✓ tests/sprint-2/unit/registration-rules.unit.test.ts > TEST-N-04 (U) decideCancellation (AC-N-04, BR-11) > lets a REGISTERED row on an open event cancel 1ms
+ ✓ tests/sprint-2/unit/registration-rules.unit.test.ts > TEST-N-04 (U) decideCancellation (AC-N-04, BR-11) > CANCELLED → ALREADY_CANCELLED, even when the event is closed 0ms
+ ✓ tests/sprint-2/unit/registration-rules.unit.test.ts > TEST-N-04 (U) decideCancellation (AC-N-04, BR-11) > EVENT_CANCELLED → ALREADY_CANCELLED, even when the event is closed 0ms
+ ✓ tests/sprint-2/unit/registration-rules.unit.test.ts > TEST-N-04 (U) decideCancellation (AC-N-04, BR-11) > CHECKED_IN → ALREADY_CHECKED_IN, before the closed check 0ms
+ ✓ tests/sprint-2/unit/registration-rules.unit.test.ts > TEST-N-04 (U) decideCancellation (AC-N-04, BR-11) > REGISTERED after the deadline or the start → REGISTRATION_CLOSED; at exactly the deadline it is closed (D-17) 0ms
+ ✓ tests/sprint-2/unit/cancel-decision.unit.test.ts > TEST-O-04 (U) decideCancel: cancelled → draft → started → OK (contract check order) > allows a published event that has not started 1ms
+ ✓ tests/sprint-2/unit/cancel-decision.unit.test.ts > TEST-O-04 (U) decideCancel: cancelled → draft → started → OK (contract check order) > refuses a cancelled event first, even if it also started 0ms
+ ✓ tests/sprint-2/unit/cancel-decision.unit.test.ts > TEST-O-04 (U) decideCancel: cancelled → draft → started → OK (contract check order) > refuses a draft, even if its start has passed 0ms
+ ✓ tests/sprint-2/unit/cancel-decision.unit.test.ts > TEST-O-04 (U) decideCancel: cancelled → draft → started → OK (contract check order) > refuses a published event that started 1 minute ago (startAt ≤ now) 0ms
+ ✓ tests/sprint-2/unit/cancel-decision.unit.test.ts > TEST-O-04 (U) decideCancel: cancelled → draft → started → OK (contract check order) > refuses a published event that started exactly now (startAt ≤ now) 0ms
+
+ Test Files  50 passed (50)
+      Tests  581 passed (581)
+   Start at  00:14:09
+   Duration  93.71s (transform 1.08s, setup 0ms, import 23.92s, tests 56.60s, environment 7ms)
+

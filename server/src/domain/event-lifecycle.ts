@@ -233,9 +233,11 @@ export async function cancelEvent(db: PrismaClient, actor: Actor, eventId: numbe
         where: { id: eventId },
         data: { status: 'CANCELLED', cancelledAt: at, cancelledById: actor.id, cancelReason: reason },
       })
+      // Sprint 3: check-in opens 60 minutes before the start, so a CHECKED_IN row may be here. Its check-in fields are
+      // cleared, as registration_checkin_fields requires (BR-19); the attendance history rows keep who and when (FR-28).
       await tx.registration.updateMany({
         where: { eventId, status: ACTIVE_STATUSES },
-        data: { status: 'EVENT_CANCELLED', cancelledAt: at },
+        data: { status: 'EVENT_CANCELLED', cancelledAt: at, checkedInAt: null, checkedInById: null },
       })
       await recordEventChange(tx, { eventId, changedById: actor.id, field: 'status', oldValue: 'PUBLISHED', newValue: 'CANCELLED', changedAt: at })
     },

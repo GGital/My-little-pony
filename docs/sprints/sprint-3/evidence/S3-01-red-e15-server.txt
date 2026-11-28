@@ -1,0 +1,145 @@
+
+ RUN  v4.0.18 <repo>/server
+
+ × tests/sprint-2/cancel-event.api.test.ts > TEST-O-01 (I) the owner cancels: event, registrations and history change together (AC-O-01, FR-10, FR-28, BR-12) > E-15: 200 CANCELLED with reason and time; 3 active → EVENT_CANCELLED; the CANCELLED row is untouched; one PUBLISHED → CANCELLED row 48ms
+   → expected 500 to be 200 // Object.is equality
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-01 (I) the owner cancels: event, registrations and history change together (AC-O-01, FR-10, FR-28, BR-12) > an event with no registrations cancels too; the reason is stored trimmed 34ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-09 by a player is 409 REGISTRATION_CLOSED and stores nothing 19ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > a second E-15 is 409 ALREADY_CANCELLED and keeps the first reason and time 14ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-14 publish of a cancelled event is 409 ALREADY_CANCELLED 10ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-13 edit of a cancelled event is 409 ALREADY_CANCELLED and changes nothing (cancellation is final) 16ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-04 leaves the event out of the default list 14ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-04 with include=cancelled lists it with status CANCELLED, and only then (FR-14, BR-04) 22ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-05 as a visitor: still visible, with the reason and time, action CLOSED, and never cancelledById 9ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-05 for a player who was registered: action CLOSED and the reason is visible 12ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-05 for a published event has null cancel fields 11ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-10 shows the affected player their registration as EVENT_CANCELLED 13ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-02 (I) after cancelling, everything agrees (AC-O-02, BR-04, FR-10) > E-07 lists it for the owner as CANCELLED 11ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-03 (I) the reason is checked before anything else changes (AC-O-03, BR-12) > a reason that is missing: 400 VALIDATION_FAILED with the reason message, and nothing changes 53ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-03 (I) the reason is checked before anything else changes (AC-O-03, BR-12) > a reason that is 4 characters: 400 VALIDATION_FAILED with the reason message, and nothing changes 28ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-03 (I) the reason is checked before anything else changes (AC-O-03, BR-12) > a reason that is 201 characters: 400 VALIDATION_FAILED with the reason message, and nothing changes 28ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-03 (I) the reason is checked before anything else changes (AC-O-03, BR-12) > a reason that is only spaces: 400 VALIDATION_FAILED with the reason message, and nothing changes 22ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-03 (I) the reason is checked before anything else changes (AC-O-03, BR-12) > a reason that is not a string: 400 VALIDATION_FAILED with the reason message, and nothing changes 21ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-03 (I) the reason is checked before anything else changes (AC-O-03, BR-12) > an unknown field in the body is 400 and changes nothing 11ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-03 (I) the reason is checked before anything else changes (AC-O-03, BR-12) > 5 and 200 characters are accepted (two events) 41ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-03 (I) the reason is checked before anything else changes (AC-O-03, BR-12) > a bad path id is 400 INVALID_PATH_PARAMETER 7ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-03 (I) the reason is checked before anything else changes (AC-O-03, BR-12) > validation comes before ownership: a bad reason on a missing event is 400, a good one is 404 16ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-04 (I) only an upcoming, published event can be cancelled (AC-O-04, BR-04) > an event started 1 minute ago: 409 EVENT_STARTED and nothing changes 23ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-04 (I) only an upcoming, published event can be cancelled (AC-O-04, BR-04) > an event starting exactly now: 409 EVENT_STARTED and nothing changes 24ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-04 (I) only an upcoming, published event can be cancelled (AC-O-04, BR-04) > an event one minute from now can still be cancelled 29ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-04 (I) only an upcoming, published event can be cancelled (AC-O-04, BR-04) > a draft: 409 NOT_PUBLISHED and nothing changes 17ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-05 (I) only the owner can cancel (AC-O-05, BR-13, BR-14, SR-05) > another organizer (Dragon's Den) is refused and nothing changes 19ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-05 (I) only the owner can cancel (AC-O-05, BR-13, BR-14, SR-05) > a participant (Mint) is refused and nothing changes 16ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-05 (I) only the owner can cancel (AC-O-05, BR-13, BR-14, SR-05) > a visitor is refused and nothing changes 13ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-05 (I) only the owner can cancel (AC-O-05, BR-13, BR-14, SR-05) > another organizer's event is the same 404 as a missing one 25ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-05 (I) only the owner can cancel (AC-O-05, BR-13, BR-14, SR-05) > a foreign Origin is 403 FORBIDDEN and nothing changes 11ms
+ ✓ tests/sprint-2/cancel-event.api.test.ts > TEST-O-05 (I) only the owner can cancel (AC-O-05, BR-13, BR-14, SR-05) > GET on the cancel path is 404 (POST only) 6ms
+ ✓ tests/sprint-3/checkin.api.test.ts > TEST-P-01 (I) · AC-P-01, FR-21, FR-28: the owner checks Mint in > 200 CHECKED_IN at T by Quantum Cards; the row and one attendance change row are stored; E-08 counts it; seats unchanged 68ms
+ ✓ tests/sprint-3/checkin.api.test.ts > TEST-P-01 (I) · AC-P-01, FR-21, FR-28: the owner checks Mint in > accepts no body at all as well as {} 22ms
+ ✓ tests/sprint-3/checkin.api.test.ts > TEST-P-02 (I) · AC-P-02, BR-18, NFR-11: the window boundaries on the server clock > S − 61 → 409; S − 60 → 200; E − 1 → 200; E → 409; the undo at E → 409; E-08 open false/true/true/false 177ms
+ ✓ tests/sprint-3/checkin.api.test.ts > TEST-P-03 (I) · AC-P-03, FR-22, BR-19: the owner undoes a check-in > 200 REGISTERED with both check-in fields null; a second attendance row CHECKED_IN → REGISTERED; the count goes back 54ms
+ ✓ tests/sprint-3/checkin.api.test.ts > TEST-P-04 (I) · AC-P-04, BR-18, BR-19: statuses that cannot be checked in or undone > Mint ALREADY_CHECKED_IN; Ploy and Boss REGISTRATION_NOT_ACTIVE; undo of Nok NOT_CHECKED_IN; nothing changes 109ms
+ ✓ tests/sprint-3/checkin.api.test.ts > TEST-P-05 (I) · AC-P-05, BR-14, NFR-02: who may check in, and the order of the checks > E-18: another organizer 404 byte-identical to 999999; participant 403; visitor 401; foreign Origin 403; abc 400 62ms
+ ✓ tests/sprint-3/checkin.api.test.ts > TEST-P-05 (I) · AC-P-05, BR-14, NFR-02: who may check in, and the order of the checks > E-19: another organizer 404 byte-identical to 999999; participant 403; visitor 401; foreign Origin 403; abc 400 52ms
+ ✓ tests/sprint-3/checkin.api.test.ts > TEST-P-05 (I) · AC-P-05, BR-14, NFR-02: who may check in, and the order of the checks > E-18 takes no input: a body with a field is 400 before any lookup 20ms
+ × tests/sprint-3/checkin.api.test.ts > Cross-feature · Feature-O E-15 after a check-in (BR-12, BR-19, FR-28) > 200; the checked-in row becomes EVENT_CANCELLED with its check-in fields cleared; the attendance history stays 50ms
+   → expected 500 to be 200 // Object.is equality
+ ✓ tests/sprint-3/checkin.api.test.ts > TEST-B-03 rows (E-18, E-19) POST and DELETE /api/organizer/registrations/:id/check-in > visitor 401; participant 403; another organizer 404; the owner 200 for both 76ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > has exactly the SDS §6.2 codes 1ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > VALIDATION_FAILED answers 400 with the standard body 1ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > INVALID_PATH_PARAMETER answers 400 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > UNAUTHENTICATED answers 401 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > INVALID_CREDENTIALS answers 401 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > FORBIDDEN answers 403 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > EVENT_NOT_FOUND answers 404 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > REGISTRATION_NOT_FOUND answers 404 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > NOT_FOUND answers 404 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > EVENT_FULL answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > ALREADY_REGISTERED answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > REGISTRATION_CLOSED answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > CAPACITY_BELOW_REGISTERED answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > EVENT_STARTED answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > ALREADY_CANCELLED answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > NOT_IN_CHECK_IN_WINDOW answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > ALREADY_CHECKED_IN answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > REGISTRATION_NOT_ACTIVE answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > NOT_CHECKED_IN answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > ALREADY_PUBLISHED answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > NOT_PUBLISHED answers 409 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > PAYLOAD_TOO_LARGE answers 413 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > UNSUPPORTED_MEDIA_TYPE answers 415 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > EVENT_TIME_INVALID answers 422 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > TOO_MANY_ATTEMPTS answers 429 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > INTERNAL_ERROR answers 500 with the standard body 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > adds details only when given 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > uses the fixed safe wording for 500 (contracts §2 item 6) 0ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > throws at run time for a code outside the catalogue 1ms
+ ✓ tests/sprint-1/unit/errors.unit.test.ts > TEST-SR2-04 — every error code gets its status from the catalogue (NFR-07) > refuses an unknown code at compile time, and accepts a known one 2282ms
+ ✓ tests/sprint-2/cancel-registration.api.test.ts > TEST-N-01 · AC-N-01, FR-19, FR-28: a participant cancels their seat > 200 CANCELLED with cancelledAt = T, 2 / 24 by independent count, the row kept, and the other endpoints agree 115ms
+ ✓ tests/sprint-2/cancel-registration.api.test.ts > TEST-N-01 · AC-N-01, FR-19, FR-28: a participant cancels their seat > E-11 and E-05 show canCancel true for an active registration, and E-05 gives the registration id 31ms
+ ✓ tests/sprint-2/cancel-registration.api.test.ts > TEST-N-02 · AC-N-02, FR-20, BR-06: registering again makes a new row > 201 with a new id, 2 rows (1 CANCELLED, 1 REGISTERED), then 409 ALREADY_REGISTERED 97ms
+ ✓ tests/sprint-2/cancel-registration.api.test.ts > TEST-N-03 · AC-N-03, BR-05: a freed seat goes to the next player > 2 / 2: Ploy cancels → 200; Nok registers → 201; Ploy again → 409 EVENT_FULL; active = 2 65ms
+ ✓ tests/sprint-2/cancel-registration.api.test.ts > TEST-N-04 · AC-N-04, BR-11: rows that cannot be cancelled > CANCELLED and EVENT_CANCELLED → ALREADY_CANCELLED; CHECKED_IN → ALREADY_CHECKED_IN; past the deadline → REGISTRATION_CLOSED; nothing changes 75ms
+ ✓ tests/sprint-2/cancel-registration.api.test.ts > TEST-M-04 · AC-M-04, BR-08, BR-11: the deadline closes cancelling too > canCancel is true at D − 1 min and false at D on E-10, E-11 and E-05; E-16 at D is 409 REGISTRATION_CLOSED 103ms
+ ✓ tests/sprint-2/cancel-registration.api.test.ts > TEST-N-05 · AC-N-05, BR-11, BR-16, BR-17, NFR-02: who may cancel > another player and a missing id give the same 404; the owner 403; a visitor 401; a foreign Origin 403; a body with participantId 400 126ms
+ ✓ tests/sprint-2/cancel-registration.api.test.ts > TEST-N-05 · AC-N-05, BR-11, BR-16, BR-17, NFR-02: who may cancel > an empty body and no body both cancel 53ms
+ ✓ tests/sprint-2/cancel-registration.api.test.ts > TEST-B-03 rows (E-16) POST /api/me/registrations/:id/cancel > visitor 401; owner 403; another organizer (Dragon Den) 403; another player 404; the registered player 200 54ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-03 capacity must be a whole number from 1 to 256 (BR-01) > rejects capacity 0 at database level 15ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-03 capacity must be a whole number from 1 to 256 (BR-01) > rejects capacity -1 at database level 3ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-03 capacity must be a whole number from 1 to 256 (BR-01) > rejects capacity 257 at database level 3ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-03 capacity must be a whole number from 1 to 256 (BR-01) > accepts capacity 1 5ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-03 capacity must be a whole number from 1 to 256 (BR-01) > accepts capacity 256 3ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-04 an event ends after it starts and lasts at most 24 hours (BR-02) > rejects an end equal to the start 3ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-04 an event ends after it starts and lasts at most 24 hours (BR-02) > rejects an end before the start 3ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-04 an event ends after it starts and lasts at most 24 hours (BR-02) > rejects an end 24 hours and 1 minute after the start 3ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-04 an event ends after it starts and lasts at most 24 hours (BR-02) > accepts an end exactly 24 hours after the start 2ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-05 one ACTIVE registration per participant per event (BR-06) > is enforced by a partial unique index that covers only active statuses 12ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-05 one ACTIVE registration per participant per event (BR-06) > rejects a second active registration, then allows one again after the first is cancelled 33ms
+ ✓ tests/sprint-1/constraints.api.test.ts > TEST-SR1-05 one ACTIVE registration per participant per event (BR-06) > lets two different participants hold active registrations for the same event 16ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/sprint-3/checkin.api.test.ts > Cross-feature · Feature-O E-15 after a check-in (BR-12, BR-19, FR-28) > 200; the checked-in row becomes EVENT_CANCELLED with its check-in fields cleared; the attendance history stays
+AssertionError: expected 500 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 500
+
+ ❯ tests/sprint-3/checkin.api.test.ts:273:24
+    271|       .set('Cookie', cookies.quantum)
+    272|       .send({ reason: 'Store closed for repairs.' })
+    273|     expect(res.status).toBe(200)
+       |                        ^
+    274| 
+    275|     const stored = await storedReg(mint.id)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/sprint-2/cancel-event.api.test.ts > TEST-O-01 (I) the owner cancels: event, registrations and history change together (AC-O-01, FR-10, FR-28, BR-12) > E-15: 200 CANCELLED with reason and time; 3 active → EVENT_CANCELLED; the CANCELLED row is untouched; one PUBLISHED → CANCELLED row
+AssertionError: expected 500 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 500
+
+ ❯ tests/sprint-2/cancel-event.api.test.ts:110:24
+    108| 
+    109|     const res = await cancel(event.id, cookies.quantum)
+    110|     expect(res.status).toBe(200)
+       |                        ^
+    111|     expect(res.body).toMatchObject({
+    112|       id: event.id,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 3 passed (5)
+      Tests  2 failed | 91 passed (93)
+   Start at  00:13:43
+   Duration  12.08s (transform 509ms, setup 0ms, import 2.87s, tests 7.84s, environment 1ms)
+

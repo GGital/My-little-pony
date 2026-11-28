@@ -240,6 +240,10 @@ above up to 3 Dec become:
 
 From 5 Dec the table above is unchanged.
 
+**Changed again (27 Nov 2026, evening; S3-01).** The Deliverable 2 brief (§2, §3.3) still asks for one Sprint 3 workflow
+or rule built and tested in the candidate, so S3-01 Feature-P (Student 1) and S3-05 Feature-T (Student 2) are built on
+28 Nov and go into the `v0.3.0` candidate. The rest of the table above stands.
+
 **Completion outcome (13 Dec, Final delivery):**
 - [ ] All features A … X and SR-01 … SR-08 done; all ACs passing; regression green in CI.
 - [ ] Accessibility scan has 0 serious or critical issues on the main screens (NFR-10); the load run meets NFR-12.
@@ -280,3 +284,4 @@ established in exactly one sprint and re-verified in later ones.
 | v0.2 | 21 Nov 2026 | CH-11: Feature-U in Sprint 2, Feature-V in Sprint 3 (D-24); revised schedules for Sprints 2 and 3 added below the original tables (Sprint 2 code starts 21 Nov after Labs 5–6; P and T move into the Deliverable 2 week); coverage 68 requirements. FR-30 is established in Sprint 2 (games) and completed in Sprint 3 (logo) | Team (AI-assisted) |
 | v0.3 | 21 Nov 2026 | CH-12: Feature-W and Feature-X in Sprint 3 (D-36); exam-week schedule rows; tournament risk note with a fallback decision date (8 Dec); coverage 79 requirements (Sprint 3: 24) | Team (AI-assisted) |
 | #118 | 27 Nov 2026 | Revised Sprint 3 schedule: Deliverable 2 asks for complete Sprint 3 specifications instead of Sprint 3 code, so features start 30 Nov (S3-01, S3-05 to 1 Dec; S3-02 2 Dec; S3-03 3 Dec); §3 outcome note | Team (AI-assisted) |
+| S3-01 | 28 Nov 2026 | S3-01 and S3-05 are built on 28 Nov for the Deliverable 2 candidate `v0.3.0` (team decision 27 Nov, evening); the earlier note is kept | Team (AI-assisted) |

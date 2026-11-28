@@ -70,7 +70,7 @@ export interface EventDetail extends EventSummary {
 /** One row of an event's change history, E-17 (Sprint 2 contracts §0.1, SR-08). Only the display name, never an id. */
 export interface EventChange {
   id: number;
-  field: 'status' | 'details' | 'capacity' | 'deadline';
+  field: 'status' | 'details' | 'capacity' | 'deadline' | 'attendance'; // attendance: Sprint 3 Feature-P
   oldValue: string | null;
   newValue: string;
   changedAt: string;
@@ -96,6 +96,17 @@ export interface OrganizerRegistrationRow {
   status: 'REGISTERED' | 'CHECKED_IN' | 'CANCELLED';
   createdAt: string;
   cancelledAt?: string | null;
+  /** Sprint 3 Feature-P: set when checked in, with the organizer's display name only. */
+  checkedInAt?: string | null;
+  checkedInBy?: { displayName: string } | null;
+}
+
+/** Sprint 3 §0.2: E-08 says whether check-in is open, so the page never compares times itself. */
+export interface CheckInWindow {
+  open: boolean;
+  state: 'NOT_YET' | 'OPEN' | 'CLOSED';
+  opensAt: string;
+  closesAt: string;
 }
 
 export interface EventRegistrationsResponse {
@@ -107,6 +118,9 @@ export interface EventRegistrationsResponse {
     seatsRemaining: number;
   };
   items: OrganizerRegistrationRow[];
+  /** Sprint 3 Feature-P (absent from a Sprint 1 server). */
+  checkIn?: CheckInWindow;
+  counts?: { active: number; checkedIn: number };
 }
 
 export interface ApiErrorDetail {
