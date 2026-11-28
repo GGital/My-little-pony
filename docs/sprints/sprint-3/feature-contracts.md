@@ -339,8 +339,8 @@ captions; on phones the per-event table scrolls inside its own box, never the pa
 **Rules, boundaries:**
 - Failures 1–5 each get `401 INVALID_CREDENTIALS`. Attempt 6 within 10 minutes of the 1st gets `429`, even with
   the right password.
-- With the 5th failure at time F, an attempt at F + 9 min 59 s gets `429`, and one at F + 10 min is checked
-  normally.
+- With the 5th-newest failure at time F (the 5th failure, when all five are at one instant), an attempt at
+  F + 9 min 59 s gets `429`, and one at F + 10 min is checked normally.
 - Different emails never affect each other.
 - The 429 body has the same shape as every error, and reveals nothing about whether the account exists.
 
@@ -367,7 +367,7 @@ records (X-11).
 | **AC-T-04** | Mint is locked | Ploy signs in correctly; Mint signs in correctly at F + 10 min, then fails once | Ploy `200`; Mint `200`, then her next failure is `401`, not `429` (earlier failures are now older than 10 min) |
 | **AC-T-05** | 5 failures recorded | a new Prisma client and a restarted app; E-01 again; every Sprint 1–3 response body is scanned | still `429` (the lock is stored in PostgreSQL); no response contains `LoginAttempt`, `attemptedAt` or the attempted passwords; the UI shows the message in the alert with the email kept |
 
-**Planned tests:** TEST-T-01 … 05 (U, I, C).
+**Planned tests:** TEST-T-01 … 06 (U, I, C). TEST-T-06: simultaneous attempts for one email run one at a time (advisory lock), so at most 5 get `401`.
 
 ---
 
@@ -724,3 +724,4 @@ here. Each one is linked to at least one AC above.
 | #118 | 27 Nov 2026 | §9 Behaviour 2 and AC-SR5-04 (team decision 27 Nov): a fourth keyboard journey, cancel a registration in My Events, and focus then moves to the "Your registration is cancelled." notice. This specifies the focus gap left by the Sprint 2 release | Team (AI-assisted) |
 | S3-01 | 28 Nov 2026 | S3-01: §0.2 E-08 `checkIn` gains `state` (NOT_YET, OPEN, CLOSED), so Behaviour 4 can say "opens at" or "closed at" without the page comparing times; §1 Data: the migration folder has a timestamp name (AGENTS.md §4); E-15 clears the check-in fields when it cancels an event with players already checked in (BR-19; the attendance rows keep the history); JRN-05: EV-4 belongs to Dragon's Den, not Quantum Cards. The server messages of the two new codes are fixed text; the page adds the player's name | Team (AI-assisted) |
 | S3-05 | 28 Nov 2026 | §5 Feature-T: the `LoginAttempt` migration is `20261128010000_s3-05_login_attempt` (timestamped folder, AGENTS.md §4), not `0005_sprint3_attendance`, which S3-01 replaced with its own timestamped folder. No AC changes | Team (AI-assisted) |
+| S3-05 | 29 Nov 2026 | §5 Feature-T: F is the 5th-newest failure (review of PR #120); sign-ins for one email are serialised, TEST-T-06 added | Team (AI-assisted) |
