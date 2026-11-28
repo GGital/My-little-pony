@@ -1,4 +1,7 @@
-import type { PrismaClient } from '@prisma/client'
+import type { Prisma, PrismaClient } from '@prisma/client'
+
+/** Either the client or a transaction of it. */
+type Db = PrismaClient | Prisma.TransactionClient
 
 /** Sign-in throttling rules (Sprint 3 contracts §5 Feature-T, NFR-16). */
 export const MAX_FAILURES = 5
@@ -21,7 +24,7 @@ export function lockedUntil(failures: Date[], at: Date): Date | null {
 }
 
 /** The lock end for this (already normalised) email, read from PostgreSQL so it survives restarts. */
-export async function findLock(db: PrismaClient, email: string, at: Date) {
+export async function findLock(db: Db, email: string, at: Date) {
   const rows = await db.loginAttempt.findMany({
     where: { email, succeeded: false, attemptedAt: { gt: new Date(at.getTime() - WINDOW_MS) } },
     orderBy: { attemptedAt: 'desc' },
@@ -32,9 +35,11 @@ export async function findLock(db: PrismaClient, email: string, at: Date) {
 }
 
 /** Records one attempt and deletes attempts older than 24 hours (the only rows that may be deleted). */
-export function recordAttempt(db: PrismaClient, email: string, succeeded: boolean, at: Date) {
-  return db.$transaction([
-    db.loginAttempt.create({ data: { email, succeeded, attemptedAt: at } }),
-    db.loginAttempt.deleteMany({ where: { attemptedAt: { lt: new Date(at.getTime() - KEEP_MS) } } }),
-  ])
+export async function recordAttempt(db: Db, email: string, succeeded: boolean, at: Date) {
+  await db.loginAttempt.create({ data: { email, succeeded, attemptedAt: at } })
+  await db.loginAttempt.deleteMany({ where: { attemptedAt: { lt: new Date(at.getTime() - KEEP_MS) } } })
 }
+
+/** Sign-ins for one email run one at a time, so a burst cannot read "0 failures" before any row exists (NFR-16). */
+export const lockEmail = (tx: Prisma.TransactionClient, email: string) =>
+  tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${email}))`
