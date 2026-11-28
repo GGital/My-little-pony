@@ -1,0 +1,37 @@
+{
+  "id": "S3-01-P1",
+  "side": "after",
+  "action": "Dragon's Den opens /organizer/events/EV-4/registrations and presses CHECK IN on Mint's row",
+  "expected": "Door check-in: Mint's row reads \"Checked in HH:MM\" with Undo; \"Checked in 1 / 1\"; E-08 row CHECKED_IN by Dragon's Den; counts { active 1, checkedIn 1 }",
+  "actual": {
+    "checkInButtons": 0,
+    "undoButtons": 1,
+    "countLine": "Checked in 1 / 1",
+    "e08Row": {
+      "id": 9,
+      "participant": {
+        "displayName": "Mint"
+      },
+      "status": "CHECKED_IN",
+      "createdAt": "2026-11-27T17:29:27.833Z",
+      "cancelledAt": null,
+      "checkedInAt": "2026-11-27T17:29:29.603Z",
+      "checkedInBy": {
+        "displayName": "Dragon's Den"
+      }
+    },
+    "e08CheckIn": {
+      "open": true,
+      "state": "OPEN",
+      "opensAt": "2026-11-27T15:29:27.788Z",
+      "closesAt": "2026-11-27T20:29:27.788Z"
+    },
+    "e08Counts": {
+      "active": 1,
+      "checkedIn": 1
+    }
+  },
+  "time": "2026-11-27T17:29:29.872Z",
+  "commit": "a443918",
+  "screenshot": "S3-01-P1-after.png"
+}

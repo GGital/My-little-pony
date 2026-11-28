@@ -7,8 +7,10 @@ test.beforeEach(async ({ page }) => signIn(page, EMAIL.quantum))
 
 test('TEST-E-01 (E2E) — /organizer lists exactly Quantum Cards\' events in start order (AC-E-01)', async ({ page }) => {
   await page.goto('/organizer')
-  // Sprint 2 (S2-01) seeds EV-9 and the draft EV-7 for Quantum Cards (Sprint 2 contracts §0.4).
+  // Sprint 2 (S2-01) seeds EV-9 and the draft EV-7 for Quantum Cards (Sprint 2 contracts §0.4); Sprint 3 (S3-01) adds
+  // EV-10, which started a week ago, so it comes first (Sprint 3 §0.3).
   await expect(page.locator('.event-card .event-card__title')).toHaveText([
+    "Last Week's League Night",
     'Friday Night Constructed',
     'Early Deadline Sealed',
     'Last Seat Sealed',

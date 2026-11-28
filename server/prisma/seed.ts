@@ -60,6 +60,9 @@ type SeedEvent = {
   status?: EventStatus
   deadlineOffset?: number
   cancelReason?: string
+  // Sprint 3 §0.3: players in `registered` who were checked in by the owner, or who cancelled their seat.
+  checkedIn?: string[]
+  cancelledByPlayer?: string[]
 }
 
 const QUANTUM = {
@@ -126,6 +129,13 @@ const EVENTS: SeedEvent[] = [
     type: 'CASUAL', format: 'SEALED', startOffset: 2 * DAY, hours: 4, capacity: 8, deadlineOffset: -1 * HOUR,
     description: 'Registration closed early so the product can be ordered.', registered: ['mint@player.example'],
   },
+  {
+    // Sprint 3 §0.3 (S3-01): ended a week ago, so the report, the summary and the history show real numbers.
+    seedKey: 'EV-10', owner: 'quantum@organizer.example', ...QUANTUM, title: "Last Week's League Night", game: 'MAGIC',
+    type: 'CASUAL', format: 'CONSTRUCTED', startOffset: -7 * DAY, hours: 4, capacity: 8,
+    registered: ['ploy@player.example', 'boss@player.example', 'mint@player.example'],
+    checkedIn: ['ploy@player.example'], cancelledByPlayer: ['mint@player.example'],
+  },
 ]
 
 export async function seed(prisma: PrismaClient, password = process.env.SEED_PASSWORD): Promise<void> {
@@ -146,7 +156,7 @@ export async function seed(prisma: PrismaClient, password = process.env.SEED_PAS
 
   const now = Date.now()
   const seededAt = new Date(now)
-  for (const { seedKey, owner, startOffset, hours, registered, status = 'PUBLISHED', deadlineOffset, cancelReason, ...fields } of EVENTS) {
+  for (const { seedKey, owner, startOffset, hours, registered, status = 'PUBLISHED', deadlineOffset, cancelReason, checkedIn = [], cancelledByPlayer = [], ...fields } of EVENTS) {
     const startAt = new Date(now + startOffset)
     const organizerId = ids.get(owner)!
     const cancelled = status === 'CANCELLED'
@@ -174,7 +184,12 @@ export async function seed(prisma: PrismaClient, password = process.env.SEED_PAS
       await prisma.registration.create({
         data: cancelled
           ? { eventId: event.id, participantId, status: 'EVENT_CANCELLED', cancelledAt: seededAt }
-          : { eventId: event.id, participantId },
+          : checkedIn.includes(email)
+            ? // Checked in by the owner 10 minutes after the start, inside the window (BR-18, BR-19).
+              { eventId: event.id, participantId, status: 'CHECKED_IN', checkedInAt: new Date(event.startAt.getTime() + 10 * 60_000), checkedInById: organizerId }
+            : cancelledByPlayer.includes(email)
+              ? { eventId: event.id, participantId, status: 'CANCELLED', cancelledAt: new Date(event.startAt.getTime() - DAY) }
+              : { eventId: event.id, participantId },
       })
     }
   }

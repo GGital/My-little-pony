@@ -57,11 +57,17 @@ export function insertEventRaw(organizerId: number, capacity: number, startAt: D
             ${startAt}, ${endAt}, ${capacity}, 'PUBLISHED', now())`
 }
 
-/** Inserts a registration with raw SQL, bypassing every application rule. */
+/**
+ * Inserts a registration with raw SQL, bypassing every application rule. A CHECKED_IN row gets the check-in fields that
+ * registration_checkin_fields requires (Sprint 3, BR-19), checked in by the participant id itself (any user id will do), so
+ * the constraint a test aims at is the only one that can refuse the row.
+ */
 export function insertRegistrationRaw(eventId: number, participantId: number, status: string) {
+  const checkedIn = status === 'CHECKED_IN'
   return prisma.$executeRaw`
-    INSERT INTO "Registration" ("eventId", "participantId", "status")
-    VALUES (${eventId}, ${participantId}, ${status}::"RegistrationStatus")`
+    INSERT INTO "Registration" ("eventId", "participantId", "status", "checkedInAt", "checkedInById")
+    VALUES (${eventId}, ${participantId}, ${status}::"RegistrationStatus",
+            ${checkedIn ? new Date() : null}, ${checkedIn ? participantId : null})`
 }
 
 /** Row count of every table, read independently of the code under test (STS §1.1 rule 3). */

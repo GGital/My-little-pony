@@ -48,7 +48,7 @@ Rates are returned as unrounded numbers from 0 to 1. The UI rounds half up to a 
 
 // E-08 response gains the window, so the page never compares times itself
 { "items": [ /* rows */ ], "event": { "...EventSummary": "…" },
-  "+checkIn": { "open": true, "opensAt": "…", "closesAt": "…" },
+  "+checkIn": { "open": true, "state": "NOT_YET | OPEN | CLOSED", "opensAt": "…", "closesAt": "…" },
   "+counts": { "active": 20, "checkedIn": 12 } }
 
 // AttendanceReport (E-20)
@@ -156,7 +156,7 @@ updates without reloading the page.
 - `Registration.checkedInAt` (timestamptz null) and `checkedInById` (FK User, null), with
   `registration_checkin_fields` (SDS §4.3).
 - `EventChange.registrationId` (FK, null) and the `field` value `attendance`.
-- Migration `0005_sprint3_attendance`.
+- Migration `20261128000000_s3-01_attendance` (AGENTS.md §4 names new folders by time; planned as `0005_sprint3_attendance`).
 
 | AC | Given | When | Then |
 |---|---|---|---|
@@ -686,7 +686,7 @@ sprints on the `v1.0.0` candidate. The traceability matrix gets each requirement
 
 | ID | Journey | Covers |
 |---|---|---|
-| JRN-05 | Quantum Cards opens Door check-in for EV-4, finds Mint, checks her in, undoes it, checks her in again; the clock moves past the end; the attendance report shows her as checked in; Mint's History shows **Attended** | P, Q, S, SR-08 |
+| JRN-05 | Dragon's Den (EV-4's owner) opens Door check-in for EV-4, finds Mint, checks her in, undoes it, checks her in again; the clock moves past the end; the attendance report shows her as checked in; Mint's History shows **Attended** | P, Q, S, SR-08 |
 | JRN-06 | A visitor fails sign-in 5 times, sees the 10-minute message, and signs in after the window (fixed clock in the test build) | T |
 | JRN-07 | Quantum Cards uploads a logo and a banner; a visitor sees both on the event and the logo in search | V, U |
 | JRN-08 | Dragon's Den starts EV-11 (4 players, 2 rounds), enters round 1 results, pairs round 2 (no rematch), enters results, finishes; Mint sees her table and opponent during round 2 and her final placing in History | W, X, S |
@@ -722,3 +722,4 @@ here. Each one is linked to at least one AC above.
 | #118 | 25 Nov 2026 | Deliverable 2 check (Part C): every contract names each template layer, or says "no change in this layer" (P and W rules labelled; UI lines for T, V and X; layer lines for SR-05 and SR-06; SR-07 gains Links and Behaviour); CH-13 noted in the shared rules; §0.3 says two seed events; inputs SRS v0.8, traceability v0.9, SDS v0.15, Sprint 2 contracts v0.6. No AC changes | Team (AI-assisted) |
 | #118 | 27 Nov 2026 | Deliverable 2 check, 27 Nov: inputs are the current SRS v0.9, traceability v0.12 and the released Sprint 2 contracts v0.10, re-read for Sprint 3 (CH-13, D-40 and D-41 change no Sprint 3 rule); §0.5 says D-28 … D-36 are recorded in the SRS, not only proposed. No AC changes | Team (AI-assisted) |
 | #118 | 27 Nov 2026 | §9 Behaviour 2 and AC-SR5-04 (team decision 27 Nov): a fourth keyboard journey, cancel a registration in My Events, and focus then moves to the "Your registration is cancelled." notice. This specifies the focus gap left by the Sprint 2 release | Team (AI-assisted) |
+| S3-01 | 28 Nov 2026 | S3-01: §0.2 E-08 `checkIn` gains `state` (NOT_YET, OPEN, CLOSED), so Behaviour 4 can say "opens at" or "closed at" without the page comparing times; §1 Data: the migration folder has a timestamp name (AGENTS.md §4); E-15 clears the check-in fields when it cancels an event with players already checked in (BR-19; the attendance rows keep the history); JRN-05: EV-4 belongs to Dragon's Den, not Quantum Cards. The server messages of the two new codes are fixed text; the page adds the player's name | Team (AI-assisted) |

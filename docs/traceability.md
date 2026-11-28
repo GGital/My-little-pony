@@ -67,8 +67,8 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | FR-18 | Organizer's registration list for own event | Feature-I | Sprint 1 | AC-I-01 · I, E → **Pass**: TEST-I-01, JRN-01 | 3 (check-in) |
 | FR-19 | Participant cancels before deadline | Feature-N | Sprint 2 | AC-N-01, AC-N-04, AC-N-05 · I, C, E → **Pass**: TEST-N-01, TEST-N-04, TEST-N-05 (red `95d8e69`, green `62db165`) | 3 |
 | FR-20 | Re-register after cancelling | Feature-N | Sprint 2 | AC-N-02, AC-N-03 · I → **Pass**: TEST-N-02, TEST-N-03 (red `95d8e69`, green `62db165`) | 3 |
-| FR-21 | Check in during window | Feature-P | Sprint 3 | AC-P-01, AC-P-02, AC-P-05 · U, I, C, E → **Planned**: TEST-P-01, TEST-P-02, TEST-P-05 (Sprint 3 STS) | — |
-| FR-22 | Undo check-in | Feature-P | Sprint 3 | AC-P-03 · I, C → **Planned**: TEST-P-03 (Sprint 3 STS) | — |
+| FR-21 | Check in during window | Feature-P | Sprint 3 | AC-P-01, AC-P-02, AC-P-05 · U, I, C, E → **Pass** (`b908ca1`): TEST-P-01, TEST-P-02, TEST-P-05 (Sprint 3 STS; red `89e0f29`, green `b908ca1`) | — |
+| FR-22 | Undo check-in | Feature-P | Sprint 3 | AC-P-03 · I, C → **Pass** (`b908ca1`): TEST-P-03 (Sprint 3 STS; red `89e0f29`, green `b908ca1`) | — |
 | FR-23 | Per-event attendance report | Feature-Q | Sprint 3 | AC-Q-01 … 05 · U, I, C, E → **Planned**: TEST-Q-01 … 05 (Sprint 3 STS) | — |
 | FR-24 | Organizer summary over a date range | Feature-R | Sprint 3 | AC-R-01 … 05 · U, I, C, E → **Planned**: TEST-R-01 … 05 (Sprint 3 STS) | — |
 | FR-25 | Participant event history | Feature-S | Sprint 3 | AC-S-01 … 05 · I, C, E → **Planned**: TEST-S-01 … 05 (Sprint 3 STS) | — |
@@ -106,8 +106,8 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | BR-15 | Frozen fields once started | Feature-L | Sprint 2 | AC-L-05 · U, I, C → **Pass**: TEST-L-05 (red `0906f89`, green `9f71b81`) | 3 |
 | BR-16 | Own registrations only; public sees counts; organizers see display names | Feature-B, F, H, I | Sprint 1 | AC-F-05, AC-H-02, AC-I-03 · I → **Pass**: TEST-F-05, TEST-H-02, TEST-I-03 | 2, 3 |
 | BR-17 | Identity only from the session | Feature-B | Sprint 1 | AC-B-01 · I → **Pass**: TEST-B-01 | 2, 3 |
-| BR-18 | Check-in: registered, owner, window | Feature-P, SR-03 | Sprint 3 | AC-P-02, AC-P-04, AC-P-05 · U, I → **Planned**: TEST-P-02, TEST-P-04, TEST-P-05 (Sprint 3 STS) | — |
-| BR-19 | Check in once; undo in window | Feature-P | Sprint 3 | AC-P-03, AC-P-04, AC-P-06 · I → **Planned**: TEST-P-03, TEST-P-04, TEST-P-06 (Sprint 3 STS) | — |
+| BR-18 | Check-in: registered, owner, window | Feature-P, SR-03 | Sprint 3 | AC-P-02, AC-P-04, AC-P-05 · U, I → **Pass** (`b908ca1`): TEST-P-02, TEST-P-04, TEST-P-05 (Sprint 3 STS; red `89e0f29`, green `b908ca1`) | — |
+| BR-19 | Check in once; undo in window | Feature-P | Sprint 3 | AC-P-03, AC-P-04, AC-P-06 · I → **Pass** (`b908ca1`): TEST-P-03, TEST-P-04, TEST-P-06 (Sprint 3 STS; red `89e0f29`, green `b908ca1`) | — |
 | BR-20 | No-show and attendance-rate rule | Feature-Q, R, S | Sprint 3 | AC-Q-01 … 03, AC-R-01, AC-S-01 … 03 · U, I → **Planned**: TEST-Q-01 … 03, TEST-R-01, TEST-S-01 … 03 (Sprint 3 STS) | — |
 | BR-21 | Tournament start: TOURNAMENT, in progress, ≥ 2 checked in, once; rounds cap | Feature-W | Sprint 3 | AC-W-01, AC-W-02 · U, I → **Planned**: TEST-W-01, TEST-W-02 (Sprint 3 STS) | — |
 | BR-22 | Swiss pairing: no rematch, one bye at most, round must be complete | Feature-W | Sprint 3 | AC-W-03, AC-W-04, AC-W-06, AC-W-07 · U, I → **Planned**: TEST-W-03, TEST-W-04, TEST-W-06, TEST-W-07 (Sprint 3 STS) | — |
@@ -122,7 +122,7 @@ test (component test or Playwright) · **M** manual check with recorded evidence
 | NFR-02 | 403 wrong role, 404 not owner; fixed check order | Feature-B, SR-02 | Sprint 1 | AC-B-03 · I → **Pass**: TEST-B-03 | 2, 3 |
 | NFR-03 | scrypt hash, no password in data or responses | Feature-A | Sprint 1 | AC-A-05 · U, I → **Pass**: TEST-A-05 | — |
 | NFR-04 | HttpOnly SameSite cookie, 8 h absolute, dead after sign-out | Feature-A | Sprint 1 | AC-A-04, AC-A-06 · U, I → **Pass**: TEST-A-04, TEST-A-06 | Lab 5 (deployed) |
-| NFR-05 | 20 simultaneous requests → exactly 1 wins | Feature-G | Sprint 1 | AC-G-06 · I → **Pass**: TEST-G-06, JRN-02. Sprint 2 re-verification (S2-07) **Pass**: TEST-N-06 (20 rounds) | 2 (with cancel) |
+| NFR-05 | 20 simultaneous requests → exactly 1 wins | Feature-G | Sprint 1 | AC-G-06 · I → **Pass**: TEST-G-06, JRN-02. Sprint 2 re-verification (S2-07) **Pass**: TEST-N-06 (20 rounds). Sprint 3 (S3-01) **Pass** (`b908ca1`): TEST-P-06 (20 rounds) | 2 (with cancel), 3 (check-in) |
 | NFR-06 | Data survives restart; migrations only; seed reproducible | SR-01 | Sprint 1 | AC-SR1-01, AC-SR1-02 · I, M → **Pass**: TEST-SR1-01, TEST-SR1-02 | 2, 3, Lab 5 |
 | NFR-07 | One safe error shape | SR-02 | Sprint 1 | AC-SR2-01 · I → **Pass**: TEST-SR2-01, TEST-SR2-04 | 2, 3 |
 | NFR-08 | No horizontal scroll at 390 / 768 / 1440 px | SR-05, Feature-C | Sprint 1 (Sprint 1 screens) | AC-SR5-01 · E → **Pass**: TEST-SR5-01 | 2 (TEST-SR5-05 and the theme check TEST-C-08, Sprint 2 STS §2.9–2.10), 3 (all screens: AC-SR5-03 → TEST-SR5-03) |
@@ -306,3 +306,4 @@ in the Sprint 2 contracts PR (S2-00), and the course's approved-scope rule for D
 | S2-09 | 26 Nov 2026 | Review 2 of [#113](https://github.com/GGital/My-little-pony/pull/113) (D-41): FR-29 and FR-30 also covered by TEST-U-06 … 08 (green `7af6773`) | Team (AI-assisted) |
 | v0.12 | 27 Nov 2026 | S2-08 release records: covers the S2-07 and S2-09 rows above. FR-08, FR-09, FR-28 (Sprint 2 ACs), BR-08, BR-09, BR-15 and NFR-10 (AC-C-08) Pass from their Issues' green commits, rerun on the release candidate `2075544`; JRN-03 added to FR-08, FR-09 and FR-28; all 15 Sprint 2 requirements Pass; NFR-08 names TEST-SR5-05 (renumbered from TEST-SR5-02, which is Sprint 3's axe scan) | Team (AI-assisted) |
 | #118 | 27 Nov 2026 | Deliverable 2 check of the Sprint 3 rows: AC-X-07 added to NFR-10 and AC-SR7-02 to NFR-14, so all 53 Sprint 3 ACs are traced; §2.5 BR-14 adds Feature-W and X (AC-W-05, AC-X-06), NFR-10 adds R and X; the duplicated NFR-05 row and two pasted matrix cells removed. No status changes | Team (AI-assisted) |
+| S3-01 | 28 Nov 2026 | FR-21, FR-22, BR-18 and BR-19 Pass from S3-01 (red `89e0f29`, green `b908ca1`); NFR-05 Sprint 3 re-verification TEST-P-06 | Team (AI-assisted) |

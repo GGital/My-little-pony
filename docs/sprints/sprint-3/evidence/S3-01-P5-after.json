@@ -1,0 +1,25 @@
+{
+  "id": "S3-01-P5",
+  "side": "after",
+  "action": "Quantum Cards (not the owner) and Mint call E-18 on Mint's EV-4 registration; Quantum Cards opens EV-4's Door check-in",
+  "expected": "Quantum Cards: 404 REGISTRATION_NOT_FOUND, byte-identical to id 999999; Mint: 403 FORBIDDEN; the row stays REGISTERED; the page is the not-found page",
+  "actual": {
+    "anotherOrganizer": {
+      "status": 404,
+      "body": "{\"error\":{\"code\":\"REGISTRATION_NOT_FOUND\",\"message\":\"This registration could not be found.\"}}"
+    },
+    "missingId": {
+      "status": 404,
+      "body": "{\"error\":{\"code\":\"REGISTRATION_NOT_FOUND\",\"message\":\"This registration could not be found.\"}}"
+    },
+    "identicalTo999999": true,
+    "participant": {
+      "status": 403,
+      "body": "{\"error\":{\"code\":\"FORBIDDEN\",\"message\":\"You don't have access to that.\"}}"
+    },
+    "mintStatusAfter": "REGISTERED"
+  },
+  "time": "2026-11-27T17:29:35.457Z",
+  "commit": "a443918",
+  "screenshot": "S3-01-P5-after.png"
+}

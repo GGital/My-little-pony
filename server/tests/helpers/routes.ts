@@ -2,7 +2,7 @@
  * The Sprint 1 route table (SDS §6.3), used by TEST-SR2-03 to call every route with GET.
  * Each Issue that adds an endpoint adds its row here in the same PR; I-12 checks that all twelve are listed.
  */
-export type RouteRow = { id: string; method: 'GET' | 'POST' | 'PATCH'; path: string }
+export type RouteRow = { id: string; method: 'GET' | 'POST' | 'PATCH' | 'DELETE'; path: string }
 
 export const SPRINT1_ROUTES: RouteRow[] = [
   { id: 'E-01', method: 'POST', path: '/api/auth/login' },
@@ -29,4 +29,10 @@ export const SPRINT2_ROUTES: RouteRow[] = [
   { id: 'E-23', method: 'PATCH', path: '/api/organizer/store' },
 ]
 
-export const ALL_ROUTES: RouteRow[] = [...SPRINT1_ROUTES, ...SPRINT2_ROUTES]
+/** The Sprint 3 routes built so far (SDS §6.3), in E-number order. Each Sprint 3 Issue that adds an endpoint adds its row here. */
+export const SPRINT3_ROUTES: RouteRow[] = [
+  { id: 'E-18', method: 'POST', path: '/api/organizer/registrations/1/check-in' },
+  { id: 'E-19', method: 'DELETE', path: '/api/organizer/registrations/1/check-in' },
+]
+
+export const ALL_ROUTES: RouteRow[] = [...SPRINT1_ROUTES, ...SPRINT2_ROUTES, ...SPRINT3_ROUTES]
