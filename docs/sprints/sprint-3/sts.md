@@ -275,7 +275,7 @@ are the Sprint 3 TDD evidence in the 29 Nov PDF.
 | S3-02 Feature-Q report | TEST-Q-01 … 05 | | | | |
 | S3-03 Feature-R summary | TEST-R-01 … 05 | | | | |
 | S3-04 Feature-S history | TEST-S-01 … 05 | | | | |
-| S3-05 Feature-T throttling | TEST-T-01 … 05 | | | | |
+| S3-05 Feature-T throttling | TEST-T-01 … 06 | cf56d8d (T-06: 7822b0d) | server 8 / 11, client 1 / 1 (T-06: 1 / 1 failed) | b7e2447 (T-06: ea04319) | server 594 / 594, client 233 / 233 |
 | S3-06 Feature-V media | TEST-V-01 … 07 | | | | |
 | S3-07 SR-05 accessibility | TEST-SR5-02 … 04 | | | | |
 | S3-08 SR-06 performance | TEST-SR6-01, 02 | | | | |

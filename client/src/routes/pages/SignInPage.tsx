@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Navigate, useLocation, useSearchParams } from 'react-router-dom';
 import { ApiError } from '../../api/errors';
 import type { ApiErrorDetail, UserRole } from '../../api/types';
@@ -36,12 +36,20 @@ export const SignInPage: React.FC = () => {
   const [busy, setBusy] = useState(false);
   const [alert, setAlert] = useState<string | null>(null);
   const [details, setDetails] = useState<ApiErrorDetail[] | undefined>();
+  const [throttled, setThrottled] = useState(false);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const alertRef = useRef<HTMLDivElement>(null);
+
+  // Feature-T Behaviour 4: after a 429 focus moves to the alert, which names the wait (no countdown).
+  useEffect(() => {
+    if (throttled && alert) alertRef.current?.focus();
+  }, [throttled, alert]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
     setAlert(null);
+    setThrottled(false);
     setDetails(undefined);
     try {
       // Success makes the user signed in; the redirect below then leaves this page.
@@ -54,6 +62,10 @@ export const SignInPage: React.FC = () => {
       }
       setAlert(err instanceof ApiError ? err.message : 'Something went wrong. Please try again.');
       setPassword('');
+      if (err instanceof ApiError && err.status === 429) {
+        setThrottled(true);
+        return;
+      }
       passwordRef.current?.focus();
     }
   };
@@ -76,7 +88,11 @@ export const SignInPage: React.FC = () => {
           </p>
         </div>
         {sessionEnded && !alert && <Notice tone="info">Your session has ended — please sign in again</Notice>}
-        {alert && <Notice tone="error">{alert}</Notice>}
+        {alert && (
+          <Notice tone="error" boxRef={throttled ? alertRef : undefined}>
+            {alert}
+          </Notice>
+        )}
         <form onSubmit={onSubmit} noValidate className="form-section">
           <div>
             <label htmlFor="signin-email" className="form-label">

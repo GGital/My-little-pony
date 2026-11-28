@@ -5,7 +5,7 @@ export const prisma = new PrismaClient()
 
 /** Empties every table and restarts ids, so each test file starts from nothing (STS §1.3). */
 export async function resetDb() {
-  await prisma.$executeRawUnsafe('TRUNCATE TABLE "Registration", "Session", "Event", "User" RESTART IDENTITY CASCADE')
+  await prisma.$executeRawUnsafe('TRUNCATE TABLE "Registration", "Session", "Event", "User", "LoginAttempt" RESTART IDENTITY CASCADE')
 }
 
 let counter = 0

@@ -92,6 +92,7 @@ UAT findings from Team 1 KitLoop are Issues #56–#64; the triage is Part 4 of t
 | S2-08 Release `v0.2.0`: release PR `sprint-2-staging` → `main`, deploy, live checks S2-D01 and S2-D02, records | [#87](https://github.com/GGital/My-little-pony/issues/87) | `sprint-2-staging` · [#115](https://github.com/GGital/My-little-pony/pull/115); records `docs/s2-08-release-records` | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (approved #115, 27 Nov) | Merged 27 Nov (`a32b3ba`), tag `v0.2.0`; deployed as `tcg-event-hub-00019-vgc`; S2-D01 and S2-D02 Pass; records in review |
 | S3-00 follow-up: Sprint 3 contracts, STS and README (Deliverable 2 Part C check); Issues #96–#106; `sprint-3-staging` | [#96](https://github.com/GGital/My-little-pony/issues/96)–[#106](https://github.com/GGital/My-little-pony/issues/106) | `docs/s3-contracts-d2` · [#118](https://github.com/GGital/My-little-pony/pull/118) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (requested) | In review (PR #118) |
 | S3-01 Feature-P check-in and undo: E-18, E-19, Door check-in, migration, seed EV-10, E-15 fix | [#96](https://github.com/GGital/My-little-pony/issues/96) | `feature/s3-01-check-in` · [#119](https://github.com/GGital/My-little-pony/pull/119) | Phattaratorn (directed; drafted with Claude Code, see `ai-use.md`) | Praewa (requested) | In review (PR #119) |
+| S3-05 Feature-T: sign-in throttling (E-01 `429 TOO_MANY_ATTEMPTS` with `Retry-After`, `LoginAttempt`, sign-in alert focus) | [#97](https://github.com/GGital/My-little-pony/issues/97) | `feature/s3-05-throttling` · [#120](https://github.com/GGital/My-little-pony/pull/120) | Praewa (with Claude Code, see `ai-use.md`) | Teammate review on the real database, to come | In review (PR #120) (red `cf56d8d`, green `b7e2447`) |
 
 ## 6. Lab 7: Sprint 1 maintenance (CH-13)
 
@@ -160,3 +161,4 @@ as the work. Pair work names both students. Reviewers are filled in from the PR'
 | v0.38 | 27 Nov 2026 | S2-08: the S2-08 row is Merged (#114); release row for #115, the deploy and the live checks | Team (AI-assisted) |
 | #118 | 27 Nov 2026 | §5: S3-00 follow-up row (Sprint 3 Issues and the Deliverable 2 Part C check) | Team (AI-assisted) |
 | S3-01 | 28 Nov 2026 | §5: S3-01 Feature-P row | Team (AI-assisted) |
+| S3-05 | 28 Nov 2026 | §5: S3-05 Feature-T row | Team (AI-assisted) |
