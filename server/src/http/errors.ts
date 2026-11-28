@@ -22,12 +22,14 @@ export const ERRORS = {
   ALREADY_CANCELLED: { status: 409, message: 'This is already cancelled.' },
   NOT_IN_CHECK_IN_WINDOW: { status: 409, message: 'Check-in is not open right now.' },
   ALREADY_CHECKED_IN: { status: 409, message: 'This player is already checked in.' },
+  REGISTRATION_NOT_ACTIVE: { status: 409, message: "This registration was cancelled, so it can't be checked in." }, // Sprint 3 §0.4
+  NOT_CHECKED_IN: { status: 409, message: "This player isn't checked in, so there's nothing to undo." }, // Sprint 3 §0.4
   ALREADY_PUBLISHED: { status: 409, message: 'This event is already published.' }, // Sprint 2 contracts §0.5
   NOT_PUBLISHED: { status: 409, message: 'Only a published event can be cancelled.' }, // Sprint 2 contracts §0.5
   PAYLOAD_TOO_LARGE: { status: 413, message: 'That request is too large.' },
   UNSUPPORTED_MEDIA_TYPE: { status: 415, message: 'Requests must be sent as JSON.' },
   EVENT_TIME_INVALID: { status: 422, message: "Those event times don't work." },
-  TOO_MANY_ATTEMPTS: { status: 429, message: 'Too many attempts. Please wait a few minutes and try again.' },
+  TOO_MANY_ATTEMPTS: { status: 429, message: 'Too many sign-in attempts. Try again in 10 minutes.' }, // Sprint 3 contracts §5
   INTERNAL_ERROR: { status: 500, message: 'Something went wrong. Please try again.' },
 } as const satisfies Record<string, { status: number; message: string }>
 
@@ -39,15 +41,18 @@ export class HttpError extends Error {
   constructor(
     readonly code: ErrorCode,
     readonly details?: ErrorDetail[],
+    /** Extra response headers, such as Retry-After on a 429. */
+    readonly headers?: Record<string, string>,
   ) {
     super(code)
   }
 }
 
 /** The only way an error response is sent (contracts §2 item 1). */
-export function sendError(res: Response, code: ErrorCode, details?: ErrorDetail[]) {
+export function sendError(res: Response, code: ErrorCode, details?: ErrorDetail[], headers?: Record<string, string>) {
   if (!Object.hasOwn(ERRORS, code)) throw new Error(`Unknown error code: ${String(code)}`)
   const { status, message } = ERRORS[code]
+  if (headers) res.set(headers)
   return res.status(status).json({ error: { code, message, ...(details?.length ? { details } : {}) } })
 }
 
@@ -63,7 +68,7 @@ const BODY_PARSER_ERRORS: Record<string, ErrorCode> = {
 export function errorHandler(log: Logger): ErrorRequestHandler {
   return (err, req, res, next) => {
     if (res.headersSent) return next(err)
-    if (err instanceof HttpError) return sendError(res, err.code, err.details)
+    if (err instanceof HttpError) return sendError(res, err.code, err.details, err.headers)
 
     const parserCode = BODY_PARSER_ERRORS[(err as { type?: string } | null)?.type ?? '']
     if (parserCode === 'VALIDATION_FAILED') {

@@ -5,6 +5,7 @@ import express, { type Router } from 'express'
 import type { PrismaClient } from '@prisma/client'
 import type { Config } from './config.js'
 import { authRouter } from './http/auth.routes.js'
+import { checkInRouter } from './http/checkin.routes.js'
 import { jsonBody } from './http/body.js'
 import { errorHandler, sendError } from './http/errors.js'
 import { eventsRouter } from './http/events.routes.js'
@@ -45,6 +46,7 @@ export function createApp({
   api.use(loadSession(prisma)) // SDS §2.3 step 2: every route after health knows its caller
   api.use('/auth', authRouter(prisma, config))
   api.use(organizerRouter(prisma, config))
+  api.use(checkInRouter(prisma, config)) // Sprint 3 Feature-P: E-18, E-19
   api.use(storeRouter(prisma, config))
   api.use(eventsRouter(prisma, config))
   api.use(meRouter(prisma, config))

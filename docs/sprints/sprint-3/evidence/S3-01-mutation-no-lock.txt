@@ -1,0 +1,61 @@
+
+ RUN  v4.0.18 <repo>/server
+
+ ❯ tests/sprint-3/checkin.concurrency.api.test.ts (2 tests | 2 failed) 1609ms
+     × 20 rounds: one 200, one 409 ALREADY_CHECKED_IN, one change row 101ms
+     × 20 rounds: exactly CHECKED_IN or CANCELLED, never both timestamps, and the loser got the matching 409 1083ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/sprint-3/checkin.concurrency.api.test.ts > TEST-P-06a — two check-ins of the same registration at once (AC-P-06, BR-19, NFR-05) > 20 rounds: one 200, one 409 ALREADY_CHECKED_IN, one change row
+AssertionError: round 2: expected [ '200 CHECKED_IN', '200 CHECKED_IN' ] to deeply equal [ '200 CHECKED_IN', …(1) ]
+
+- Expected
++ Received
+
+  [
+    "200 CHECKED_IN",
+-   "409 ALREADY_CHECKED_IN",
++   "200 CHECKED_IN",
+  ]
+
+ ❯ tests/sprint-3/checkin.concurrency.api.test.ts:52:41
+     50|       const results = await Promise.all([checkIn(reg.id), checkIn(reg.…
+     51|       const outcome = results.map((r) => `${r.status} ${r.body.error?.…
+     52|       expect(outcome, `round ${round}`).toEqual(['200 CHECKED_IN', '40…
+       |                                         ^
+     53|       const changes = await prisma.eventChange.count({ where: { eventI…
+     54|       expect(changes, `round ${round}`).toBe(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/sprint-3/checkin.concurrency.api.test.ts > TEST-P-06b — the owner checks in while the player cancels (AC-P-06, BR-19, NFR-05) > 20 rounds: exactly CHECKED_IN or CANCELLED, never both timestamps, and the loser got the matching 409
+AssertionError: round 1: expected [ 200, 500, 'INTERNAL_ERROR' ] to deeply equal [ 200, 409, 'REGISTRATION_NOT_ACTIVE' ]
+
+- Expected
++ Received
+
+  [
+    200,
+-   409,
+-   "REGISTRATION_NOT_ACTIVE",
++   500,
++   "INTERNAL_ERROR",
+  ]
+
+ ❯ tests/sprint-3/checkin.concurrency.api.test.ts:75:98
+     73|       } else {
+     74|         expect(stored.status, `round ${round}`).toBe('CANCELLED')
+     75|         expect([playerRes.status, ownerRes.status, ownerRes.body.error…
+       |                                                                                                  ^
+     76|         outcomes.add('cancel first')
+     77|       }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  00:15:55
+   Duration  3.00s (transform 371ms, setup 0ms, import 1.12s, tests 1.61s, environment 0ms)
+

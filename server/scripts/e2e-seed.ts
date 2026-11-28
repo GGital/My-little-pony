@@ -12,7 +12,7 @@ if (!test || process.env.DATABASE_URL !== test) {
 
 const prisma = new PrismaClient()
 try {
-  await prisma.$executeRawUnsafe('TRUNCATE TABLE "Registration", "Session", "Event", "User" RESTART IDENTITY CASCADE')
+  await prisma.$executeRawUnsafe('TRUNCATE TABLE "Registration", "Session", "LoginAttempt", "Event", "User" RESTART IDENTITY CASCADE')
   await seed(prisma)
   await prisma.user.create({
     data: {

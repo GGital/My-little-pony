@@ -35,7 +35,10 @@ beforeAll(async () => {
   await resetDb()
   mint = await makeUserWithPassword('PARTICIPANT', 'Mint', 'mint@player.example')
 })
-beforeEach(() => prisma.session.deleteMany())
+beforeEach(async () => {
+  await prisma.session.deleteMany()
+  await prisma.loginAttempt.deleteMany() // Sprint 3 throttling: each test starts with no recorded attempts
+})
 afterEach(() => resetNow())
 afterAll(() => prisma.$disconnect())
 
@@ -84,6 +87,7 @@ describe('TEST-A-02 — failed sign-in tells nothing (AC-A-02, FR-02)', () => {
     let known = 0
     let unknown = 0
     for (let i = 0; i < 20; i++) {
+      await prisma.loginAttempt.deleteMany() // outside the timed calls: 20 failures for Mint would be throttled (Sprint 3)
       known += await timeOf('mint@player.example')
       unknown += await timeOf(`ghost${i}@player.example`)
     }
