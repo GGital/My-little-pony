@@ -166,3 +166,13 @@ describe('TEST-T-05 — the lock lives in PostgreSQL and no response leaks it (A
     }
   })
 })
+
+describe('TEST-T-06 — parallel attempts cannot get past the limit (AC-T-01, NFR-16)', () => {
+  it('10 simultaneous wrong passwords give 5 × 401 and 5 × 429, and exactly 5 failure rows', async () => {
+    const results = await Promise.all(Array.from({ length: 10 }, () => attempt(MINT, WRONG)))
+
+    expect(results.filter((r) => r.status === 401)).toHaveLength(5)
+    expect(results.filter((r) => r.status === 429)).toHaveLength(5)
+    expect(await failedRows(MINT)).toBe(5)
+  })
+})
